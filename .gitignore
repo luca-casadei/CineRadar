@@ -31,3 +31,5 @@ gradle-app.setting
 build
 .idea
 .vs_code
+*.bbl
+*.blg
