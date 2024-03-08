@@ -26,3 +26,8 @@ gradle-app.setting
 *.out
 *.gz
 *.toc
+
+# Ignore Gradle build output directory
+build
+.idea
+.vs_code
