@@ -4,7 +4,7 @@
 \usepackage{hyperref}
 \usepackage[utf8]{inputenc}
 \usepackage{float}
-\usepackage{xcolor}
+\usepackage[table,xcdraw]{xcolor}
 \usepackage{graphicx}
 
 \title{\textbf{CineRadar}\\Progetto di Basi di dati}
@@ -18,9 +18,31 @@
 	\section{Introduzione}
 	Il progetto consiste nella realizzazione di un applicativo per la condivisione e la recensione di elementi multimediali quali film e serie TV.
 	\section{Intervista}
-	È richiesto un sistema che consenta all'utenza di accedere al portale di condivisione di film e serie TV e poter recensirne uno o più di interesse, \textit{(D'ora in poi entrambi li denomineremo "film" in maniera generica)}. È necessario che l'utente si registri inserendo i propri dati che verranno salvaguardati, tra cui username, password, nome, cognome, data di nascita per controllare i limiti di età sui film. Un utente deve avere la possibilità di aggiungere nuovi film nel sistema, ma non in maniera diretta, la richiesta deve prima essere approvata da un altro tipo di utente con privilegi di amministratore del sistema. L'amministratore si occuperà di aggiungere film alla piattaforma con frequenza settimanale. Sulle recensioni di altri utenti, un visualizzatore registrato può esprimere un parere di utilità che andrà a classificare la recensione in una sorta di "classifica delle recensioni più utili". Quando si va a memorizzare un film bisogna inserire il titolo, uno o più autori, la descrizione, la durata, l'anno di rilascio ed eventuale casa produttrice. I visualizzatori devono essere in grado di vedere tutti i film presenti in base a dei filtri sul genere, categoria, autori e recensioni, sempre a patto che i risultati ottenuti rispettino i limiti di età standard dei film (\textit{over 18, over 16} etc\dots). Quando un utente vede un film della lista, deve poterlo segnare come \textit{"già visto"} per poterlo recensire successivamente se lo desidera. Dato che si vogliono anche incentivare le famiglie, è richiesta una funzionalità che renda possibile inserire un'età e visualizzare i film la cui visione è consentita (per esempio per capire se un film è adatto per il proprio figlio). Vi devono essere anche delle piccole classifiche per incentivare gli utenti ad effettuare recensioni, per esempio una classifica degli utenti con il maggior numero di film visualizzati o recensiti. Vi è inoltre una statistica sui film inseriti, per esempio sarà possibile ottenere il genere di film con il maggior numero di visualizzazioni complessive. Oltre che sui film ci devono essere delle statistiche su chi i film li fa, quindi per esempio il regista che ha girato il film con le recensioni migliori. L'amministratore può attribuire dei premi in base alla classifica degli utenti migliori (in base alle recensioni più utili), effettuerà anche atti di moderazione sugli utenti registrati, ad esempio, se un utente effettua troppe recensioni al di sotto della soglia di utilità potrà essere rimosso dal sistema.
-	\section{Estrazione dei dati dell'intervista}
-	\textbf{Utente / Visualizzatore} $\longrightarrow$ Utente che si registra sull'applicativo\\Successivamente verranno elencati i dati da dover memorizzare.
+	È richiesto un sistema che consenta all'utenza di accedere al portale di condivisione di film e serie TV e poter recensirne uno o più di interesse, \textit{(D'ora in poi entrambi li denomineremo "film" in maniera generica)}. È necessario che l'utente si registri inserendo i propri dati che verranno salvaguardati, tra cui username, password, nome, cognome, data di nascita per controllare i limiti di età sui film. Un utente deve avere la possibilità di aggiungere nuovi film nel sistema, ma non in maniera diretta, la richiesta deve prima essere approvata da un altro tipo di utente con privilegi di amministratore del sistema. L'amministratore si occuperà di aggiungere film alla piattaforma con frequenza settimanale. Sulle recensioni di altri utenti, un visualizzatore registrato può esprimere un parere di utilità che andrà a classificare la recensione in una sorta di "classifica delle recensioni più utili". Quando si va a memorizzare un film bisogna inserire il titolo, uno o più autori, la descrizione, la durata, l'anno di rilascio ed eventuale casa produttrice. I visualizzatori devono essere in grado di vedere tutti i film presenti in base a dei filtri sul genere, categoria, autori e recensioni, sempre a patto che i risultati ottenuti rispettino i limiti di età standard dei film (\textit{over 18, over 16} etc\dots). Quando un utente vede un film della lista, deve poterlo segnare come \textit{"già visto"} per poterlo recensire successivamente se lo desidera. Dato che si vogliono anche incentivare le famiglie, è richiesta una funzionalità che renda possibile inserire un'età e visualizzare i film la cui visione è consentita (per esempio per capire se un film è adatto per il proprio figlio). Vi devono essere anche delle piccole classifiche per incentivare gli utenti ad effettuare recensioni, per esempio una classifica degli utenti con il maggior numero di film visualizzati o recensiti. Vi è inoltre una statistica sui film inseriti, per esempio sarà possibile ottenere il genere di film con il maggior numero di visualizzazioni complessive. Oltre che sui film ci devono essere delle statistiche su chi i film li fa, quindi per esempio il regista che ha girato il film con le recensioni migliori. L'amministratore può attribuire dei premi in base alla classifica degli utenti migliori (in base alle recensioni più utili), effettuerà anche atti di moderazione sugli utenti registrati, ad esempio, se un utente effettua troppe recensioni al di sotto della soglia di utilità potrà essere rimosso o bloccato dall'effettuare l'accesso al sistema.
+	\section{Rielaborazione del testo}
+	\subsection{Obiettivi finali:}
+	È richiesto un sistema che consenta all'utenza di accedere al portale di condivisione di \textcolor{orange}{\underline{film}} e \textcolor{orange}{\underline{serie TV}} per poterne recensire uno o più di interesse.\\
+	Vi devono essere anche delle piccole \textcolor{orange}{\underline{classifiche}} per incentivare gli utenti ad effettuare \textcolor{orange}{\underline{recensioni}}, per esempio una classifica degli utenti con il maggior numero di film visualizzati o recensiti.\\ 
+	Vi è inoltre una statistica sui film inseriti, per esempio sarà possibile ottenere il \textcolor{orange}{\underline{genere}} di film con il maggior numero di visualizzazioni complessive. Inoltre è richiesta anche una statistica sugli \textcolor{orange}{\underline{attori}} e i \textcolor{orange}{\underline{registi}} che hanno prodotto i film inseriti, esempio, l'attore con più comparse all'interno dei film inseriti.
+	\subsection{Funzionalità lato utente:}
+	È necessario che l'\textcolor{orange}{\underline{utente}} si registri inserendo i propri dati che verranno salvaguardati, tra cui username, password, nome, cognome, data di nascita per controllare i limiti di età sui film. Un utente deve avere la possibilità di aggiungere nuovi \textcolor{orange}{\underline{film}} attraverso una richiesta al sistema, essa deve prima essere approvata da un altro tipo di utente con privilegi di \textcolor{orange}{\underline{amministratore}} del sistema.\\
+	Quando un utente vede un film della lista, deve poterlo segnare come \textcolor{orange}{\underline{"Visto"}} per poterlo recensire successivamente se lo desidera. Dato che si vogliono anche incentivare le \textcolor{orange}{\underline{famiglie}}, è richiesta una funzionalità che renda possibile inserire un'età e visualizzare i film la cui visione è consentita (per esempio per capire se un film è adatto per il proprio figlio).\\
+	I visualizzatori devono essere in grado di vedere tutti i film presenti in base a dei \textcolor{orange}{\underline{filtri}} sul genere, categoria, autori e recensioni, sempre a patto che i risultati ottenuti rispettino i \textcolor{orange}{\underline{limiti di età}} standard dei film (\textit{over 18, over 16} etc\dots).
+	\subsection{Funzionalità lato amministrativo:}
+	L'\textcolor{orange}{\underline{amministratore}} si occuperà di aggiungere film alla piattaforma con frequenza settimanale. Sulle recensioni di altri utenti, un visualizzatore registrato può esprimere un parere di utilità che andrà a classificare la recensione in una sorta di "classifica delle recensioni più utili".\\
+	Quando si va a memorizzare un film bisogna inserire il titolo, uno o più autori, la descrizione, la durata, l'anno di rilascio ed eventuale casa produttrice.
+	L'amministratore può attribuire dei \textcolor{orange}{\underline{premi}} in base alla classifica degli utenti migliori (in base alle recensioni più utili), effettuerà anche atti di moderazione sugli utenti registrati, ad esempio, se un utente effettua troppe recensioni al di sotto della soglia di utilità potrà essere rimosso o bloccato dall'effettuare l'accesso al sistema.
+	\subsection*{Termini da chiarire}
+	\begin{itemize}
+		\item  "Visualizzatore" $\longrightarrow$ Sinonimo di utente.
+		\item "Visto" $\longrightarrow$ Un utente può spuntare una casella "visto" se ha visto effettivamente il film, si può recensire un film solo se è stato spuntato come "visto".
+		\item "Filtro" $\longrightarrow$ Un filtro viene applicato sulla ricerca che può fare un utente sulla lista di film / serie, questo può riguardare l'autore, il titolo, le recensioni dell'utenza etc\dots
+		\item "Classifica" $\longrightarrow$ Una lista visualizzabile sull'applicativo in base a parametri scelti; il concetto non viene esplicitato nello schema concettuale ma sarà realizzato attraverso delle query.
+		\item "Famiglia" $\longrightarrow$ Un utente genitore può effettuare una sorta di controllo parentale inserendo un'età in un'apposita casella e visualizzando tutti i film che rispettano il limite di età inserito.
+	\end{itemize}
+	\section{Estrazione dei dati del testo rielaborato}
+	\subsection{Estrazione dati sugli utenti}
+	\textbf{Utente} $\longrightarrow$ Utente che si registra sull'applicativo\\Successivamente verranno elencati i dati da dover memorizzare.
 	\begin{itemize}
 		\item Nome
 		\item Cognome
@@ -32,8 +54,11 @@
 	\begin{itemize}
 		\item Username
 		\item Password
+		\item Nome
+		\item Cognome
 		\item Contatto (Da stabilire se uno o più)
 	\end{itemize}
+	\subsection{Estrazione dati sui film/serie e produttori}
 	\textbf{Film / Serie TV} $\longrightarrow$ Elementi multimediali su cui gli utenti registrati possono apporre la propria visualizzazione ed effettuare recensioni in seguito.
 	\begin{itemize}
 		\item Data di rilascio
@@ -42,19 +67,22 @@
 		\item Genere
 		\item Limite di età
 	\end{itemize}
-	\textbf{Autori / Registi} $\longrightarrow$ Questi vengono memorizzati per stilare la classifica visualizzabile, ed esplicitare delle preferenze.
+	\textbf{Attori} $\longrightarrow$ Questi vengono memorizzati per stilare la classifica visualizzabile, ed esplicitare delle preferenze. Fanno parte del cast di un film.
 	\begin{itemize}
 		\item Nome
 		\item Cognome
 		\item Nome d'arte
-		\item Età
+		\item Data di nascita
 	\end{itemize}
-	\subsection*{Termini da chiarire}
+	\textbf{Registi} $\longrightarrow$ Sono coloro che dirigono il cast.
 	\begin{itemize}
-		\item "Visto" $\longrightarrow$ Un utente può spuntare una casella "visto" se ha visto effettivamente il film, si può recensire un film solo se è stato spuntato come "visto".
-		\item "Filtro" $\longrightarrow$ Un filtro viene applicato sulla ricerca che può fare un utente sulla lista di film / serie, questo può riguardare l'autore, il titolo, le recensioni dell'utenza etc\dots
+		\item Nome
+		\item Cognome
+		\item Nome d'arte
+		\item Data di nascita
+		\item Debutto carriera
 	\end{itemize}
-	\subsection*{Elenco delle azioni}
+	\subsection{Elenco delle azioni}
 	\subsubsection{Utente}
 	\begin{itemize}
 		\item Registrarsi sulla piattaforma.
@@ -79,8 +107,21 @@
 		\item Aggiungere film / serie alla lista, compresi quelli che sono stati richiesti dagli utenti.
 		\item Inserire nuovi autori o registi da associare a dei film.
 	\end{itemize}
+	\section{Tabella delle operazioni}
+	\begin{table}[H]
+		\begin{tabular}{|c|c|}
+			\hline
+			\rowcolor[HTML]{FFCE93} 
+			\textbf{Operazione}        & \textbf{Frequenza a settimana} \\ \hline
+			Inserimento di un film     & 15                             \\ \hline
+			Registrazione di un utente & 20                             \\ \hline
+			Inserimento di un attore   & 50                             \\ \hline
+			Accesso alla piattaforma   & 500                            \\ \hline
+			Recensione di un film      & 750                            \\ \hline
+		\end{tabular}
+	\end{table}
 	\chapter{Progettazione concettuale}
-	\section{Schema scheletro}
+	\section{Strategia bottom-up}
 	\subsection{Utenza}
 	Rappresentazione di una sottoparte dello schema ER che riguarda la gestione dell'utenza, in particolare, è stata pensata una generalizzazione dell'entità \textbf{utente} con due sotto-entità \textbf{amministratore} e \textbf{visualizzatore} di cui dobbiamo memorizzare elementi diversi. La generalizzazione è di tipo \textit{totale} e \textit{esclusiva}, questo perché l'amministratore ha un tipo di account diverso da quello di semplice visualizzatore, se l'amministratore vuole effettuare le operazioni di un utente normale deve registrarsi con un altro account.
 	\begin{figure}[H]
