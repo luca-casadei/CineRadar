@@ -1,4 +1,7 @@
 package unibo.cineradar.view;
 
-public class SignInView {
+/**
+ * The view managing the sign-in page to the application.
+ */
+public final class SignInView {
 }
