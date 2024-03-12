@@ -24,18 +24,35 @@ public final class LogInView implements CineRadarViewComponent {
     }
 
     private void setInternalComponents() {
-        //Main layout
+        // Main layout
         final JPanel contentPane = new JPanel(new BorderLayout());
-        final JButton loginButton = new JButton("Login");
-        contentPane.add(loginButton, BorderLayout.SOUTH);
-        //Login form
+
+        // Login form
         final JPanel loginForm = new JPanel();
-        loginForm.setLayout(new BoxLayout(loginForm,BoxLayout.Y_AXIS));
-        final JTextField userField = new JTextField();
-        loginForm.add(userField);
-        final JPasswordField pwField = new JPasswordField();
-        loginForm.add(pwField);
-        contentPane.add(loginForm,BorderLayout.CENTER);
+        loginForm.setLayout(new BoxLayout(loginForm, BoxLayout.Y_AXIS));
+
+        final JPanel usernamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        final JLabel usernameLabel = new JLabel("Username:");
+        usernameField.setColumns(20);
+        usernamePanel.add(usernameLabel);
+        usernamePanel.add(usernameField);
+        loginForm.add(usernamePanel);
+
+
+        final JPanel passwordPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        final JLabel passwordLabel = new JLabel("Password:");
+        passwordField.setColumns(20);
+        passwordPanel.add(passwordLabel);
+        passwordPanel.add(passwordField);
+        loginForm.add(passwordPanel);
+
+        contentPane.add(loginForm, BorderLayout.CENTER);
+
+        // Login button
+        final JButton loginButton = new JButton("Login");
+        loginButton.setPreferredSize(new Dimension(100, 40));
+        loginButton.setBackground(Color.LIGHT_GRAY); 
+        contentPane.add(loginButton, BorderLayout.SOUTH);
         this.loginFrame.setContentPane(contentPane);
     }
 
