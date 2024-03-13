@@ -17,6 +17,14 @@ public final class ViewUtilities {
      */
     public static final int LOGIN_FRAME_FIELD_WIDTH = 200;
     /**
+     * The title of the signin frame.
+     */
+    public static final String SIGNIN_FRAME_TITLE = "CineRadar - Signin";
+    /**
+     * The width of the fields contained in the login form.
+     */
+    public static final int SIGNIN_FRAME_FIELD_WIDTH = 200;
+    /**
      * The portion of the screen that equals the minimum size of the window.
      */
     public static final int FRAME_SIZE_FACTOR = 2;

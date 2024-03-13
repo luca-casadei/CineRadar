@@ -33,6 +33,7 @@ public final class LogInView implements CineRadarViewComponent {
     public LogInView() {
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.loginFrame = new JFrame();
+
         //Size setting
         this.loginFrame.setSize(screenSize.width / ViewUtilities.FRAME_SIZE_FACTOR,
                 screenSize.height / ViewUtilities.FRAME_SIZE_FACTOR);
@@ -41,11 +42,11 @@ public final class LogInView implements CineRadarViewComponent {
                         / (ViewUtilities.FRAME_SIZE_FACTOR * 2),
                         (screenSize.height + SCREEN_AUGMENT_FACTOR_FOR_MINIMUM)
                                 / (ViewUtilities.FRAME_SIZE_FACTOR * 2)));
+
         //Title
         this.loginFrame.setTitle(ViewUtilities.LOGIN_FRAME_TITLE);
         //Close on exit.
         this.loginFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
         setInternalComponents();
     }
 
@@ -68,31 +69,31 @@ public final class LogInView implements CineRadarViewComponent {
         imageLabel.setIcon(new ImageIcon(logoImage));
         contentPane.add(imageLabel, gbc);
 
-        //Row 1 - Col 0
+        //Row 1 - Col 0 - Username label
         ViewUtilities.setGridBagConstraints(
                 gbc, 0, 1, 1, 1,
                 new Insets(0, 0, 10, 10));
         contentPane.add(new JLabel("Username:"), gbc);
 
-        //Row 1 - Col 1
+        //Row 1 - Col 1 - Username field
         gbc.ipadx = ViewUtilities.LOGIN_FRAME_FIELD_WIDTH;
         ViewUtilities.setGridBagConstraints(gbc, 1, 1, 1, 1,
                 new Insets(0, 0, 10, 0));
         contentPane.add(usernameField, gbc);
 
-        //Row 2 - Col 0
+        //Row 2 - Col 0 - Password label
         gbc.ipadx = 0;
         ViewUtilities.setGridBagConstraints(gbc, 0, 2, 1, 1,
                 new Insets(0, 0, 10, 10));
         contentPane.add(new JLabel("Password:"), gbc);
 
-        //Row 2 - Col 1
+        //Row 2 - Col 1 - Password field
         gbc.ipadx = ViewUtilities.LOGIN_FRAME_FIELD_WIDTH;
         ViewUtilities.setGridBagConstraints(gbc, 1, 2, 1, 1,
                 new Insets(0, 0, 10, 0));
         contentPane.add(passwordField, gbc);
 
-        //Row 3 - Col 0-1 Login Button
+        //Row 3 - Col 0-1 - Login Button
         gbc.ipadx = 100;
         ViewUtilities.setGridBagConstraints(gbc, 0, 3, 2, 1,
                 new Insets(10 * 2, 0, TOP_DOWN_MARGIN, 0));
