@@ -143,6 +143,39 @@
 		\includegraphics[width=230pt]{ER/cast.png}
 		\caption{Schema ER dei membri del cast.}
 	\end{figure}
+	
+	\subsection{Coupon}
+	Un coupon rappresenta un'offerta promozionale, espressa come una percentuale di sconto, che può essere utilizzata da un Utente. Viene suddiviso in due sotto entità in maniera totale ed esclusiva:
+	\begin{itemize}
+			\item Coupon singolo: si riferisce ad uno e un solo film.
+			\item Coupon multiplo: si riferisce ad uno o più generi di film.
+	\end{itemize}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=230pt]{ER/coupon.png}
+		\caption{Schema ER del coupon.}
+	\end{figure}
+	\subsection{Relazione tra cinema e tessera}
+	Il testo esplicita come una tessera predisponga di un nome e di una relativa scadenza. Viene rilasciata da un cinema definito da un codice identificatore e l'apposito indirizzo. Quindi un cinema può rilasciare più tessere mentre una tessera appartiene ad uno e un solo cinema. 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\linewidth]{ER/cinetessera.png}
+		\caption{Schema ER della relazione tra il cinema e la tessera.}
+	\end{figure}
+	\subsection{Relazione tra utenza e recensioni}
+	Il testo esplicita come un utente puó scrivere piú di una recensione su vari film, esplicitando il titolo del film, la descrizione della recensione e la sua valutazione. Inoltre, un utente puó classificare, tramite un voto di utilitá, piú di una recensione scritta da un altro utente.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=450pt]{ER/utenzarecensione.png}
+		\caption{Schema ER della relazione tra utenza e recensioni.}
+	\end{figure}
+	\subsection{Relazione tra cinema, tessera e coupon}
+	Il testo esplicita l'associazione di più promozioni a una singola tessera, e viceversa, consentendo a ciascuna promozione di essere collegata a più tessere. In questa struttura, una promozione è considerata come un legame con coupon. La distinzione tra coupon e promozione risiede nel fatto che il coupon identifica la tipologia di beneficio, mentre la promozione aggiunge a esso una data di scadenza prefissata.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\linewidth]{ER/cinetesseracoupon.png}
+		\caption{Schema ER della relazione tra il cinema, la tessera e il coupon.}
+	\end{figure}
 	\subsection{Relazione tra membri del cast e film}
 	Il testo esplicita come di un film dobbiamo memorizzare gli attori che hanno partecipato al cast, e il regista, quindi il regista è uno solo per film e generalmente è così, per questo si spiega la scelta della cardinalità \textbf{1-N} nella relazione con il regista mentre \textbf{N-N} per quella con gli attori.
 	\begin{figure}[H]
@@ -150,18 +183,17 @@
 		\includegraphics[width=450pt]{ER/filmcast.png}
 		\caption{Schema ER della relazione tra membri del cast e film.}
 	\end{figure}
-	\subsection{Relazione tra utenza e recensioni}
-	Il testo esplicita come un utente puó scrivere piú di una recensione su vari film, esplicitando il titolo del film, la descrizione della recensione e la sua valutazione. Inoltre, un utente puó classificare, tramite un voto di utilitá, piú di una recensione scritta da un altro utente.
+	\subsection{Relazione tra film, coupon e tessera}
+	Il testo esplicita che: sia un coupon singolo che uno multiplo possono essere utilizzati per ottenere uno sconto su un film in particolare(qualora fosse un coupon singolo) oppure in base al genere del film(nel caso di un coupon multiplo).
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=450pt]{ER/cast.png}
-		\caption{Schema ER della relazione tra utenza e recensioni.}
+		\includegraphics[width=0.9\linewidth]{ER/filmcoupontessera.png}
+		\caption{Schema ER della relazione tra il film, il coupon e la tessera.}
 	\end{figure}
 	\subsection{Schema completo}
-	Questo è lo schema finale, è stata realizzata l'entità \textbf{RECENSIONE} per il collegamento tra l'utenza e i film memorizzati, questo perché era necessario dare la possibilità agli utenti di valutare le recensioni già fatte da altri, inoltre, un utente può recensire solamente un film, quindi non è necessario inserire un numero di recensione aggiuntivo.
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=450pt]{ER/ercompleto.png}
+		\includegraphics[width=480pt]{ER/ercompleto.png}
 		\caption{Schema ER completo.}
 	\end{figure}
 \end{document}
