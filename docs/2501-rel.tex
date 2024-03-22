@@ -144,46 +144,47 @@
 		\caption{Schema ER del coupon.}
 	\end{figure}
 	\subsection{Relazione tra film e membri del cast}
-	\textbf{TBD}
+	Un film può essere diretto da uno e un solo regista mentre possono prendere parte all'interno di un film uno o più attori. Queste due entità sono raggruppate tramite la generalizzazione "membro cast" che descrive un qualsiasi membro del cast cinematografico che ha presto parte nel film stesso.
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.7\linewidth]{ER/filmcast.png}
 		\caption{Schema ER della relazione tra film e membri del cast}
 	\end{figure}
 	\subsection{Relazione tra utenza e recensioni}
-	Il testo esplicita come un utente può scrivere piú di una recensione su vari film, esplicitando il titolo del film, la descrizione della recensione e la sua valutazione. Inoltre, un utente può classificare, tramite un voto di utilitá, piú di una recensione scritta da un altro utente.
+	Un utente può scrivere più di una recensione su vari film, esplicitando il titolo del film, la descrizione della recensione e la sua valutazione. Inoltre, un utente può classificare, tramite un voto di utilitá, piú di una recensione scritta da un altro utente.
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=250pt]{ER/utenzarecensione.png}
 		\caption{Schema ER della relazione tra utenza e recensioni.}
 	\end{figure}
 	\subsection{Relazione tra utenza e tessera}
-	\textbf{TBD}
+	Una tessera debba essere registrata tramite un registratore. Un utente può effettuare più tesseramenti in modo facoltativo, mentre una tessera è sempre legata ad un utente(così come anche al registratore). % non mi convince
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.7\linewidth]{ER/utenzatessera.png}
 		\caption{Schema ER della relazione tra utenza e tessera.}
 	\end{figure}
+	
 	\subsection{Relazione tra utenza e cinema}
-	\textbf{TBD}
+	Un cinema afferisce a più registratori, mentre ciascuno di essi è a disposizione solo su di un cinema in particolare. Il registratore è considerato un utilizzatore, quindi è compreso nella generalizzazione. 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.7\linewidth]{ER/utenzacinema.png}
 		\caption{Schema ER della relazione tra utenza e cinema.}
 	\end{figure}
 	\subsection{Relazione tra cinema, utenza e tessera}
-	\textbf{TBD}
+	Una tessera, inserita da un registratore per il cinema per cui lavora, può essere utilizzata da un utente che è stato premiato perché risultante particolarmente attivo sulla piattaforma. 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.7\linewidth]{ER/utenzacinematessera.png}
-		\caption{Schema ER della relazione tra il cinema, la tessera e il coupon.}
+		\caption{Schema ER della relazione tra cinema, utenza e tessera.}
 	\end{figure}
 	\subsection{Relazione tra film, membri del cast e coupon}
-	\textbf{TBD}
+	TBD
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.9\linewidth]{ER/filmcastcoupon.png}
-		\caption{Schema ER della relazione tra il film, il coupon e la tessera.}
+		\caption{Schema ER della relazione tra film, membri del cast e coupon.}
 	\end{figure}
 	\subsection{Schema completo}
 	Questo é lo schema derivato dalla composizione di tutte le sotto-componenti descritte precedentemente. Il collegamento tra film e recensione impone che ci sia un unica recensione per film e che quest'ultimo può averne più di una.
