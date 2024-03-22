@@ -188,4 +188,82 @@
 	\end{figure}
 	\chapter{Progettazione Logica}
 	\section{Stima del volume dei dati}
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{|lll|}
+			\hline
+			\rowcolor[HTML]{FFCE93} 
+			\multicolumn{3}{|l|}{\cellcolor[HTML]{FFCE93}Film e Cast} \\ \hline
+			\rowcolor[HTML]{CBCEFB} 
+			Concetto             & Costrutto         & Volume         \\ \hline
+			FILM                 & E                 & 5000           \\ \hline
+			GENERE				 & E				 & 13			  \\ \hline
+			CategorizzazioneFilm & R				 & 5000			  \\ \hline
+			ATTORE               & E                 & 9000           \\ \hline
+			REGISTA              & E                 & 500	          \\ \hline
+			AttoreCast           & R                 & 8000           \\ \hline
+			RegistaCast          & R                 & 5500           \\ \hline
+		\end{tabular}
+	\end{table}
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{|lll|}
+			\hline
+			\rowcolor[HTML]{FFCE93} 
+			\multicolumn{3}{|l|}{\cellcolor[HTML]{FFCE93}Utilizzatori} \\ \hline
+			\rowcolor[HTML]{CBCEFB} 
+			Concetto               & Costrutto         & Volume        \\ \hline
+			UTILIZZATORE           & E                 & 10000         \\ \hline
+			AMMINISTRATORE         & E                 & 10            \\ \hline
+			REGISTRATORE           & E                 & 30            \\ \hline
+			UTENTE                 & E                 & 9960          \\ \hline
+		\end{tabular}
+	\end{table}
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{|lll|}
+			\hline
+			\rowcolor[HTML]{FFCE93} 
+			\multicolumn{3}{|l|}{\cellcolor[HTML]{FFCE93}Cinema e registratori di tessere} \\ \hline
+			\rowcolor[HTML]{CBCEFB} 
+			Concetto                     & Costrutto                & Volume               \\ \hline
+			CINEMA                       & E                        & 25                   \\ \hline
+			Afferenza                    & R                        & 30                   \\ \hline
+			TESSERA                      & E                        & 3500                 \\ \hline
+			Registrazione                & R                        & 3500                 \\ \hline
+			Tesseramento                 & R                        & 3500                 \\ \hline
+		\end{tabular}
+	\end{table}
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{|lll|}
+			\hline
+			\rowcolor[HTML]{FFCE93} 
+			\multicolumn{3}{|l|}{\cellcolor[HTML]{FFCE93}Coupon e premi su tessera} \\ \hline
+			\rowcolor[HTML]{CBCEFB} 
+			Concetto                   & Costrutto             & Volume             \\ \hline
+			PROMO                      & E                     & 200                \\ \hline
+			COUPON                     & E                     & 500                \\ \hline
+			COUPONMULTIPLO             & E                     & 25                 \\ \hline
+			COUPONSINGOLO              & E                     & 475                \\ \hline
+			PremiTessera               & R                     & 1500               \\ \hline
+			Validità                   & R                     & 200                \\ \hline
+			CouponSuGenere             & R                     & 50                 \\ \hline
+			CouponSuFilm               & R                     & 475                \\ \hline
+		\end{tabular}
+	\end{table}
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{|lll|}
+			\hline
+			\rowcolor[HTML]{FFCE93} 
+			\multicolumn{3}{|l|}{\cellcolor[HTML]{FFCE93}Recensioni} \\ \hline
+			\rowcolor[HTML]{CBCEFB} 
+			Concetto              & Costrutto        & Volume        \\ \hline
+			RECENSIONE            & E                & 45000         \\ \hline
+			RecensioneFilm        & R                & 45000         \\ \hline
+			Valutazione           & R                & 115000        \\ \hline
+			Autorità              & R                & 45000         \\ \hline
+		\end{tabular}
+	\end{table}
 \end{document}
