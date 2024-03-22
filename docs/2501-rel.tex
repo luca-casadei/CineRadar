@@ -132,7 +132,6 @@
 		\includegraphics[width=250pt]{ER/cast.png}
 		\caption{Schema ER dei membri del cast.}
 	\end{figure}
-	
 	\subsection{Coupon}
 	Un coupon rappresenta un'offerta promozionale, espressa come una percentuale di sconto, che può essere utilizzata da un Utente. Viene suddiviso in due sotto entità in maniera totale ed esclusiva:
 	\begin{itemize}
@@ -144,12 +143,12 @@
 		\includegraphics[width=250pt]{ER/coupon.png}
 		\caption{Schema ER del coupon.}
 	\end{figure}
-	\subsection{Relazione tra registratore e tessera}
-	Il testo esplicita come una tessera predisponga di un nome e di una relativa scadenza. La tessera deve essere inserita e nel sistema da parte di un gestore del cinema che la emette, questo gestore avrà quindi un account di accesso a parte. Un gestore è associato per forza di cose ad uno e un solo cinema, quindi se una persona lavora in più cinema e in entrambi può rilasciare tessere avrà due account con credenziali diverse.
+	\subsection{Relazione tra film e membri del cast}
+	\textbf{TBD}
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.7\linewidth]{ER/cinetessera.png}
-		\caption{Schema ER della relazione tra il cinema e la tessera.}
+		\includegraphics[width=0.7\linewidth]{ER/filmcast.png}
+		\caption{Schema ER della relazione tra film e membri del cast}
 	\end{figure}
 	\subsection{Relazione tra utenza e recensioni}
 	Il testo esplicita come un utente può scrivere piú di una recensione su vari film, esplicitando il titolo del film, la descrizione della recensione e la sua valutazione. Inoltre, un utente può classificare, tramite un voto di utilitá, piú di una recensione scritta da un altro utente.
@@ -158,25 +157,32 @@
 		\includegraphics[width=250pt]{ER/utenzarecensione.png}
 		\caption{Schema ER della relazione tra utenza e recensioni.}
 	\end{figure}
-	\subsection{Relazione tra cinema, tessera e coupon}
-	Il testo esplicita l'associazione di più promozioni a una singola tessera, e viceversa, consentendo a ciascuna promozione di essere collegata a più tessere. In questa struttura, una promozione è considerata come un legame con coupon. La distinzione tra coupon e promozione risiede nel fatto che il coupon identifica la tipologia di beneficio, mentre la promozione aggiunge a esso una data di scadenza prefissata.
+	\subsection{Relazione tra utenza e tessera}
+	\textbf{TBD}
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.7\linewidth]{ER/cinetesseracoupon.png}
+		\includegraphics[width=0.7\linewidth]{ER/utenzatessera.png}
+		\caption{Schema ER della relazione tra utenza e tessera.}
+	\end{figure}
+	\subsection{Relazione tra utenza e cinema}
+	\textbf{TBD}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\linewidth]{ER/utenzacinema.png}
+		\caption{Schema ER della relazione tra utenza e cinema.}
+	\end{figure}
+	\subsection{Relazione tra cinema, utenza e tessera}
+	\textbf{TBD}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\linewidth]{ER/utenzacinematessera.png}
 		\caption{Schema ER della relazione tra il cinema, la tessera e il coupon.}
 	\end{figure}
-	\subsection{Relazione tra membri del cast e film}
-	Il testo esplicita come di un film dobbiamo memorizzare gli attori che hanno partecipato al cast, e il regista, quindi il regista è uno solo per film e generalmente è così, per questo si spiega la scelta della cardinalità \textbf{1-N} nella relazione con il regista mentre \textbf{N-N} per quella con gli attori.
+	\subsection{Relazione tra film, membri del cast e coupon}
+	\textbf{TBD}
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=450pt]{ER/filmcast.png}
-		\caption{Schema ER della relazione tra membri del cast e film.}
-	\end{figure}
-	\subsection{Relazione tra film, coupon e tessera}
-	Il testo esplicita che: sia un coupon singolo che uno multiplo possono essere utilizzati per ottenere uno sconto su un film in particolare(qualora fosse un coupon singolo) oppure in base al genere del film(nel caso di un coupon multiplo).
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.9\linewidth]{ER/filmcoupontessera.png}
+		\includegraphics[width=0.9\linewidth]{ER/filmcastcoupon.png}
 		\caption{Schema ER della relazione tra il film, il coupon e la tessera.}
 	\end{figure}
 	\subsection{Schema completo}
