@@ -6,8 +6,9 @@
 \usepackage{float}
 \usepackage[table,xcdraw]{xcolor}
 \usepackage{graphicx}
+\usepackage{todonotes}
 
-\title{\textbf{CineRadar}\\Progetto di Basi di dati}
+\title{\textbf{CineRadar}\\Progetto di Basi di dati\\\textit{Università di Bologna}}
 \author{Martin Tomassi; 0001077737\\Francesco Pazzaglia; 0001077423\\Luca Casadei; 0001069237}
 \date{\today}
 
@@ -180,7 +181,7 @@
 		\caption{Schema ER della relazione tra cinema, utenza e tessera.}
 	\end{figure}
 	\subsection{Relazione tra film, membri del cast e coupon}
-	TBD
+	\todo{TBD}
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.9\linewidth]{ER/filmcastcoupon.png}
@@ -190,7 +191,7 @@
 	Questo é lo schema derivato dalla composizione di tutte le sotto-componenti descritte precedentemente. Il collegamento tra film e recensione impone che ci sia un unica recensione per film e che quest'ultimo può averne più di una.
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=470pt]{ER/ercompleto.png}
+		\includegraphics[width=430pt]{ER/ercompleto.png}
 		\caption{Schema ER completo.}
 	\end{figure}
 	\chapter{Progettazione Logica}
@@ -273,4 +274,20 @@
 			Autorità              & R                & 45000         \\ \hline
 		\end{tabular}
 	\end{table}
+	\section{Stima della frequenza delle operazioni}
+	\todo{TBD}
+	\section{Schemi di navigazione e tabelle degli accessi}
+	\todo{TBD}
+	\section{Raffinamento dello schema}
+	\todo{TBD}
+	\section{Analisi delle ridondanze}
+	\todo{TBD}
+	\section{Traduzione di entità e associazioni in relazioni}
+	\todo{TBD}
+	\section{Schema relazionale finale}
+	\todo{TBD}
+	\section{Traduzione delle operazioni in query SQL}
+	\todo{TBD}
+	\chapter{Progettazione dell'applicazione}
+	\todo{TBD}
 \end{document}
