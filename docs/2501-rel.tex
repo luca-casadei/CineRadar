@@ -125,22 +125,31 @@
 	Rappresentazione di una sottoparte dello schema ER che riguarda la gestione dell'utenza, in particolare, è stata pensata una generalizzazione dell'entità \textbf{utilizzatore} con due sotto-entità \textbf{amministratore} e \textbf{utente} di cui dobbiamo memorizzare elementi diversi. La generalizzazione è di tipo \textit{totale} e \textit{esclusiva}, questo perché l'amministratore ha un tipo di account diverso da quello di semplice utente, se l'amministratore vuole effettuare le operazioni di un utente normale deve registrarsi con un altro account.
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=250pt]{ER/utenza.png}
+		\includegraphics[width=300pt]{ER/utenza.png}
 		\caption{Schema ER dell'utenza.}
 	\end{figure}
-	\subsection{Film}
+	\subsection{Multimedia}
+	\todo{TBD}
 	Qui viene descritta la rappresentazione di un \textbf{film} / serie, che come si può vedere nel glossario in particolare nella sezione \ref{ss:terminologia} sono lo stesso concetto, quindi non è necessaria una generalizzazione. Un film può essere associato a diversi \textbf{generi}, \textit{(quindi esistono film che sono sia horror che commedia per esempio)}, e l'inserimento dei generi è indipendente dall'esistenza dei film, quindi si è optato per la cardinalità \textbf{0-N}.
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=450pt]{ER/film.png}
-		\caption{Schema ER dei film.}
+		\includegraphics[width=300pt]{ER/multimedia.png}
+		\caption{Schema ER dei multimedia.}
 	\end{figure}
 	\subsection{Cast}
 	I membri del cast da tracciare possono essere \textbf{registi} o \textbf{attori}; degli attori ci interessa in particolare un nome d'arte, mentre dei registi la data di debutto della carriera per effettuare delle statistiche. La generalizzazione in questo caso è \textit{totale} e \textit{sovrapposta}, questo significa che nel dominio del nostro problema non si vogliono tracciare altri membri oltre che a questi due, ed è sovrapposta perché possono esserci casi in cui un regista è anche un attore.
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=250pt]{ER/cast.png}
+		\includegraphics[width=300pt]{ER/cast.png}
 		\caption{Schema ER dei membri del cast.}
+	\end{figure}
+	\subsection{Recensione}
+	\todo{TBD}
+	Una recensione è suddivisa in più sezioni(ad esempio: trama, colonna sonora, etc\dots) e per ciascuna di esse viene assegnato un voto. Una sezione, invece, può esistere anche senza il concetto di recensione. 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=300pt]{ER/recensione.png}
+		\caption{Schema ER della recensione.}
 	\end{figure}
 	\subsection{Promo}
 	Una promozione è un'offerta limitata da una scadenza specifica, viene definita come un'istanza di un modello promozionale. Tale \textit{template} è caratterizzato da una percentuale di sconto, che gli utenti possono usufruire. La promo \textit{template} è suddivisa in due sotto entità in maniera totale ed esclusiva:
@@ -150,64 +159,83 @@
 	\end{itemize}
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=250pt]{ER/promo.png}
+		\includegraphics[width=270pt]{ER/promo.png}
 		\caption{Schema ER della promo.}
 	\end{figure}
-	\subsection{Recensione}
-	Una recensione è suddivisa in più sezioni(ad esempio: trama, colonna sonora, etc\dots) e per ciascuna di esse viene assegnato un voto. Una sezione, invece, può esistere anche senza il concetto di recensione. 
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=350pt]{ER/recensione.png}
-		\caption{Schema ER della recensione.}
-	\end{figure}
-	\subsection{Relazione tra film e membri del cast}
-	Un film può essere diretto da uno e un solo regista mentre possono prendere parte all'interno di un film uno o più attori. Queste due entità sono raggruppate tramite la generalizzazione "membro cast" che descrive un qualsiasi membro del cast cinematografico che ha presto parte nel film stesso.
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.7\linewidth]{ER/filmcast.png}
-		\caption{Schema ER della relazione tra film e membri del cast}
-	\end{figure}
 	\subsection{Relazione tra utenza e recensioni}
+	\todo{TBD}
 	Un utente può scrivere più di una recensione su vari film, esplicitando il titolo del film, la descrizione della recensione e la sua valutazione. Quando viene scritta una recensione vengono scelti dei voti, ciascuno per ogni sezione selezionata dall'utente.
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=250pt]{ER/utenzarecensione.png}
+		\includegraphics[width=300pt]{ER/utenzarecensione.png}
 		\caption{Schema ER della relazione tra utenza e recensioni.}
-	\end{figure}
-	\subsection{Relazione tra utenza e tessera}
-	Gli utenti hanno la possibilità di iscriversi a una o più tessere. Una tessera è inserita da un registratore. Ciascuna tessera è caratterizzata da un numero univoco, che la identifica insieme all'utente tesserato, e da una data di rinnovo. 
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.7\linewidth]{ER/utenzatessera.png}
-		\caption{Schema ER della relazione tra utenza e tessera.}
 	\end{figure}
 	\subsection{Relazione tra utenza e cinema}
 	Un cinema afferisce a più registratori, mentre ciascuno di essi è a disposizione solo su di un cinema in particolare. Il registratore è considerato un utilizzatore, quindi è compreso nella generalizzazione. 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.7\linewidth]{ER/utenzacinema.png}
+		\includegraphics[width=300pt]{ER/utenzacinema.png}
 		\caption{Schema ER della relazione tra utenza e cinema.}
 	\end{figure}
-	\subsection{Relazione tra cinema, utenza e tessera}
-	Una tessera, inserita da un registratore per il cinema per cui lavora, può essere utilizzata da un utente che è stato premiato perché risultante particolarmente attivo sulla piattaforma. Questi utenti possono usufruire di vantaggi quali sconti e offerte per mezzo della tessera stessa. Nello specifico una tessera è valida solo per un cinema, quello di afferenza del registratore.
+	\subsection{Relazione tra utenza e tessera}
+	Gli utenti hanno la possibilità di iscriversi a una o più tessere. Una tessera è inserita da un registratore. Ciascuna tessera è caratterizzata da un numero univoco, che la identifica insieme all'utente tesserato, e da una data di rinnovo. 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.7\linewidth]{ER/utenzacinematessera.png}
-		\caption{Schema ER della relazione tra cinema, utenza e tessera.}
+		\includegraphics[width=300pt]{ER/utenzatessera.png}
+		\caption{Schema ER della relazione tra utenza e tessera.}
 	\end{figure}
-	\subsection{Relazione tra film, membri del cast e promo}
+	\subsection{Relazione tra multimedia e membri del cast}
+	\todo{TBD}
+	Un film può essere diretto da uno e un solo regista mentre possono prendere parte all'interno di un film uno o più attori. Queste due entità sono raggruppate tramite la generalizzazione "membro cast" che descrive un qualsiasi membro del cast cinematografico che ha presto parte nel film stesso.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=300pt]{ER/multimediacast.png}
+		\caption{Schema ER della relazione tra multimedia e membri del cast}
+	\end{figure}
+	\subsection{Relazione tra multimedia e promo}
+	\todo{TBD}
 	Di un film vengono memorizzati i membri del cast che, tramite una generalizzazione, vengono suddivisi in regista e attore. Inoltre un film può essere soggetto ad offerte promozionali in modo diretto o per mezzo della sua categoria. 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.9\linewidth]{ER/filmcastpromo.png}
-		\caption{Schema ER della relazione tra film, membri del cast e coupon.}
+		\includegraphics[width=300pt]{ER/multimediapromo.png}
+		\caption{Schema ER della relazione tra multimedia e promo.}
+	\end{figure}
+	\subsection{Relazione tra multimedia, cast e promo}
+	\todo{TBD}
+	Di un film vengono memorizzati i membri del cast che, tramite una generalizzazione, vengono suddivisi in regista e attore. Inoltre un film può essere soggetto ad offerte promozionali in modo diretto o per mezzo della sua categoria. 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=300pt]{ER/multimediacastpromo.png}
+		\caption{Schema ER della relazione tra multimedia, cast e promo.}
+	\end{figure}
+	\subsection{Relazione tra utenza, cinema e tessera}
+	\todo{TBD}
+	Una tessera, inserita da un registratore per il cinema per cui lavora, può essere utilizzata da un utente che è stato premiato perché risultante particolarmente attivo sulla piattaforma. Questi utenti possono usufruire di vantaggi quali sconti e offerte per mezzo della tessera stessa. Nello specifico una tessera è valida solo per un cinema, quello di afferenza del registratore.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=300pt]{ER/utenzacinematessera.png}
+		\caption{Schema ER della relazione tra utenza, cinema e tessera.}
+	\end{figure}
+	\subsection{Relazione tra utenza, cinema, tessera e recensione}
+	\todo{TBD}
+	Una tessera, inserita da un registratore per il cinema per cui lavora, può essere utilizzata da un utente che è stato premiato perché risultante particolarmente attivo sulla piattaforma. Questi utenti possono usufruire di vantaggi quali sconti e offerte per mezzo della tessera stessa. Nello specifico una tessera è valida solo per un cinema, quello di afferenza del registratore.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=400pt]{ER/utenzacinematesserarecensione.png}
+		\caption{Schema ER della relazione tra utenza, cinema, tessera e recensione.}
 	\end{figure}
 	\subsection{Schema completo}
+	\todo{TBD}
 	Questo é lo schema derivato dalla composizione di tutte le sotto-componenti descritte precedentemente. Il collegamento tra film e recensione impone che ci sia un unica recensione per film e che quest'ultimo può averne più di una.
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=430pt]{ER/ercompleto.png}
-		\caption{Schema ER completo.}
+		\includegraphics[width=430pt]{ER/ercompletosx.png}
+		\caption{Schema ER completo 1/2.}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=430pt]{ER/ercompletodx.png}
+		\caption{Schema ER completo 2/2.}
 	\end{figure}
 	\chapter{Progettazione Logica}
 	\section{Stima del volume dei dati}
