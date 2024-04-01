@@ -429,9 +429,46 @@
 		664 / mese &
 		\begin{tabular}[c]{@{}c@{}}Considerando una stima\\ di 4 membri rilevanti del\\ cast di un film che si\\ vogliono tracciare, regista\\ compreso.\end{tabular} \\ \hline
 	\end{longtable}
-	\section{Schemi di navigazione e tabelle degli accessi}
-	\todo{TBD}
 	\section{Raffinamento dello schema}
+	\subsection{Eliminazione delle gerarchie}
+	\subsubsection{	Gerarchia "Multimedia"}
+	Questa gerarchia è stata risolta adottando il metodo del collasso verso il basso, questo perché l'accesso alle entità avviene separatamente (i film vengono reperiti in maniera separata dalle serie e viceversa). Questo metodo è inoltre applicabile perché la copertura della gerarchia è totale ed esclusiva.
+	\begin{figure}[H]
+		\centering
+		\includegraphics{ER/ristrutturazione/ristmultimedia.png}
+		\caption{Ristrutturazione della gerarchia "Multimedia"}
+	\end{figure}
+	\subsubsection{Gerarchia "Recensione"}
+	Analogamente alla precedente, è stato usato il collasso verso il basso.
+	\begin{figure}[H]
+		\centering
+		\includegraphics{ER/ristrutturazione/ristrecensione.png}
+		\caption{Ristrutturazione della gerarchia "Recensione"}
+	\end{figure}
+	\subsubsection{Gerarchia "Utilizzatore"}
+	Analogamente alla precedente, è stato usato il collasso verso il basso.
+	\begin{figure}[H]
+		\centering
+		\includegraphics{ER/ristrutturazione/ristutenza.png}
+		\caption{Ristrutturazione della gerarchia "Utilizzatore"}
+	\end{figure}
+	\subsubsection{Gerarchia "Membro Cast"}
+	In questo caso abbiamo una copertura totale ma sovrapposta, e dato che in genere quando si consulta il cast di un film, che è una consultazione più frequente rispetto al reperimento di un singolo attore o regista, si accedono entrambi i tipi di membri del cast contemporaneamente, per questo si è optato per il collasso verso l'alto con selettori di tipo (copertura sovrapposta).
+	\begin{figure}[H]
+		\centering
+		\includegraphics{ER/ristrutturazione/ristmembrocast.png}
+		\caption{Ristrutturazione della gerarchia "Membro cast"}
+	\end{figure}
+	\subsubsection{Gerarchia "Template Promo"}
+	Questa gerarchia è stata rielaborata mantenendo le entità e introducendo delle relazione al posto della gerarchia, questo perché vi è copertura totale ed esclusiva e ci sono relazioni distinte sia con il padre che con le entità figlie.
+	\begin{figure}[H]
+		\centering
+		\includegraphics{ER/ristrutturazione/ristpromo.png}
+		\caption{Ristrutturazione della gerarchia "Template Promo"}
+	\end{figure}
+	\subsubsection{Schema completo dopo l'eliminazione delle gerarchie}
+	\todo{TBD}
+	\section{Schemi di navigazione e tabelle degli accessi}
 	\todo{TBD}
 	\section{Analisi delle ridondanze}
 	\todo{TBD}
