@@ -445,13 +445,6 @@
 		\includegraphics{ER/ristrutturazione/ristrecensione.png}
 		\caption{Ristrutturazione della gerarchia "Recensione"}
 	\end{figure}
-	\subsubsection{Gerarchia "Utilizzatore"}
-	Analogamente alla precedente, è stato usato il collasso verso il basso.
-	\begin{figure}[H]
-		\centering
-		\includegraphics{ER/ristrutturazione/ristutenza.png}
-		\caption{Ristrutturazione della gerarchia "Utilizzatore"}
-	\end{figure}
 	\subsubsection{Gerarchia "Membro Cast"}
 	In questo caso abbiamo una copertura totale ma sovrapposta, e dato che in genere quando si consulta il cast di un film, che è una consultazione più frequente rispetto al reperimento di un singolo attore o regista, si accedono entrambi i tipi di membri del cast contemporaneamente, per questo si è optato per il collasso verso l'alto con selettori di tipo (copertura sovrapposta).
 	\begin{figure}[H]
@@ -463,11 +456,27 @@
 	Questa gerarchia è stata rielaborata mantenendo le entità e introducendo delle relazione al posto della gerarchia, questo perché vi è copertura totale ed esclusiva e ci sono relazioni distinte sia con il padre che con le entità figlie.
 	\begin{figure}[H]
 		\centering
-		\includegraphics{ER/ristrutturazione/ristpromo.png}
+		\includegraphics[width=400pt]{ER/ristrutturazione/ristpromo.png}
 		\caption{Ristrutturazione della gerarchia "Template Promo"}
 	\end{figure}
+	\subsubsection{Gerarchia "Utilizzatore"}
+	Analogamente alla precedente, è stato usato il mantenimento delle gerarchie (Se si fosse utilizzato il collasso verso il basso i nomi utente non sarebbero stati univoci tra i diversi tipi di utente).
+	\begin{figure}[H]
+		\centering
+		\includegraphics{ER/ristrutturazione/ristutenza.png}
+		\caption{Ristrutturazione della gerarchia "Utilizzatore"}
+	\end{figure}
 	\subsubsection{Schema completo dopo l'eliminazione delle gerarchie}
-	\todo{TBD}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=450pt]{ER/ristrutturazione/ristcomp1.png}
+		\caption{Schema ristrutturato completo, prima parte}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=450pt]{ER/ristrutturazione/ristcomp2.png}
+		\caption{Schema ristrutturato completo, seconda parte}
+	\end{figure}
 	\section{Schemi di navigazione e tabelle degli accessi}
 	\todo{TBD}
 	\section{Analisi delle ridondanze}
