@@ -352,9 +352,17 @@
 		\begin{tabular}[c]{@{}c@{}}Registrazione di \\ un nuovo utente.\end{tabular} &
 		2 &
 		\\ \hline
-		2 &
-		Accesso alla piattaforma. &
+		2.1 &
+		Accesso di un utente alla piattaforma. &
 		10 &
+		\\ \hline
+		2.2 &
+		Accesso di un amministratore alla piattaforma. &
+		2 &
+		\\ \hline
+		2.3 &
+		Accesso di un registratore alla piattaforma. &
+		1 &
 		\\ \hline
 		3.1 &
 		Scelta delle preferenze. &
@@ -477,57 +485,73 @@
 		\includegraphics[width=450pt]{ER/ristrutturazione/ristcomp2.png}
 		\caption{Schema ristrutturato completo \textbf{2/2}}
 	\end{figure}
+	
 	\section{Schemi di navigazione e tabelle degli accessi - Operazioni Utente}
-	\subsection{Registrazione di un nuovo utente}
-	\subsubsection{Schema di Navigazione}
+	\subsection{Registrazione di un nuovo utente (Op. 1)}
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=450pt]{ER/navigazione/registrazioneutente.png}
 		\caption{Schema di navigazione - registrazione nuovo utente}
 	\end{figure}
 	
-	\todo{Loss OP 2, 3.*}
-	
-	\subsection{Visualizzare tutto l'elenco dei film}
-	\subsubsection{Schema di Navigazione}
+	\subsection{Accesso alla piattaforma di un utente (Op. 2.1)}
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=250pt]{ER/navigazione/visualizzarefilm.png}
+		\includegraphics[width=200pt]{ER/navigazione/accessoutente.png}
+		\caption{Schema di navigazione - Accesso utente}
+	\end{figure}
+	
+	\subsection{Accesso alla piattaforma di un amministratore (Op. 2.2)}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=250pt]{ER/navigazione/accessoamm.png}
+		\caption{Schema di navigazione - Accesso amministratore}
+	\end{figure}
+	
+	\subsection{Accesso alla piattaforma di un registratore (Op. 2.3)}
+	\begin{figure}[H]
+		\centering
+		\includegraphics{ER/navigazione/accessoreg.png}
+		\caption{Schema di navigazione - Accesso registratore}
+	\end{figure}
+	
+	\subsection{Visualizzare tutto l'elenco dei film}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=300pt]{ER/navigazione/visualizzarefilm.png}
 		\caption{Schema di navigazione - visualizzare elenco film}
 	\end{figure}
+	
 	\subsection{Visualizzare l’elenco dei film in base ad un’età scelta.}
-	\subsubsection{Schema di Navigazione}
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=250pt]{ER/navigazione/visualizzarefilm.png}
 		\caption{Schema di navigazione - visualizzare elenco film in base all'età}
 	\end{figure}
+	
 	\subsection{Contrassegnare come ”visualizzato” un film}
-	\subsubsection{Schema di Navigazione}
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=450pt]{ER/navigazione/visualizzatofilm.png}
 		\caption{Schema di navigazione - contrassegnare un film "visualizzato"}
 	\end{figure}
+	
 	\subsection{Recensire un film}
-	\subsubsection{Schema di Navigazione}
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=450pt]{ER/navigazione/recensionefilm.png}
 		\caption{Schema di navigazione - recensire un film}
 	\end{figure}
+	
 	\subsection{Visualizzare le recensioni di un film}
-	\subsubsection{Schema di Navigazione}
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=450pt]{ER/navigazione/visualrecensionifilm.png}
 		\caption{Schema di navigazione - visualizzare le recensioni di un film}
 	\end{figure}
-	
 	\todo{Loss 7.2}
 	
 	\subsection{Visualizzare una classifica dei generi più visualizzati}
-	\subsubsection{Schema di Navigazione}
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=450pt]{ER/navigazione/classificageneri.png}
@@ -536,24 +560,23 @@
 	\todo{Loss 8.2}
 	
 	\section{Schemi di navigazione e tabelle degli accessi - Operazioni Amministratore}
-	
 	\todo{Loss 9.*, 10}
 	
 	\subsection{Aggiunta di un nuovo film alla piattaforma}
-	\subsubsection{Schema di Navigazione}
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=450pt]{ER/navigazione/aggiuntafilm.png}
 		\caption{Schema di navigazione - aggiunta nuovo film alla piattaforma}
 	\end{figure}
+	
 	\subsection{Aggiunta di persone che hanno realizzato un film alla piattaforma}
 	\todo{TBMod OP}
-	\subsubsection{Schema di Navigazione}
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=450pt]{ER/navigazione/aggiuntacast.png}
 		\caption{Schema di navigazione - aggiunta di persone che hanno realizzato un film}
 	\end{figure}
+	
 	\subsubsection{Tavola degli Accessi}
 	\todo{TBD}
 	\section{Analisi delle ridondanze}
