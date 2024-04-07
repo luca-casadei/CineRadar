@@ -239,6 +239,7 @@
 			GENERE				 & E				 & 13			  \\ \hline
 			categorizzazione	 & R				 & 12000		  \\ \hline
 			visualizzazionefilm	 & R				 & 5000		  	  \\ \hline
+			preferenza			 & R				 & 29880		  \\ \hline
 		\end{tabular}
 	\end{table}
 	\begin{table}[H]
@@ -353,15 +354,15 @@
 		2 &
 		\\ \hline
 		2.1 &
-		Accesso di un utente alla piattaforma. &
+		\begin{tabular}[c]{@{}c@{}}Accesso di un \\ utente.\end{tabular} &
 		10 &
 		\\ \hline
 		2.2 &
-		Accesso di un amministratore alla piattaforma. &
+		\begin{tabular}[c]{@{}c@{}}Accesso di un \\ amministratore.\end{tabular} &
 		2 &
 		\\ \hline
 		2.3 &
-		Accesso di un registratore alla piattaforma. &
+		\begin{tabular}[c]{@{}c@{}}Accesso di un \\ registratore.\end{tabular} &
 		1 &
 		\\ \hline
 		3.1 &
@@ -395,7 +396,11 @@
 		7.2 &
 		\begin{tabular}[c]{@{}c@{}}Dare una valutazione \\ di utilità ad una\\ recensione di un altro \\ utente su un film.\end{tabular} &
 		40 &
-		\begin{tabular}[c]{@{}c@{}}Su alcune recensioni \\ che si visualizzano\\ si può dare una \\ valutazione di utilità,\\ quindi anche su più \\ recensioni dello stesso\\ film.\end{tabular} \\ \hline
+		\\ \hline
+		7.3 &
+		\begin{tabular}[c]{@{}c@{}}Dare una valutazione \\ di utilità ad una\\ recensione di un altro \\ utente su una serie.\end{tabular} &
+		30 &
+		\\ \hline
 		8.1 &
 		\begin{tabular}[c]{@{}c@{}}Visualizzare una \\ classifica dei generi\\ più visualizzati.\end{tabular} &
 		6 &
@@ -549,7 +554,20 @@
 		\includegraphics[width=450pt]{ER/navigazione/visualrecensionifilm.png}
 		\caption{Schema di navigazione - visualizzare le recensioni di un film}
 	\end{figure}
-	\todo{Loss 7.2}
+
+	\subsection{Dare una valutazione di utilità ad una recensione di un altro utente su un film. (Op. 7.2)}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=450pt]{ER/navigazione/valutazionerecfilm.png}
+		\caption{Schema di navigazione - Dare una valutazione di utilità ad una recensione di un altro utente su un film.}
+	\end{figure}
+	
+	\subsection{Dare una valutazione di utilità ad una recensione di un altro utente su un film. (Op. 7.3)}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=450pt]{ER/navigazione/valutazionerecserie.png}
+		\caption{Schema di navigazione - Dare una valutazione di utilità ad una recensione di un altro utente su una serie.}
+	\end{figure}
 	
 	\subsection{Visualizzare una classifica dei generi più visualizzati}
 	\begin{figure}[H]
