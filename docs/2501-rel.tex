@@ -374,7 +374,7 @@
 		1 &
 		\begin{tabular}[c]{@{}c@{}}Tra tutti gli utenti \\ che accedano in un \\ giorno, è plausibile \\ che pochi aggiornino \\ le proprie preferenze.\end{tabular} \\ \hline
 		4.1 &
-		\begin{tabular}[c]{@{}c@{}}Visualizzare tutto \\ l'elenco dei film.\end{tabular} &
+		\begin{tabular}[c]{@{}c@{}}Visualizzare tutto \\ l'elenco dei film \\ in base all'età \\ di chi lo richiede.\end{tabular} &
 		9 &
 		\begin{tabular}[c]{@{}c@{}}Generalmente chi \\ effettua l'accesso ha\\ quella intenzione.\end{tabular} \\ \hline
 		4.2 &
@@ -525,8 +525,10 @@
 			\rowcolor[HTML]{CBCEFB} 
 			Concetto                   & Costrutto             & Accesso 		& Tipo	\\ \hline
 			ACCOUNT                    & E                     & 1           	&	L   \\ \hline
+			UTENTE               & E                     & 1           	&	L   \\ \hline
+			tipo.usr                   & R                     & 1           	&	L   \\ \hline
 			\rowcolor[HTML]{CBCEFB} 
-			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1L} \\ \hline
+			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 3L} \\ \hline
 		\end{tabular}
 	\end{table}
 	
@@ -543,12 +545,14 @@
 			\rowcolor[HTML]{CBCEFB} 
 			Concetto                   & Costrutto             & Accesso 		& Tipo	\\ \hline
 			ACCOUNT                    & E                     & 1           	&	L   \\ \hline
+			AMMINISTRATORE               & E                     & 1           	&	L   \\ \hline
+			tipo.amm                   & R                     & 1           	&	L   \\ \hline
 			\rowcolor[HTML]{CBCEFB} 
-			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1L} \\ \hline
+			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 3L} \\ \hline
 		\end{tabular}
 	\end{table}
 	
-	\subsubsection{Accesso alla piattaforma di un registratore (Op. 2.3)}
+	\subsection{Accesso alla piattaforma di un registratore (Op. 2.3)}
 	\begin{figure}[H]
 		\centering
 		\includegraphics{ER/navigazione/accessoreg.png}
@@ -561,14 +565,16 @@
 			\rowcolor[HTML]{CBCEFB} 
 			Concetto                   & Costrutto             & Accesso 		& Tipo	\\ \hline
 			ACCOUNT                    & E                     & 1           	&	L   \\ \hline
+			REGISTRATORE               & E                     & 1           	&	L   \\ \hline
+			tipo.reg                   & R                     & 1           	&	L   \\ \hline
 			\rowcolor[HTML]{CBCEFB} 
-			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1L} \\ \hline
+			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 3L} \\ \hline
 		\end{tabular}
 	\end{table}
 	
 	\todo{Op. 3.*}
 	
-	\subsubsection{Visualizzare tutto l'elenco dei film (Op. 4.1)}
+	\subsection{Visualizzare tutto l'elenco dei film in base all'età di chi lo richiede (Op. 4.1)}
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=300pt]{ER/navigazione/visualizzarefilm.png}
@@ -582,16 +588,19 @@
 			Concetto                   & Costrutto             & Accesso 		& Tipo	\\ \hline
 			FILM                       & E                     & 9500        	&	L   \\ \hline
 			UTENTE					   & E					   & 1				& 	L	\\ \hline
+			ACCOUNT				       & E					   & 1				& 	L	\\ \hline
+			tipo.usr				   & E					   & 1				& 	L	\\ \hline
 			\rowcolor[HTML]{CBCEFB} 
-			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 9501L} \\ \hline
+			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 9503L} \\ \hline
 		\end{tabular}
 	\end{table}
 	
-	\subsubsection{Visualizzare l’elenco dei film in base ad un’età scelta. (Op. 4.2)}
+	\subsection{Visualizzare l’elenco dei film in base ad un’età scelta. (Op. 4.2)}
+	In media gli utenti che richiedono la visualizzazione dei film sono principalmente adulti, quindi la maggior parte visualizzerà tutti i film (9500).
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=250pt]{ER/navigazione/visualizzarefilm.png}
-		\caption{Schema di navigazione - visualizzare elenco film in base all'età}
+		\includegraphics{ER/navigazione/visualizzarefilm2.png}
+		\caption{Schema di navigazione - Visualizzare elenco film in base all'età}
 	\end{figure}
 	\begin{table}[H]
 	\centering
@@ -600,17 +609,16 @@
 			\rowcolor[HTML]{CBCEFB} 
 			Concetto                   & Costrutto             & Accesso 		& Tipo	\\ \hline
 			FILM                       & E                     & 9500        	&	L   \\ \hline
-			UTENTE					   & E					   & 1				& 	L	\\ \hline
 			\rowcolor[HTML]{CBCEFB} 
-			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 9501L} \\ \hline
+			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 9500L} \\ \hline
 		\end{tabular}
 	\end{table}
 	
-	\subsubsection{Contrassegnare come ”visualizzato” un film (Op. 5)}
+	\subsection{Contrassegnare come ”visualizzato” un film (Op. 5)}
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=450pt]{ER/navigazione/visualizzatofilm.png}
-		\caption{Schema di navigazione - contrassegnare un film "visualizzato"}
+		\includegraphics[width=300pt]{ER/navigazione/visualizzatofilm.png}
+		\caption{Schema di navigazione - Contrassegnare un film "visualizzato"}
 	\end{figure}
 	\begin{table}[H]
 	\centering
@@ -618,15 +626,15 @@
 			\hline
 			\rowcolor[HTML]{CBCEFB} 
 			Concetto                   & Costrutto             & Accesso 		& Tipo	\\ \hline
-			FILM                       & E                     & 1        	&	L   \\ \hline
-			UTENTE					   & E					   & 1				& 	L	\\ \hline
 			visualizzazionefilm		   & R					   & 1				&   S   \\ \hline
 			\rowcolor[HTML]{CBCEFB} 
-			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 2L + 1S} \\ \hline
+			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1S} \\ \hline
 		\end{tabular}
 	\end{table}
 	
-	\subsubsection{Recensire un film (Op. 6)}
+	\todo{DA QUESTO PUNTO SONO DA RICONTROLLARE}
+	
+	\subsection{Recensire un film (Op. 6)}
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=450pt]{ER/navigazione/recensionefilm.png}
@@ -649,35 +657,35 @@
 		\end{tabular}
 	\end{table}
 	
-	\subsubsection{Visualizzare le recensioni di un film (Op. 7.1)}
+	\subsection{Visualizzare le recensioni di un film (Op. 7.1)}
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=450pt]{ER/navigazione/visualrecensionifilm.png}
 		\caption{Schema di navigazione - visualizzare le recensioni di un film}
 	\end{figure}
 
-	\subsubsection{Dare una valutazione di utilità ad una recensione di un altro utente su un film. (Op. 7.2)}
+	\subsection{Dare una valutazione di utilità ad una recensione di un altro utente su un film. (Op. 7.2)}
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=450pt]{ER/navigazione/valutazionerecfilm.png}
 		\caption{Schema di navigazione - Dare una valutazione di utilità ad una recensione di un altro utente su un film.}
 	\end{figure}
 	
-	\subsubsection{Dare una valutazione di utilità ad una recensione di un altro utente su una serie tv. (Op. 7.3)}
+	\subsection{Dare una valutazione di utilità ad una recensione di un altro utente su una serie tv. (Op. 7.3)}
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=450pt]{ER/navigazione/valutazionerecserie.png}
 		\caption{Schema di navigazione - Dare una valutazione di utilità ad una recensione di un altro utente su una serie.}
 	\end{figure}
 	
-	\subsubsection{Visualizzare una classifica dei generi più visualizzati (Op. 8.1)}
+	\subsection{Visualizzare una classifica dei generi più visualizzati (Op. 8.1)}
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=450pt]{ER/navigazione/classificageneri.png}
 		\caption{Schema di navigazione - visualizzare classifica dei generi più visualizzati}
 	\end{figure}	
 	
-	\subsubsection{Visualizzare una classifica dei registi più apprezzati (Op. 8.2)}
+	\subsection{Visualizzare una classifica dei registi più apprezzati (Op. 8.2)}
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=450pt]{ER/navigazione/classificaregisti.png}
