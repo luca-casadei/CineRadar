@@ -498,6 +498,18 @@
 		\includegraphics[width=450pt]{ER/navigazione/registrazioneutente.png}
 		\caption{Schema di navigazione - registrazione nuovo utente}
 	\end{figure}
+	\begin{table}[H]
+	\centering
+		\begin{tabular}{|llll|}
+			\hline
+			\rowcolor[HTML]{CBCEFB} 
+			Concetto                   & Costrutto             & Accesso 		& Tipo	\\ \hline
+			ACCOUNT                    & E                     & 1           	&	S   \\ \hline
+			UTENTE                     & E                     & 1           	&	S   \\ \hline
+			\rowcolor[HTML]{CBCEFB} 
+			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 2L} \\ \hline
+		\end{tabular}
+	\end{table}
 	
 	\subsubsection{Accesso alla piattaforma di un utente (Op. 2.1)}
 	\begin{figure}[H]
@@ -505,6 +517,17 @@
 		\includegraphics[width=200pt]{ER/navigazione/accessoutente.png}
 		\caption{Schema di navigazione - Accesso utente}
 	\end{figure}
+	\begin{table}[H]
+	\centering
+		\begin{tabular}{|llll|}
+			\hline
+			\rowcolor[HTML]{CBCEFB} 
+			Concetto                   & Costrutto             & Accesso 		& Tipo	\\ \hline
+			ACCOUNT                    & E                     & 1           	&	L   \\ \hline
+			\rowcolor[HTML]{CBCEFB} 
+			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1L} \\ \hline
+		\end{tabular}
+	\end{table}
 	
 	\subsection{Accesso alla piattaforma di un amministratore (Op. 2.2)}
 	\begin{figure}[H]
@@ -512,6 +535,17 @@
 		\includegraphics[width=250pt]{ER/navigazione/accessoamm.png}
 		\caption{Schema di navigazione - Accesso amministratore}
 	\end{figure}
+	\begin{table}[H]
+	\centering
+		\begin{tabular}{|llll|}
+			\hline
+			\rowcolor[HTML]{CBCEFB} 
+			Concetto                   & Costrutto             & Accesso 		& Tipo	\\ \hline
+			ACCOUNT                    & E                     & 1           	&	L   \\ \hline
+			\rowcolor[HTML]{CBCEFB} 
+			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1L} \\ \hline
+		\end{tabular}
+	\end{table}
 	
 	\subsubsection{Accesso alla piattaforma di un registratore (Op. 2.3)}
 	\begin{figure}[H]
@@ -519,6 +553,17 @@
 		\includegraphics{ER/navigazione/accessoreg.png}
 		\caption{Schema di navigazione - Accesso registratore}
 	\end{figure}
+	\begin{table}[H]
+	\centering
+		\begin{tabular}{|llll|}
+			\hline
+			\rowcolor[HTML]{CBCEFB} 
+			Concetto                   & Costrutto             & Accesso 		& Tipo	\\ \hline
+			ACCOUNT                    & E                     & 1           	&	L   \\ \hline
+			\rowcolor[HTML]{CBCEFB} 
+			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1L} \\ \hline
+		\end{tabular}
+	\end{table}
 	
 	\subsubsection{Visualizzare tutto l'elenco dei film (Op. 4.1)}
 	\begin{figure}[H]
@@ -526,6 +571,18 @@
 		\includegraphics[width=300pt]{ER/navigazione/visualizzarefilm.png}
 		\caption{Schema di navigazione - visualizzare elenco film}
 	\end{figure}
+	\begin{table}[H]
+	\centering
+		\begin{tabular}{|llll|}
+			\hline
+			\rowcolor[HTML]{CBCEFB} 
+			Concetto                   & Costrutto             & Accesso 		& Tipo	\\ \hline
+			FILM                       & E                     & 9500        	&	L   \\ \hline
+			UTENTE					   & E					   & 1				& 	L	\\ \hline
+			\rowcolor[HTML]{CBCEFB} 
+			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 9501L} \\ \hline
+		\end{tabular}
+	\end{table}
 	
 	\subsubsection{Visualizzare l’elenco dei film in base ad un’età scelta. (Op. 4.2)}
 	\begin{figure}[H]
@@ -533,6 +590,18 @@
 		\includegraphics[width=250pt]{ER/navigazione/visualizzarefilm.png}
 		\caption{Schema di navigazione - visualizzare elenco film in base all'età}
 	\end{figure}
+	\begin{table}[H]
+	\centering
+		\begin{tabular}{|llll|}
+			\hline
+			\rowcolor[HTML]{CBCEFB} 
+			Concetto                   & Costrutto             & Accesso 		& Tipo	\\ \hline
+			FILM                       & E                     & 9500        	&	L   \\ \hline
+			UTENTE					   & E					   & 1				& 	L	\\ \hline
+			\rowcolor[HTML]{CBCEFB} 
+			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 9501L} \\ \hline
+		\end{tabular}
+	\end{table}
 	
 	\subsubsection{Contrassegnare come ”visualizzato” un film (Op. 5)}
 	\begin{figure}[H]
@@ -540,6 +609,19 @@
 		\includegraphics[width=450pt]{ER/navigazione/visualizzatofilm.png}
 		\caption{Schema di navigazione - contrassegnare un film "visualizzato"}
 	\end{figure}
+	\begin{table}[H]
+	\centering
+		\begin{tabular}{|llll|}
+			\hline
+			\rowcolor[HTML]{CBCEFB} 
+			Concetto                   & Costrutto             & Accesso 		& Tipo	\\ \hline
+			FILM                       & E                     & 1        	&	L   \\ \hline
+			UTENTE					   & E					   & 1				& 	L	\\ \hline
+			visualizzazionefilm		   & R					   & 1				&   S   \\ \hline
+			\rowcolor[HTML]{CBCEFB} 
+			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 2L + 1S} \\ \hline
+		\end{tabular}
+	\end{table}
 	
 	\subsubsection{Recensire un film (Op. 6)}
 	\begin{figure}[H]
@@ -547,6 +629,22 @@
 		\includegraphics[width=450pt]{ER/navigazione/recensionefilm.png}
 		\caption{Schema di navigazione - recensire un film}
 	\end{figure}
+	\begin{table}[H]
+	\centering
+		\begin{tabular}{|llll|}
+			\hline
+			\rowcolor[HTML]{CBCEFB} 
+			Concetto                   & Costrutto             & Accesso 		& Tipo	\\ \hline
+			FILM                       & E                     & 1        	 	&	L   \\ \hline
+			UTENTE					   & E					   & 1				& 	L	\\ \hline
+			visualizzazionefilm		   & R					   & 1				&   L   \\ \hline
+			RECFILM					   & E					   & 1				&   S   \\ \hline
+			recfilm.sez				   & R					   & 5				& 	S   \\ \hline
+			SEZIONE					   & E  				   & 5 				&   S   \\ \hline
+			\rowcolor[HTML]{CBCEFB} 
+			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 3L + 11S} \\ \hline
+		\end{tabular}
+	\end{table}
 	
 	\subsubsection{Visualizzare le recensioni di un film (Op. 7.1)}
 	\begin{figure}[H]
