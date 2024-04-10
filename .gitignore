@@ -38,3 +38,4 @@ bin
 *.bbl
 *.blg
 *.lun#
+*.bak*
