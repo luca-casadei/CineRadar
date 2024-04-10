@@ -224,7 +224,7 @@
 		\caption{Schema ER completo \textbf{2/2}.}
 	\end{figure}
 	\chapter{Progettazione Logica}
-	\section{Stima del volume dei dati}
+	\section{Stima del volume dei dati} \label{s:volumes}
 	\begin{table}[H]
 		\centering
 		\begin{tabular}{|lll|}
@@ -632,8 +632,6 @@
 		\end{tabular}
 	\end{table}
 	
-	\todo{DA QUESTO PUNTO SONO DA RICONTROLLARE}
-	
 	\subsection{Recensire un film (Op. 6)}
 	\begin{figure}[H]
 		\centering
@@ -656,6 +654,7 @@
 	\end{table}
 	
 	\subsection{Visualizzare le recensioni di un film (Op. 7.1)}
+	Considerando la tabella dei volumi (sez: \ref{s:volumes}), un film ha in media $\frac{950000}{9500} = 100$ recensioni.
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=450pt]{ER/navigazione/visualrecensionifilm.png}
@@ -667,11 +666,11 @@
 			\hline
 			\rowcolor[HTML]{CBCEFB} 
 			Concetto                   & Costrutto             & Accesso 		& Tipo	\\ \hline
-			RECFILM					   & E					   & 1				&   L   \\ \hline
-			recfilm.sez				   & R					   & 5				& 	L   \\ \hline
-			SEZIONE					   & E  				   & 5 				&   L   \\ \hline
+			RECFILM					   & E					   & 100				&   L   \\ \hline
+			recfilm.sez				   & R					   & 500				& 	L   \\ \hline
+			SEZIONE					   & E  				   & 500			&   L   \\ \hline
 			\rowcolor[HTML]{CBCEFB} 
-			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 11L} \\ \hline
+			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1100L} \\ \hline
 		\end{tabular}
 	\end{table}
 
@@ -687,10 +686,9 @@
 			\hline
 			\rowcolor[HTML]{CBCEFB} 
 			Concetto                   & Costrutto             & Accesso 		& Tipo	\\ \hline
-			RECFILM					   & E					   & 1				&   L   \\ \hline
     		val.rec.film			   & R					   & 1				& 	S   \\ \hline
 			\rowcolor[HTML]{CBCEFB} 
-			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1L + 1S} \\ \hline
+			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1S} \\ \hline
 		\end{tabular}
 	\end{table}
 	
@@ -706,10 +704,9 @@
 			\hline
 			\rowcolor[HTML]{CBCEFB} 
 			Concetto                   & Costrutto             & Accesso 		& Tipo	\\ \hline
-			RECFILM					   & E					   & 1				&   L   \\ \hline
 			val.rec.serie			   & R					   & 1				& 	S   \\ \hline
 			\rowcolor[HTML]{CBCEFB} 
-			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1L + 1S} \\ \hline
+			\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1S} \\ \hline
 		\end{tabular}
 	\end{table}
 	
