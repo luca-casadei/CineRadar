@@ -381,6 +381,14 @@ Quello che segue rappresenta lo schema derivato dalla composizione di tutte le s
 	\begin{tabular}[c]{@{}c@{}}Visualizzare l'elenco \\ dei film in base\\ ad un'età scelta.\end{tabular}                              &
 	17                                                                                                                                 &
 	\begin{tabular}[c]{@{}c@{}}Meno frequenza \\ rispetto all'operazione\\ precedente, \\ i genitori registrati che\\ accedono ed usano \\ questa funzione sono\\ meno.\end{tabular}                                                                                                                         \\ \hline
+	4.3                                                                                                                                &
+	\begin{tabular}[c]{@{}c@{}}Visualizzare l'elenco \\ delle serie TV \\ con la relativa \\ durata complessiva \\ e il numero \\ di episodi complessivo, \\ in base all'età \\ di chi lo richiede.\end{tabular}                              &
+	100                                                                                                                                 &
+	\begin{tabular}[c]{@{}c@{}}Viene effettuato all'accesso.\end{tabular}\\ \hline
+	4.4                                                                                                                                &
+	\begin{tabular}[c]{@{}c@{}}Visualizzare le \\ informazioni riguardanti \\ una serie TV, comprese \\ tutte le stagioni \\ e tutti gli episodi.\end{tabular}                              &
+	50&
+	\\ \hline
 	5.1                                                                                                                                &
 	\begin{tabular}[c]{@{}c@{}}Contrassegnare \\ come "visualizzato" \\ un film.\end{tabular}                                          &
 	350                                                                                                                                &
@@ -405,7 +413,7 @@ Quello che segue rappresenta lo schema derivato dalla composizione di tutte le s
 	30                                                                                                                                 &
 	\\ \hline
 	8.1                                                                                                                                &
-	\begin{tabular}[c]{@{}c@{}}Visualizzare una \\ classifica dei generi\\ più visualizzati.\end{tabular}                              &
+	\begin{tabular}[c]{@{}c@{}}Ottenere una \\ classifica dei generi\\ più visualizzati.\end{tabular}                              &
 	5                                                                                                                                  &
 	\begin{tabular}[c]{@{}c@{}}Si considera nella \\ classifica solo la serie \\ completa come visualizzata, \\ se si visualizza \\ un singolo episodio \\ senza completare la \\ serie di appartenenza,\\ questo non verrà\\ considerato nel conteggio\\ per le visualizzazioni\\ dei generi.\end{tabular}
 	\\ \hline
@@ -618,7 +626,7 @@ In media gli utenti che richiedono la visualizzazione dei film sono principalmen
 	\end{tabular}
 \end{table}
 
-\subsection{Contrassegnare come ”visualizzato” un film (Op. 5.1)}
+\subsection{Contrassegnare come ”visualizzato” un film (Op. 5.1)} \label{ss:op51}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=300pt]{ER/navigazione/visualizzatofilm.png}
@@ -636,7 +644,7 @@ In media gli utenti che richiedono la visualizzazione dei film sono principalmen
 	\end{tabular}
 \end{table}
 
-\subsection{Contrassegnare come ”visualizzato” un episodio di una serie (Op. 5.2)}
+\subsection{Contrassegnare come ”visualizzato” un episodio di una serie (Op. 5.2)} \label{ss:op52}
 \begin{figure}[H]
 	\centering
 	\includegraphics{ER/navigazione/visualizzatoep.png}
@@ -732,7 +740,7 @@ Considerando la tabella dei volumi (sez: \ref{s:volumes}), un film ha in media $
 	\end{tabular}
 \end{table}
 
-\subsection{Visualizzare una classifica dei generi più visualizzati (Op. 8.1)}
+\subsection{Ottenere una classifica dei generi più visualizzati (Op. 8.1)} \label{ss:op81}
 Per questa operazione consideriamo che: Ci sono in tutto $13$ generi che vengono memorizzati, questi andranno letti tutti dato che è una classifica. Ci interessano inoltre le relazioni \textit{visualizzazioneep} (Visualizzazione Episodio) e \textit{visualizzazionefilm} (Visualizzazione Film), complessivamente, un utente visualizza in media $\frac{350000}{9960} \approx 35$ film, avendo i film visualizzati, possiamo calcolare quanti generi sono stati visualizzati in media: $\frac{23500}{9500} \approx 2$, ricapitolando i volumi per le visualizzazioni dei film in media sono:
 \begin{itemize}
 	\item 35 su visualizzazionefilm (per utente).
@@ -843,13 +851,26 @@ Otteniamo:
 
 \section{Analisi delle ridondanze}
 Le ridondanze principali che vogliamo analizzare sono le seguenti:
-\begin{itemize}
+\begin{enumerate}
 	\item Attributo "NumeroVisualizzati" nell'entità GENERE.
 	\item Attributo "DurataComplessiva" nell'entità MULTIMEDIA.
 	\item Attributo "NumeroEpisodi" nell'entità STAGIONE.
 	\item Attribito "NumeroStagioni" nell'entità SERIE.
 	\item Attributo "VotoComplessivo" nell'entità RECENSIONE.
+\end{enumerate}
+\subsection{Attributo 1: NumeroVisualizzati}
+\subsubsection{Operazioni interessate:}
+\begin{itemize}
+	\item Op. 8.1: Ottenere una classifica dei generi più visualizzati
+	\item Op. 5.(1-2): Contrassegnare come "visualizzato" un film o un episodio di una serie.
 \end{itemize}
+\subsubsection{Tabelle degli accessi:}
+\begin{itemize}
+	\item Per operazione 8.1: Vedi la sottosezione \ref{ss:op81}
+	\item Per operazione 5.1: Vedi la sottosezione \ref{ss:op51}
+	\item Per operazione 5.2: Vedi la sottosezione \ref{ss:op52}
+\end{itemize}
+\subsubsection{Analisi:}
 \todo{TBD}
 \section{Traduzione di entità e associazioni in relazioni}
 \todo{TBD}
