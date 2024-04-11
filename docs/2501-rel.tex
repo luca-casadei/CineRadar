@@ -853,13 +853,24 @@ Per questa operazione il ragionamento è analogo a quella precedente(Op. 9.1).
 	\end{tabular}
 \end{table}
 
-\subsubsection{Assegnamento di coupon ai primi 5 utenti tesserati con la media valutazioni di utilità migliori (Op. 10)}
-\todo{TBD}
+\subsubsection{Assegnamento in blocco di promozioni ai primi 5 utenti tesserati con la media valutazioni di utilità migliori (Op. 10)}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=450pt]{ER/navigazione/couponutentimigliori.png}
-	\caption{Schema di navigazione - }
+	\caption{Schema di navigazione - Operazione 10}
 \end{figure}
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|llll|}
+		\hline
+		\rowcolor[HTML]{CBCEFB}
+		Concetto            & Costrutto & Accesso   & Tipo                         \\ \hline
+		premitessera              & R         & 5      & S                            \\ \hline
+		\rowcolor[HTML]{CBCEFB}
+		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 5S} \\ \hline
+	\end{tabular}
+\end{table}
+
 
 \subsubsection{Aggiunta di un nuovo film alla piattaforma (Op. 11.1)}
 \begin{figure}[H]
