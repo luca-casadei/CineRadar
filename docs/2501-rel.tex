@@ -643,7 +643,7 @@ In media gli utenti che richiedono la visualizzazione dei film sono principalmen
 	\end{tabular}
 \end{table}
 
-\subsection{Visualizzare l’elenco delle serie TV con la relativa durata complessiva e il numero di episodi complessivo, in base all’età di chi lo richiede. (Op. 4.3)}
+\subsection{Visualizzare l’elenco delle serie TV con la relativa durata complessiva e il numero di episodi complessivo, in base all’età di chi lo richiede. (Op. 4.3)} \label{ss:op43}
 \missingfigure{MARTINO FAI L'IMMAGINE}
 \begin{table}[H]
 	\centering
@@ -660,7 +660,7 @@ In media gli utenti che richiedono la visualizzazione dei film sono principalmen
 	\end{tabular}
 \end{table}
 
-\subsection{Visualizzare le informazioni riguardanti una serie TV, comprese tutte le stagioni e tutti gli episodi. (Op. 4.4)}
+\subsection{Visualizzare le informazioni riguardanti una serie TV, comprese tutte le stagioni e tutti gli episodi. (Op. 4.4)} \label{ss:op44}
 \missingfigure{MARTINO FAI L'IMMAGINE}
 Per ogni serie vi sono in media $\frac{10000}{2500} = 4$ stagioni, che si compongono ciascuna di $\frac{400000}{10000 * 4} = 10$ episodi complessivi.
 \begin{table}[H]
@@ -996,22 +996,39 @@ Le ridondanze principali che vogliamo analizzare sono le seguenti:
 	\item Per operazione 5.2: Vedi la sottosezione \ref{ss:op52}, essa ha frequenza $500/gg$ dandoci complessivamente 500 accessi in scrittura al giorno.
 \end{itemize}
 Complessivamente quindi, abbiamo $2 * (500 + 350) + 12.743.880 = 12.745.580$ accessi complessivi.
-\subsubsection{Tabelle degli accessi con attributo ridondante}
+\subsubsection{Tabelle degli accessi con ridondanza:}
 Consideriamo il caso in cui si introduca un attributo ridondante "NumeroVisualizzazioni" sull'entità "GENERE", che viene incrementato ogni volta che un utente contrassegna come visualizzato un film, o tutti gli episodi correnti di una serie.
 \begin{itemize}
 	\item Per operazione 5.1: Per effettuare questa operazione, oltre che 1S per scrivere la relazione \textit{visualizzazionefilm} è necessario un aggiornamento su genere per incrementare il valore dell'attributo ridondante, avendo una complessità complessiva di 1L + 2S, considerando la frequenza di $350/gg$ questa ci crea $350 + 4 * 350 = 1750$ accessi complessivi al giorno.
 	\item Per operazione 5.2: Questa invece ci obbliga a calcolare quanti episodi servono per poter considerare una serie come visualizzata, sappiamo che una serie è composta in media da 4 stagioni da 10 episodi ciascuna, quindi se vengono contrassegnati 500 episodi al giorno, significa che vengono visualizzate in media $\frac{500}{4 * 10} = 12,5$ serie al giorno, comportando 12,5S + 12,5L + 500S accessi, dando una complessità complessiva di $3 * 12,5 + 1000 = 1037,5$ al giorno.
 	\item Per operazione 8.1: Con l'attributo ridondante questa operazione si limita alla lettura dell'attributo "NumeroVisualizzati" nell'entità "GENERE", considerando che ce ne sono 13 si hanno 13L con una frequenza di 5 al giorno, quindi complessivamente $13 * 5$ letture al giorno dando una complessità di 65 accessi.
 \end{itemize}
-In totale si ottiene da questo studio $65 + 1037,5 + 1750 = 2852.5$
+In totale si ottiene da questo studio $65 + 1037,5 + 1750 = 2852.5$ accessi complessivi.
 \subsubsection{Conclusione:}
 Considerando i valori ottenuti dall'analisi precedente, si può affermare che data la complessità $2852.5 \ll 12.745.580$ è di gran lunga conveniente introdurre l'attributo ridondante "NumeroVisualizzati" in GENERE, privilegiando l'efficienza rispetto all'occupazione di spazio.
-\subsection{Attributo 2: DurataComplessiva}
+\subsection{Attributo 2-3: DurataComplessiva e NumeroEpisodi}
 \todo{TBD}
-\subsubsection{Operazioni interessate}
+\subsubsection{Operazioni interessate:}
+\begin{itemize}
+	\item Op. 4.3: Visualizzare l’elenco delle serie TV con la relativa durata complessiva e il numero di episodi complessivo, in base all’età di chi lo richiede.
+	\item Op. 4.4: Visualizzare le informazioni riguardanti una serie TV, comprese tutte le stagioni e tutti gli episodi.
+\end{itemize}
+\subsubsection{Tabelle degli accessi senza ridondanza:}
+\begin{itemize}
+	\item Per operazione 4.3: Vedi la sottosezione \ref{ss:op43}, essa ha frequenza $100/gg$ dandoci complessivamente accessi 41.250.100 in lettura al giorno
+	\item Per operazione 4.4: Vedi la sottosezione \ref{ss:op44}, essa ha frequenza $50/gg$ dandoci complessivamente accessi 2.250 in lettura al giorno
+\end{itemize}
+Complessivamente quindi, abbiamo $ 41.250.100 + 2.250 = 41.252.350$ accessi complessivi.
+\subsubsection{Tabelle degli accessi con ridondanza:}
+Consideriamo il caso in cui si introducano due attributi ridondanti "DurataComplessiva" e "NumeroEpisodi" sull'entità "SERIE", questi attributi servono per dichiarare la durata complessiva(quindi la sommatoria della durata di ciascun episodio) di una serie tv e il numero complessivo di episodi che la compongono.
+\begin{itemize}
+	\item Per operazione 4.3: Inserendo gli attributi ridondanti diminuiamo notevolmente gli accessi in lettura essendo che per un utente che richiede la visualizzazione dei film disponibili in base alla propria età verrà fatta 1L per l'utente stesso mentre le serie verranno controllate tutte una sola volta, quindi 2500L. Considerando la frequenza di $100/gg$ questa causerà $ 100*2501 = 250.100$ accessi complessivi al giorno.
+	\item Per operazione 4.4: Questa operazione è analoga al caso senza ridondanza.
+\end{itemize}
 
-\subsection{Attributo 3: NumeroEpisodi}
-\todo{TBD}
+In totale si ottiene da questo studio $250.100 + 2.250 = 252.350$ accessi complessivi.
+\subsubsection{Conclusioni:}
+Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che data la complessità $252.350 \ll 41.252.350$ conviene introdurre gli attributi ridondanti "DurataComplessiva" e "NumeroEpisodi" in SERIE.
 \subsection{Attributo 4: NumeroStagioni}
 \todo{TBD}
 \subsection{Attributo 5: VotoComplessivo}
