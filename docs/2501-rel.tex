@@ -333,8 +333,8 @@ Quello che segue rappresenta lo schema derivato dalla composizione di tutte le s
 		recensioneserie          & R         & 250000            \\ \hline
 		valutazione              & R         & 115000            \\ \hline
 		valutazionesezione       & R         & 1400000           \\ \hline
+		scritturarecensionefilm  & R         & 950000            \\ \hline
 		scritturarecensioneserie & R         & 250000            \\ \hline
-		scritturarecensioneserie & R         & 950000            \\ \hline
 	\end{tabular}
 \end{table}
 \section{Operazioni e loro frequenza}
@@ -791,21 +791,67 @@ Otteniamo:
 	\includegraphics[width=450pt]{ER/navigazione/classificaregisti.png}
 	\caption{Schema di navigazione - visualizzare classifica dei registi più apprezzati}
 \end{figure}
+Questa operazione richiede di tenere conto del fatto che le recensioni fornite per un film o una serie TV sono attribuite a loro volta al regista, poiché è univoco per ciascun multimedia. Pertanto, è essenziale esaminare ogni recensione sia per i film che per le serie TV, così come i relativi prodotti multimediali e i registi che li hanno realizzati.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|llll|}
+		\hline
+		\rowcolor[HTML]{CBCEFB}
+		Concetto            & Costrutto & Accesso   & Tipo                         \\ \hline
+		REGISTA             & E         & 600       & L                            \\ \hline
+		RECFILM				& E			& 950.000	& L							   \\ \hline
+		RECSERIE			& E			& 250.000	& L							   \\ \hline
+		MULTIMEDIA			& E			& 12.000	& L							   \\ \hline
+		\rowcolor[HTML]{CBCEFB}
+		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1.212.600 L} \\ \hline
+	\end{tabular}
+\end{table}
 
 \section{Schemi di navigazione e tabelle degli accessi - Operazioni Amministratore}
 \subsubsection{Visualizzare una classifica degli utenti con la media valutazioni di utilità peggiore (Op. 9.1)}
+Per questa operazione bisogna valutare ogni utente e verificare ogni singola valutazione per le sue recensioni scritte. In media un utente scrive $\frac{1200000}{9960} \approx 120$ recensioni(in particolare $\frac{950000}{9960} \approx 95$ recensioni per i film e $\frac{250000}{9960} \approx 25$ recensioni per le serie tv). \\
+Ciascuna recensione per un film riceve $\frac{950000}{115000} \approx 8$ valutazioni mentre per quanto riguarda le recensioni sulle serie tv ciascuna riceve $\frac{250000}{115000} \approx 2$ valutazioni. \\
+Quindi complessivamente avremo $95 * 8 = 760$ valutazioni nelle recensioni per i film e $25 * 2 = 50$ valutazioni nelle recensioni per le serie tv che ha svolto un utente, per questo il tutto va moltiplicato per il numero di utenti.
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=450pt]{ER/navigazione/classificautilitápeggiore.png}
 	\caption{Schema di navigazione - visualizzare classifica degli utenti con la media valutazioni di utilità peggiore}
 \end{figure}
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|llll|}
+		\hline
+		\rowcolor[HTML]{CBCEFB}
+		Concetto            & Costrutto & Accesso   & Tipo                         \\ \hline
+		UTENTE              & E         & 9960      & L                            \\ \hline
+		val.rec.film		& R			& 7.569.600	& L							   \\ \hline
+		val.rec.serie		& R			& 498.000	& L							   \\ \hline
+		\rowcolor[HTML]{CBCEFB}
+		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 8.077.560 L} \\ \hline
+	\end{tabular}
+\end{table}
 
 \subsubsection{Visualizzare una classifica degli utenti con la media valutazioni di utilità migliori (Op. 9.2)}
+Per questa operazione il ragionamento è analogo a quella precedente(Op. 9.1).
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=450pt]{ER/navigazione/classificautilitámigliore.png}
 	\caption{Schema di navigazione - visualizzare classifica degli utenti con la media valutazioni di utilità migliori}
 \end{figure}
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|llll|}
+		\hline
+		\rowcolor[HTML]{CBCEFB}
+		Concetto            & Costrutto & Accesso   & Tipo                         \\ \hline
+		UTENTE              & E         & 9960      & L                            \\ \hline
+		val.rec.film		& R			& 7.569.600	& L							   \\ \hline
+		val.rec.serie		& R			& 498.000	& L							   \\ \hline
+		\rowcolor[HTML]{CBCEFB}
+		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 8.077.560 L} \\ \hline
+	\end{tabular}
+\end{table}
 
 \subsubsection{Assegnamento di coupon ai primi 5 utenti tesserati con la media valutazioni di utilità migliori (Op. 10)}
 \todo{TBD}
