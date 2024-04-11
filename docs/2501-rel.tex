@@ -869,13 +869,30 @@ Le ridondanze principali che vogliamo analizzare sono le seguenti:
 	\item Op. 8.1: Ottenere una classifica dei generi più visualizzati
 	\item Op. 5.(1-2): Contrassegnare come "visualizzato" un film o un episodio di una serie.
 \end{itemize}
-\subsubsection{Tabelle degli accessi:}
+\subsubsection{Tabelle degli accessi senza ridondanza:}
 \begin{itemize}
-	\item Per operazione 8.1: Vedi la sottosezione \ref{ss:op81}
-	\item Per operazione 5.1: Vedi la sottosezione \ref{ss:op51}
-	\item Per operazione 5.2: Vedi la sottosezione \ref{ss:op52}
+	\item Per operazione 8.1: Vedi la sottosezione \ref{ss:op81}, essa ha frequenza $5/gg$ dandoci complessivamente 12.743.880 accessi in lettura al giorno.
+	\item Per operazione 5.1: Vedi la sottosezione \ref{ss:op51}, essa ha frequenza $350/gg$ dandoci complessivamente 350 accessi in scrittura al giorno.
+	\item Per operazione 5.2: Vedi la sottosezione \ref{ss:op52}, essa ha frequenza $500/gg$ dandoci complessivamente 500 accessi in scrittura al giorno.
 \end{itemize}
-\subsubsection{Analisi:}
+Complessivamente quindi, abbiamo $2 * (500 + 350) + 12.743.880 = 12.745.580$ accessi complessivi.
+\subsubsection{Tabelle degli accessi con attributo ridondante}
+Consideriamo il caso in cui si introduca un attributo ridondante "NumeroVisualizzazioni" sull'entità "GENERE", che viene incrementato ogni volta che un utente contrassegna come visualizzato un film, o tutti gli episodi correnti di una serie.
+\begin{itemize}
+	\item Per operazione 5.1: Per effettuare questa operazione, oltre che 1S per scrivere la relazione \textit{visualizzazionefilm} è necessario un aggiornamento su genere per incrementare il valore dell'attributo ridondante, avendo una complessità complessiva di 1L + 2S, considerando la frequenza di $350/gg$ questa ci crea $350 + 4 * 350 = 1750$ accessi complessivi al giorno.
+	\item Per operazione 5.2: Questa invece ci obbliga a calcolare quanti episodi servono per poter considerare una serie come visualizzata, sappiamo che una serie è composta in media da 4 stagioni da 10 episodi ciascuna, quindi se vengono contrassegnati 500 episodi al giorno, significa che vengono visualizzate in media $\frac{500}{4 * 10} = 12,5$ serie al giorno, comportando 12,5S + 12,5L + 500S accessi, dando una complessità complessiva di $3 * 12,5 + 1000 = 1037,5$ al giorno.
+	\item Per operazione 8.1: Con l'attributo ridondante questa operazione si limita alla lettura dell'attributo "NumeroVisualizzati" nell'entità "GENERE", considerando che ce ne sono 13 si hanno 13L con una frequenza di 5 al giorno, quindi complessivamente $13 * 5$ letture al giorno dando una complessità di 65 accessi.
+\end{itemize}
+In totale si ottiene da questo studio $65 + 1037,5 + 1750 = 2852.5$
+\subsubsection{Conclusione:}
+Considerando i valori ottenuti dall'analisi precedente, si può affermare che data la complessità $2852.5 \ll 12.745.580$ è di gran lunga conveniente introdurre l'attributo ridondante "NumeroVisualizzati" in GENERE, privilegiando l'efficienza rispetto all'occupazione di spazio.
+\subsection{Attributo 2: DurataComplessiva}
+\todo{TBD}
+\subsection{Attributo 3: NumeroEpisodi}
+\todo{TBD}
+\subsection{Attributo 4: NumeroStagioni}
+\todo{TBD}
+\subsection{Attributo 5: VotoComplessivo}
 \todo{TBD}
 \section{Traduzione di entità e associazioni in relazioni}
 \todo{TBD}
