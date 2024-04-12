@@ -22,7 +22,9 @@ repositories {
 dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation(libs.junit.jupiter)
+    testImplementation("org.mockito:mockito-core:5.11.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation("commons-codec:commons-codec:1.16.1")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

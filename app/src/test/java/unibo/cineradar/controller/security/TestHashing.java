@@ -1,0 +1,35 @@
+package unibo.cineradar.controller.security;
+
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import java.security.NoSuchAlgorithmException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class TestHashing {
+    private static final String PLAIN = "nic2arlo!dsa#co2m";
+    private static final HashingAlgorithm ALGORITHM = HashingAlgorithm.SHA_512;
+    private static final String HASHED = "7ba4a8b4b449d21b0ccd4d82b60562d2abb80bb5ca61"
+            + "dc6e620cbee9b5adb9ab013be961e73ef56eee0636287"
+            + "fa72ade938b5b51df3b4e17a8249cfb7c7aeacb";
+
+    @Test
+    void testHashing() throws NoSuchAlgorithmException {
+        assertEquals(HASHED, HashingUtilities.getHashedString(PLAIN, ALGORITHM));
+    }
+
+    @Test
+    void testCheckPassword() {
+        final PasswordChecker sha512pc = new PasswordChecker(ALGORITHM);
+        assertTrue(sha512pc.checkPassword(PLAIN, HASHED));
+        assertFalse(sha512pc.checkPassword("Ciao!", HASHED));
+        //Mocking an algorithm that does not exist.
+        final HashingAlgorithm nonExistantAlgo = Mockito.mock(HashingAlgorithm.class);
+        Mockito.when(nonExistantAlgo.getAlgorithmName()).thenReturn("Junk");
+        final PasswordChecker brokenPasswordCheker = new PasswordChecker(nonExistantAlgo);
+        assertFalse(brokenPasswordCheker.checkPassword(PLAIN, HASHED));
+    }
+}
