@@ -402,7 +402,7 @@ Quello che segue rappresenta lo schema derivato dalla composizione di tutte le s
 	\begin{tabular}[c]{@{}c@{}}Dei film contrassegnati \\ in un giorno solo\\ alcuni verranno recensiti.\end{tabular}                                                                                                                                                                                        \\ \hline
 	7.1                                                                                                                                                                                                          &
 	\begin{tabular}[c]{@{}c@{}}Visualizzare le \\ recensioni di un film.\end{tabular}                                                                                                                            &
-	25                                                                                                                                                                                                           &
+	250                                                                                                                                                                                                           &
 	\\ \hline
 	7.2                                                                                                                                                                                                          &
 	\begin{tabular}[c]{@{}c@{}}Dare una valutazione \\ di utilità ad una\\ recensione di un altro \\ utente su un film.\end{tabular}                                                                             &
@@ -411,6 +411,14 @@ Quello che segue rappresenta lo schema derivato dalla composizione di tutte le s
 	7.3                                                                                                                                                                                                          &
 	\begin{tabular}[c]{@{}c@{}}Dare una valutazione \\ di utilità ad una\\ recensione di un altro \\ utente su una serie.\end{tabular}                                                                           &
 	30                                                                                                                                                                                                           &
+	\\ \hline
+	7.4                                                                                                                                                                                                          &
+	\begin{tabular}[c]{@{}c@{}}Visualizzare le \\ recensioni di una \\ singola serie.\end{tabular}                                                                                                               &
+	150                                                                                                                                                                                                           &
+	\\ \hline
+	7.5                                                                                                                                                                                                          &
+	\begin{tabular}[c]{@{}c@{}}Aggiornare il voto \\ di una sezione \\ di una recensione.\end{tabular}                                                                                                               &
+	50                                                                                                                                                                                                           &
 	\\ \hline
 	8.1                                                                                                                                                                                                          &
 	\begin{tabular}[c]{@{}c@{}}Ottenere una \\ classifica dei generi\\ più visualizzati.\end{tabular}                                                                                                            &
@@ -654,11 +662,11 @@ In media gli utenti che richiedono la visualizzazione dei film sono principalmen
 	\begin{tabular}{|llll|}
 		\hline
 		\rowcolor[HTML]{CBCEFB}
-		Concetto            & Costrutto & Accesso & Tipo                  \\ \hline
-		UTENTE 				& E         & 1       & L                     \\ \hline
-		SERIE 				& E		    & 2500	  & L					  \\ \hline
-		STAGIONE			& E			& 10.000  & L 					  \\ \hline
-		EPISODIO			& E			& 400.000 & L					  \\ \hline
+		Concetto & Costrutto & Accesso & Tipo                                   \\ \hline
+		UTENTE   & E         & 1       & L                                      \\ \hline
+		SERIE    & E         & 2500    & L                                      \\ \hline
+		STAGIONE & E         & 10.000  & L                                      \\ \hline
+		EPISODIO & E         & 400.000 & L                                      \\ \hline
 		\rowcolor[HTML]{CBCEFB}
 		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 412.501L} \\ \hline
 	\end{tabular}
@@ -676,10 +684,10 @@ Per ogni serie vi sono in media $\frac{10000}{2500} = 4$ stagioni, che si compon
 	\begin{tabular}{|llll|}
 		\hline
 		\rowcolor[HTML]{CBCEFB}
-		Concetto            & Costrutto & Accesso & Tipo                  \\ \hline
-		SERIE 				& E		    & 1	  	  & L					  \\ \hline
-		STAGIONE			& E			& 4  	  & L 					  \\ \hline
-		EPISODIO			& E			& 40      & L					  \\ \hline
+		Concetto & Costrutto & Accesso & Tipo                              \\ \hline
+		SERIE    & E         & 1       & L                                 \\ \hline
+		STAGIONE & E         & 4       & L                                 \\ \hline
+		EPISODIO & E         & 40      & L                                 \\ \hline
 		\rowcolor[HTML]{CBCEFB}
 		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 45L} \\ \hline
 	\end{tabular}
@@ -732,12 +740,12 @@ Per ogni serie vi sono in media $\frac{10000}{2500} = 4$ stagioni, che si compon
 	\begin{tabular}{|llll|}
 		\hline
 		\rowcolor[HTML]{CBCEFB}
-		Concetto            & Costrutto & Accesso & Tipo                        \\ \hline
-		SEZIONE             & E         & 5       & S                           \\ \hline
-		RECFILM             & E         & 1       & S                           \\ \hline
-		visual.film 		& R         & 1       & L                           \\ \hline
-		recfilm.sez         & R         & 5       & S                           \\ \hline
-		scritt.rec.film     & R         & 1       & S                           \\ \hline
+		Concetto        & Costrutto & Accesso & Tipo                            \\ \hline
+		SEZIONE         & E         & 5       & S                               \\ \hline
+		RECFILM         & E         & 1       & S                               \\ \hline
+		visual.film     & R         & 1       & L                               \\ \hline
+		recfilm.sez     & R         & 5       & S                               \\ \hline
+		scritt.rec.film & R         & 1       & S                               \\ \hline
 		\rowcolor[HTML]{CBCEFB}
 		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1L + 12S} \\ \hline
 	\end{tabular}
@@ -748,7 +756,7 @@ Considerando la tabella dei volumi (sez: \ref{s:volumes}), un film ha in media $
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=450pt]{ER/navigazione/visualrecensionifilm.png}
-	\caption{Schema di navigazione - visualizzare le recensioni di un film}
+	\caption{Schema di navigazione - Visualizzare le recensioni di un film}
 \end{figure}
 \begin{table}[H]
 	\centering
@@ -757,10 +765,9 @@ Considerando la tabella dei volumi (sez: \ref{s:volumes}), un film ha in media $
 		\rowcolor[HTML]{CBCEFB}
 		Concetto    & Costrutto & Accesso & Tipo                             \\ \hline
 		RECFILM     & E         & 100     & L                                \\ \hline
-		SEZIONE     & E         & 500     & L                                \\ \hline
 		recfilm.sez & R         & 500     & L                                \\ \hline
 		\rowcolor[HTML]{CBCEFB}
-		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1100L} \\ \hline
+		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 600L} \\ \hline
 	\end{tabular}
 \end{table}
 
@@ -797,6 +804,45 @@ Considerando la tabella dei volumi (sez: \ref{s:volumes}), un film ha in media $
 		val.rec.serie & R         & 1       & S                           \\ \hline
 		\rowcolor[HTML]{CBCEFB}
 		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1S} \\ \hline
+	\end{tabular}
+\end{table}
+
+\subsection{Visualizzare le recensioni di una singola serie (Op. 7.4)}
+Considerando la tabella dei volumi (sez: \ref{s:volumes}), una serie ha in media $\frac{250000}{2500} = 100$ recensioni e ciascuna recensione è articolata nel caso con maggior volume in tutte e 5 le sezioni.
+\begin{figure}[H]
+	\centering
+	\includegraphics{ER/navigazione/visualrecserie.png}
+	\caption{Schema di navigazione - Visualizzare le recensioni di una serie.}
+\end{figure}
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|llll|}
+		\hline
+		\rowcolor[HTML]{CBCEFB}
+		Concetto     & Costrutto & Accesso & Tipo                            \\ \hline
+		RECSERIE     & E         & 100     & L                               \\ \hline
+		recserie.sez & R         & 500     & L                               \\ \hline
+		\rowcolor[HTML]{CBCEFB}
+		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 600L} \\ \hline
+	\end{tabular}
+\end{table}
+
+\subsection{Aggiornare il voto di una sezione di una recensione (Op. 7.5)}
+\begin{figure}[H]
+	\centering
+	\includegraphics{ER/navigazione/visualrecserie.png}
+	\caption{Schema di navigazione - Aggiornare una sezione di una recensione.}
+\end{figure}
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|llll|}
+		\hline
+		\rowcolor[HTML]{CBCEFB}
+		Concetto     & Costrutto & Accesso & Tipo                            \\ \hline
+		recserie.sez     & R         & 1     & S                               \\ \hline
+		recserie.sez & R         & 1     & L                               \\ \hline
+		\rowcolor[HTML]{CBCEFB}
+		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1S + 1L} \\ \hline
 	\end{tabular}
 \end{table}
 
@@ -1015,7 +1061,6 @@ In totale si ottiene da questo studio $65 + 1037,5 + 1750 = 2852.5$ accessi comp
 \subsubsection{Conclusione:}
 Considerando i valori ottenuti dall'analisi precedente, si può affermare che data la complessità $2852.5 \ll 12.745.580$ è di gran lunga conveniente introdurre l'attributo ridondante "NumeroVisualizzati" in GENERE, privilegiando l'efficienza rispetto all'occupazione di spazio.
 \subsection{Attributo 2-3: DurataComplessiva e NumeroEpisodi}
-\todo{TBD}
 \subsubsection{Operazioni interessate:}
 \begin{itemize}
 	\item Op. 4.3: Visualizzare l’elenco delle serie TV con la relativa durata complessiva e il numero di episodi complessivo, in base all’età di chi lo richiede.
@@ -1038,11 +1083,40 @@ In totale si ottiene da questo studio $250.100 + 2.250 = 252.350$ accessi comple
 \subsubsection{Conclusioni:}
 Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che data la complessità $252.350 \ll 41.252.350$ conviene introdurre gli attributi ridondanti "DurataComplessiva" e "NumeroEpisodi" in SERIE.
 \subsection{Attributo 4: NumeroStagioni}
-\todo{TBD}
+\missingfigure{PARTE DI KEKKO / MARTINO}
 \subsection{Attributo 5: VotoComplessivo}
-\todo{TBD}
+\subsubsection{Operazioni interessate:}
+\begin{itemize}
+	\item Op. 7.1: Visualizzare le recensioni di un film.
+	\item Op. 7.4: Visualizzare le recensioni di una serie.
+\end{itemize}
+\subsubsection{Tabelle degli accessi senza ridondanza:}
+\begin{itemize}
+	\item Per operazione 7.1: 600L con una frequenza di $250/gg$.
+	\item Per operazione 7.4: 600L con una frequenza di $150/gg$.
+\end{itemize}
+In tutto abbiamo $600 * 250 + 600 * 150 = 252.500$ accessi complessivi.
+\subsubsection{Tabelle degli accessi con ridondanza:}
+Supponiamo di introdurre un "VotoComplessivo" su ogni singola recensione, le letture non diminuiscono dato che comunque vanno reperiti i dati sulle diverse sezioni per poterle visualizzare:
+\begin{itemize}
+	\item Op. 7.1: 600L con una frequenza di $250/gg$.
+	\item Op. 7.4: 600L con una frequenza di $150/gg$.
+	\item Op. 7.5: 1S + 1L + 5L (il ricalcolo del voto complessivo) con una frequenza di $50/gg$
+\end{itemize}
+\subsubsection{Conclusione:}
+Si nota che nel secondo caso gli accessi sono maggiori rispetto al primo, quindi l'introduzione dell'attributo ridondante non è conveniente.
+\section{Rimozione degli attributi composti}
+CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando disaggregazione in Ind{\_}Via, Ind{\_}CAP, Ind{\_}Civico e Ind{\_}Città.
 \section{Traduzione di entità e associazioni in relazioni}
-\todo{TBD}
+\subsection{Schema tradotto}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=400pt]{ER/schemalogico/logicsx.png}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=400pt]{ER/schemalogico/logicdx.png}
+\end{figure}
 \section{Schema relazionale finale}
 \todo{TBD}
 \section{Traduzione delle operazioni in query SQL}
