@@ -382,7 +382,7 @@ Quello che segue rappresenta lo schema derivato dalla composizione di tutte le s
 	17                                                                                                                                                                                                           &
 	\begin{tabular}[c]{@{}c@{}}Meno frequenza \\ rispetto all'operazione\\ precedente, \\ i genitori registrati che\\ accedono ed usano \\ questa funzione sono\\ meno.\end{tabular}                                                                                                                         \\ \hline
 	4.3                                                                                                                                                                                                          &
-	\begin{tabular}[c]{@{}c@{}}Visualizzare l'elenco \\ delle serie TV \\ con la relativa \\ durata complessiva \\ e il numero \\ di episodi complessivo, \\ in base all'età \\ di chi lo richiede.\end{tabular} &
+	\begin{tabular}[c]{@{}c@{}}Visualizzare l'elenco \\ delle serie TV \\ con la relativa \\ durata complessiva \\ e il numero  di stagioni \\ ed episodi complessivo, \\ in base all'età \\ di chi lo richiede.\end{tabular} &
 	100                                                                                                                                                                                                          &
 	\begin{tabular}[c]{@{}c@{}}Viene effettuato all'accesso.\end{tabular}                                                                                                                                                                                                                                    \\ \hline
 	4.4                                                                                                                                                                                                          &
@@ -651,11 +651,12 @@ In media gli utenti che richiedono la visualizzazione dei film sono principalmen
 	\end{tabular}
 \end{table}
 
-\subsection{Visualizzare l’elenco delle serie TV con la relativa durata complessiva e il numero di episodi complessivo, in base all’età di chi lo richiede. (Op. 4.3)} \label{ss:op43}
+\subsection{Visualizzare l’elenco delle serie TV con la relativa durata complessiva e il numero di stagioni ed episodi complessivo, in base all’età di chi lo richiede. (Op. 4.3)} \label{ss:op43}
 \begin{figure}[H]
 	\centering
-	\includegraphics{ER/navigazione/elencoserietv.png}
-	\caption{Schema di navigazione - Visualizzare elenco serie tv in base all'età}
+	\includegraphics[width=1.2\linewidth]{ER/navigazione/elencoserietv}
+	\caption{}
+	\label{fig:elencoserietv}
 \end{figure}
 \begin{table}[H]
 	\centering
@@ -675,7 +676,7 @@ In media gli utenti che richiedono la visualizzazione dei film sono principalmen
 \subsection{Visualizzare le informazioni riguardanti una serie TV, comprese tutte le stagioni e tutti gli episodi. (Op. 4.4)} \label{ss:op44}
 \begin{figure}[H]
 	\centering
-	\includegraphics{ER/navigazione/infoserietv.png}
+	\includegraphics[width=1.2\linewidth]{ER/navigazione/infoserietv.png}
 	\caption{Schema di navigazione - Visualizzare elenco serie tv in base all'età}
 \end{figure}
 Per ogni serie vi sono in media $\frac{10000}{2500} = 4$ stagioni, che si compongono ciascuna di $\frac{400000}{10000 * 4} = 10$ episodi complessivi.
@@ -1060,7 +1061,7 @@ Consideriamo il caso in cui si introduca un attributo ridondante "NumeroVisualiz
 In totale si ottiene da questo studio $65 + 1037,5 + 1750 = 2852.5$ accessi complessivi.
 \subsubsection{Conclusione:}
 Considerando i valori ottenuti dall'analisi precedente, si può affermare che data la complessità $2852.5 \ll 12.745.580$ è di gran lunga conveniente introdurre l'attributo ridondante "NumeroVisualizzati" in GENERE, privilegiando l'efficienza rispetto all'occupazione di spazio.
-\subsection{Attributo 2-3: DurataComplessiva e NumeroEpisodi}
+\subsection{Attributo 2-3-4: DurataComplessiva, NumeroEpisodi e NumeroStagioni}
 \subsubsection{Operazioni interessate:}
 \begin{itemize}
 	\item Op. 4.3: Visualizzare l’elenco delle serie TV con la relativa durata complessiva e il numero di episodi complessivo, in base all’età di chi lo richiede.
@@ -1073,17 +1074,16 @@ Considerando i valori ottenuti dall'analisi precedente, si può affermare che da
 \end{itemize}
 Complessivamente quindi, abbiamo $ 41.250.100 + 2.250 = 41.252.350$ accessi complessivi.
 \subsubsection{Tabelle degli accessi con ridondanza:}
-Consideriamo il caso in cui si introducano due attributi ridondanti "DurataComplessiva" e "NumeroEpisodi" sull'entità "SERIE", questi attributi servono per dichiarare la durata complessiva(quindi la sommatoria della durata di ciascun episodio) di una serie tv e il numero complessivo di episodi che la compongono.
+Consideriamo il caso in cui si introducano i seguenti attributi ridondanti: "DurataComplessiva", "NumeroEpisodi" e "NumeroStagioni" sull'entità "SERIE", questi attributi servono per dichiarare la durata complessiva(quindi la sommatoria della durata di ciascun episodio) di una serie tv e il numero complessivo di stagioni ed episodi che la compongono.
 \begin{itemize}
 	\item Per operazione 4.3: Inserendo gli attributi ridondanti diminuiamo notevolmente gli accessi in lettura essendo che per un utente che richiede la visualizzazione dei film disponibili in base alla propria età verrà fatta 1L per l'utente stesso mentre le serie verranno controllate tutte una sola volta, quindi 2500L. Considerando la frequenza di $100/gg$ questa causerà $ 100*2501 = 250.100$ accessi complessivi al giorno.
-	\item Per operazione 4.4: Questa operazione è analoga al caso senza ridondanza.
+	\item Per operazione 4.4: Quest'operazione è analoga al caso senza ridondanza.
 \end{itemize}
 
 In totale si ottiene da questo studio $250.100 + 2.250 = 252.350$ accessi complessivi.
 \subsubsection{Conclusioni:}
-Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che data la complessità $252.350 \ll 41.252.350$ conviene introdurre gli attributi ridondanti "DurataComplessiva" e "NumeroEpisodi" in SERIE.
-\subsection{Attributo 4: NumeroStagioni}
-\missingfigure{PARTE DI KEKKO / MARTINO}
+Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che data la complessità $252.350 \ll 41.252.350$ conviene introdurre gli attributi ridondanti "DurataComplessiva", "NumeroEpisodi" e "NumeroStagioni" in SERIE.
+
 \subsection{Attributo 5: VotoComplessivo}
 \subsubsection{Operazioni interessate:}
 \begin{itemize}
