@@ -1129,7 +1129,7 @@ Considerando i valori ottenuti dall'analisi precedente, si può affermare che da
 	\item Per operazione 4.5: Vedi la sottosezione \ref{ss:op45}, essa ha frequenza $5/gg$ dandoci complessivamente accessi 5 in lettura e 40 in scrittura al giorno.
 	\item Per operazione 4.6: Vedi la sottosezione \ref{ss:op46}, essa ha frequenza $10/gg$ dandoci complessivamente accessi 10 in lettura e 40 in scrittura al giorno.
 \end{itemize}
-Complessivamente quindi, abbiamo $ 41.250.100 + 2.250 + 45 + 50 = 41.252.445$ accessi complessivi.
+Complessivamente quindi, abbiamo $41.250.100 + 2.250 + 45 + 50 = 41.252.445$ accessi complessivi.
 \subsubsection{Tabelle degli accessi con ridondanza:}
 Consideriamo il caso in cui si introduca il seguente attributo ridondante "DurataComplessiva" sull'entità "SERIE", questo attributo serve per dichiarare la durata complessiva(quindi la sommatoria della durata di ciascun episodio) di una serie tv.
 \begin{itemize}
@@ -1141,43 +1141,53 @@ Consideriamo il caso in cui si introduca il seguente attributo ridondante "Durat
 
 In totale si ottiene da questo studio $41.250.100 + 2.250 + 55 + 80 = 41.252.485$ accessi complessivi.
 \subsubsection{Conclusioni:}
-Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che data la complessità $41.252.485 > 41.252.350$ NON conviene introdurre l'attributo ridondante "DurataComplessiva" in SERIE (perlomeno non singolarmente).
+Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che data la complessità $41.252.485 > 41.252.445$ NON conviene introdurre l'attributo ridondante "DurataComplessiva" in SERIE (perlomeno non singolarmente).
 
 \subsection{Attributo 3: NumeroEpisodi}
 \subsubsection{Operazioni interessate:}
 \begin{itemize}
-	\item Op. 4.3: Visualizzare l’elenco delle serie TV con la relativa durata complessiva e il numero di episodi complessivo, in base all’età di chi lo richiede.
+	\item Op. 4.3: Visualizzare l’elenco delle serie TV con la relativa durata complessiva e il numero di stagioni ed episodi complessivo, in base all’età di chi lo richiede.
 	\item Op. 4.4: Visualizzare le informazioni riguardanti una serie TV, comprese tutte le stagioni e tutti gli episodi.
+	\item Op. 4.5: Aggiunta di una nuova stagione per una specifica serie TV.
+	\item Op. 4.6: Aggiunta di un nuovo episodio per una specifica stagione di una serie TV.
 \end{itemize}
 \subsubsection{Tabelle degli accessi senza ridondanza:}
 \begin{itemize}
-	\item Per operazione 4.3: Vedi la sottosezione \ref{ss:op43}, essa ha frequenza $100/gg$ dandoci complessivamente accessi 41.250.100 in lettura al giorno
-	\item Per operazione 4.4: Vedi la sottosezione \ref{ss:op44}, essa ha frequenza $50/gg$ dandoci complessivamente accessi 2.250 in lettura al giorno
+	\item Per operazione 4.3: Vedi la sottosezione \ref{ss:op43}, essa ha frequenza $100/gg$ dandoci complessivamente accessi 41.250.100 in lettura al giorno.
+	\item Per operazione 4.4: Vedi la sottosezione \ref{ss:op44}, essa ha frequenza $50/gg$ dandoci complessivamente accessi 2.250 in lettura al giorno.
+	\item Per operazione 4.5: Vedi la sottosezione \ref{ss:op45}, essa ha frequenza $5/gg$ dandoci complessivamente accessi 5 in lettura e 40 in scrittura al giorno.
+	\item Per operazione 4.6: Vedi la sottosezione \ref{ss:op46}, essa ha frequenza $10/gg$ dandoci complessivamente accessi 10 in lettura e 40 in scrittura al giorno.
 \end{itemize}
-Complessivamente quindi, abbiamo $ 41.250.100 + 2.250 = 41.252.350$ accessi complessivi.
+Complessivamente quindi, abbiamo $41.250.100 + 2.250 + 45 + 50 = 41.252.445$ accessi complessivi.
 \subsubsection{Tabelle degli accessi con ridondanza:}
-Consideriamo il caso in cui si introducano i seguenti attributi ridondanti: "DurataComplessiva", "NumeroEpisodi" e "NumeroStagioni" sull'entità "SERIE", questi attributi servono per dichiarare la durata complessiva(quindi la sommatoria della durata di ciascun episodio) di una serie tv e il numero complessivo di stagioni ed episodi che la compongono.
+Consideriamo il caso in cui si introduca il seguente attributo ridondante "NumeroEpisodi" sull'entità "STAGIONE", questo attributo serve per dichiarare la quantità di episodi che è composta una STAGIONE di una specifica SERIE.
 \begin{itemize}
-	\item Per operazione 4.3: Inserendo gli attributi ridondanti diminuiamo notevolmente gli accessi in lettura essendo che per un utente che richiede la visualizzazione dei film disponibili in base alla propria età verrà fatta 1L per l'utente stesso mentre le serie verranno controllate tutte una sola volta, quindi 2500L. Considerando la frequenza di $100/gg$ questa causerà $ 100*2501 = 250.100$ accessi complessivi al giorno.
+	\item Per operazione 4.3: Quest'operazione è analoga al caso senza ridondanza.
 	\item Per operazione 4.4: Quest'operazione è analoga al caso senza ridondanza.
+	\item Per operazione 4.5: Quest'operazione è analoga al caso senza ridondanza.
+	\item Per operazione 4.6: In quest'operazione bisogna incrementare "NumeroEpisodi" nell'entità STAGIONE quindi effettuare un aggiornamento ottenendo in totale 1L + 3S che messe in relazione con la frequenza giornaliera darà come risultato un totale di 10 accessi in lettura e 60 accessi in scrittura al giorno.
 \end{itemize}
 
-In totale si ottiene da questo studio $250.100 + 2.250 = 252.350$ accessi complessivi.
+In totale si ottiene da questo studio $41.250.100 + 2.250 + 45 + 70 = 41.252.465$ accessi complessivi.
 \subsubsection{Conclusioni:}
-Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che data la complessità $252.350 \ll 41.252.350$ conviene introdurre gli attributi ridondanti "DurataComplessiva", "NumeroEpisodi" e "NumeroStagioni" in SERIE.
+Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che data la complessità $41.252.465 > 41.252.445$ NON conviene introdurre l'attributo ridondante "NumeroEpisodi" in STAGIONE (perlomeno non singolarmente).
 
 \subsection{Attributo 4: NumeroStagioni}
 \subsubsection{Operazioni interessate:}
 \begin{itemize}
-	\item Op. 4.3: Visualizzare l’elenco delle serie TV con la relativa durata complessiva e il numero di episodi complessivo, in base all’età di chi lo richiede.
+	\item Op. 4.3: Visualizzare l’elenco delle serie TV con la relativa durata complessiva e il numero di stagioni ed episodi complessivo, in base all’età di chi lo richiede.
 	\item Op. 4.4: Visualizzare le informazioni riguardanti una serie TV, comprese tutte le stagioni e tutti gli episodi.
+	\item Op. 4.5: Aggiunta di una nuova stagione per una specifica serie TV.
+	\item Op. 4.6: Aggiunta di un nuovo episodio per una specifica stagione di una serie TV.
 \end{itemize}
 \subsubsection{Tabelle degli accessi senza ridondanza:}
 \begin{itemize}
-	\item Per operazione 4.3: Vedi la sottosezione \ref{ss:op43}, essa ha frequenza $100/gg$ dandoci complessivamente accessi 41.250.100 in lettura al giorno
-	\item Per operazione 4.4: Vedi la sottosezione \ref{ss:op44}, essa ha frequenza $50/gg$ dandoci complessivamente accessi 2.250 in lettura al giorno
+	\item Per operazione 4.3: Vedi la sottosezione \ref{ss:op43}, essa ha frequenza $100/gg$ dandoci complessivamente accessi 41.250.100 in lettura al giorno.
+	\item Per operazione 4.4: Vedi la sottosezione \ref{ss:op44}, essa ha frequenza $50/gg$ dandoci complessivamente accessi 2.250 in lettura al giorno.
+	\item Per operazione 4.5: Vedi la sottosezione \ref{ss:op45}, essa ha frequenza $5/gg$ dandoci complessivamente accessi 5 in lettura e 40 in scrittura al giorno.
+	\item Per operazione 4.6: Vedi la sottosezione \ref{ss:op46}, essa ha frequenza $10/gg$ dandoci complessivamente accessi 10 in lettura e 40 in scrittura al giorno.
 \end{itemize}
-Complessivamente quindi, abbiamo $ 41.250.100 + 2.250 = 41.252.350$ accessi complessivi.
+Complessivamente quindi, abbiamo $ 41.250.100 + 2.250 + 45 + 50 = 41.252.445$ accessi complessivi.
 \subsubsection{Tabelle degli accessi con ridondanza:}
 Consideriamo il caso in cui si introducano i seguenti attributi ridondanti: "DurataComplessiva", "NumeroEpisodi" e "NumeroStagioni" sull'entità "SERIE", questi attributi servono per dichiarare la durata complessiva(quindi la sommatoria della durata di ciascun episodio) di una serie tv e il numero complessivo di stagioni ed episodi che la compongono.
 \begin{itemize}
