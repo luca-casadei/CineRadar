@@ -1189,15 +1189,17 @@ Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che d
 \end{itemize}
 Complessivamente quindi, abbiamo $ 41.250.100 + 2.250 + 45 + 50 = 41.252.445$ accessi complessivi.
 \subsubsection{Tabelle degli accessi con ridondanza:}
-Consideriamo il caso in cui si introducano i seguenti attributi ridondanti: "DurataComplessiva", "NumeroEpisodi" e "NumeroStagioni" sull'entità "SERIE", questi attributi servono per dichiarare la durata complessiva(quindi la sommatoria della durata di ciascun episodio) di una serie tv e il numero complessivo di stagioni ed episodi che la compongono.
+Consideriamo il caso in cui si introduca il seguente attributo ridondante "NumeroStagioni" sull'entità "SERIE", questo attributo serve per dichiarare la quantità di stagioni che è composta una SERIE.
 \begin{itemize}
-	\item Per operazione 4.3: Inserendo gli attributi ridondanti diminuiamo notevolmente gli accessi in lettura essendo che per un utente che richiede la visualizzazione dei film disponibili in base alla propria età verrà fatta 1L per l'utente stesso mentre le serie verranno controllate tutte una sola volta, quindi 2500L. Considerando la frequenza di $100/gg$ questa causerà $ 100*2501 = 250.100$ accessi complessivi al giorno.
+	\item Per operazione 4.3: Quest'operazione è analoga al caso senza ridondanza.
 	\item Per operazione 4.4: Quest'operazione è analoga al caso senza ridondanza.
+	\item Per operazione 4.5: Per questa operazione è necessario l'incremento dell'attributo ridondante in SERIE, quindi questo aggiornamento porta ad avere gli accessi totali a 1L in lettura e 5S. Mettendo questi accessi in relazione con la frequenza, otteniamo in totale 5 accessi in lettura e 100 accessi in scrittura al giorno.
+	\item Per operazione 4.6: Quest'operazione è analoga al caso senza ridondanza.
 \end{itemize}
 
-In totale si ottiene da questo studio $250.100 + 2.250 = 252.350$ accessi complessivi.
+In totale si ottiene da questo studio $41.250.100 + 2.250 + 105 + 50 = 41.252.505$ accessi complessivi.
 \subsubsection{Conclusioni:}
-Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che data la complessità $252.350 \ll 41.252.350$ conviene introdurre gli attributi ridondanti "DurataComplessiva", "NumeroEpisodi" e "NumeroStagioni" in SERIE.
+Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che data la complessità $41.252.505 > 41.252.445$ NON conviene introdurre l'attributo ridondante "NumeroStagioni" in SERIE (perlomeno non singolarmente).
 
 \subsection{Attributo 5: VotoComplessivo}
 \subsubsection{Operazioni interessate:}
