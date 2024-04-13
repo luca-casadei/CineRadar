@@ -1173,6 +1173,7 @@ In totale si ottiene da questo studio $41.250.100 + 2.250 + 45 + 70 = 41.252.465
 \subsubsection{Conclusioni:}
 Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che data la complessità $41.252.465 > 41.252.445$ NON conviene introdurre l'attributo ridondante "NumeroEpisodi" in STAGIONE (perlomeno non singolarmente).
 
+
 \subsection{Attributo 4: NumeroStagioni}
 \subsubsection{Operazioni interessate:}
 \begin{itemize}
@@ -1202,6 +1203,7 @@ In totale si ottiene da questo studio $41.250.100 + 2.250 + 105 + 50 = 41.252.50
 \subsubsection{Conclusioni:}
 Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che data la complessità $41.252.505 > 41.252.445$ NON conviene introdurre l'attributo ridondante "NumeroStagioni" in SERIE (perlomeno non singolarmente).
 
+
 \subsection{Attributo 2-3: DurataComplessiva e NumeroEpisodi}
 \subsubsection{Operazioni interessate:}
 \begin{itemize}
@@ -1228,11 +1230,10 @@ Consideriamo il caso in cui si introducano i seguenti attributi ridondanti "Dura
 	\item Per operazione 4.6: Per questa operazione il ragionamento è analogo alla precedente. Quindi otterremo un totale di 2L + 3S che messe in relazione con la frequenza giornaliera darà come risultato un totale di 20 accessi in lettura e 60 accessi in scrittura al giorno.
 \end{itemize}
 
-
-
 In totale si ottiene da questo studio $1.250.100 + 2.250 + 60 + 80 = 1.252.490$ accessi complessivi.
 \subsubsection{Conclusioni:}
-Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che data la complessità $1.252.540 \ll 41.252.445$ conviene introdurre gli attributi ridondanti "DurataComplessiva" e "NumeroEpisodi" relativamente nelle entità SERIE e STAGIONE.
+Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che data la complessità $1.252.540 \ll 41.252.445$ conviene introdurre, in coppia, gli attributi ridondanti "DurataComplessiva" e "NumeroEpisodi" relativamente nelle entità SERIE e STAGIONE.
+
 
 \subsection{Attributo 2-4: DurataComplessiva e NumeroStagioni}
 \subsubsection{Operazioni interessate:}
@@ -1253,18 +1254,17 @@ Complessivamente quindi, abbiamo $41.250.100 + 2.250 + 45 + 50 = 41.252.445$ acc
 \subsubsection{Tabelle degli accessi con ridondanza:}
 Consideriamo il caso in cui si introducano i seguenti attributi ridondanti "DurataComplessiva" e "NumeroStagioni" relativamente sulla entità "SERIE", questi attributi servono per sapere la durata totale(in minuti) di una serie e il numero di stagioni per una una serie TV.
 \begin{itemize}
-	\item Per operazione 4.3: Quest'operazione è analoga al caso senza ridondanza se non per il fatto che non è più necessario leggere ciascuna stagione, grazie al fatto che manteniamo salvato il numero di stagioni tramite l'attributo ridondante in SERIE. Quindi avremo in totale 400.001L, che messe in relazione con la frequenza diventano 40.000.100 accessi in lettura al giorno.
+	\item Per operazione 4.3: Quest'operazione è analoga al caso senza ridondanza se non per il fatto che non è più necessario leggere ciascuna stagione, grazie al fatto che manteniamo salvato il numero di stagioni tramite l'attributo ridondante in SERIE. Quindi avremo in totale 402.501L, che messe in relazione con la frequenza diventano 40.250.100 accessi in lettura al giorno.
 	\item Per operazione 4.4: Quest'operazione è analoga al caso senza ridondanza.
 	\item Per operazione 4.5: Per questa operazione gli accessi in scrittura aumentano dato che bisogna fare un aggiornamento nell'entità SERIE per incrementare l'attributo ridondante "DurataComplessiva" e "NumeroStagioni" a seguito dell'aggiunta di una STAGIONE con il relativo EPISODIO (aggiunto obbligatoriamente, data la cardinalità). 
 	Quindi avremo un totale di 1L + 5S che messe in relazione con la frequenza giornaliera darà come risultato un totale di 5 accessi in lettura e 50 accessi in scrittura al giorno.
 	\item Per operazione 4.6: Per questa operazione il ragionamento è analogo alla precedente. Quindi otterremo un totale di 2L + 3S, aggiornando "DurataComplessiva" di SERIE, che messe in relazione con la frequenza giornaliera darà come risultato un totale di 20 accessi in lettura e 60 accessi in scrittura al giorno.
 \end{itemize}
 
-
-
-In totale si ottiene da questo studio $40.000.100 + 2.250 + 110 + 80 = 40.002.540$ accessi complessivi.
+In totale si ottiene da questo studio $40.250.100 + 2.250 + 55 + 80 = 40.252.485$ accessi complessivi.
 \subsubsection{Conclusioni:}
-Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che data la complessità $40.002.540 < 41.252.445$ conviene introdurre gli attributi ridondanti "DurataComplessiva" e "NumeroStagioni" relativamente nella entità SERIE.
+Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che data la complessità $40.252.485 < 41.252.445$ conviene introdurre, in coppia, gli attributi ridondanti "DurataComplessiva" e "NumeroStagioni" relativamente nella entità SERIE.
+
 
 \subsection{Attributo 3-4: NumeroEpisodi e NumeroStagioni}
 \subsubsection{Operazioni interessate:}
@@ -1285,18 +1285,16 @@ Complessivamente quindi, abbiamo $41.250.100 + 2.250 + 45 + 50 = 41.252.445$ acc
 \subsubsection{Tabelle degli accessi con ridondanza:}
 Consideriamo il caso in cui si introducano i seguenti attributi ridondanti "NumeroEpisodi" e "NumeroStagioni" relativamente sulle entità "STAGIONE" e "SERIE", questi attributi servono per sapere il numero di episodi di una serie e il numero di stagioni per una serie TV.
 \begin{itemize}
-	\item Per operazione 4.3: Quest'operazione è analoga al caso senza ridondanza se non per il fatto che non è più necessario leggere ciascuna stagione ed episodio, grazie al fatto che manteniamo salvato il numero di stagioni ed episodi tramite l'attributo ridondante in STAGIONE e SERIE. Quindi avremo in totale 2501L, che messe in relazione con la frequenza diventano 250.100 accessi in lettura al giorno.
+	\item Per operazione 4.3: Quest'operazione è analoga al caso senza ridondanza.
 	\item Per operazione 4.4: Quest'operazione è analoga al caso senza ridondanza.
-	\item Per operazione 4.5: Per questa operazione gli accessi in scrittura aumentano dato che bisogna fare un aggiornamento nell'entità STAGIONE e EPISODIO per incrementare l'attributo ridondante "NumeroEpisodi" e "NumeroStagioni" a seguito dell'aggiunta di una STAGIONE con il relativo EPISODIO (aggiunto obbligatoriamente, data la cardinalità). 
+	\item Per operazione 4.5: Per questa operazione gli accessi in scrittura aumentano dato che bisogna fare un aggiornamento nell'entità STAGIONE e SERIE per incrementare i relativi attributi ridondanti "NumeroEpisodi" e "NumeroStagioni" a seguito dell'aggiunta di una STAGIONE con il relativo EPISODIO (aggiunto obbligatoriamente, data la cardinalità). 
 	Quindi avremo un totale di 1L + 5S che messe in relazione con la frequenza giornaliera darà come risultato un totale di 5 accessi in lettura e 50 accessi in scrittura al giorno.
 	\item Per operazione 4.6: Per questa operazione il ragionamento è analogo alla precedente. Quindi otterremo un totale di 1L + 3S, che messe in relazione con la frequenza giornaliera darà come risultato un totale di 10 accessi in lettura e 60 accessi in scrittura al giorno.
 \end{itemize}
 
-
-
-In totale si ottiene da questo studio $250.100 + 2.250 + 55 + 70 = 252.475$ accessi complessivi.
+In totale si ottiene da questo studio $41.250.100 + 2.250 + 55 + 70 = 41.252.475$ accessi complessivi.
 \subsubsection{Conclusioni:}
-Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che data la complessità $252.475 \ll 41.252.445$ conviene introdurre gli attributi ridondanti "NumeroEpisodi" e "NumeroStagioni" relativamente nelle entità SERIE e STAGIONE.
+Considerando i valori ottenuti dall'analisi precedente, possiamo affermare che data la complessità $41.252.475 > 41.252.445$ NON conviene introdurre, in coppia, gli attributi ridondanti "NumeroEpisodi" e "NumeroStagioni" relativamente nelle entità SERIE e STAGIONE.
 
 
 \subsection{Attributo 5: VotoComplessivo}
