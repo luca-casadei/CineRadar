@@ -389,6 +389,16 @@ Quello che segue rappresenta lo schema derivato dalla composizione di tutte le s
 	\begin{tabular}[c]{@{}c@{}}Visualizzare le \\ informazioni riguardanti \\ una serie TV, comprese \\ tutte le stagioni \\ e tutti gli episodi.\end{tabular}                                                   &
 	50                                                                                                                                                                                                           &
 	\\ \hline
+	4.5                                                                                                                                                                                                          &
+	\begin{tabular}[c]{@{}c@{}}Aggiunta di una \\ nuova stagione per una \\ specifica serie TV.\end{tabular}                                                 &
+	5																						&
+	
+	\\ \hline
+	4.6                                                                                                                                                                                                          &
+	\begin{tabular}[c]{@{}c@{}}Aggiunta di un \\ nuovo episodio per una \\ specifica stagione di una serie TV.\end{tabular}                                                   &
+	10																						&
+	
+	\\ \hline
 	5.1                                                                                                                                                                                                          &
 	\begin{tabular}[c]{@{}c@{}}Contrassegnare \\ come "visualizzato" \\ un film.\end{tabular}                                                                                                                    &
 	350                                                                                                                                                                                                          &
@@ -691,6 +701,49 @@ Per ogni serie vi sono in media $\frac{10000}{2500} = 4$ stagioni, che si compon
 		EPISODIO & E         & 40      & L                                 \\ \hline
 		\rowcolor[HTML]{CBCEFB}
 		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 45L} \\ \hline
+	\end{tabular}
+\end{table}
+
+\subsection{Aggiunta di una nuova stagione per una specifica serie TV. (Op. 4.5)} \label{ss:op45}
+Per questa Operazione, é necessaria la lettura della serie per poter aggiungere una nuova stagione e legarla tramite l'associazione compSerie. Inoltre, va aggiunto un nuovo episodio alla stagione aggiunta, essendo la cardinalitá minima obbligatoria che lega episodio a stagione.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.2\linewidth]{ER/navigazione/aggiuntastagione.png}
+	\caption{Schema di navigazione - Aggiunta di nuova stagione per serie TV}
+\end{figure}
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|llll|}
+		\hline
+		\rowcolor[HTML]{CBCEFB}
+		Concetto 		& Costrutto & Accesso 	& Tipo                              \\ \hline
+		SERIE   		& E     	& 1       	& L                                 \\ \hline
+		STAGIONE 		& E         & 1       	& S                                 \\ \hline
+		EPISODIO 		& E         & 1       	& S                                 \\ \hline
+		compSerie 		& R         & 1       	& S                                 \\ \hline
+		compStagione	& R         & 1       	& S                                 \\ \hline
+		\rowcolor[HTML]{CBCEFB}
+		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1L+4S} \\ \hline
+	\end{tabular}
+\end{table}
+
+\subsection{Aggiunta di un nuovo episodio per una specifica stagione di una serie TV. (Op. 4.6)} \label{ss:op46}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.2\linewidth]{ER/navigazione/aggiuntaepisodio.png}
+	\caption{Schema di navigazione - Aggiunta di nuovo episodio per stagione serie TV.}
+\end{figure}
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|llll|}
+		\hline
+		\rowcolor[HTML]{CBCEFB}
+		Concetto 		& Costrutto & Accesso 	& Tipo                              \\ \hline
+		STAGIONE 		& E         & 1       	& L                                 \\ \hline
+		EPISODIO 		& E         & 1       	& S                                 \\ \hline
+		compStagione	& R         & 1       	& S                                 \\ \hline
+		\rowcolor[HTML]{CBCEFB}
+		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1L+2S} \\ \hline
 	\end{tabular}
 \end{table}
 
