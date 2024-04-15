@@ -1,4 +1,4 @@
-package unibo.cineradar.controller.security;
+package unibo.cineradar.utilities.security;
 
 import java.security.NoSuchAlgorithmException;
 

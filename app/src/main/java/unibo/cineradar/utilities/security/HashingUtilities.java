@@ -1,4 +1,4 @@
-package unibo.cineradar.controller.security;
+package unibo.cineradar.utilities.security;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -6,7 +6,10 @@ import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.codec.binary.Hex;
 
-final class HashingUtilities {
+/**
+ * Utilities for hashing passwords.
+ */
+public final class HashingUtilities {
     private static final byte[] SALT = {127, 54, 36, 102, 19, 81, 42, 89, 30, 28, 77, 95, 13, 14, 114, 62};
 
     private HashingUtilities() {
@@ -21,8 +24,16 @@ final class HashingUtilities {
         return digester.digest(plain.getBytes(StandardCharsets.UTF_8));
     }
 
-    static String getHashedString(final String plainText,
-                                  final HashingAlgorithm algorithm) throws NoSuchAlgorithmException {
+    /**
+     * Gets the hashed string using the preferred algorithm.
+     *
+     * @param plainText The plain text to hash.
+     * @param algorithm The algorithm used to hash the plain text.
+     * @return An hashed string of the plain text
+     * @throws NoSuchAlgorithmException Exception thrown if the algorithm is not recognized.
+     */
+    public static String getHashedString(final String plainText,
+                                         final HashingAlgorithm algorithm) throws NoSuchAlgorithmException {
         final byte[] hashedBytes = createHash(plainText, algorithm, SALT);
         return Hex.encodeHexString(hashedBytes);
     }

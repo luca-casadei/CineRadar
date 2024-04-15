@@ -1,0 +1,72 @@
+package unibo.cineradar.controller;
+
+import unibo.cineradar.controller.login.LoginController;
+import unibo.cineradar.model.SessionContext;
+import unibo.cineradar.model.login.LoginType;
+import unibo.cineradar.model.utente.Account;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+/**
+ * Main controller of the application, containing the context of the session.
+ */
+public final class SessionController {
+    private final SessionContext sessionContext;
+    private final LoginController loginController;
+
+    /**
+     * Constructs a session.
+     *
+     * @param username The username author of the session.
+     * @param password The password used to log in.
+     */
+    public SessionController(final String username, final String password) {
+        this.loginController = new LoginController();
+        final Optional<Account> currentAccount = this.loginController.login(username, password);
+        this.sessionContext = currentAccount.map(SessionContext::new).orElse(null);
+    }
+
+    /**
+     * Gets the login controller of the session.
+     *
+     * @return The login controller of the session.
+     */
+    public LoginController getLoginController() {
+        return this.loginController;
+    }
+
+    /**
+     * Returns the details of the current logged user.
+     *
+     * @return A list containing the details of the current logged account.
+     */
+    public List<String> getAccountDetails() {
+        final List<String> accountDetails = new ArrayList<>();
+        final Account account = this.sessionContext.getCurrentlyLoggedAccount();
+        accountDetails.add(account.getUsername());
+        accountDetails.add(account.getNome());
+        accountDetails.add(account.getCognome());
+        return List.copyOf(accountDetails);
+    }
+
+    /**
+     * Gets the type of the account to be used for casting.
+     *
+     * @return An instance of a LoginType choice.
+     */
+    public LoginType getUserType() {
+        return this.sessionContext.getUserType();
+    }
+
+    /**
+     * Checks the status of the session.
+     *
+     * @return True if the connection is successful, false otherwise.
+     */
+    public boolean sessionStatus() {
+        return !Objects.isNull(this.sessionContext);
+    }
+}
