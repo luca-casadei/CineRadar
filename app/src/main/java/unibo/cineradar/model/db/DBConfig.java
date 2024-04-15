@@ -1,5 +1,8 @@
 package unibo.cineradar.model.db;
 
+/**
+ * Utility class to contain DB connection strings.
+ */
 public final class DBConfig {
     private static final String DB_SERVER = "casadei.ddns.net";
     private static final String LOCALHOST = "localhost";

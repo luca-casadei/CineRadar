@@ -5,8 +5,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public final class DBManager implements AutoCloseable {
@@ -47,8 +45,11 @@ public final class DBManager implements AutoCloseable {
             final PreparedStatement statement = dbConnection.prepareStatement(query);
             statement.setString(1, username);
             final ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            result = resultSet.getString(1);
+            if (resultSet.next()) {
+                result = resultSet.getString(1);
+            } else {
+                result = "";
+            }
         } catch (SQLException ex) {
             result = "";
         }
@@ -60,8 +61,8 @@ public final class DBManager implements AutoCloseable {
         Objects.requireNonNull(this.dbConnection);
         try {
             this.dbConnection.close();
-        } catch (SQLException ex) {
-            throw new RuntimeException();
+        } catch (SQLException ignored) {
+
         }
     }
 }

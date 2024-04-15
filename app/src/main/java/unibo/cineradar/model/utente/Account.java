@@ -1,6 +1,6 @@
 package unibo.cineradar.model.utente;
 
-public abstract class Account {
+public class Account {
     private final String username;
     private final String password;
     private final String nome;
