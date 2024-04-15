@@ -25,6 +25,8 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.11.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("commons-codec:commons-codec:1.16.1")
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.3.3")
+    testImplementation("org.slf4j:slf4j-simple:2.0.13")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
