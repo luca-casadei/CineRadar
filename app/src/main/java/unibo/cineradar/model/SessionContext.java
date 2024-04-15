@@ -15,10 +15,15 @@ public final class SessionContext {
      */
     public SessionContext(final Account currentlyLoggedAccount) {
         this.currentlyLoggedAccount = currentlyLoggedAccount;
-        placeHolder();
     }
 
-    private void placeHolder() {
-        throw new UnsupportedOperationException(this.currentlyLoggedAccount.toString());
+    /**
+     * Gets the currently logged account.
+     *
+     * @return The instance of the currently logged account.
+     */
+    public Account getCurrentlyLoggedAccount() {
+        return this.currentlyLoggedAccount;
     }
+
 }
