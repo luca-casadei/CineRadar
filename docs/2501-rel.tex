@@ -1424,7 +1424,7 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 
 \section{Vincoli Intra-Relazionali}
 \begin{itemize}
-	\item GENERE:
+	\item GENERI:
 	\begin{itemize}
 		\item Vincoli di Dominio:
 			\begin{itemize}
@@ -1445,7 +1445,7 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: Codice
 	\end{itemize}
-	\item Film:
+	\item FILM:
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
@@ -1457,6 +1457,12 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: Codice
+	\end{itemize}
+	\item CATEGORIZZAZIONE FILM:
+	\begin{itemize}
+		\item Vincoli di Dominio: Nessuno
+		\item Vincoli di Tupla: Nessuno
+		\item Vincoli di Chiave: NomeGenere, Codice
 	\end{itemize}
 \end{itemize}
 \subsection{Vincoli di Integritá Referenziale}
