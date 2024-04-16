@@ -1643,7 +1643,7 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: CodicePromo, Scadenza, CodiceCinema, UsernameUtente
 	\end{itemize}
-	\item RECSERIE
+	\item RECSERIE:
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
@@ -1652,6 +1652,12 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: UsernameUtente, CodiceSerie
+	\end{itemize}
+	\item SEZIONAMENTI SERIE:
+	\begin{itemize}
+		\item Vincoli di Dominio: Nessuno
+		\item Vincoli di Tupla: Nessuno
+		\item Vincoli di Chiave: NomeSezione, UsernameUtente, CodiceRecSerie
 	\end{itemize}
 \end{itemize}
 \subsection{Vincoli di Integritá Referenziale}
