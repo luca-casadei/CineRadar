@@ -1422,6 +1422,23 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\item \textbf{RICHIESTA}(\underline{Numero}, Tipo, Titolo, AnnoUscita, Descrizione, Chiusa, UsernameUtente:UTENTE)
 \end{itemize}
 
+\section{Vincoli Intra-Relazionali}
+\begin{itemize}
+	\item GENERE:
+	\begin{itemize}
+		\item Vincoli di Dominio:
+			\begin{itemize}
+				\item Nome: stringa (non vuota)
+				\item Descrizione: stringa
+				\item NumeroVisualizzati: intero non negativo
+			\end{itemize}
+		\item Vincoli di Tupla: Nessuno
+		\item Vincoli di Chiave: Nome
+	\end{itemize}
+\end{itemize}
+\subsection{Vincoli di Integritá Referenziale}
+\todo{TBD}
+
 \section{Schema relazionale finale}
 \todo{TBD}
 \section{Traduzione delle operazioni in query SQL}
