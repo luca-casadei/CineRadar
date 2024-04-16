@@ -1530,6 +1530,21 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: CodiceTemplatePromo, Scadenza
 	\end{itemize}
+	\item SINGOLI:
+	\begin{itemize}
+		\item Vincoli di Dominio: Nessuno
+		\item Vincoli di Tupla: Nessuno
+		\item Vincoli di Chiave: CodiceTemplatePromo, CodiceSerie, CodiceFilm
+	\end{itemize}
+	\item MULTIPLI:
+	\begin{itemize}
+		\item Vincoli di Dominio:
+		\begin{itemize}
+			\item CodiceTemplatePromo: stringa (non vuota)
+		\end{itemize}
+		\item Vincoli di Tupla: Nessuno
+		\item Vincoli di Chiave: CodiceTemplatePromo
+	\end{itemize}
 \end{itemize}
 \subsection{Vincoli di Integritá Referenziale}
 \todo{TBD}
