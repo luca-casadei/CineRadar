@@ -1565,6 +1565,45 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: Codice
 	\end{itemize}
+	\item ACCOUNT:
+	\begin{itemize}
+		\item Vincoli di Dominio:
+		\begin{itemize}
+			\item Username: stringa (non vuota)
+			\item Password: stringa
+			\item Nome: stringa
+			\item Cognome: stringa
+		\end{itemize}
+		\item Vincoli di Tupla: Nessuno
+		\item Vincoli di Chiave: Username
+	\end{itemize}
+	\item UTENTI:
+	\begin{itemize}
+		\item Vincoli di Dominio:
+		\begin{itemize}
+			\item DataNascita: data
+		\end{itemize}
+		\item Vincoli di Tupla: Nessuno
+		\item Vincoli di Chiave: Username
+	\end{itemize}
+	\item AMMINISTRATORI:
+	\begin{itemize}
+		\item Vincoli di Dominio:
+		\begin{itemize}
+			\item NumeroTelefono: stringa
+		\end{itemize}
+		\item Vincoli di Tupla: Nessuno
+		\item Vincoli di Chiave: Username
+	\end{itemize}
+	\item REGISTRATORI:
+	\begin{itemize}
+		\item Vincoli di Dominio:
+		\begin{itemize}
+			\item EmailCinema: stringa
+		\end{itemize}
+		\item Vincoli di Tupla: Nessuno
+		\item Vincoli di Chiave: Username
+	\end{itemize}
 \end{itemize}
 \subsection{Vincoli di Integritá Referenziale}
 \todo{TBD}
