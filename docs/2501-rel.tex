@@ -1373,53 +1373,53 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 
 \subsection{Schema logico}
 \begin{itemize} % Ho lasciato gli spazi per poter suddividere meglio a vista le varie "categorie" di Entità.
-	\item \textbf{GENERE}(\underline{Nome}, Descrizione, NumeroVisualizzati)
+	\item \textbf{GENERI}(\underline{Nome}, Descrizione, NumeroVisualizzati)
 	
 	\item \textbf{CAST}(\underline{Codice}, Nome*)
 	
 	\item \textbf{FILM}(\underline{Codice}, Titolo, EtaLimite, Trama, Durata, CodiceCast:CAST)
-	\item \textbf{CATEGORIZZAZIONE{\_}FILM}(\underline{NomeGenere}:GENERE, \underline{CodiceFilm}:FILM)
+	\item \textbf{CATEGORIZZAZIONI{\_}FILM}(\underline{NomeGenere}:GENERE, \underline{CodiceFilm}:FILM)
 	
 	\item \textbf{SERIE}(\underline{Codice}, Titolo, EtaLimite, Trama, DurataComplessiva, NumeroEpisodi)
-	\item \textbf{STAGIONE}(\underline{CodiceSerie}:SERIE, \underline{NumeroStagione}, Sunto, CodiceCast:CAST)
-	\item \textbf{EPISODIO}(\underline{CodiceSerie}:STAGIONE, \underline{NumeroStagione}:STAGIONE, \underline{NumeroEpisodio}, DurataMin)
-	\item \textbf{CATEGORIZZAZIONE{\_}SERIE}(\underline{NomeGenere}:GENERE, \underline{CodiceSerie}:SERIE)
+	\item \textbf{STAGIONI}(\underline{CodiceSerie}:SERIE, \underline{NumeroStagione}, Sunto, CodiceCast:CAST)
+	\item \textbf{EPISODI}(\underline{CodiceSerie}:STAGIONE, \underline{NumeroStagione}:STAGIONE, \underline{NumeroEpisodi}, DurataMin)
+	\item \textbf{CATEGORIZZAZIONI{\_}SERIE}(\underline{NomeGenere}:GENERE, \underline{CodiceSerie}:SERIE)
 	
-	\item \textbf{SEZIONE}(\underline{Nome}, Dettaglio)
+	\item \textbf{SEZIONI}(\underline{Nome}, Dettaglio)
 	
 	\item \textbf{TEMPLATEPROMO}(\underline{CodicePromo}, PercentualeSconto)
 	\item \textbf{PROMO}(\underline{CodiceTemplatePromo}:TEMPLATEPROMO, \underline{Scadenza})
-	\item \textbf{SINGOLO}(\underline{CodiceTemplatePromo}:TEMPLATEPROMO, CodiceSerie:SERIE, CodiceFilm:FILM)
-	\item \textbf{MULTIPLO}(\underline{CodiceTemplatePromo}:TEMPLATEPROMO)
+	\item \textbf{SINGOLI}(\underline{CodiceTemplatePromo}:TEMPLATEPROMO, CodiceSerie:SERIE, CodiceFilm:FILM)
+	\item \textbf{MULTIPLI}(\underline{CodiceTemplatePromo}:TEMPLATEPROMO)
 	\item \textbf{PROMO{\_}GENERE}(\underline{NomeGenere}:GENERE, \underline{CodiceTemplateMultiplo}:MULTIPLO)
 	
 	\item \textbf{CINEMA}(\underline{Codice}, Nome, Ind{\_}Via, Ind{\_}CAP, Ind{\_}Civico, Ind{\_}Citta)
 	
 	\item \textbf{ACCOUNT}(\underline{Username}, Password, Nome, Cognome)
-	\item \textbf{UTENTE}(\underline{Username}:ACCOUNT, TargaPremio*, DataNascita)
-	\item \textbf{AMMINISTRATORE}(\underline{Username}:ACCOUNT, NumeroTelefono)
-	\item \textbf{REGISTRATORE}(\underline{Username}:ACCOUNT, EmailCinema*, CodiceCinema:CINEMA)
+	\item \textbf{UTENTI}(\underline{Username}:ACCOUNT, TargaPremio*, DataNascita)
+	\item \textbf{AMMINISTRATORI}(\underline{Username}:ACCOUNT, NumeroTelefono)
+	\item \textbf{REGISTRATORI}(\underline{Username}:ACCOUNT, EmailCinema*, CodiceCinema:CINEMA)
 	
-	\item \textbf{MEMBROCAST}(\underline{Codice}, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera*, NomeArte*)
-	\item \textbf{PARTECIPAZIONE{\_}CAST}(\underline{CodiceMembro}:MEMBROCAST, \underline{CodiceCast}:CAST)
+	\item \textbf{MEMBRICAST}(\underline{Codice}, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera*, NomeArte*)
+	\item \textbf{PARTECIPAZIONI{\_}CAST}(\underline{CodiceMembro}:MEMBROCAST, \underline{CodiceCast}:CAST)
 	
-	\item \textbf{PREFERENZA}(\underline{NomeGenere}:GENERE, \underline{UsernameUtente}:UTENTE)
+	\item \textbf{PREFERENZE}(\underline{NomeGenere}:GENERE, \underline{UsernameUtente}:UTENTE)
 	
-	\item \textbf{TESSERA}(\underline{CodiceCinema}:CINEMA, \underline{UsernameUtente}:UTENTE, NumeroTessera, DataRinnovo)
+	\item \textbf{TESSERE}(\underline{CodiceCinema}:CINEMA, \underline{UsernameUtente}:UTENTE, NumeroTessera, DataRinnovo)
 	\item \textbf{PREMI{\_}TESSERA}(\underline{CodicePromo}:PROMO, \underline{Scadenza}:PROMO, \underline{CodiceCinema}:TESSERA, \underline{UsernameUtente}:TESSERA)
 	
 	\item \textbf{RECSERIE}(\underline{UsernameUtente}:UTENTE, \underline{CodiceSerie}:SERIE, Titolo, Descrizione)
-	\item \textbf{SEZIONAMENTO{\_}SERIE}(\underline{NomeSezione}:SEZIONE, \underline{UsernameUtente}:RECSERIE, \underline{CodiceRecSerie}:RECSERIE, Voto)
-	\item \textbf{VALUTAZIONE{\_}SERIE}(\underline{UsernameUtenteValutato}:RECSERIE, \underline{CodiceRecSerie}:RECSERIE, \underline{UsernameUtente}:UTENTE, Positiva)
+	\item \textbf{SEZIONAMENTI{\_}SERIE}(\underline{NomeSezione}:SEZIONE, \underline{UsernameUtente}:RECSERIE, \underline{CodiceRecSerie}:RECSERIE, Voto)
+	\item \textbf{VALUTAZIONI{\_}SERIE}(\underline{UsernameUtenteValutato}:RECSERIE, \underline{CodiceRecSerie}:RECSERIE, \underline{UsernameUtente}:UTENTE, Positiva)
 	
 	\item \textbf{RECFILM}(\underline{UsernameUtente}:UTENTE, \underline{CodiceFilm}:FILM, Titolo, Descrizione, VotoComplessivo)
-	\item \textbf{SEZIONAMENTO{\_}FILM}(\underline{UsernameUtente}:RECFILM, \underline{CodiceRecFilm}:RECFILM, \underline{NomeSezione}:SEZIONE, Voto)
-	\item \textbf{VALUTAZIONE{\_}FILM}(\underline{UsernameUtenteValutato}:RECFILM, \underline{CodiceRecFilm}:RECFILM, \underline{UsernameUtente}:UTENTE, Positiva)
+	\item \textbf{SEZIONAMENTI{\_}FILM}(\underline{UsernameUtente}:RECFILM, \underline{CodiceRecFilm}:RECFILM, \underline{NomeSezione}:SEZIONE, Voto)
+	\item \textbf{VALUTAZIONI{\_}FILM}(\underline{UsernameUtenteValutato}:RECFILM, \underline{CodiceRecFilm}:RECFILM, \underline{UsernameUtente}:UTENTE, Positiva)
 	
 	\item \textbf{VISUALIZZAZIONI{\_}EPISODIO}(\underline{UsernameUtente}:UTENTE, \underline{CodiceSerie}:EPISODIO, \underline{NumeroEpisodio}:EPISODIO, \underline{NumeroStagione}:EPISODIO, Data)
 	\item \textbf{VISUALIZZAZIONI{\_}FILM}(\underline{CodiceFilm}:FILM, \underline{UsernameUtente}:UTENTE)
 	
-	\item \textbf{RICHIESTA}(\underline{Numero}, Tipo, Titolo, AnnoUscita, Descrizione, Chiusa, UsernameUtente:UTENTE)
+	\item \textbf{RICHIESTE}(\underline{Numero}, Tipo, Titolo, AnnoUscita, Descrizione, Chiusa, UsernameUtente:UTENTE)
 \end{itemize}
 
 \section{Vincoli Intra-Relazionali}
@@ -1451,7 +1451,7 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 		\begin{itemize}
 			\item Codice: stringa (non vuota)
 			\item Titolo: stringa
-			\item EtaLimite: intero non negativo
+			\item EtaLimite: intero positivo
 			\item Trama: stringa
 			\item Durata: intero positivo
 		\end{itemize}
@@ -1470,7 +1470,7 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 		\begin{itemize}
 			\item Codice: stringa (non vuota)
 			\item Titolo: stringa
-			\item EtaLimite: intero non negativo
+			\item EtaLimite: intero positivo
 			\item Trama: stringa
 			\item DurataComplessiva: intero positivo
 			\item NumeroEpisodi: intero positivo
@@ -1582,6 +1582,7 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 		\item Vincoli di Dominio:
 		\begin{itemize}
 			\item DataNascita: data
+			\item TargaPremio: booleano
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: Username
@@ -1608,9 +1609,13 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
+			\item Nome: stringa
+			\item Cognome: stringa
 			\item DataNascita: data
 			\item TipoAttore: stringa
 			\item TipoRegista: stringa
+			\item DataDebuttoCarriera: data
+			\item NomeArte: stringa
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: Codice
@@ -1655,13 +1660,19 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\end{itemize}
 	\item SEZIONAMENTI SERIE:
 	\begin{itemize}
-		\item Vincoli di Dominio: Nessuno
+		\item Vincoli di Dominio:
+		\begin{itemize}
+			\item Voto: intero compreso tra 1 e 5
+		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: NomeSezione, UsernameUtente, CodiceRecSerie
 	\end{itemize}
 	\item VALUTAZIONI SERIE:
 	\begin{itemize}
-		\item Vincoli di Dominio: Nessuno
+		\item Vincoli di Dominio:
+		\begin{itemize}
+			\item Positiva: booleano
+		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: UsernameUtenteValutato, CodiceRecSerie, UsernameUtente
 	\end{itemize}
@@ -1678,13 +1689,19 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\end{itemize}
 	\item SEZIONAMENTI FILM:
 	\begin{itemize}
-		\item Vincoli di Dominio: Nessuno
+		\item Vincoli di Dominio:
+		\begin{itemize}
+			\item Voto: intero compreso tra 1 e 5
+		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: UsernameUtente, CodiceRecFilm, NomeSezione
 	\end{itemize}
 	\item VALUTAZIONI FILM:
 	\begin{itemize}
-		\item Vincoli di Dominio: Nessuno
+		\item Vincoli di Dominio:
+		\begin{itemize}
+			\item Positiva: booleano
+		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: UsernameUtenteValutato, CodiceRecFilm, UsernameUtente
 	\end{itemize}
@@ -1708,6 +1725,8 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 		\item Vincoli di Dominio:
 		\begin{itemize}
 			\item Numero: intero positivo
+			\item Tipo: stringa
+			\item Titolo: stringa
 			\item AnnoUscita: intero positivo
 			\item Descrizione: stringa
 			\item Chiusa: booleano
