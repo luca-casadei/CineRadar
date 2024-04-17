@@ -32,6 +32,22 @@ public final class ViewUtilities {
      * The default path of images.
      */
     public static final String DEFAULT_IMAGE_PATH = "unibo/cineradar/images";
+    /**
+     * Five graphical points.
+     */
+    public static final int FIVE_PTS = 5;
+    /**
+     * Ten graphical points.
+     */
+    public static final int TEN_PTS = 10;
+    /**
+     * Twenty graphical points.
+     */
+    public static final int TWENTY_PTS = 20;
+    /**
+     * Zero graphical points.
+     */
+    public static final int NO_PTS = 0;
 
     private ViewUtilities() {
 

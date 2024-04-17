@@ -2,7 +2,7 @@ package unibo.cineradar.model;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import unibo.cineradar.model.utente.Amministratore;
+import unibo.cineradar.model.utente.Administrator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -12,12 +12,12 @@ class TestSessionContext {
 
     @BeforeAll
     static void setUpContext() {
-        session = new SessionContext(new Amministratore("test", "Test", "Testing"));
+        session = new SessionContext(new Administrator("test", "Test", "Testing"));
     }
 
     @Test
     void notNull() {
         assertNotNull(session);
-        assertEquals("Testing", session.getCurrentlyLoggedAccount().getCognome());
+        assertEquals("Testing", session.getCurrentlyLoggedAccount().getLastName());
     }
 }

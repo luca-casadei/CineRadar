@@ -1,11 +1,12 @@
 package unibo.cineradar.view;
 
+import unibo.cineradar.model.db.DBManager;
 import unibo.cineradar.view.utilities.ViewUtilities;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -22,10 +23,9 @@ import java.awt.Toolkit;
 /**
  * The view managing the login page to the application.
  */
-public final class LogInView implements CineRadarViewComponent {
+public final class LogInView extends CineRadarViewFrameImpl {
     private static final int SCREEN_AUGMENT_FACTOR_FOR_MINIMUM = 500;
     private static final int TOP_DOWN_MARGIN = 50;
-    private final JFrame loginFrame;
     private final JTextField usernameField = new JTextField();
     private final JPasswordField passwordField = new JPasswordField();
     private final JLabel statusLabel = new JLabel();
@@ -35,21 +35,42 @@ public final class LogInView implements CineRadarViewComponent {
      * Constructs the main frame of this view component.
      */
     public LogInView() {
+        super();
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        this.loginFrame = new JFrame();
 
         //Size setting
-        this.loginFrame.setSize(screenSize.width / ViewUtilities.FRAME_SIZE_FACTOR, screenSize.height
+        this.getMainFrame().setSize(screenSize.width / ViewUtilities.FRAME_SIZE_FACTOR, screenSize.height
                 / ViewUtilities.FRAME_SIZE_FACTOR);
-        this.loginFrame.setMinimumSize(new Dimension((screenSize.width + SCREEN_AUGMENT_FACTOR_FOR_MINIMUM)
+        this.getMainFrame().setMinimumSize(new Dimension((screenSize.width + SCREEN_AUGMENT_FACTOR_FOR_MINIMUM)
                 / (ViewUtilities.FRAME_SIZE_FACTOR * 2), (screenSize.height + SCREEN_AUGMENT_FACTOR_FOR_MINIMUM)
                 / (ViewUtilities.FRAME_SIZE_FACTOR * 2)));
 
         //Title
-        this.loginFrame.setTitle(ViewUtilities.LOGIN_FRAME_TITLE);
+        this.getMainFrame().setTitle(ViewUtilities.LOGIN_FRAME_TITLE);
         //Close on exit.
-        this.loginFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.getMainFrame().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setInternalComponents();
+    }
+
+    @Override
+    public void display() {
+        this.getMainFrame().setVisible(true);
+        this.testDBConnection();
+    }
+
+    private void testDBConnection() {
+        this.disableEveryInternalComponent();
+        try (DBManager mgr = new DBManager()) {
+            if (!mgr.hasConnectionSucceeded()) {
+                JOptionPane.showMessageDialog(this.getMainFrame(),
+                        "Connessione al database non riuscita, l'applicazione verra' chiusa.",
+                        "ERRORE DI CONNESSIONE AL DB",
+                        JOptionPane.ERROR_MESSAGE);
+                this.destroy();
+            } else {
+                this.enableEveryInternalComponent();
+            }
+        }
     }
 
     private void setInternalComponents() {
@@ -96,19 +117,7 @@ public final class LogInView implements CineRadarViewComponent {
         gbc.ipadx = 100;
         ViewUtilities.setGridBagConstraints(gbc, 0, 3, 2, 1,
                 new Insets(10 * 2, 0, 0, 0));
-        final JButton loginButton = new JButton("Login");
-        loginButton.addActionListener(e -> {
-            this.context = new ViewContext(usernameField.getText(), new String(passwordField.getPassword()));
-            if (context.getController().sessionStatus()) {
-                this.statusLabel.setForeground(Color.BLUE);
-                this.statusLabel.setText("AUTHORIZED");
-            } else {
-                statusLabel.setForeground(Color.RED);
-                statusLabel.setText("UNAUTHORIZED");
-                passwordField.setText("");
-                usernameField.setText("");
-            }
-        });
+        final JButton loginButton = createLoginButton();
         contentPane.add(loginButton, gbc);
 
         //Row 4 - Col 0-1 Status
@@ -118,17 +127,24 @@ public final class LogInView implements CineRadarViewComponent {
         statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
         contentPane.add(statusLabel, gbc);
 
-        this.loginFrame.setContentPane(contentPane);
+        this.getMainFrame().setContentPane(contentPane);
+        this.getMainFrame().pack();
     }
 
-    @Override
-    public void display() {
-        this.loginFrame.pack();
-        this.loginFrame.setVisible(true);
-    }
-
-    @Override
-    public void destroy() {
-        this.loginFrame.dispose();
+    private JButton createLoginButton() {
+        final JButton loginButton = new JButton("Login");
+        loginButton.addActionListener(e -> {
+            this.context = new ViewContext(usernameField.getText(), new String(passwordField.getPassword()));
+            if (context.getController().sessionStatus()) {
+                this.statusLabel.setForeground(Color.BLUE);
+                this.statusLabel.setText("AUTORIZZATO");
+            } else {
+                statusLabel.setForeground(Color.RED);
+                statusLabel.setText("NON AUTORIZZATO");
+                passwordField.setText("");
+                usernameField.setText("");
+            }
+        });
+        return loginButton;
     }
 }

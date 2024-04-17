@@ -4,7 +4,7 @@ import unibo.cineradar.utilities.security.HashingAlgorithm;
 import unibo.cineradar.utilities.security.PasswordChecker;
 import unibo.cineradar.model.db.DBManager;
 import unibo.cineradar.model.utente.Account;
-import unibo.cineradar.model.utente.Amministratore;
+import unibo.cineradar.model.utente.Administrator;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,10 +32,10 @@ public final class Logger {
             if (gotPassword.isPresent()
                     && new PasswordChecker(HashingAlgorithm.SHA_512)
                     .checkPassword(password, gotPassword.get())) {
-                final List<String> admDetails = mgr.getAdministrationDetails(username);
                 switch (type) {
                     case ADMINISTRATION -> {
-                        return Optional.of(new Amministratore(
+                        final List<String> admDetails = mgr.getAdministrationDetails(username);
+                        return Optional.of(new Administrator(
                                 admDetails.get(0),
                                 admDetails.get(1),
                                 admDetails.get(2),

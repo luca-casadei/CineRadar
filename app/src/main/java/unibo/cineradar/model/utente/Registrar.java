@@ -5,7 +5,7 @@ import unibo.cineradar.model.cinema.Cinema;
 /**
  * The class of the registration account.
  */
-public final class Registratore extends Account {
+public final class Registrar extends Account {
     private final String emailCinema;
     private final Cinema cinema;
 
@@ -13,17 +13,17 @@ public final class Registratore extends Account {
      * Constructs a registration account.
      *
      * @param username    The username of the account.
-     * @param nome        The name of the account.
-     * @param cognome     The last name of the account.
+     * @param name        The name of the account.
+     * @param lastName    The last name of the account.
      * @param emailCinema The email associated with the cinema.
      * @param cinema      The cinema instance.
      */
-    public Registratore(final String username,
-                        final String nome,
-                        final String cognome,
-                        final String emailCinema,
-                        final Cinema cinema) {
-        super(username, nome, cognome);
+    public Registrar(final String username,
+                     final String name,
+                     final String lastName,
+                     final String emailCinema,
+                     final Cinema cinema) {
+        super(username, name, lastName);
         this.emailCinema = emailCinema;
         this.cinema = cinema;
     }
@@ -38,9 +38,9 @@ public final class Registratore extends Account {
     }
 
     /**
-     * Gets the cinema associated with the registrator.
+     * Gets the cinema associated with the registration.
      *
-     * @return The instance of the cinema associated with the registrator.
+     * @return The instance of the cinema associated with the registration.
      */
     public Cinema getCinema() {
         return cinema;

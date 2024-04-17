@@ -47,8 +47,8 @@ public final class SessionController {
         final List<String> accountDetails = new ArrayList<>();
         final Account account = this.sessionContext.getCurrentlyLoggedAccount();
         accountDetails.add(account.getUsername());
-        accountDetails.add(account.getNome());
-        accountDetails.add(account.getCognome());
+        accountDetails.add(account.getName());
+        accountDetails.add(account.getLastName());
         return List.copyOf(accountDetails);
     }
 

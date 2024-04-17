@@ -22,11 +22,10 @@ public final class DBManager implements AutoCloseable {
      * The constructor of the database management class.
      */
     public DBManager() {
-        Connection tmpDbConn;
+        Connection tmpDbConn = null;
         try {
             tmpDbConn = this.getDbConnection();
-        } catch (SQLException e) {
-            throw (IllegalStateException) new IllegalStateException().initCause(e);
+        } catch (SQLException ignored) {
         }
         this.dbConnection = tmpDbConn;
     }
@@ -109,16 +108,22 @@ public final class DBManager implements AutoCloseable {
     @Override
     public void close() {
         try {
-            this.resultSet.close();
+            if (!Objects.isNull(this.resultSet)) {
+                this.resultSet.close();
+            }
         } catch (SQLException ignored) {
         } finally {
             try {
-                this.preparedStatement.close();
+                if (!Objects.isNull(this.preparedStatement)) {
+                    this.preparedStatement.close();
+                }
             } catch (SQLException ignored) {
             } finally {
-                try {
-                    this.dbConnection.close();
-                } catch (SQLException ignored) {
+                if (this.hasConnectionSucceeded()) {
+                    try {
+                        this.dbConnection.close();
+                    } catch (SQLException ignored) {
+                    }
                 }
             }
         }

@@ -4,7 +4,6 @@ import unibo.cineradar.view.utilities.ViewUtilities;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -20,10 +19,9 @@ import java.awt.Toolkit;
 /**
  * The view managing the sign-in page to the application.
  */
-public final class SignInView implements CineRadarViewComponent {
+public final class SignInView extends CineRadarViewFrameImpl {
     private static final int SCREEN_AUGMENT_FACTOR_FOR_MINIMUM = 500;
-    private static final int TOP_DOWN_MARGIN = 50;
-    private final JFrame signinFrame;
+    private static final int TOP_DOWN_MARGIN = ViewUtilities.TEN_PTS * ViewUtilities.FIVE_PTS;
     private final JTextField usernameField = new JTextField();
     private final JTextField firstNameField = new JTextField();
     private final JTextField lastNameField = new JTextField();
@@ -34,20 +32,20 @@ public final class SignInView implements CineRadarViewComponent {
      * Constructs the main frame of this view component.
      */
     public SignInView() {
+        super();
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        this.signinFrame = new JFrame();
         // Size setting
-        this.signinFrame.setSize(screenSize.width / ViewUtilities.FRAME_SIZE_FACTOR,
+        this.getMainFrame().setSize(screenSize.width / ViewUtilities.FRAME_SIZE_FACTOR,
                 screenSize.height / ViewUtilities.FRAME_SIZE_FACTOR);
-        this.signinFrame.setMinimumSize(
+        this.getMainFrame().setMinimumSize(
                 new Dimension((screenSize.width + SCREEN_AUGMENT_FACTOR_FOR_MINIMUM)
                         / (ViewUtilities.FRAME_SIZE_FACTOR * 2),
                         (screenSize.height + SCREEN_AUGMENT_FACTOR_FOR_MINIMUM)
                                 / (ViewUtilities.FRAME_SIZE_FACTOR * 2)));
         // Title
-        this.signinFrame.setTitle(ViewUtilities.SIGNIN_FRAME_TITLE);
+        this.getMainFrame().setTitle(ViewUtilities.SIGNIN_FRAME_TITLE);
         // Close on exit.
-        this.signinFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.getMainFrame().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         setInternalComponents();
     }
@@ -79,37 +77,37 @@ public final class SignInView implements CineRadarViewComponent {
         // Row 1 - Col 1 - First name field
         gridbagConst.ipadx = ViewUtilities.SIGNIN_FRAME_FIELD_WIDTH;
         ViewUtilities.setGridBagConstraints(gridbagConst, 1, 1, 1, 1,
-                new Insets(0, 0, 10, 0));
+                new Insets(ViewUtilities.NO_PTS, ViewUtilities.NO_PTS, ViewUtilities.TEN_PTS, ViewUtilities.NO_PTS));
         contentPane.add(firstNameField, gridbagConst);
 
         // Row 2 - Col 0 - Last name label
-        gridbagConst.ipadx = 0;
-        ViewUtilities.setGridBagConstraints(gridbagConst, 0, 2, 1, 1,
-                new Insets(0, 0, 10, 10));
+        gridbagConst.ipadx = ViewUtilities.NO_PTS;
+        ViewUtilities.setGridBagConstraints(gridbagConst, ViewUtilities.NO_PTS, 2, 1, 1,
+                new Insets(ViewUtilities.NO_PTS, ViewUtilities.NO_PTS, 10, 10));
         contentPane.add(new JLabel("Last name:"), gridbagConst);
 
         // Row 2 - Col 1 - Last name field
         gridbagConst.ipadx = ViewUtilities.SIGNIN_FRAME_FIELD_WIDTH;
         ViewUtilities.setGridBagConstraints(gridbagConst, 1, 2, 1, 1,
-                new Insets(0, 0, 10, 0));
+                new Insets(ViewUtilities.NO_PTS, ViewUtilities.NO_PTS, ViewUtilities.TEN_PTS, ViewUtilities.NO_PTS));
         contentPane.add(lastNameField, gridbagConst);
 
         // Row 3 - Col 0 - Username label
         gridbagConst.ipadx = 0;
         ViewUtilities.setGridBagConstraints(gridbagConst, 0, 3, 1, 1,
-                new Insets(0, 0, 10, 10));
+                new Insets(0, 0, ViewUtilities.TEN_PTS, ViewUtilities.TEN_PTS));
         contentPane.add(new JLabel("Username:"), gridbagConst);
 
         // Row 3 - Col 1 - Username field
         gridbagConst.ipadx = ViewUtilities.SIGNIN_FRAME_FIELD_WIDTH;
         ViewUtilities.setGridBagConstraints(gridbagConst, 1, 3, 1, 1,
-                new Insets(0, 0, 10, 0));
+                new Insets(0, 0, ViewUtilities.TEN_PTS, 0));
         contentPane.add(usernameField, gridbagConst);
 
         // Row 4 - Col 0 - Password label
         gridbagConst.ipadx = 0;
         ViewUtilities.setGridBagConstraints(gridbagConst, 0, 4, 1, 1,
-                new Insets(0, 0, 10, 10));
+                new Insets(0, 0, ViewUtilities.TEN_PTS, ViewUtilities.TEN_PTS));
         contentPane.add(new JLabel("Password:"), gridbagConst);
 
         // Row 4 - Col 1 - Password field
@@ -118,10 +116,9 @@ public final class SignInView implements CineRadarViewComponent {
                 new Insets(0, 0, 10, 0));
         contentPane.add(passwordField, gridbagConst);
 
-        final int confirmPasswordY = 5;
-        final int confirmPasswordIpaX = 50;
+        final int confirmPasswordY = ViewUtilities.FIVE_PTS;
         // Row 5 - Col 0 - Confirm password label
-        gridbagConst.ipadx = confirmPasswordIpaX;
+        gridbagConst.ipadx = ViewUtilities.FIVE_PTS * ViewUtilities.TEN_PTS;
         ViewUtilities.setGridBagConstraints(gridbagConst, 0, confirmPasswordY, 1, 1,
                 new Insets(0, 0, 10, 10));
         contentPane.add(new JLabel("Confirm Password:"), gridbagConst);
@@ -140,17 +137,7 @@ public final class SignInView implements CineRadarViewComponent {
         final JButton signinButton = new JButton("Signin");
         contentPane.add(signinButton, gridbagConst);
 
-        this.signinFrame.setContentPane(contentPane);
-    }
-
-    @Override
-    public void display() {
-        this.signinFrame.pack();
-        this.signinFrame.setVisible(true);
-    }
-
-    @Override
-    public void destroy() {
-        this.signinFrame.dispose();
+        this.getMainFrame().setContentPane(contentPane);
+        this.getMainFrame().pack();
     }
 }
