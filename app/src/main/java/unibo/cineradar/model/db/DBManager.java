@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -67,6 +69,35 @@ public final class DBManager implements AutoCloseable {
                 result = Optional.empty();
             }
             return result;
+        } catch (SQLException ex) {
+            throw (IllegalStateException) new IllegalStateException().initCause(ex);
+        }
+    }
+
+    /**
+     * Gets the details of an administrator given its username.
+     *
+     * @param username The username of the administrator to fetch.
+     * @return A list of details of the retrieved account.
+     */
+    public List<String> getAdministrationDetails(final String username) {
+        Objects.requireNonNull(this.dbConnection);
+        try {
+            final String query = "SELECT amministratore.Username, Nome, Cognome, NumeroTelefono "
+                    + "FROM amministratore JOIN account "
+                    + "ON amministratore.Username = account.Username "
+                    + "WHERE account.Username = ?";
+            final List<String> results = new ArrayList<>();
+            this.preparedStatement = this.dbConnection.prepareStatement(query);
+            this.preparedStatement.setString(1, username);
+            this.resultSet = this.preparedStatement.executeQuery();
+            if (this.resultSet.next()) {
+                results.add(this.resultSet.getString(1));
+                results.add(this.resultSet.getString(2));
+                results.add(this.resultSet.getString(3));
+                results.add(this.resultSet.getString(4));
+            }
+            return List.copyOf(results);
         } catch (SQLException ex) {
             throw (IllegalArgumentException) new IllegalArgumentException().initCause(ex);
         }

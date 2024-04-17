@@ -2,6 +2,9 @@ package unibo.cineradar.controller.security;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import unibo.cineradar.utilities.security.HashingAlgorithm;
+import unibo.cineradar.utilities.security.HashingUtilities;
+import unibo.cineradar.utilities.security.PasswordChecker;
 
 import java.security.NoSuchAlgorithmException;
 

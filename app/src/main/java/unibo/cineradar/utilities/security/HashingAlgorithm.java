@@ -1,4 +1,4 @@
-package unibo.cineradar.controller.security;
+package unibo.cineradar.utilities.security;
 
 /**
  * A list of hashing algorithms to be used for password hashing.

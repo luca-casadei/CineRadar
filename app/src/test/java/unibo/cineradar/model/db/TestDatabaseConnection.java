@@ -4,6 +4,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.security.NoSuchAlgorithmException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -26,7 +28,7 @@ class TestDatabaseConnection {
     }
 
     @Test
-    void testGetQueries() {
+    void testGetQueries() throws NoSuchAlgorithmException {
         final String result = dbMgr.getUserCredentials("admin").get();
         assertEquals("ea6dc907a62197d8b424b12d78b44dbd374fa"
                 + "b1cef45b46897d9b88ebb6a8fa95453b15df2b79a26b8c25f"
