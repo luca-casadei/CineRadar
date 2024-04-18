@@ -25,13 +25,9 @@ public final class PasswordChecker {
      * @return True if the two passwords match, false otherwise.
      */
     public boolean checkPassword(final String password, final String hashedPassword) {
-        try {
-            return HashingUtilities.getHashedString(
-                    password,
-                    this.chosenAlgorithm
-            ).equals(hashedPassword);
-        } catch (NoSuchAlgorithmException exception) {
-            return false;
-        }
+        return HashingUtilities.getHashedString(
+                password,
+                this.chosenAlgorithm
+        ).equals(hashedPassword);
     }
 }

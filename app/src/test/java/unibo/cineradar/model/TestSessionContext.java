@@ -18,6 +18,6 @@ class TestSessionContext {
     @Test
     void notNull() {
         assertNotNull(session);
-        assertEquals("Testing", session.getCurrentlyLoggedAccount().getLastName());
+        assertEquals("Testing", session.currentlyLoggedAccount().getLastName());
     }
 }

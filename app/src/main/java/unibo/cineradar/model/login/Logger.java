@@ -1,11 +1,13 @@
 package unibo.cineradar.model.login;
 
 import unibo.cineradar.utilities.security.HashingAlgorithm;
+import unibo.cineradar.utilities.security.HashingUtilities;
 import unibo.cineradar.utilities.security.PasswordChecker;
 import unibo.cineradar.model.db.DBManager;
 import unibo.cineradar.model.utente.Account;
 import unibo.cineradar.model.utente.Administrator;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +18,20 @@ public final class Logger {
 
     private Logger() {
 
+    }
+
+    public static boolean signIn(final String username,
+                                 final String plainPassword,
+                                 final String name,
+                                 final String surname,
+                                 final Date date) {
+        try (DBManager mgr = new DBManager()) {
+            return mgr.insertUser(username,
+                    HashingUtilities.getHashedString(plainPassword, HashingAlgorithm.SHA_512),
+                    name,
+                    surname,
+                    date);
+        }
     }
 
     /**

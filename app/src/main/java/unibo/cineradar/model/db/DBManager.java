@@ -1,6 +1,7 @@
 package unibo.cineradar.model.db;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,14 +25,29 @@ public final class DBManager implements AutoCloseable {
     public DBManager() {
         Connection tmpDbConn = null;
         try {
+            DriverManager.setLoginTimeout(1);
             tmpDbConn = this.getDbConnection();
         } catch (SQLException ignored) {
+            try {
+                DriverManager.setLoginTimeout(5);
+                tmpDbConn = this.getFallBackDbConnection();
+            } catch (SQLException ignored1) {
+            }
         }
         this.dbConnection = tmpDbConn;
     }
 
     private Connection getDbConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mariadb://"
+        return DriverManager.getConnection(DBConfig.getMainConnectionString()
+                + DBConfig.getLocalhost()
+                + ":" + DBConfig.getPort()
+                + "/" + DBConfig.getDBName()
+                + "?user=" + DBConfig.getUsername()
+                + "&password=" + DBConfig.getPassword());
+    }
+
+    private Connection getFallBackDbConnection() throws SQLException {
+        return DriverManager.getConnection(DBConfig.getMainConnectionString()
                 + DBConfig.getDbServer()
                 + ":" + DBConfig.getPort()
                 + "/" + DBConfig.getDBName()
@@ -69,7 +85,7 @@ public final class DBManager implements AutoCloseable {
             }
             return result;
         } catch (SQLException ex) {
-            throw (IllegalStateException) new IllegalStateException().initCause(ex);
+            throw new IllegalStateException(ex);
         }
     }
 
@@ -98,8 +114,28 @@ public final class DBManager implements AutoCloseable {
             }
             return List.copyOf(results);
         } catch (SQLException ex) {
-            throw (IllegalArgumentException) new IllegalArgumentException().initCause(ex);
+            throw new IllegalArgumentException(ex);
         }
+    }
+
+    public boolean insertUser(final String username,
+                              final String password,
+                              final String name,
+                              final String surname,
+                              final Date birthDate) {
+        Objects.requireNonNull(this.dbConnection);
+        try {
+            final String query = "INSERT INTO account(Username, Password, Name, Surname) VALUES(?, ?, ?, ?)";
+            this.preparedStatement = this.dbConnection.prepareStatement(query);
+            this.preparedStatement.setString(1, username);
+            this.preparedStatement.setString(2, password);
+            this.preparedStatement.setString(3, name);
+            this.preparedStatement.setString(4, surname);
+            this.preparedStatement.executeQuery();
+        } catch (SQLException ex) {
+            return false;
+        }
+        return true;
     }
 
     /**

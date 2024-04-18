@@ -9,16 +9,13 @@ import unibo.cineradar.model.utente.User;
 /**
  * Saves the current session when logged in.
  */
-public final class SessionContext {
-    private final Account currentlyLoggedAccount;
-
+public record SessionContext(Account currentlyLoggedAccount) {
     /**
      * The current session constructor.
      *
      * @param currentlyLoggedAccount The account author of the session.
      */
-    public SessionContext(final Account currentlyLoggedAccount) {
-        this.currentlyLoggedAccount = currentlyLoggedAccount;
+    public SessionContext {
     }
 
     /**
@@ -43,7 +40,8 @@ public final class SessionContext {
      *
      * @return The instance of the currently logged account.
      */
-    public Account getCurrentlyLoggedAccount() {
+    @Override
+    public Account currentlyLoggedAccount() {
         return this.currentlyLoggedAccount;
     }
 

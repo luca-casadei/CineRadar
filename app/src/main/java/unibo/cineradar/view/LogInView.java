@@ -13,12 +13,15 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * The view managing the login page to the application.
@@ -122,10 +125,27 @@ public final class LogInView extends CineRadarViewFrameImpl {
 
         //Row 4 - Col 0-1 Status
         ViewUtilities.setGridBagConstraints(gbc, 0, 4, 2, 1,
-                new Insets(TOP_DOWN_MARGIN, 0, TOP_DOWN_MARGIN, 0));
+                new Insets(0, 0, 0, 0));
         statusLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
         contentPane.add(statusLabel, gbc);
+
+        //Row 5 - Col 0-1 Registration
+        ViewUtilities.setGridBagConstraints(gbc, 0, 5, 2, 1,
+                new Insets(0, 0, 0, 0));
+        final JLabel registrationLabel = new JLabel("Registrati");
+        registrationLabel.setForeground(Color.BLUE);
+        registrationLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        registrationLabel.setVerticalAlignment(SwingConstants.CENTER);
+        registrationLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        registrationLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(final MouseEvent e) {
+                new SignInView().display();
+                destroy();
+            }
+        });
+        contentPane.add(registrationLabel, gbc);
 
         this.getMainFrame().setContentPane(contentPane);
         this.getMainFrame().pack();

@@ -33,8 +33,13 @@ public final class HashingUtilities {
      * @throws NoSuchAlgorithmException Exception thrown if the algorithm is not recognized.
      */
     public static String getHashedString(final String plainText,
-                                         final HashingAlgorithm algorithm) throws NoSuchAlgorithmException {
-        final byte[] hashedBytes = createHash(plainText, algorithm, SALT);
+                                         final HashingAlgorithm algorithm) {
+        final byte[] hashedBytes;
+        try {
+            hashedBytes = createHash(plainText, algorithm, SALT);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalArgumentException(e);
+        }
         return Hex.encodeHexString(hashedBytes);
     }
 }

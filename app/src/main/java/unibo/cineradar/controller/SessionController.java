@@ -15,7 +15,6 @@ import java.util.Optional;
  */
 public final class SessionController {
     private final SessionContext sessionContext;
-    private final LoginController loginController;
 
     /**
      * Constructs a session.
@@ -24,18 +23,9 @@ public final class SessionController {
      * @param password The password used to log in.
      */
     public SessionController(final String username, final String password) {
-        this.loginController = new LoginController();
-        final Optional<Account> currentAccount = this.loginController.login(username, password);
+        final LoginController loginController = new LoginController();
+        final Optional<Account> currentAccount = loginController.login(username, password);
         this.sessionContext = currentAccount.map(SessionContext::new).orElse(null);
-    }
-
-    /**
-     * Gets the login controller of the session.
-     *
-     * @return The login controller of the session.
-     */
-    public LoginController getLoginController() {
-        return this.loginController;
     }
 
     /**
@@ -45,7 +35,7 @@ public final class SessionController {
      */
     public List<String> getAccountDetails() {
         final List<String> accountDetails = new ArrayList<>();
-        final Account account = this.sessionContext.getCurrentlyLoggedAccount();
+        final Account account = this.sessionContext.currentlyLoggedAccount();
         accountDetails.add(account.getUsername());
         accountDetails.add(account.getName());
         accountDetails.add(account.getLastName());

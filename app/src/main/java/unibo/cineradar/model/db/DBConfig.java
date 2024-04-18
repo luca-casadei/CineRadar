@@ -8,6 +8,7 @@ public final class DBConfig {
      * Server name where the DB is located.
      */
     private static final String DB_SERVER = "casadei.ddns.net";
+    private static final String MAIN_CONNECTION_STRING = "jdbc:mariadb://";
     /**
      * To be used if the server is unresponsive.
      */
@@ -84,6 +85,10 @@ public final class DBConfig {
      */
     public static String getDBName() {
         return DB_NAME;
+    }
+
+    public static String getMainConnectionString() {
+        return MAIN_CONNECTION_STRING;
     }
 
 }

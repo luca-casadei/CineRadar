@@ -27,6 +27,9 @@ dependencies {
     implementation("commons-codec:commons-codec:1.16.1")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.3.3")
     implementation("org.slf4j:slf4j-simple:2.0.13")
+    //View
+    //https://mvnrepository.com/artifact/com.github.lgooddatepicker/LGoodDatePicker
+    implementation("com.github.lgooddatepicker:LGoodDatePicker:11.2.1")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
