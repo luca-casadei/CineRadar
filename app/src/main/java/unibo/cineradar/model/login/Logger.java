@@ -73,9 +73,7 @@ public final class Logger {
                             return Optional.empty();
                         }
                     }
-                    case REGISTRATION -> {
-                        throw new UnsupportedOperationException("Not supported or implemented.");
-                    }
+                    case REGISTRATION -> throw new UnsupportedOperationException("Not supported or implemented.");
                     case USER -> {
                         final List<String> userDetails = mgr.getUserDetails(username);
                         if (!userDetails.isEmpty()) {
@@ -90,9 +88,7 @@ public final class Logger {
                             return Optional.empty();
                         }
                     }
-                    default -> {
-                        throw new IllegalStateException("Unhandled LoginType: " + type);
-                    }
+                    default -> throw new IllegalStateException("Unhandled LoginType: " + type);
                 }
             }
         }

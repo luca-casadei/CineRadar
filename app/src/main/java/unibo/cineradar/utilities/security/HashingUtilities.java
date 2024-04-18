@@ -20,10 +20,9 @@ public final class HashingUtilities {
 
     private static byte[] createHash(
             final char[] plain,
-            final HashingAlgorithm algorithm,
-            final byte[] salt) throws NoSuchAlgorithmException {
+            final HashingAlgorithm algorithm) throws NoSuchAlgorithmException {
         final MessageDigest digester = MessageDigest.getInstance(algorithm.getAlgorithmName());
-        digester.update(salt);
+        digester.update(HashingUtilities.SALT);
         return digester.digest(toByteArray(plain));
     }
 
@@ -33,13 +32,12 @@ public final class HashingUtilities {
      * @param plainText The plain text to hash.
      * @param algorithm The algorithm used to hash the plain text.
      * @return A hashed string of the plain text
-     * @throws NoSuchAlgorithmException Exception thrown if the algorithm is not recognized.
      */
     public static String getHashedString(final char[] plainText,
                                          final HashingAlgorithm algorithm) {
         final byte[] hashedBytes;
         try {
-            hashedBytes = createHash(plainText, algorithm, SALT);
+            hashedBytes = createHash(plainText, algorithm);
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalArgumentException(e);
         }

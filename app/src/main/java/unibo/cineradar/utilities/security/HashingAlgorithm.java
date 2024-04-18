@@ -12,7 +12,7 @@ public enum HashingAlgorithm {
      * 256 output bit hashing.
      */
     SHA_256("SHA-256");
-    private String algorithmName;
+    private final String algorithmName;
 
     /**
      * Sets the name of the algorithm.
