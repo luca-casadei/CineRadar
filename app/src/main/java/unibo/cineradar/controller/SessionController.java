@@ -19,12 +19,13 @@ public final class SessionController {
     /**
      * Constructs a session.
      *
-     * @param username The username author of the session.
-     * @param password The password used to log in.
+     * @param username  The username author of the session.
+     * @param password  The password used to log in.
+     * @param loginType The type of the login to perform.
      */
-    public SessionController(final String username, final String password) {
+    public SessionController(final String username, final char[] password, final LoginType loginType) {
         final LoginController loginController = new LoginController();
-        final Optional<Account> currentAccount = loginController.login(username, password);
+        final Optional<Account> currentAccount = loginController.login(username, password, loginType);
         this.sessionContext = currentAccount.map(SessionContext::new).orElse(null);
     }
 

@@ -1,12 +1,16 @@
 package unibo.cineradar.view;
 
 import javax.swing.JFrame;
+import javax.swing.WindowConstants;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.Arrays;
 
 /**
  * A container of a frame with some shared methods inside.
  */
 public class CineRadarViewFrameImpl implements CineRadarViewFrame {
+    private static final int SCREEN_FRACTION_TO_ADD = 12;
     private final JFrame mainFrame;
 
     /**
@@ -14,6 +18,7 @@ public class CineRadarViewFrameImpl implements CineRadarViewFrame {
      */
     protected CineRadarViewFrameImpl() {
         this.mainFrame = new JFrame();
+        this.mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     /**
@@ -21,6 +26,13 @@ public class CineRadarViewFrameImpl implements CineRadarViewFrame {
      */
     @Override
     public void display() {
+        this.mainFrame.pack();
+        this.mainFrame.setLocationRelativeTo(null);
+        final Dimension currentSize = this.mainFrame.getSize();
+        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        this.mainFrame.setSize(currentSize.width + screenSize.width / SCREEN_FRACTION_TO_ADD,
+                currentSize.height + screenSize.height / SCREEN_FRACTION_TO_ADD);
+        this.mainFrame.setMinimumSize(this.mainFrame.getSize());
         this.mainFrame.setVisible(true);
     }
 

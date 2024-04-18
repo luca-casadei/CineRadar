@@ -8,6 +8,8 @@ import unibo.cineradar.model.utente.User;
 
 /**
  * Saves the current session when logged in.
+ *
+ * @param currentlyLoggedAccount The account owner of the session.
  */
 public record SessionContext(Account currentlyLoggedAccount) {
     /**

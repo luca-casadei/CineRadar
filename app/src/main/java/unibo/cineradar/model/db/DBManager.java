@@ -15,6 +15,7 @@ import java.util.Optional;
  * Class used to manage database connections and queries.
  */
 public final class DBManager implements AutoCloseable {
+    private static final int FALLBACK_LOGIN_TIMEOUT = 5;
     private final Connection dbConnection;
     private ResultSet resultSet;
     private PreparedStatement preparedStatement;
@@ -27,11 +28,11 @@ public final class DBManager implements AutoCloseable {
         try {
             DriverManager.setLoginTimeout(1);
             tmpDbConn = this.getDbConnection();
-        } catch (SQLException ignored) {
+        } catch (SQLException ignored1) {
             try {
-                DriverManager.setLoginTimeout(5);
+                DriverManager.setLoginTimeout(FALLBACK_LOGIN_TIMEOUT);
                 tmpDbConn = this.getFallBackDbConnection();
-            } catch (SQLException ignored1) {
+            } catch (SQLException ignored) {
             }
         }
         this.dbConnection = tmpDbConn;
@@ -48,11 +49,11 @@ public final class DBManager implements AutoCloseable {
 
     private Connection getFallBackDbConnection() throws SQLException {
         return DriverManager.getConnection(DBConfig.getMainConnectionString()
-                + DBConfig.getDbServer()
-                + ":" + DBConfig.getPort()
-                + "/" + DBConfig.getDBName()
-                + "?user=" + DBConfig.getUsername()
-                + "&password=" + DBConfig.getPassword());
+                + DBConfig.getDbServer() + ":"
+                + DBConfig.getPort() + "/"
+                + DBConfig.getDBName() + "?user="
+                + DBConfig.getUsername() + "&password="
+                + DBConfig.getPassword());
     }
 
     /**
@@ -90,6 +91,38 @@ public final class DBManager implements AutoCloseable {
     }
 
     /**
+     * Gets the details of a user given its username.
+     *
+     * @param username The username of the user.
+     * @return A list of details of the retrieved account.
+     */
+    public List<String> getUserDetails(final String username) {
+        Objects.requireNonNull(this.dbConnection);
+        try {
+            final String query = "SELECT utente.Username, Nome, Cognome, TargaPremio, utente.DataNascita "
+                    + "FROM utente JOIN account "
+                    + "ON utente.Username = account.Username "
+                    + "WHERE account.Username = ?";
+            this.preparedStatement = this.dbConnection.prepareStatement(query);
+            this.preparedStatement.setString(1, username);
+            this.resultSet = this.preparedStatement.executeQuery();
+            return iterateOverRowResults("Username", "Nome", "Cognome", "TargaPremio", "DataNascita");
+        } catch (SQLException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    private List<String> iterateOverRowResults(final String... columNames) throws SQLException {
+        final List<String> results = new ArrayList<>();
+        if (this.resultSet.next()) {
+            for (final String colName : columNames) {
+                results.add(this.resultSet.getString(colName));
+            }
+        }
+        return List.copyOf(results);
+    }
+
+    /**
      * Gets the details of an administrator given its username.
      *
      * @param username The username of the administrator to fetch.
@@ -102,40 +135,65 @@ public final class DBManager implements AutoCloseable {
                     + "FROM amministratore JOIN account "
                     + "ON amministratore.Username = account.Username "
                     + "WHERE account.Username = ?";
-            final List<String> results = new ArrayList<>();
             this.preparedStatement = this.dbConnection.prepareStatement(query);
             this.preparedStatement.setString(1, username);
             this.resultSet = this.preparedStatement.executeQuery();
-            if (this.resultSet.next()) {
-                results.add(this.resultSet.getString(1));
-                results.add(this.resultSet.getString(2));
-                results.add(this.resultSet.getString(3));
-                results.add(this.resultSet.getString(4));
-            }
-            return List.copyOf(results);
+            return iterateOverRowResults("Username", "Nome", "Cognome", "NumeroTelefono");
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);
         }
     }
 
+    private boolean insertAccount(final String username,
+                                  final String password,
+                                  final String name,
+                                  final String surname) {
+        Objects.requireNonNull(this.dbConnection);
+        try {
+            final String query = "INSERT INTO account(Username, Password, Nome, Cognome) VALUES(?, ?, ?, ?)";
+            this.preparedStatement = this.dbConnection.prepareStatement(query);
+            this.preparedStatement.setString(1, username);
+            this.preparedStatement.setString(2, password);
+            this.preparedStatement.setString(3, name);
+            this.preparedStatement.setString(4, surname);
+            this.resultSet = this.preparedStatement.executeQuery();
+        } catch (SQLException ignored) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Inserts a new user into the database via query.
+     *
+     * @param username  The username of the user.
+     * @param password  The password of the user.
+     * @param name      The first name of the user.
+     * @param surname   The last name of the user.
+     * @param birthDate The birthdate of the user.
+     * @return True if the query doesn't fail, false otherwise.
+     */
     public boolean insertUser(final String username,
                               final String password,
                               final String name,
                               final String surname,
                               final Date birthDate) {
         Objects.requireNonNull(this.dbConnection);
-        try {
-            final String query = "INSERT INTO account(Username, Password, Name, Surname) VALUES(?, ?, ?, ?)";
-            this.preparedStatement = this.dbConnection.prepareStatement(query);
-            this.preparedStatement.setString(1, username);
-            this.preparedStatement.setString(2, password);
-            this.preparedStatement.setString(3, name);
-            this.preparedStatement.setString(4, surname);
-            this.preparedStatement.executeQuery();
-        } catch (SQLException ex) {
+        if (insertAccount(username, password, name, surname)) {
+            try {
+                final String query = "INSERT INTO utente(Username, TargaPremio, DataNascita) VALUES(?, ?, ?)";
+                this.preparedStatement = this.dbConnection.prepareStatement(query);
+                this.preparedStatement.setString(1, username);
+                this.preparedStatement.setBoolean(2, false);
+                this.preparedStatement.setDate(3, birthDate);
+                this.resultSet = this.preparedStatement.executeQuery();
+            } catch (SQLException ignored) {
+                return false;
+            }
+            return true;
+        } else {
             return false;
         }
-        return true;
     }
 
     /**

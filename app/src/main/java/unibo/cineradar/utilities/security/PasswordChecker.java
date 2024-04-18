@@ -1,7 +1,5 @@
 package unibo.cineradar.utilities.security;
 
-import java.security.NoSuchAlgorithmException;
-
 /**
  * Class used for password checking.
  */
@@ -24,7 +22,7 @@ public final class PasswordChecker {
      * @param hashedPassword The reference hashed password.
      * @return True if the two passwords match, false otherwise.
      */
-    public boolean checkPassword(final String password, final String hashedPassword) {
+    public boolean checkPassword(final char[] password, final String hashedPassword) {
         return HashingUtilities.getHashedString(
                 password,
                 this.chosenAlgorithm

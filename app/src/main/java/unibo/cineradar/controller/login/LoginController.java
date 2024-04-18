@@ -15,9 +15,10 @@ public final class LoginController {
      *
      * @param username The username to log.
      * @param password The password to authorize the login.
+     * @param type     The type of login to perform.
      * @return Optional of an Account if the login is successful, empty otherwise.
      */
-    public Optional<Account> login(final String username, final String password) {
-        return Logger.logIn(username, password, LoginType.ADMINISTRATION);
+    public Optional<Account> login(final String username, final char[] password, final LoginType type) {
+        return Logger.logIn(username, password, type);
     }
 }

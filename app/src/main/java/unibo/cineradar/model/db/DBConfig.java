@@ -87,6 +87,11 @@ public final class DBConfig {
         return DB_NAME;
     }
 
+    /**
+     * Gets the start of the connection string.
+     *
+     * @return The start of the connection string as a String.
+     */
     public static String getMainConnectionString() {
         return MAIN_CONNECTION_STRING;
     }

@@ -1,8 +1,11 @@
 package unibo.cineradar.utilities.security;
 
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 import org.apache.commons.codec.binary.Hex;
 
@@ -16,12 +19,12 @@ public final class HashingUtilities {
     }
 
     private static byte[] createHash(
-            final String plain,
+            final char[] plain,
             final HashingAlgorithm algorithm,
             final byte[] salt) throws NoSuchAlgorithmException {
         final MessageDigest digester = MessageDigest.getInstance(algorithm.getAlgorithmName());
         digester.update(salt);
-        return digester.digest(plain.getBytes(StandardCharsets.UTF_8));
+        return digester.digest(toByteArray(plain));
     }
 
     /**
@@ -29,10 +32,10 @@ public final class HashingUtilities {
      *
      * @param plainText The plain text to hash.
      * @param algorithm The algorithm used to hash the plain text.
-     * @return An hashed string of the plain text
+     * @return A hashed string of the plain text
      * @throws NoSuchAlgorithmException Exception thrown if the algorithm is not recognized.
      */
-    public static String getHashedString(final String plainText,
+    public static String getHashedString(final char[] plainText,
                                          final HashingAlgorithm algorithm) {
         final byte[] hashedBytes;
         try {
@@ -41,5 +44,13 @@ public final class HashingUtilities {
             throw new IllegalArgumentException(e);
         }
         return Hex.encodeHexString(hashedBytes);
+    }
+
+    private static byte[] toByteArray(final char[] charArray) {
+        final CharBuffer charBuffer = CharBuffer.wrap(charArray);
+        final ByteBuffer byteBuffer = StandardCharsets.UTF_8.encode(charBuffer);
+        final byte[] byteArray = Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit());
+        Arrays.fill(byteBuffer.array(), (byte) 0);
+        return byteArray;
     }
 }

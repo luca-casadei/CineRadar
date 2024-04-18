@@ -1,5 +1,6 @@
 package unibo.cineradar.model.login;
 
+import unibo.cineradar.model.utente.User;
 import unibo.cineradar.utilities.security.HashingAlgorithm;
 import unibo.cineradar.utilities.security.HashingUtilities;
 import unibo.cineradar.utilities.security.PasswordChecker;
@@ -20,8 +21,18 @@ public final class Logger {
 
     }
 
+    /**
+     * Registers a new account with the user type into the database.
+     *
+     * @param username      The username of the account.
+     * @param plainPassword The password plain text.
+     * @param name          The first name of the user.
+     * @param surname       The last name of the user.
+     * @param date          The birthdate of the user.
+     * @return True if the insertion was successful, false otherwise.
+     */
     public static boolean signIn(final String username,
-                                 final String plainPassword,
+                                 final char[] plainPassword,
                                  final String name,
                                  final String surname,
                                  final Date date) {
@@ -42,7 +53,7 @@ public final class Logger {
      * @param type     The type of account to fetch.
      * @return An instance of Account inside an Optional if successful, empty otherwise.
      */
-    public static Optional<Account> logIn(final String username, final String password, final LoginType type) {
+    public static Optional<Account> logIn(final String username, final char[] password, final LoginType type) {
         try (DBManager mgr = new DBManager()) {
             final Optional<String> gotPassword = mgr.getUserCredentials(username);
             if (gotPassword.isPresent()
@@ -51,18 +62,33 @@ public final class Logger {
                 switch (type) {
                     case ADMINISTRATION -> {
                         final List<String> admDetails = mgr.getAdministrationDetails(username);
-                        return Optional.of(new Administrator(
-                                admDetails.get(0),
-                                admDetails.get(1),
-                                admDetails.get(2),
-                                admDetails.get(3)
-                        ));
+                        if (!admDetails.isEmpty()) {
+                            return Optional.of(new Administrator(
+                                    admDetails.get(0),
+                                    admDetails.get(1),
+                                    admDetails.get(2),
+                                    admDetails.get(3)
+                            ));
+                        } else {
+                            return Optional.empty();
+                        }
                     }
                     case REGISTRATION -> {
                         throw new UnsupportedOperationException("Not supported or implemented.");
                     }
                     case USER -> {
-                        throw new UnsupportedOperationException("Not supported yet.");
+                        final List<String> userDetails = mgr.getUserDetails(username);
+                        if (!userDetails.isEmpty()) {
+                            return Optional.of(new User(
+                                    userDetails.get(0),
+                                    userDetails.get(1),
+                                    userDetails.get(2),
+                                    userDetails.get(3),
+                                    Boolean.parseBoolean(userDetails.get(4))
+                            ));
+                        } else {
+                            return Optional.empty();
+                        }
                     }
                     default -> {
                         throw new IllegalStateException("Unhandled LoginType: " + type);
