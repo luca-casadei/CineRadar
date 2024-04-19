@@ -1808,6 +1808,15 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\end{itemize}
 \end{itemize}
 
+\section{Vincoli Inespressi}
+\begin{itemize}
+	\item Un ACCOUNT deve essere associato al suo corrispettivo tipo: AMMINISTRATORE, REGISTRATORE oppure UTENTE.
+	\item Un UTENTE per recensire un FILM/SERIE deve aver visualizzato tale MULTIMEDIA.
+	\item Un UTENTE, se minorenne, può visualizzare solo una parte di FILM/SERIE.
+	\item Una TESSERA può ricevere una determinata PROMO, se essa é associata allo stesso CINEMA che registra tale TESSERA.
+	\item Un UTENTE può effettuare una RICHIESTA per aggiungere un FILM/SERIE, se non disponibile nel Database.
+\end{itemize}
+
 \section{Schema relazionale finale}
 \todo{TBD}
 \section{Traduzione delle operazioni in query SQL}
