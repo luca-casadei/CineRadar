@@ -1428,9 +1428,9 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 			\begin{itemize}
-				\item Nome: stringa (non vuota)
-				\item Descrizione: stringa
-				\item NumeroVisualizzati: intero non negativo
+				\item Nome: VARCHAR(20) (non null)
+				\item Descrizione: VARCHAR(500) (non null)
+				\item NumeroVisualizzati: INT (non null)
 			\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: Nome
@@ -1439,8 +1439,8 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item Codice: stringa (non vuota)
-			\item Nome: stringa
+			\item Codice: INT (non null)
+			\item Nome: VARCHAR(50)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: Codice
@@ -1449,18 +1449,23 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item Codice: stringa (non vuota)
-			\item Titolo: stringa
-			\item EtaLimite: intero positivo
-			\item Trama: stringa
-			\item Durata: intero positivo
+			\item Codice: INT (non null)
+			\item Titolo: VARCHAR(50) (non null)
+			\item EtaLimite: INT (non null)
+			\item Trama: VARCHAR(500) (non null)
+			\item Durata: INT (non null)
+			\item CodiceCast: INT (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: Codice
 	\end{itemize}
 	\item CATEGORIZZAZIONE FILM:
 	\begin{itemize}
-		\item Vincoli di Dominio: Nessuno
+		\item Vincoli di Dominio:
+		\begin{itemize}
+			\item NomeGenere: VARCHAR(20) (non null)
+			\item CodiceFilm: INT (non null)
+		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: NomeGenere, Codice
 	\end{itemize}
@@ -1468,12 +1473,12 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item Codice: stringa (non vuota)
-			\item Titolo: stringa
-			\item EtaLimite: intero positivo
-			\item Trama: stringa
-			\item DurataComplessiva: intero positivo
-			\item NumeroEpisodi: intero positivo
+			\item Codice: INT (non null)
+			\item Titolo: VARCHAR(50) (non null)
+			\item EtaLimite: INT (non null)
+			\item Trama: VARCHAR(500) (non null)
+			\item DurataComplessiva: INT (non null)
+			\item NumeroEpisodi: INT (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: Codice
@@ -1482,8 +1487,10 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item NumeroStagione: intero positivo
-			\item Sunto: stringa
+			\item CodiceSerie: INT (non null)
+			\item NumeroStagioneL: INT (non null)
+			\item Sunto: VARCHAR(500) (non null)
+			\item CodiceCast: INT (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: CodiceSerie, NumeroStagione
@@ -1492,15 +1499,21 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item NumeroEpisodio: intero positivo
-			\item DurataMin: intero positivo
+			\item CodiceSerie: INT (non null)
+			\item NumeroStagione: INT (non null)
+			\item NumeroEpisodio: INT (non null)
+			\item DurataMin: INT (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: CodiceSerie, NumeroStagione, NumeroEpisodio
 	\end{itemize}
 	\item CATEGORIZZAZIONE SERIE:
 	\begin{itemize}
-		\item Vincoli di Dominio: Nessuno
+		\item Vincoli di Dominio:
+		\begin{itemize}
+			\item NomeGenere: VARCHAR(20) (non null)
+			\item CodiceSerie: INT (non null)
+		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: NomeGenere, CodiceSerie
 	\end{itemize}
@@ -1508,8 +1521,8 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item Nome: stringa (non vuota)
-			\item Dettaglio: stringa
+			\item Nome: CHAR(10) (non null)
+			\item Dettaglio: VARCHAR(100) (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: Nome
@@ -1518,21 +1531,30 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item CodicePromo: stringa (non vuota)
-			\item PercentualeSconto: intero compreso tra 0 e 100
+			\item CodicePromo: INT (non null)
+			\item PercentualeSconto: INT compreso tra 0 e 100 (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: CodicePromo
 	\end{itemize}
 	\item PROMO:
 	\begin{itemize}
-		\item Vincoli di Dominio: Nessuno
+		\item Vincoli di Dominio:
+		\begin{itemize}
+			\item CodiceTemplatePromo: INT (non null)
+			\item Scadenza: DATE (non null)
+		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: CodiceTemplatePromo, Scadenza
 	\end{itemize}
 	\item SINGOLI:
 	\begin{itemize}
-		\item Vincoli di Dominio: Nessuno
+		\item Vincoli di Dominio:
+		\begin{itemize}
+			\item CodiceTemplatePromo: INT (non null)
+			\item CodiceSerie: INT (non null)
+			\item CodiceFilm: INT (non null)
+		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: CodiceTemplatePromo, CodiceSerie, CodiceFilm
 	\end{itemize}
@@ -1540,14 +1562,18 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item CodiceTemplatePromo: stringa (non vuota)
+			\item CodiceTemplatePromo: INT (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: CodiceTemplatePromo
 	\end{itemize}
 	\item PROMO GENERE:
 	\begin{itemize}
-		\item Vincoli di Dominio: Nessuno
+		\item Vincoli di Dominio:
+		\begin{itemize}
+			\item NomeGenere: VARCHAR(20) (non null)
+			\item CodiceTemplateMultiplo: INT (non null)
+		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: NomeGenere, CodiceTemplateMultiplo
 	\end{itemize}
@@ -1555,12 +1581,12 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item Codice: stringa (non vuota)
-			\item Nome: stringa
-			\item IndVia: stringa
-			\item IndCAP: stringa
-			\item IndCivico: stringa
-			\item IndCitta: stringa
+			\item Codice: INT (non null)
+			\item Nome: VARCHAR(50) (non null)
+			\item IndVia: VARCHAR(30) (non null)
+			\item IndCAP: CHAR(10) (non null)
+			\item IndCivico: INT (non null)
+			\item IndCitta: VARCHAR(30) (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: Codice
@@ -1569,10 +1595,10 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item Username: stringa (non vuota)
-			\item Password: stringa
-			\item Nome: stringa
-			\item Cognome: stringa
+			\item Username: CHAR(20) (non null)
+			\item PASSWORD: CHAR(128) (non null)
+			\item Nome: VARCHAR(20) (non null)
+			\item Cognome: VARCHAR(20) (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: Username
@@ -1581,8 +1607,9 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item DataNascita: data
-			\item TargaPremio: booleano
+			\item Username: CHAR(20) (non null)
+			\item TargaPremio: BOOLEAN (non null)
+			\item DataNascita: DATE (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: Username
@@ -1591,7 +1618,8 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item NumeroTelefono: stringa
+			\item Username: CHAR(20) (non null)
+			\item NumeroTelefono: CHAR(10) (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: Username
@@ -1600,7 +1628,9 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item EmailCinema: stringa
+			\item Username: CHAR(20) (non null)
+			\item EmailCinema: VARCHAR(200)
+			\item CodiceCinema: INT (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: Username
@@ -1609,26 +1639,34 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item Nome: stringa
-			\item Cognome: stringa
-			\item DataNascita: data
-			\item TipoAttore: stringa
-			\item TipoRegista: stringa
-			\item DataDebuttoCarriera: data
-			\item NomeArte: stringa
+			\item Nome: VARCHAR(20) (non null)
+			\item Cognome: VARCHAR(20) (non null)
+			\item DataNascita: DATE (non null)
+			\item TipoAttore: BOOLEAN (non null)
+			\item TipoRegista: BOOLEAN (non null)
+			\item DataDebuttoCarriera: DATE
+			\item NomeArte: VARCHAR(30)	
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: Codice
 	\end{itemize}
 	\item PARTECIPAZIONI CAST:
 	\begin{itemize}
-		\item Vincoli di Dominio: Nessuno
+		\item Vincoli di Dominio:
+		\begin{itemize}
+			\item CodiceMembro: INT (non null)
+			\item CodiceCast: INT (non null)
+		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: CodiceMembro, CodiceCast
 	\end{itemize}
 	\item PREFERENZE:
 	\begin{itemize}
-		\item Vincoli di Dominio: Nessuno
+		\item Vincoli di Dominio:
+		\begin{itemize}
+			\item NomeGenere: VARCHAR(20) (non null)
+			\item UsernameUtente: CHAR(20) (non null)
+		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: NomeGenere, UsernameUtente
 	\end{itemize}
@@ -1636,15 +1674,23 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item NumeroTessera: stringa (non vuota)
-			\item DataRinnovo: data
+			\item CodiceCinema: INT (non null)
+			\item UsernameUtente: CHAR(20) (non null)
+			\item NumeroTessera: INT (non null)
+			\item DataRinnovo: DATE (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: CodiceCinema, UsernameUtente
 	\end{itemize}
 	\item PREMI TESSERA:
 	\begin{itemize}
-		\item Vincoli di Dominio: Nessuno
+		\item Vincoli di Dominio:
+		\begin{itemize}
+			\item CodicePromoPromo: INT (non null)
+			\item Scadenza: DATE (non null)
+			\item CodiceCinema: INT (non null)
+			\item UsernameUtente: CHAR(20) (non null)
+		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: CodicePromo, Scadenza, CodiceCinema, UsernameUtente
 	\end{itemize}
@@ -1652,8 +1698,10 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item Titolo: stringa
-			\item Descrizione: stringa
+			\item UsernameUtente: CHAR(20) (non null)
+			\item CodiceSerie: INT (non null)
+			\item Titolo: VARCHAR(50) (non null)
+			\item Descrizione: VARCHAR(500) (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: UsernameUtente, CodiceSerie
@@ -1662,7 +1710,10 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item Voto: intero compreso tra 1 e 5
+			\item NomeSezione: CHAR(10) (non null)
+			\item UsernameUtente: CHAR(20) (non null)
+			\item CodiceRecSerie: INT (non null)
+			\item Voto: INT compreso tra 1 e 5 (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: NomeSezione, UsernameUtente, CodiceRecSerie
@@ -1671,7 +1722,10 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item Positiva: booleano
+			\item UsernameUtenteValutato: CHAR(20) (non null)
+			\item CodiceRecSerie: INT (non null)
+			\item UsernameUtente: CHAR(20) (non null)
+			\item positiva: BOOLEAN (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: UsernameUtenteValutato, CodiceRecSerie, UsernameUtente
@@ -1680,9 +1734,11 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item Titolo: stringa
-			\item Descrizione: stringa
-			\item VotoComplessivo: intero compreso tra 1 e 5
+			\item UsernameUtente: CHAR(20) (non null)
+			\item CodiceFilm: INT (non null)
+			\item Titolo: VARCHAR(50) (non null)
+			\item Descrizione: VARCHAR(500) (non null)
+			\item VotoComplessivo: INT compreso tra 1 e 5 (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: UsernameUtente, CodiceFilm
@@ -1691,7 +1747,10 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item Voto: intero compreso tra 1 e 5
+			\item UsernameUtente: CHAR(20) (non null)
+			\item CodiceRecFilm: INT (non null)
+			\item NomeSezione: CHAR(10) (non null)
+			\item Voto: INT compreso tra 1 e 5 (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: UsernameUtente, CodiceRecFilm, NomeSezione
@@ -1700,7 +1759,10 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item Positiva: booleano
+			\item UsernameUtenteValutato: CHAR(20) (non null)
+			\item CodiceRecFilm: INT (non null)
+			\item UsernameUtente: CHAR(20) (non null)
+			\item positiva: BOOLEAN (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: UsernameUtenteValutato, CodiceRecFilm, UsernameUtente
@@ -1709,14 +1771,22 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item Data: data
+			\item UsernameUtente: CHAR(20) (non null)
+			\item CodiceSerie: INT (non null)
+			\item NumeroEpisodio: INT (non null)
+			\item NumeroStagione: INT (non null)
+			\item Data: DATE (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: UsernameUtente, CodiceSerie, NumeroStagione, NumeroEpisodio
 	\end{itemize}
 	\item VISUALIZZAZIONI FILM:
 	\begin{itemize}
-		\item Vincoli di Dominio: Nessuno
+		\item Vincoli di Dominio:
+		\begin{itemize}
+			\item CodiceFilm: INT (non null)
+			\item UsernameUtente: CHAR(20) (non null)
+		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: CodiceFilm, UsernameUtente
 	\end{itemize}
@@ -1724,12 +1794,13 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{itemize}
 		\item Vincoli di Dominio:
 		\begin{itemize}
-			\item Numero: intero positivo
-			\item Tipo: stringa
-			\item Titolo: stringa
-			\item AnnoUscita: intero positivo
-			\item Descrizione: stringa
-			\item Chiusa: booleano
+			\item Numero: INT (non null)
+			\item Tipo: BOOLEAN (non null)
+			\item Titolo: VARCHAR(100) (non null)
+			\item AnnoUscita: DATE (non null)
+			\item Descrizione: VARCHAR(100) (non null)
+			\item Chiusa: BOOLEAN (non null)
+			\item UsernameUtente: CHAR(20) (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: Numero
