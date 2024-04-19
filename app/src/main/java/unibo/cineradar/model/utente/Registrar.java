@@ -1,13 +1,11 @@
 package unibo.cineradar.model.utente;
 
-import unibo.cineradar.model.cinema.Cinema;
-
 /**
  * The class of the registration account.
  */
 public final class Registrar extends Account {
     private final String emailCinema;
-    private final Cinema cinema;
+    private final int codCinema;
 
     /**
      * Constructs a registration account.
@@ -16,16 +14,16 @@ public final class Registrar extends Account {
      * @param name        The name of the account.
      * @param lastName    The last name of the account.
      * @param emailCinema The email associated with the cinema.
-     * @param cinema      The cinema instance.
+     * @param codCinema   The cinema code.
      */
     public Registrar(final String username,
                      final String name,
                      final String lastName,
                      final String emailCinema,
-                     final Cinema cinema) {
+                     final int codCinema) {
         super(username, name, lastName);
         this.emailCinema = emailCinema;
-        this.cinema = cinema;
+        this.codCinema = codCinema;
     }
 
     /**
@@ -38,11 +36,11 @@ public final class Registrar extends Account {
     }
 
     /**
-     * Gets the cinema associated with the registration.
+     * Gets the cinema code associated with the registration.
      *
-     * @return The instance of the cinema associated with the registration.
+     * @return The code of the cinema associated with the registration.
      */
-    public Cinema getCinema() {
-        return cinema;
+    public int getCinema() {
+        return codCinema;
     }
 }

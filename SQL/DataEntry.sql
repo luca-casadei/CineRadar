@@ -7,7 +7,9 @@ FROM registratore;
 DELETE
 FROM account;
 DELETE
-from cinema;
+FROM cinema;
+
+ALTER TABLE cinema AUTO_INCREMENT 1;
 
 INSERT INTO account(Username, Password, Nome, Cognome)
 VALUES ("admin",
@@ -22,10 +24,10 @@ VALUES ("luca",
 INSERT INTO utente(Username, TargaPremio, DataNascita)
 VALUES ("luca", FALSE, "2003-06-19");
 INSERT INTO cinema(Nome, Ind_Via, Ind_CAP, Ind_Civico, Ind_Citta)
-VALUES ("UCI - Savignano", "Piazza Metropolis", "47039", "1", "Savignano sul Rubicone");
+VALUES ("UCI - Savignano", "Piazza Metropolis", "47039", 1, "Savignano sul Rubicone");
 INSERT INTO account(Username, PASSWORD, Nome, Cognome)
 VALUES ("reguci1",
-        "bf28b719a859eccabd9948a5740eba24c1c0c40bcf34235f9b01a0826989da367d10ff8f757028070d30d12accb64ddd7f52b9891710d4250eb0e356b7e97319",
-        "Renato", "Bruni");
+        "4b1eeaa6328550c544a4f01fbd22295bf14a5ec688b50ac8f4f368465c319ecc85a0072ca7eaf19d78a64bf1e3b0bad325bd3b986ee2f575da73e552b0adf27f",
+        "Renato", "Bruni"); -- pwd = bruno --
 INSERT INTO registratore(Username, EmailCinema, CodiceCinema)
-VALUES ("reguci1", NULL, "1");
+VALUES ("reguci1", NULL, 1);

@@ -71,7 +71,7 @@ public final class DBManager implements AutoCloseable {
      * @param username The username of the account whose password is to get.
      * @return An Optional containing a String with the hashed password if the user is found, empty otherwise.
      */
-    public Optional<String> getUserCredentials(final String username) {
+    public Optional<String> getAccountCredentials(final String username) {
         Objects.requireNonNull(this.dbConnection);
         try {
             final String query = "SELECT Password FROM ACCOUNT WHERE Username = ?";
@@ -88,6 +88,17 @@ public final class DBManager implements AutoCloseable {
         } catch (SQLException ex) {
             throw new IllegalStateException(ex);
         }
+    }
+
+    private List<String> iterateOverRowResults(final String... columNames) throws SQLException {
+        final List<String> results = new ArrayList<>();
+        if (this.resultSet.next()) {
+            for (final String colName : columNames) {
+                final String res = this.resultSet.getString(colName);
+                results.add(Objects.isNull(res) ? "" : res);
+            }
+        }
+        return List.copyOf(results);
     }
 
     /**
@@ -112,14 +123,27 @@ public final class DBManager implements AutoCloseable {
         }
     }
 
-    private List<String> iterateOverRowResults(final String... columNames) throws SQLException {
-        final List<String> results = new ArrayList<>();
-        if (this.resultSet.next()) {
-            for (final String colName : columNames) {
-                results.add(this.resultSet.getString(colName));
-            }
+    /**
+     * Gets the details of a registrar given its username.
+     *
+     * @param username The username of the registrar.
+     * @return A list of details of the retrieved account.
+     */
+    public List<String> getRegistrarDetails(final String username) {
+        Objects.requireNonNull(this.dbConnection);
+        try {
+            final String query = "SELECT registratore.Username, Nome, Cognome, registratore.EmailCinema, "
+                    + "registratore.CodiceCinema "
+                    + "FROM registratore JOIN account "
+                    + "ON registratore.Username = account.Username "
+                    + "WHERE account.Username = ?";
+            this.preparedStatement = this.dbConnection.prepareStatement(query);
+            this.preparedStatement.setString(1, username);
+            this.resultSet = this.preparedStatement.executeQuery();
+            return iterateOverRowResults("Username", "Nome", "Cognome", "EmailCinema", "CodiceCinema");
+        } catch (SQLException ex) {
+            throw new IllegalStateException(ex);
         }
-        return List.copyOf(results);
     }
 
     /**

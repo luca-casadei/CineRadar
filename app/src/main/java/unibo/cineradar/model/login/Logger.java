@@ -1,5 +1,6 @@
 package unibo.cineradar.model.login;
 
+import unibo.cineradar.model.utente.Registrar;
 import unibo.cineradar.model.utente.User;
 import unibo.cineradar.utilities.security.HashingAlgorithm;
 import unibo.cineradar.utilities.security.HashingUtilities;
@@ -55,7 +56,7 @@ public final class Logger {
      */
     public static Optional<Account> logIn(final String username, final char[] password, final LoginType type) {
         try (DBManager mgr = new DBManager()) {
-            final Optional<String> gotPassword = mgr.getUserCredentials(username);
+            final Optional<String> gotPassword = mgr.getAccountCredentials(username);
             if (gotPassword.isPresent()
                     && new PasswordChecker(HashingAlgorithm.SHA_512)
                     .checkPassword(password, gotPassword.get())) {
@@ -73,7 +74,20 @@ public final class Logger {
                             return Optional.empty();
                         }
                     }
-                    case REGISTRATION -> throw new UnsupportedOperationException("Not supported or implemented.");
+                    case REGISTRATION -> {
+                        final List<String> rgsDetails = mgr.getRegistrarDetails(username);
+                        if (!rgsDetails.isEmpty()) {
+                            return Optional.of(new Registrar(
+                                    rgsDetails.get(0),
+                                    rgsDetails.get(1),
+                                    rgsDetails.get(2),
+                                    rgsDetails.get(3),
+                                    Integer.parseInt(rgsDetails.get(4))
+                            ));
+                        } else {
+                            return Optional.empty();
+                        }
+                    }
                     case USER -> {
                         final List<String> userDetails = mgr.getUserDetails(username);
                         if (!userDetails.isEmpty()) {
