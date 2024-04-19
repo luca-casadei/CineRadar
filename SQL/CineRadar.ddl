@@ -145,10 +145,11 @@ CREATE TABLE RECFILM
 );
 CREATE TABLE RECSERIE
 (
-    UsernameUtente CHAR(20)     NOT NULL,
-    CodiceSerie    INT          NOT NULL,
-    Titolo         VARCHAR(50)  NOT NULL,
-    Descrizione    VARCHAR(500) NOT NULL,
+    UsernameUtente  CHAR(20)     NOT NULL,
+    CodiceSerie     INT          NOT NULL,
+    Titolo          VARCHAR(50)  NOT NULL,
+    Descrizione     VARCHAR(500) NOT NULL,
+    VotoComplessivo INT          NOT NULL,
     CONSTRAINT IDRECSERIE_ID PRIMARY KEY (UsernameUtente, CodiceSerie)
 );
 CREATE TABLE REGISTRATORE
