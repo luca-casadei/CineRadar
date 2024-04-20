@@ -15,8 +15,10 @@ FROM film;
 DELETE
 FROM recfilm;
 
-ALTER TABLE cinema AUTO_INCREMENT 1;
-ALTER TABLE casting AUTO_INCREMENT 1;
+ALTER TABLE cinema
+    AUTO_INCREMENT 1;
+ALTER TABLE casting
+    AUTO_INCREMENT 1;
 
 INSERT INTO account(Username, Password, Nome, Cognome)
 VALUES ("admin",
@@ -26,7 +28,7 @@ INSERT INTO amministratore(Username, NumeroTelefono)
 VALUES ("admin", "1234567890");
 INSERT INTO account(Username, PASSWORD, Nome, Cognome)
 VALUES ("luca",
-        "ee579b62aa913de2047346be9e4e5d3b92d6bb2e09f527633dfe4b1d1e22b70da40ea575320f708457fc340101890da31a774a6bdf59cefe00ac9cc3ab68a4cb",
+        "74307c667a965cc5d3f65a06982994f6294c39767010382659a4629fd918195a8e255c5606f1ee157f8e9a8e59b25c6b55521ea3b9955b0effd2e6aaacee8984",
         "Luca", "Casadei");
 INSERT INTO utente(Username, TargaPremio, DataNascita)
 VALUES ("luca", FALSE, "2003-06-19");
@@ -43,4 +45,6 @@ VALUES ("Unbroken Cast");
 INSERT INTO film(Codice, Titolo, EtaLimite, Trama, Durata, CodiceCast)
 VALUES (1, "Unbroken", 16, "Film della seconda guerra mondiale", 120, 1);
 INSERT INTO recfilm(UsernameUtente, CodiceFilm, Titolo, Descrizione, VotoComplessivo)
-VALUES ("luca", 1, "Bello ma poco coinvolgente", "Mi è piaciuto il film, lo ho trovato molto realistico e crudo, però troppo poco coinvolgente per lo spettatore", 8);
+VALUES ("luca", 1, "Bello ma poco coinvolgente",
+        "Mi è piaciuto il film, lo ho trovato molto realistico e crudo, però troppo poco coinvolgente per lo spettatore",
+        8);

@@ -13,11 +13,11 @@
 -- ________________
 
 DROP
-DATABASE if EXISTS CineRadar;
+    DATABASE if EXISTS CineRadar;
 CREATE
-DATABASE CineRadar;
+    DATABASE CineRadar;
 USE
-CineRadar;
+    CineRadar;
 
 -- Tables Section
 -- _____________
@@ -59,7 +59,7 @@ CREATE TABLE CINEMA
     Nome       VARCHAR(50) NOT NULL,
     Ind_Via    VARCHAR(30) NOT NULL,
     Ind_CAP    CHAR(10)    NOT NULL,
-    Ind_Civico INT         NOT NULL,
+    Ind_Civico INT         NOT NULL CHECK ( Ind_Civico >= 0 ),
     Ind_Citta  VARCHAR(30) NOT NULL,
     CONSTRAINT IDCINEMA_ID PRIMARY KEY (Codice)
 );
@@ -75,9 +75,9 @@ CREATE TABLE FILM
 (
     Codice     INT          NOT NULL,
     Titolo     VARCHAR(50)  NOT NULL,
-    EtaLimite  INT          NOT NULL,
+    EtaLimite  INT          NOT NULL CHECK ( EtaLimite >= 0 ),
     Trama      VARCHAR(500) NOT NULL,
-    Durata     INT          NOT NULL,
+    Durata     INT          NOT NULL CHECK ( Durata > 0 ),
     CodiceCast INT          NOT NULL,
     CONSTRAINT IDFILM_ID PRIMARY KEY (Codice)
 );
@@ -85,7 +85,7 @@ CREATE TABLE GENERE
 (
     Nome               VARCHAR(20)  NOT NULL,
     Descrizione        VARCHAR(500) NOT NULL,
-    NumeroVisualizzati INT          NOT NULL,
+    NumeroVisualizzati INT          NOT NULL CHECK ( NumeroVisualizzati >= 0 ),
     CONSTRAINT IDGENERE PRIMARY KEY (Nome)
 );
 CREATE TABLE MEMBROCAST
@@ -96,7 +96,7 @@ CREATE TABLE MEMBROCAST
     DataNascita         DATE        NOT NULL,
     TipoAttore          BOOLEAN     NOT NULL,
     TipoRegista         BOOLEAN     NOT NULL,
-    DataDebuttoCarriera DATE,
+    DataDebuttoCarriera DATE CHECK ( DataDebuttoCarriera > MEMBROCAST.DataNascita ),
     NomeArte            VARCHAR(30),
     CONSTRAINT IDMEMBROCAST PRIMARY KEY (Codice)
 );
@@ -143,7 +143,7 @@ CREATE TABLE RECFILM
     CodiceFilm      INT          NOT NULL,
     Titolo          VARCHAR(50)  NOT NULL,
     Descrizione     VARCHAR(500) NOT NULL,
-    VotoComplessivo INT          NOT NULL,
+    VotoComplessivo INT          NOT NULL CHECK ( VotoComplessivo >= 0 ),
     CONSTRAINT IDRECFILM_ID PRIMARY KEY (UsernameUtente, CodiceFilm)
 );
 CREATE TABLE RECSERIE
@@ -152,7 +152,7 @@ CREATE TABLE RECSERIE
     CodiceSerie     INT          NOT NULL,
     Titolo          VARCHAR(50)  NOT NULL,
     Descrizione     VARCHAR(500) NOT NULL,
-    VotoComplessivo INT          NOT NULL,
+    VotoComplessivo INT          NOT NULL CHECK ( VotoComplessivo >= 0 ),
     CONSTRAINT IDRECSERIE_ID PRIMARY KEY (UsernameUtente, CodiceSerie)
 );
 CREATE TABLE REGISTRATORE
@@ -169,7 +169,7 @@ CREATE TABLE RICHIESTA
     Titolo         VARCHAR(100) NOT NULL,
     AnnoUscita     DATE         NOT NULL,
     Descrizione    VARCHAR(100) NOT NULL,
-    Chiusa         BOOLEAN      NOT NULL,
+    Chiusa         BOOLEAN      NOT NULL DEFAULT FALSE,
     UsernameUtente CHAR(20)     NOT NULL,
     CONSTRAINT IDRICHIESTA PRIMARY KEY (Numero)
 );
@@ -237,7 +237,7 @@ CREATE TABLE TESSERA
 CREATE TABLE UTENTE
 (
     Username    CHAR(20) NOT NULL,
-    TargaPremio BOOLEAN  NOT NULL,
+    TargaPremio BOOLEAN  NOT NULL DEFAULT FALSE,
     DataNascita DATE     NOT NULL,
     CONSTRAINT FKtipoUsr_ID PRIMARY KEY (Username)
 );
@@ -246,7 +246,7 @@ CREATE TABLE VALUTAZIONE_FILM
     UsernameUtenteValutato CHAR(20) NOT NULL,
     CodiceRecFilm          INT      NOT NULL,
     UsernameUtente         CHAR(20) NOT NULL,
-    positiva               BOOLEAN  NOT NULL,
+    Positiva               BOOLEAN  NOT NULL,
     CONSTRAINT IDVALUTAZIONE_FILM PRIMARY KEY (UsernameUtenteValutato, CodiceRecFilm, UsernameUtente)
 );
 CREATE TABLE VALUTAZIONE_SERIE
@@ -254,7 +254,7 @@ CREATE TABLE VALUTAZIONE_SERIE
     UsernameUtenteValutato CHAR(20) NOT NULL,
     CodiceRecSerie         INT      NOT NULL,
     UsernameUtente         CHAR(20) NOT NULL,
-    positiva               BOOLEAN  NOT NULL,
+    Positiva               BOOLEAN  NOT NULL,
     CONSTRAINT IDVALUTAZIONE_SERIE PRIMARY KEY (UsernameUtente, UsernameUtenteValutato, CodiceRecSerie)
 );
 CREATE TABLE VISUALIZZAZIONI_EPISODIO
