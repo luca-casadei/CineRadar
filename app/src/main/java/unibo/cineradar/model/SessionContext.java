@@ -6,6 +6,8 @@ import unibo.cineradar.model.utente.Administrator;
 import unibo.cineradar.model.utente.Registrar;
 import unibo.cineradar.model.utente.User;
 
+import java.util.Objects;
+
 /**
  * Saves the current session when logged in.
  *
@@ -18,6 +20,15 @@ public record SessionContext(Account currentlyLoggedAccount) {
      * @param currentlyLoggedAccount The account author of the session.
      */
     public SessionContext {
+    }
+
+    /**
+     * Checks if the session is valid.
+     *
+     * @return True if the session is valid, false otherwise.
+     */
+    public boolean isValid() {
+        return !Objects.isNull(this.currentlyLoggedAccount);
     }
 
     /**

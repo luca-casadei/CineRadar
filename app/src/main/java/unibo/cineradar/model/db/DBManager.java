@@ -1,13 +1,15 @@
 package unibo.cineradar.model.db;
 
+import unibo.cineradar.model.utente.Administrator;
+import unibo.cineradar.model.utente.Registrar;
+import unibo.cineradar.model.utente.User;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -90,24 +92,13 @@ public final class DBManager implements AutoCloseable {
         }
     }
 
-    private List<String> iterateOverRowResults(final String... columNames) throws SQLException {
-        final List<String> results = new ArrayList<>();
-        if (this.resultSet.next()) {
-            for (final String colName : columNames) {
-                final String res = this.resultSet.getString(colName);
-                results.add(Objects.isNull(res) ? "" : res);
-            }
-        }
-        return List.copyOf(results);
-    }
-
     /**
      * Gets the details of a user given its username.
      *
      * @param username The username of the user.
      * @return A list of details of the retrieved account.
      */
-    public List<String> getUserDetails(final String username) {
+    public Optional<User> getUserDetails(final String username) {
         Objects.requireNonNull(this.dbConnection);
         try {
             final String query = "SELECT utente.Username, Nome, Cognome, TargaPremio, utente.DataNascita "
@@ -117,7 +108,17 @@ public final class DBManager implements AutoCloseable {
             this.preparedStatement = this.dbConnection.prepareStatement(query);
             this.preparedStatement.setString(1, username);
             this.resultSet = this.preparedStatement.executeQuery();
-            return iterateOverRowResults("Username", "Nome", "Cognome", "TargaPremio", "DataNascita");
+            if (this.resultSet.next()) {
+                return Optional.of(new User(
+                        this.resultSet.getString("Username"),
+                        this.resultSet.getString("Nome"),
+                        this.resultSet.getString("Cognome"),
+                        this.resultSet.getDate("DataNascita").toLocalDate(),
+                        this.resultSet.getBoolean("TargaPremio")
+                ));
+            } else {
+                return Optional.empty();
+            }
         } catch (SQLException ex) {
             throw new IllegalStateException(ex);
         }
@@ -129,7 +130,7 @@ public final class DBManager implements AutoCloseable {
      * @param username The username of the registrar.
      * @return A list of details of the retrieved account.
      */
-    public List<String> getRegistrarDetails(final String username) {
+    public Optional<Registrar> getRegistrarDetails(final String username) {
         Objects.requireNonNull(this.dbConnection);
         try {
             final String query = "SELECT registratore.Username, Nome, Cognome, registratore.EmailCinema, "
@@ -140,7 +141,17 @@ public final class DBManager implements AutoCloseable {
             this.preparedStatement = this.dbConnection.prepareStatement(query);
             this.preparedStatement.setString(1, username);
             this.resultSet = this.preparedStatement.executeQuery();
-            return iterateOverRowResults("Username", "Nome", "Cognome", "EmailCinema", "CodiceCinema");
+            if (this.resultSet.next()) {
+                return Optional.of(new Registrar(
+                        this.resultSet.getString("Username"),
+                        this.resultSet.getString("Nome"),
+                        this.resultSet.getString("Cognome"),
+                        this.resultSet.getString("EmailCinema"),
+                        this.resultSet.getInt("CodiceCinema")
+                ));
+            } else {
+                return Optional.empty();
+            }
         } catch (SQLException ex) {
             throw new IllegalStateException(ex);
         }
@@ -152,7 +163,7 @@ public final class DBManager implements AutoCloseable {
      * @param username The username of the administrator to fetch.
      * @return A list of details of the retrieved account.
      */
-    public List<String> getAdministrationDetails(final String username) {
+    public Optional<Administrator> getAdministrationDetails(final String username) {
         Objects.requireNonNull(this.dbConnection);
         try {
             final String query = "SELECT amministratore.Username, Nome, Cognome, NumeroTelefono "
@@ -162,7 +173,16 @@ public final class DBManager implements AutoCloseable {
             this.preparedStatement = this.dbConnection.prepareStatement(query);
             this.preparedStatement.setString(1, username);
             this.resultSet = this.preparedStatement.executeQuery();
-            return iterateOverRowResults("Username", "Nome", "Cognome", "NumeroTelefono");
+            if (this.resultSet.next()) {
+                return Optional.of(new Administrator(
+                        this.resultSet.getString("Username"),
+                        this.resultSet.getString("Nome"),
+                        this.resultSet.getString("Cognome"),
+                        this.resultSet.getString("NumeroTelefono")
+                ));
+            } else {
+                return Optional.empty();
+            }
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);
         }

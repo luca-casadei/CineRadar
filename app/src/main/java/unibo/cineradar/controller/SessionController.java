@@ -7,8 +7,6 @@ import unibo.cineradar.model.utente.Account;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Main controller of the application, containing the context of the session.
@@ -25,8 +23,7 @@ public final class SessionController {
      */
     public SessionController(final String username, final char[] password, final LoginType loginType) {
         final LoginController loginController = new LoginController();
-        final Optional<Account> currentAccount = loginController.login(username, password, loginType);
-        this.sessionContext = currentAccount.map(SessionContext::new).orElse(null);
+        this.sessionContext = new SessionContext(loginController.login(username, password, loginType));
     }
 
     /**
@@ -58,6 +55,6 @@ public final class SessionController {
      * @return True if the connection is successful, false otherwise.
      */
     public boolean sessionStatus() {
-        return !Objects.isNull(this.sessionContext);
+        return this.sessionContext.isValid();
     }
 }

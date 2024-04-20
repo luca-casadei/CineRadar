@@ -1,10 +1,12 @@
 package unibo.cineradar.model.utente;
 
+import java.time.LocalDate;
+
 /**
  * The user type of account.
  */
 public final class User extends Account {
-    private final String birthDate;
+    private final LocalDate birthDate;
     private final boolean prizeTag;
 
     /**
@@ -19,7 +21,7 @@ public final class User extends Account {
     public User(final String username,
                 final String name,
                 final String lastName,
-                final String birthDate,
+                final LocalDate birthDate,
                 final boolean prizeTag) {
         super(username, name, lastName);
         this.birthDate = birthDate;
@@ -31,8 +33,8 @@ public final class User extends Account {
      *
      * @return A string containing the birthdate of the user.
      */
-    public String getBirthDate() {
-        return birthDate;
+    public LocalDate getBirthDate() {
+        return this.birthDate;
     }
 
     /**

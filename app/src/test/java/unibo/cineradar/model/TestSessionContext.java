@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import unibo.cineradar.model.utente.Administrator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TestSessionContext {
     private static SessionContext session;
@@ -17,7 +17,7 @@ class TestSessionContext {
 
     @Test
     void notNull() {
-        assertNotNull(session);
+        assertTrue(session.isValid());
         assertEquals("Testing", session.currentlyLoggedAccount().getLastName());
     }
 }

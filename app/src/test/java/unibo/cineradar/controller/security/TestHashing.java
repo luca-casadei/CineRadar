@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -37,5 +38,15 @@ class TestHashing {
         assertThrows(IllegalArgumentException.class, () -> {
             brokenPasswordCheker.checkPassword(PLAIN, HASHED);
         });
+    }
+
+    @Test
+    void testGetHashedPassword() {
+        // MODIFY THIS STRING AND UNCOMMENT THE LAST METHOD CALL TO GET PASSWORD
+        final String plain = "prova";
+        assertNotEquals("", HashingUtilities.getHashedString(plain.toCharArray(), ALGORITHM));
+
+        //COMMENT LINE AFTER USE
+        //assertEquals("", HashingUtilities.getHashedString(plain.toCharArray(), ALGORITHM));
     }
 }
