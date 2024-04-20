@@ -69,8 +69,10 @@ public final class SignInView extends CineRadarViewFrameImpl {
         contentPane.add(imageLabel, gridBagConstraints);
 
         //LABELS
+
+        gridBagConstraints.fill = 1;
+
         // Row 1 - Col 0 - First name label
-        gridBagConstraints.ipadx = 50;
         ViewUtilities.setGridBagConstraints(gridBagConstraints, 0, 1, 1, 1,
                 new Insets(0, 0, 20, 20));
         contentPane.add(new JLabel("Nome:"), gridBagConstraints);
@@ -107,8 +109,6 @@ public final class SignInView extends CineRadarViewFrameImpl {
         contentPane.add(statusLabel, gridBagConstraints);
 
         //FIELDS
-
-        gridBagConstraints.ipadx = 200;
         gridBagConstraints.ipady = 5;
 
         // Row 1 - Col 1 - First name field
@@ -137,14 +137,11 @@ public final class SignInView extends CineRadarViewFrameImpl {
         contentPane.add(confirmPasswordField, gridBagConstraints);
 
         // Row 6 - Col 1 - birthdate
-        gridBagConstraints.ipadx = 60;
-        gridBagConstraints.ipady = 0;
         ViewUtilities.setGridBagConstraints(gridBagConstraints, 1, 6, 1, 1,
                 new Insets(0, 0, 20, 0));
         contentPane.add(dp, gridBagConstraints);
 
         // Row 9 - Col 0-1 - SignIn Button
-        gridBagConstraints.ipadx = 100;
         ViewUtilities.setGridBagConstraints(gridBagConstraints, 0, 8, 2, 1,
                 new Insets(0, 0, 20, 0));
         final JButton signinButton = getSignInButton();

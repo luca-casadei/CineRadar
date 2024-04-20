@@ -89,6 +89,8 @@ public final class LogInView extends CineRadarViewFrameImpl {
 
         //LABELS
 
+        gbc.fill = 1;
+
         //Row 1 - Col 0 - Username label
         ViewUtilities.setGridBagConstraints(gbc, 0, 1, 1, 1,
                 new Insets(0, 0, 20, 10));
@@ -107,7 +109,7 @@ public final class LogInView extends CineRadarViewFrameImpl {
         contentPane.add(statusLabel, gbc);
 
         //FIELDS
-        gbc.ipadx = 320;
+        gbc.ipady = 5;
         //Row 1 - Col 1 - Username field
         ViewUtilities.setGridBagConstraints(gbc, 1, 1, 1, 1,
                 new Insets(0, 0, 20, 0));
@@ -118,14 +120,12 @@ public final class LogInView extends CineRadarViewFrameImpl {
         contentPane.add(passwordField, gbc);
 
         //Row 3 Col 1 - Radios
-        gbc.ipadx = 200;
         ViewUtilities.setGridBagConstraints(gbc, 0, 3, 2, 1,
                 new Insets(0, 0, 20, 0));
         final JPanel radPanel = getRadioPanel();
         contentPane.add(radPanel, gbc);
 
         //Row 4 - Col 0-1 - Login Button
-        gbc.ipadx = 100;
         ViewUtilities.setGridBagConstraints(gbc, 0, 5, 2, 1,
                 new Insets(0, 0, 20, 0));
         final JButton loginButton = createLoginButton();
