@@ -1430,7 +1430,7 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 			\begin{itemize}
 				\item Nome: VARCHAR(20) (non null)
 				\item Descrizione: VARCHAR(500) (non null)
-				\item NumeroVisualizzati: INT (non null)
+				\item NumeroVisualizzati: INT non negativo (non null)
 			\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: Nome
@@ -1451,9 +1451,9 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 		\begin{itemize}
 			\item Codice: INT (non null)
 			\item Titolo: VARCHAR(50) (non null)
-			\item EtaLimite: INT (non null)
+			\item EtaLimite: INT non negativo (non null)
 			\item Trama: VARCHAR(500) (non null)
-			\item Durata: INT (non null)
+			\item Durata: INT positivo (non null)
 			\item CodiceCast: INT (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
@@ -1585,7 +1585,7 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 			\item Nome: VARCHAR(50) (non null)
 			\item IndVia: VARCHAR(30) (non null)
 			\item IndCAP: CHAR(10) (non null)
-			\item IndCivico: INT (non null)
+			\item IndCivico: INT non negativo (non null)
 			\item IndCitta: VARCHAR(30) (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
@@ -1702,7 +1702,7 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 			\item CodiceSerie: INT (non null)
 			\item Titolo: VARCHAR(50) (non null)
 			\item Descrizione: VARCHAR(500) (non null)
-			\item VotoComplessivo: INT compreso tra 1 e 5 (non null)
+			\item VotoComplessivo: INT compreso tra 0 e 5 (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: UsernameUtente, CodiceSerie
@@ -1714,7 +1714,7 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 			\item NomeSezione: CHAR(10) (non null)
 			\item UsernameUtente: CHAR(20) (non null)
 			\item CodiceRecSerie: INT (non null)
-			\item Voto: INT compreso tra 1 e 5 (non null)
+			\item Voto: INT compreso tra 0 e 5 (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: NomeSezione, UsernameUtente, CodiceRecSerie
@@ -1739,7 +1739,7 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 			\item CodiceFilm: INT (non null)
 			\item Titolo: VARCHAR(50) (non null)
 			\item Descrizione: VARCHAR(500) (non null)
-			\item VotoComplessivo: INT compreso tra 1 e 5 (non null)
+			\item VotoComplessivo: INT compreso tra 0 e 5 (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: UsernameUtente, CodiceFilm
@@ -1751,7 +1751,7 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 			\item UsernameUtente: CHAR(20) (non null)
 			\item CodiceRecFilm: INT (non null)
 			\item NomeSezione: CHAR(10) (non null)
-			\item Voto: INT compreso tra 1 e 5 (non null)
+			\item Voto: INT compreso tra 0 e 5 (non null)
 		\end{itemize}
 		\item Vincoli di Tupla: Nessuno
 		\item Vincoli di Chiave: UsernameUtente, CodiceRecFilm, NomeSezione
