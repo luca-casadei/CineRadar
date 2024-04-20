@@ -25,13 +25,16 @@ public class CineRadarViewFrameImpl implements CineRadarViewFrame {
      * Shows the JFrame on screen.
      */
     @Override
-    public void display() {
+    public void display(final boolean extend) {
         this.mainFrame.pack();
         this.mainFrame.setLocationRelativeTo(null);
         final Dimension currentSize = this.mainFrame.getSize();
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.mainFrame.setSize(currentSize.width + screenSize.width / SCREEN_FRACTION_TO_ADD,
                 currentSize.height + screenSize.height / SCREEN_FRACTION_TO_ADD);
+        if (extend) {
+            this.mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        }
         this.mainFrame.setMinimumSize(this.mainFrame.getSize());
         this.mainFrame.setVisible(true);
     }

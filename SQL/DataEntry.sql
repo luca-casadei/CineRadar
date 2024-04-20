@@ -37,7 +37,7 @@ VALUES ("UCI - Savignano", "Piazza Metropolis", "47039", 1, "Savignano sul Rubic
 INSERT INTO account(Username, PASSWORD, Nome, Cognome)
 VALUES ("reguci1",
         "4b1eeaa6328550c544a4f01fbd22295bf14a5ec688b50ac8f4f368465c319ecc85a0072ca7eaf19d78a64bf1e3b0bad325bd3b986ee2f575da73e552b0adf27f",
-        "Renato", "Bruni");
+        "Renato", "Bruni"); -- bruno --
 INSERT INTO registratore(Username, EmailCinema, CodiceCinema)
 VALUES ("reguci1", NULL, 1);
 INSERT INTO casting(Nome)

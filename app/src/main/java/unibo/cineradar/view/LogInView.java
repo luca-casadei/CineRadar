@@ -2,6 +2,7 @@ package unibo.cineradar.view;
 
 import unibo.cineradar.model.db.DBManager;
 import unibo.cineradar.model.login.LoginType;
+import unibo.cineradar.view.homepage.RegistrarHomePageView;
 import unibo.cineradar.view.utilities.ViewUtilities;
 
 import javax.swing.BoxLayout;
@@ -51,8 +52,8 @@ public final class LogInView extends CineRadarViewFrameImpl {
     }
 
     @Override
-    public void display() {
-        super.display();
+    public void display(final boolean extend) {
+        super.display(extend);
         this.testDBConnection();
     }
 
@@ -142,7 +143,7 @@ public final class LogInView extends CineRadarViewFrameImpl {
         registrationLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(final MouseEvent e) {
-                new SignInView().display();
+                new SignInView().display(false);
                 destroy();
             }
         });
@@ -183,6 +184,21 @@ public final class LogInView extends CineRadarViewFrameImpl {
             if (context.getController().sessionStatus()) {
                 this.statusLabel.setForeground(Color.BLUE);
                 this.statusLabel.setText("AUTORIZZATO");
+                switch (this.context.getController().getUserType()) {
+                    case ADMINISTRATION -> {
+                        throw new UnsupportedOperationException("Not implemented yet.");
+                    }
+                    case REGISTRATION -> {
+                        new RegistrarHomePageView(context).display(true);
+                    }
+                    case USER -> {
+                        throw new UnsupportedOperationException("Not yet implemented.");
+                    }
+                    default -> {
+                        throw new IllegalStateException("Unknown User Type");
+                    }
+                }
+                this.destroy();
             } else {
                 statusLabel.setForeground(Color.RED);
                 statusLabel.setText("NON AUTORIZZATO");

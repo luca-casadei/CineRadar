@@ -6,8 +6,10 @@ package unibo.cineradar.view;
 public interface CineRadarViewFrame {
     /**
      * Shows the JFrame on screen.
+     *
+     * @param extend Set to true if the frame needs to be fullscreen.
      */
-    void display();
+    void display(boolean extend);
 
     /**
      * Destroys the JFrame and frees the memory.

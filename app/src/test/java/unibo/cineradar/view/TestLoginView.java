@@ -16,7 +16,7 @@ class TestLoginView {
 
     @Test
     void testCreation() {
-        login.display();
+        login.display(true);
     }
 
     @Test

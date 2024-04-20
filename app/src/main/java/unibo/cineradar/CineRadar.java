@@ -18,6 +18,6 @@ public final class CineRadar {
      */
     public static void main(final String[] args) {
         final CineRadarViewFrame loginView = new LogInView();
-        loginView.display();
+        loginView.display(false);
     }
 }

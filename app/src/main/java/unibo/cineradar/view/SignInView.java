@@ -158,7 +158,7 @@ public final class SignInView extends CineRadarViewFrameImpl {
         goBackLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(final MouseEvent e) {
-                new LogInView().display();
+                new LogInView().display(false);
                 destroy();
             }
         });
@@ -189,7 +189,7 @@ public final class SignInView extends CineRadarViewFrameImpl {
                             date)) {
                         statusLabel.setForeground(Color.BLUE);
                         statusLabel.setText("Registrazione avvenuta con successo.");
-                        new LogInView().display();
+                        new LogInView().display(false);
                         destroy();
                     } else {
                         statusLabel.setForeground(Color.red);
