@@ -3,6 +3,7 @@ package unibo.cineradar.model.db;
 import unibo.cineradar.model.utente.Administrator;
 import unibo.cineradar.model.utente.Registrar;
 import unibo.cineradar.model.utente.User;
+import unibo.cineradar.model.film.Film;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -10,6 +11,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -183,6 +186,36 @@ public final class DBManager implements AutoCloseable {
             } else {
                 return Optional.empty();
             }
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Retrieves the list of all films.
+     *
+     * @return The list of all films.
+     */
+    public List<Film> getFilms() {
+        Objects.requireNonNull(this.dbConnection);
+        try {
+            final String query = "SELECT * "
+                    + "FROM film ";
+            this.preparedStatement = this.dbConnection.prepareStatement(query);
+            this.resultSet = this.preparedStatement.executeQuery();
+            final List<Film> films = new ArrayList<>();
+            while (this.resultSet.next()) {
+                final Film film = new Film(
+                        this.resultSet.getInt("Codice"),
+                        this.resultSet.getString("Titolo"),
+                        this.resultSet.getInt("EtaLimite"),
+                        this.resultSet.getString("Trama"),
+                        this.resultSet.getInt("Durata"),
+                        this.resultSet.getInt("CodiceCast")
+                );
+                films.add(film);
+            }
+            return films;
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);
         }

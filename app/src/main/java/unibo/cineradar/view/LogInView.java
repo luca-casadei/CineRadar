@@ -3,6 +3,7 @@ package unibo.cineradar.view;
 import unibo.cineradar.model.db.DBManager;
 import unibo.cineradar.model.login.LoginType;
 import unibo.cineradar.view.homepage.RegistrarHomePageView;
+import unibo.cineradar.view.homepage.UserHomePageView;
 import unibo.cineradar.view.utilities.ViewUtilities;
 
 import javax.swing.BoxLayout;
@@ -192,7 +193,7 @@ public final class LogInView extends CineRadarViewFrameImpl {
                         new RegistrarHomePageView(context).display(true);
                     }
                     case USER -> {
-                        throw new UnsupportedOperationException("Not yet implemented.");
+                        new UserHomePageView(context).display(true);
                     }
                     default -> {
                         throw new IllegalStateException("Unknown User Type");
