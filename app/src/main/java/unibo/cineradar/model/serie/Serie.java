@@ -1,38 +1,38 @@
-package unibo.cineradar.model.film;
+package unibo.cineradar.model.serie;
 
 /**
- * The film class.
+ * The TV serie class.
  */
-public class Film {
+public class Serie {
     private final int id;
     private final String title;
     private final int ageLimit;
     private final String plot;
     private final int duration;
-    private final int castId;
+    private final int numEpisodes;
 
     /**
-     * Constructs a film instance.
+     * Constructs a tv serie instance.
      *
-     * @param id       The id of the film.
-     * @param title    The title of the film.
-     * @param ageLimit The age limit of the film.
-     * @param plot     The plot of the film.
-     * @param duration The duration of the film(in minutes).
-     * @param castId   The cast id that was in the film.
+     * @param id          The id of the serie.
+     * @param title       The title of the serie.
+     * @param ageLimit    The age limite of the serie.
+     * @param plot        The plot of the serie.
+     * @param duration    The overall duration of the serie(in minutes).
+     * @param numEpisodes The total number of episodes in the serie.
      */
-    public Film(final int id,
-                final String title,
-                final int ageLimit,
-                final String plot,
-                final int duration,
-                final int castId) {
+    public Serie(final int id,
+                 final String title,
+                 final int ageLimit,
+                 final String plot,
+                 final int duration,
+                 final int numEpisodes) {
         this.id = id;
         this.title = title;
         this.ageLimit = ageLimit;
         this.plot = plot;
         this.duration = duration;
-        this.castId = castId;
+        this.numEpisodes = numEpisodes;
     }
 
     /**
@@ -81,11 +81,11 @@ public class Film {
     }
 
     /**
-     * Gets the cast id of the film.
+     * Gets the number of episodes of the serie.
      *
-     * @return An integer containing the cast id of the film.
+     * @return An integer containing the number of episodes of the serie.
      */
-    public int getCastId() {
-        return this.castId;
+    public int getNumberOfEpisodes() {
+        return this.numEpisodes;
     }
 }
