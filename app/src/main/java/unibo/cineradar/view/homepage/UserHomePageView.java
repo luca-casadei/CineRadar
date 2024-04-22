@@ -1,7 +1,12 @@
 package unibo.cineradar.view.homepage;
 
+import com.sun.jna.platform.win32.OaIdl;
 import unibo.cineradar.view.CineRadarViewFrameImpl;
 import unibo.cineradar.view.ViewContext;
+import unibo.cineradar.view.homepage.user.UserFilmView;
+import unibo.cineradar.view.homepage.user.UserProfileView;
+import unibo.cineradar.view.homepage.user.UserReviewView;
+import unibo.cineradar.view.homepage.user.UserSerieView;
 import unibo.cineradar.view.utilities.ViewUtilities;
 
 import javax.swing.JButton;
@@ -11,15 +16,19 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Image;
+import java.util.List;
 import javax.swing.ImageIcon;
 
 /**
- * View of the user.
+ * HomePage view of the user.
  */
 public final class UserHomePageView extends CineRadarViewFrameImpl {
 
+    private final List<JPanel> jPanelList;
+    private final JPanel contentPane = new JPanel(new BorderLayout());
+
     /**
-     * Constructor of the user view.
+     * Constructor of the user homepage view.
      *
      * @param currentSessionContext The context of the current user.
      */
@@ -28,11 +37,18 @@ public final class UserHomePageView extends CineRadarViewFrameImpl {
 
         this.getMainFrame().setTitle("Benvenuto "
                 + currentSessionContext.getController().getAccountDetails().get(0));
+
+        this.jPanelList = List.of(
+                new UserFilmView(currentSessionContext),
+                new UserProfileView(currentSessionContext),
+                new UserReviewView(currentSessionContext),
+                new UserSerieView(currentSessionContext)
+        );
+
         this.setInternalComponents();
     }
 
     private void setInternalComponents() {
-        final JPanel contentPane = new JPanel(new BorderLayout());
         this.getMainFrame().setContentPane(contentPane);
         // Navigation bar on top
         final FlowLayout navLayout = new FlowLayout();
@@ -47,13 +63,32 @@ public final class UserHomePageView extends CineRadarViewFrameImpl {
         topNavPanel.add(imageLabel);
         final JButton filmBtn = new JButton("FILM");
         topNavPanel.add(filmBtn);
+        filmBtn.addActionListener(e -> displayHide(UserFilmView.class.getCanonicalName()));
         final JButton serieBtn = new JButton("SERIE TV");
         topNavPanel.add(serieBtn);
+        serieBtn.addActionListener(e -> displayHide(UserSerieView.class.getCanonicalName()));
         final JButton reviewBtn = new JButton("LE MIE RECENSIONI");
         topNavPanel.add(reviewBtn);
+        reviewBtn.addActionListener(e -> displayHide(UserReviewView.class.getCanonicalName()));
         final JButton profileBtn = new JButton("PROFILO");
         topNavPanel.add(profileBtn);
+        profileBtn.addActionListener(e -> displayHide(UserProfileView.class.getCanonicalName()));
 
         contentPane.add(topNavPanel, BorderLayout.NORTH);
+
+        contentPane.add(this.jPanelList.get(0));
+        //this.jPanelList.forEach(panel -> contentPane.add(panel, BorderLayout.CENTER));
+    }
+
+    private void displayHide(final String toShow) {
+        for (final JPanel jp : jPanelList) {
+            final boolean visibilize = jp.getClass().getCanonicalName().equals(toShow);
+            if (!visibilize) {
+                this.contentPane.remove(jp);
+            } else {
+                this.contentPane.add(jp);
+            }
+        }
+        this.getMainFrame().revalidate();
     }
 }
