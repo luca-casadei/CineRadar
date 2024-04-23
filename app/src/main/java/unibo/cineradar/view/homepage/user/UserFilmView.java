@@ -30,7 +30,9 @@ public final class UserFilmView extends UserPanel {
      */
     public UserFilmView(final ViewContext currentSessionContext) {
         super(currentSessionContext);
-        final JLabel welcomeLabel = new JLabel("Benvenuto " + currentSessionContext.getController().getAccountDetails().get(0) + " nella pagina dei film.");
+        final JLabel welcomeLabel = new JLabel("Benvenuto "
+                + currentSessionContext.getController().getAccountDetails().get(0)
+                + " nella pagina dei film.");
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
         welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
         this.add(welcomeLabel, BorderLayout.NORTH);
@@ -40,23 +42,25 @@ public final class UserFilmView extends UserPanel {
         this.add(scrollPane, BorderLayout.CENTER);
     }
 
-    private JTable createFilmTable(ViewContext currentSessionContext) {
+    private JTable createFilmTable(final ViewContext currentSessionContext) {
         final List<Film> films = currentSessionContext.getController().getFilms();
-        DefaultTableModel model = new DefaultTableModel();
+        final DefaultTableModel model = new DefaultTableModel();
         model.addColumn("ID");
         model.addColumn("Titolo");
         model.addColumn("Limite di eta'");
         model.addColumn("Trama");
-        model.addColumn("Durata");
+        model.addColumn("Durata(min)");
 
-        for (Film film : films) {
+        for (final Film film : films) {
             model.addRow(new Object[]{film.getId(), film.getTitle(), film.getAgeLimit(), film.getPlot(), film.getDuration()});
         }
 
-        JTable table = new JTable(model) {
+        final JTable table = new JTable(model) {
             @Override
-            public Component prepareRenderer(javax.swing.table.TableCellRenderer renderer, int row, int column) {
-                Component component = super.prepareRenderer(renderer, row, column);
+            public Component prepareRenderer(final javax.swing.table.TableCellRenderer renderer,
+                                             final int row,
+                                             final int column) {
+                final Component component = super.prepareRenderer(renderer, row, column);
                 if (isRowSelected(row)) {
                     component.setBackground(new Color(254, 250, 246));
                 } else {
@@ -66,13 +70,13 @@ public final class UserFilmView extends UserPanel {
             }
         };
 
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
 
         table.setRowHeight(30);
 
-        JTableHeader header = table.getTableHeader();
+        final JTableHeader header = table.getTableHeader();
         header.setFont(new Font("Arial", Font.BOLD, 12));
         header.setForeground(Color.BLACK);
         header.setBackground(Color.WHITE);

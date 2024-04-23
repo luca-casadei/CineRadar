@@ -59,6 +59,11 @@ public final class SessionController {
         return this.sessionContext.isValid();
     }
 
+    /**
+     * Gets the list of films.
+     *
+     * @return The list of films.
+     */
     public List<Film> getFilms() {
         return this.sessionContext.getFilms();
     }

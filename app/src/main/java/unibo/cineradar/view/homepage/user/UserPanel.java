@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 /**
  * The panel used in the user part.
  */
-public class UserPanel extends JPanel {
+public abstract class UserPanel extends JPanel {
     private static final long serialVersionUID = 1L; // TODO: sostituire
 
     private final ViewContext currentSessionContext; // TODO
@@ -22,7 +22,12 @@ public class UserPanel extends JPanel {
         this.setVisible(true);
     }
 
-    protected ViewContext getCurrentSessionContext(){
+    /**
+     * Retrieves the current session context.
+     *
+     * @return The current session context.
+     */
+    protected ViewContext getCurrentSessionContext() {
         return this.currentSessionContext;
     }
 }
