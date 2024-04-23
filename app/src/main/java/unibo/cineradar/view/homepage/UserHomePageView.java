@@ -74,10 +74,9 @@ public final class UserHomePageView extends CineRadarViewFrameImpl {
         topNavPanel.add(profileBtn);
         profileBtn.addActionListener(e -> displayHide(UserProfileView.class.getCanonicalName()));
 
-        contentPane.add(topNavPanel, BorderLayout.NORTH);
+        this.contentPane.add(topNavPanel, BorderLayout.NORTH);
 
-        contentPane.add(this.jPanelList.get(0));
-        //this.jPanelList.forEach(panel -> contentPane.add(panel, BorderLayout.CENTER));
+        this.contentPane.add(this.jPanelList.get(0), BorderLayout.CENTER);
     }
 
     private void displayHide(final String toShow) {
@@ -86,9 +85,11 @@ public final class UserHomePageView extends CineRadarViewFrameImpl {
             if (!visibilize) {
                 this.contentPane.remove(jp);
             } else {
-                this.contentPane.add(jp);
+                this.contentPane.add(jp, BorderLayout.CENTER);
             }
         }
         this.getMainFrame().revalidate();
+        this.contentPane.revalidate();
+        this.contentPane.repaint();
     }
 }
