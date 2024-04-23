@@ -1,14 +1,11 @@
 package unibo.cineradar.model.film;
 
+import unibo.cineradar.model.multimedia.Multimedia;
+
 /**
  * The film class.
  */
-public class Film {
-    private final int id;
-    private final String title;
-    private final int ageLimit;
-    private final String plot;
-    private final int duration;
+public class Film extends Multimedia {
     private final int castId;
 
     /**
@@ -27,57 +24,8 @@ public class Film {
                 final String plot,
                 final int duration,
                 final int castId) {
-        this.id = id;
-        this.title = title;
-        this.ageLimit = ageLimit;
-        this.plot = plot;
-        this.duration = duration;
+        super(id, title, ageLimit, plot, duration);
         this.castId = castId;
-    }
-
-    /**
-     * Gets the id of the film.
-     *
-     * @return An integer containing the id of the film.
-     */
-    public int getId() {
-        return this.id;
-    }
-
-    /**
-     * Gets title of the film.
-     *
-     * @return A string containing title of the film.
-     */
-    public String getTitle() {
-        return this.title;
-    }
-
-    /**
-     * Gets the age limit of the film.
-     *
-     * @return An integer containing the age limit of the film.
-     */
-    public int getAgeLimit() {
-        return this.ageLimit;
-    }
-
-    /**
-     * Gets the plot of the film.
-     *
-     * @return A string containing the plot of the film.
-     */
-    public String getPlot() {
-        return this.plot;
-    }
-
-    /**
-     * Gets the duration of the film.
-     *
-     * @return An integer containing the duration of the film.
-     */
-    public int getDuration() {
-        return this.duration;
     }
 
     /**

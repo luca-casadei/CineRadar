@@ -1,5 +1,6 @@
 package unibo.cineradar.model.db;
 
+import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.Administrator;
 import unibo.cineradar.model.utente.Registrar;
 import unibo.cineradar.model.utente.User;
@@ -194,14 +195,17 @@ public final class DBManager implements AutoCloseable {
     /**
      * Retrieves the list of all films.
      *
+     * @param userAge The limited age to be respected.
      * @return The list of all films.
      */
-    public List<Film> getFilms() {
+    public List<Film> getFilms(final int userAge) {
         Objects.requireNonNull(this.dbConnection);
         try {
             final String query = "SELECT * "
-                    + "FROM film ";
+                    + "FROM film "
+                    + "WHERE film.EtaLimite <= ?";
             this.preparedStatement = this.dbConnection.prepareStatement(query);
+            this.preparedStatement.setInt(1, userAge);
             this.resultSet = this.preparedStatement.executeQuery();
             final List<Film> films = new ArrayList<>();
             while (this.resultSet.next()) {
@@ -216,6 +220,39 @@ public final class DBManager implements AutoCloseable {
                 films.add(film);
             }
             return films;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Retrieves the list of all the series.
+     *
+     * @param userAge The limited age to be respected.
+     * @return The list of all the series.
+     */
+    public List<Serie> getSeries(final int userAge) {
+        Objects.requireNonNull(this.dbConnection);
+        try {
+            final String query = "SELECT * "
+                    + "FROM serie "
+                    + "WHERE serie.EtaLimite <= ?";
+            this.preparedStatement = this.dbConnection.prepareStatement(query);
+            this.preparedStatement.setInt(1, userAge);
+            this.resultSet = this.preparedStatement.executeQuery();
+            final List<Serie> series = new ArrayList<>();
+            while (this.resultSet.next()) {
+                final Serie serie = new Serie(
+                        this.resultSet.getInt("Codice"),
+                        this.resultSet.getString("Titolo"),
+                        this.resultSet.getInt("EtaLimite"),
+                        this.resultSet.getString("Trama"),
+                        this.resultSet.getInt("DurataComplessiva"),
+                        this.resultSet.getInt("NumeroEpisodi")
+                );
+                series.add(serie);
+            }
+            return series;
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);
         }
