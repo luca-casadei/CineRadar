@@ -1,5 +1,6 @@
 package unibo.cineradar.model.db;
 
+import unibo.cineradar.model.request.Request;
 import unibo.cineradar.model.utente.Administrator;
 import unibo.cineradar.model.utente.Registrar;
 import unibo.cineradar.model.utente.User;
@@ -297,6 +298,37 @@ public final class DBManager implements AutoCloseable {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Retrieves the list of all requests.
+     *
+     * @return The list of all requests.
+     */
+    public List<Request> getRequests() {
+        Objects.requireNonNull(this.dbConnection);
+        try {
+            final String query = "SELECT * "
+                    + "FROM richiesta ";
+            this.preparedStatement = this.dbConnection.prepareStatement(query);
+            this.resultSet = this.preparedStatement.executeQuery();
+            final List<Request> requests = new ArrayList<>();
+            while (this.resultSet.next()) {
+                final Request request = new Request(
+                        this.resultSet.getInt("Numero"),
+                        this.resultSet.getString("UsernameUtente"),
+                        this.resultSet.getBoolean("Tipo"),
+                        this.resultSet.getString("Titolo"),
+                        this.resultSet.getString("Descrizione"),
+                        this.resultSet.getBoolean("Chiusa"),
+                        this.resultSet.getDate("AnnoUscita")
+                );
+                requests.add(request);
+            }
+            return requests;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
         }
     }
 }
