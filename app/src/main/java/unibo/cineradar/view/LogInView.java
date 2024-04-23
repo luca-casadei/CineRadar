@@ -2,6 +2,7 @@ package unibo.cineradar.view;
 
 import unibo.cineradar.model.db.DBManager;
 import unibo.cineradar.model.login.LoginType;
+import unibo.cineradar.view.homepage.AdminHomePageView;
 import unibo.cineradar.view.homepage.RegistrarHomePageView;
 import unibo.cineradar.view.homepage.UserHomePageView;
 import unibo.cineradar.view.utilities.ViewUtilities;
@@ -189,7 +190,7 @@ public final class LogInView extends CineRadarViewFrameImpl {
                 this.statusLabel.setText("AUTORIZZATO");
                 switch (this.context.getController().getUserType()) {
                     case ADMINISTRATION -> {
-                        throw new UnsupportedOperationException("Not implemented yet.");
+                        new AdminHomePageView(context).display(true);
                     }
                     case REGISTRATION -> {
                         new RegistrarHomePageView(context).display(true);
