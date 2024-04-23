@@ -3,6 +3,7 @@ package unibo.cineradar.view.homepage.user;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 /**
  * The panel used in the user part.
@@ -19,6 +20,7 @@ public abstract class UserPanel extends JPanel {
      */
     protected UserPanel(final ViewContext currentSessionContext) {
         this.currentSessionContext = currentSessionContext;
+        this.setLayout(new BorderLayout());
         this.setVisible(true);
     }
 
