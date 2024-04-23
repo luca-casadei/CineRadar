@@ -2,6 +2,7 @@ package unibo.cineradar.controller;
 
 import unibo.cineradar.controller.login.LoginController;
 import unibo.cineradar.model.SessionContext;
+import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.login.LoginType;
 import unibo.cineradar.model.utente.Account;
 
@@ -56,5 +57,9 @@ public final class SessionController {
      */
     public boolean sessionStatus() {
         return this.sessionContext.isValid();
+    }
+
+    public List<Film> getFilms() {
+        return this.sessionContext.getFilms();
     }
 }

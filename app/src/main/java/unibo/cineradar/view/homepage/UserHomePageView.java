@@ -1,6 +1,5 @@
 package unibo.cineradar.view.homepage;
 
-import com.sun.jna.platform.win32.OaIdl;
 import unibo.cineradar.view.CineRadarViewFrameImpl;
 import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.homepage.user.UserFilmView;

@@ -1,17 +1,20 @@
 package unibo.cineradar.model;
 
+import unibo.cineradar.model.db.DBManager;
+import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.login.LoginType;
 import unibo.cineradar.model.utente.Account;
 import unibo.cineradar.model.utente.Administrator;
 import unibo.cineradar.model.utente.Registrar;
 import unibo.cineradar.model.utente.User;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
  * Saves the current session when logged in.
  *
- * @param currentlyLoggedAccount The account owner of the session.
+ * @param currentlyLoggedAccount The current logged account.
  */
 public record SessionContext(Account currentlyLoggedAccount) {
     /**
@@ -58,4 +61,14 @@ public record SessionContext(Account currentlyLoggedAccount) {
         return this.currentlyLoggedAccount;
     }
 
+    /**
+     * Gets the films.
+     *
+     * @return The list of all films.
+     */
+    public List<Film> getFilms() {
+        try (DBManager mgr = new DBManager()) {
+            return List.copyOf(mgr.getFilms());
+        }
+    }
 }

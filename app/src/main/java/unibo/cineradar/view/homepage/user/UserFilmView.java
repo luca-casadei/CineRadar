@@ -1,13 +1,27 @@
 package unibo.cineradar.view.homepage.user;
 
+import unibo.cineradar.model.film.Film;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.util.List;
+
+// CHECKSTYLE: MagicNumber OFF
 
 /**
  * Film view of the user.
  */
 public final class UserFilmView extends UserPanel {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructor of the user film view.
@@ -16,9 +30,58 @@ public final class UserFilmView extends UserPanel {
      */
     public UserFilmView(final ViewContext currentSessionContext) {
         super(currentSessionContext);
-        this.add(new JLabel("Benvenuto " +
-                currentSessionContext.getController().getAccountDetails().get(0) +
-                " nella pagina dei film."));
+        final JLabel welcomeLabel = new JLabel("Benvenuto " + currentSessionContext.getController().getAccountDetails().get(0) + " nella pagina dei film.");
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
+        this.add(welcomeLabel, BorderLayout.NORTH);
+
+        final JTable filmTable = createFilmTable(currentSessionContext);
+        final JScrollPane scrollPane = new JScrollPane(filmTable);
+        this.add(scrollPane, BorderLayout.CENTER);
     }
 
+    private JTable createFilmTable(ViewContext currentSessionContext) {
+        final List<Film> films = currentSessionContext.getController().getFilms();
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("ID");
+        model.addColumn("Titolo");
+        model.addColumn("Limite di eta'");
+        model.addColumn("Trama");
+        model.addColumn("Durata");
+
+        for (Film film : films) {
+            model.addRow(new Object[]{film.getId(), film.getTitle(), film.getAgeLimit(), film.getPlot(), film.getDuration()});
+        }
+
+        JTable table = new JTable(model) {
+            @Override
+            public Component prepareRenderer(javax.swing.table.TableCellRenderer renderer, int row, int column) {
+                Component component = super.prepareRenderer(renderer, row, column);
+                if (isRowSelected(row)) {
+                    component.setBackground(new Color(254, 250, 246));
+                } else {
+                    component.setBackground(Color.WHITE);
+                }
+                return component;
+            }
+        };
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+
+        table.setRowHeight(30);
+
+        JTableHeader header = table.getTableHeader();
+        header.setFont(new Font("Arial", Font.BOLD, 12));
+        header.setForeground(Color.BLACK);
+        header.setBackground(Color.WHITE);
+        header.setOpaque(true);
+        table.setBackground(Color.WHITE);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
+        return table;
+    }
 }
+
+// CHECKSTYLE: MagicNumber ON
