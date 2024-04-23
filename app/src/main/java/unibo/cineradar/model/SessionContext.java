@@ -3,6 +3,7 @@ package unibo.cineradar.model;
 import unibo.cineradar.model.db.DBManager;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.login.LoginType;
+import unibo.cineradar.model.request.Request;
 import unibo.cineradar.model.utente.Account;
 import unibo.cineradar.model.utente.Administrator;
 import unibo.cineradar.model.utente.Registrar;
@@ -69,6 +70,17 @@ public record SessionContext(Account currentlyLoggedAccount) {
     public List<Film> getFilms() {
         try (DBManager mgr = new DBManager()) {
             return List.copyOf(mgr.getFilms());
+        }
+    }
+
+    /**
+     * Gets the requests.
+     *
+     * @return The list of all requests.
+     */
+    public List<Request> getRequests() {
+        try (DBManager mgr = new DBManager()) {
+            return List.copyOf(mgr.getRequests());
         }
     }
 }

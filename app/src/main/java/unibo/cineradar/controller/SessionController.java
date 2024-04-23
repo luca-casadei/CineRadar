@@ -4,6 +4,7 @@ import unibo.cineradar.controller.login.LoginController;
 import unibo.cineradar.model.SessionContext;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.login.LoginType;
+import unibo.cineradar.model.request.Request;
 import unibo.cineradar.model.utente.Account;
 
 import java.util.ArrayList;
@@ -66,5 +67,14 @@ public final class SessionController {
      */
     public List<Film> getFilms() {
         return this.sessionContext.getFilms();
+    }
+
+    /**
+     * Gets the list of requests.
+     *
+     * @return The list of requests.
+     */
+    public List<Request> getRequests() {
+        return this.sessionContext.getRequests();
     }
 }
