@@ -11,7 +11,7 @@ class TestFilm {
     @Test
     void testGetFilms() {
         try (DBManager db = new DBManager()) {
-            final List<Film> films = db.getFilms();
+            final List<Film> films = db.getFilms(16);
             assertNotNull(films);
         }
     }

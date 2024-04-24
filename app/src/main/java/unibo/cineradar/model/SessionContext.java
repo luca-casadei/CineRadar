@@ -3,11 +3,14 @@ package unibo.cineradar.model;
 import unibo.cineradar.model.db.DBManager;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.login.LoginType;
+import unibo.cineradar.model.serie.Serie;
+import unibo.cineradar.model.request.Request;
 import unibo.cineradar.model.utente.Account;
 import unibo.cineradar.model.utente.Administrator;
 import unibo.cineradar.model.utente.Registrar;
 import unibo.cineradar.model.utente.User;
 
+import java.time.Year;
 import java.util.List;
 import java.util.Objects;
 
@@ -68,7 +71,39 @@ public record SessionContext(Account currentlyLoggedAccount) {
      */
     public List<Film> getFilms() {
         try (DBManager mgr = new DBManager()) {
-            return List.copyOf(mgr.getFilms());
+            if (this.currentlyLoggedAccount instanceof User) {
+                return List.copyOf(mgr.getFilms(
+                        Year.now().getValue() - ((User) (this.currentlyLoggedAccount)).getBirthDate().getYear())
+                );
+            }
+            throw new IllegalStateException("Type not supported.");
+        }
+    }
+
+    /**
+     * Gets the series.
+     *
+     * @return The list of all the series.
+     */
+    public List<Serie> getSeries() {
+        try (DBManager mgr = new DBManager()) {
+            if (this.currentlyLoggedAccount instanceof User) {
+                return List.copyOf(mgr.getSeries(
+                        Year.now().getValue() - ((User) (this.currentlyLoggedAccount)).getBirthDate().getYear())
+                );
+            }
+            throw new IllegalStateException("Type not supported.");
+        }
+    }
+
+    /**
+     * Gets the requests.
+     *
+     * @return The list of all requests.
+     */
+    public List<Request> getRequests() {
+        try (DBManager mgr = new DBManager()) {
+            return List.copyOf(mgr.getRequests());
         }
     }
 }
