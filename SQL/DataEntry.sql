@@ -30,8 +30,8 @@ INSERT INTO account(Username, PASSWORD, Nome, Cognome)
 VALUES ("luca",
         "74307c667a965cc5d3f65a06982994f6294c39767010382659a4629fd918195a8e255c5606f1ee157f8e9a8e59b25c6b55521ea3b9955b0effd2e6aaacee8984",
         "Luca", "Casadei"); -- Password: granella --
-INSERT INTO utente(Username, TargaPremio, DataNascita)
-VALUES ("luca", FALSE, "2003-06-19");
+INSERT INTO utente(Username, DataNascita)
+VALUES ("luca", "2003-06-19");
 INSERT INTO cinema(Nome, Ind_Via, Ind_CAP, Ind_Civico, Ind_Citta)
 VALUES ("UCI - Savignano", "Piazza Metropolis", "47039", 1, "Savignano sul Rubicone");
 INSERT INTO cinema(Nome, Ind_Via, Ind_CAP, Ind_Civico, Ind_Citta)
@@ -56,3 +56,7 @@ INSERT INTO recfilm(UsernameUtente, CodiceFilm, Titolo, Descrizione, VotoComples
 VALUES ("luca", 1, "Bello ma poco coinvolgente",
         "Mi è piaciuto il film, lo ho trovato molto realistico e crudo, però troppo poco coinvolgente per lo spettatore",
         8);
+INSERT INTO account(Username, PASSWORD,Nome,Cognome)
+VALUES ("tes","a3be67122051b5362984184e412dc47ed61347e610588a9e3c639d3a99de8aa80595207f2001d6c40439f141aac5927b3dbdf254bbc4d0073393bb13d5962078","Rato","Tesse");
+INSERT INTO utente(Username, DataNascita) -- Pw: tes --
+VALUES ("tes", "2001-10-11");

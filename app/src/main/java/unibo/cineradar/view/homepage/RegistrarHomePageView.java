@@ -18,6 +18,7 @@ public final class RegistrarHomePageView extends CineRadarViewFrameImpl {
 
     private static final String REG_NAME = "reg";
     private static final String CINE_NAME = "cin";
+    private final ViewContext context;
     private CardLayout cards;
     private JPanel cardPane;
 
@@ -28,7 +29,7 @@ public final class RegistrarHomePageView extends CineRadarViewFrameImpl {
      */
     public RegistrarHomePageView(final ViewContext currentSessionContext) {
         super();
-
+        this.context = currentSessionContext;
         this.getMainFrame().setTitle("Registrazione di utenti tesserati - Benvenuto "
                 + currentSessionContext.getController().getAccountDetails().get(0));
         this.setInternalComponents();
@@ -45,7 +46,7 @@ public final class RegistrarHomePageView extends CineRadarViewFrameImpl {
 
         //Home panel
         cardPane.add("reg", new CardedRegistrationForm());
-        cardPane.add("cin", new CardedCinemaPanel());
+        cardPane.add("cin", new CardedCinemaPanel(context));
 
         cards.first(cardPane);
     }

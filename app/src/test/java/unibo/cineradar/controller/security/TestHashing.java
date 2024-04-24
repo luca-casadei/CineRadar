@@ -43,7 +43,7 @@ class TestHashing {
     @Test
     void testGetHashedPassword() {
         // MODIFY THIS STRING AND UNCOMMENT THE LAST METHOD CALL TO GET PASSWORD
-        final String plain = "romolo";
+        final String plain = "tes";
         assertNotEquals("", HashingUtilities.getHashedString(plain.toCharArray(), ALGORITHM));
 
         // COMMENT LINE AFTER USE
