@@ -1,5 +1,6 @@
 package unibo.cineradar.view.homepage.admin;
 
+import unibo.cineradar.controller.administrator.AdminSessionController;
 import unibo.cineradar.model.request.Request;
 import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.homepage.user.UserPanel;
@@ -15,6 +16,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.io.Serial;
 import java.util.List;
 
 // CHECKSTYLE: MagicNumber OFF
@@ -23,7 +25,9 @@ import java.util.List;
  * Requests view of the Admin.
  */
 public final class AdminRequestsView extends UserPanel {
-    private static final long serialVersionUID = 1L;
+
+    @Serial
+    private static final long serialVersionUID = -47044683429723183L;
 
     /**
      * Constructor of the Admin Requests View.
@@ -48,7 +52,7 @@ public final class AdminRequestsView extends UserPanel {
 
     private JTable createRequestsTable(final ViewContext currentSessionContext) {
         // Retrieves the list of films from the controller
-        final List<Request> requests = currentSessionContext.getController().getRequests();
+        final List<Request> requests = ((AdminSessionController) currentSessionContext.getController()).getInsertionRequests();
 
         // Creates the table
         final DefaultTableModel requestsModelTable = new DefaultTableModel();

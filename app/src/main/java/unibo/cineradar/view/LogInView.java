@@ -185,22 +185,14 @@ public final class LogInView extends CineRadarViewFrameImpl {
                     pw,
                     this.currentlySelectedLoginType);
             Arrays.fill(pw, '0');
-            if (context.getController().sessionStatus()) {
+            if (context.getController().isSessionValid()) {
                 this.statusLabel.setForeground(Color.BLUE);
                 this.statusLabel.setText("AUTORIZZATO");
-                switch (this.context.getController().getUserType()) {
-                    case ADMINISTRATION -> {
-                        new AdminHomePageView(context).display(true);
-                    }
-                    case REGISTRATION -> {
-                        new RegistrarHomePageView(context).display(true);
-                    }
-                    case USER -> {
-                        new UserHomePageView(context).display(true);
-                    }
-                    default -> {
-                        throw new IllegalStateException("Unknown User Type");
-                    }
+                switch (this.context.getController().getType()) {
+                    case ADMINISTRATION -> new AdminHomePageView(context).display(true);
+                    case REGISTRATION -> new RegistrarHomePageView(context).display(true);
+                    case USER -> new UserHomePageView(context).display(true);
+                    default -> throw new IllegalStateException("Unknown User Type");
                 }
                 this.destroy();
             } else {

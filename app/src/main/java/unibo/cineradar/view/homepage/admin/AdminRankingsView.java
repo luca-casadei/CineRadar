@@ -2,14 +2,18 @@ package unibo.cineradar.view.homepage.admin;
 
 import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.homepage.user.UserPanel;
+
 import javax.swing.JLabel;
+import java.io.Serial;
 
 /**
  * Rankings view of the Admin.
  */
 public class AdminRankingsView extends UserPanel {
 
-    private static final long serialVersionUID = 1L;
+
+    @Serial
+    private static final long serialVersionUID = -924897837300851458L;
 
     /**
      * Constructor of the admin rankings view.

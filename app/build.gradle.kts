@@ -30,6 +30,8 @@ dependencies {
     //View
     //https://mvnrepository.com/artifact/com.github.lgooddatepicker/LGoodDatePicker
     implementation("com.github.lgooddatepicker:LGoodDatePicker:11.2.1")
+    // https://mvnrepository.com/artifact/com.github.spotbugs/spotbugs-annotations
+    implementation("com.github.spotbugs:spotbugs-annotations:4.8.4")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

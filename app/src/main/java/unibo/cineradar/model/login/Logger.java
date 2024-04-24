@@ -1,5 +1,8 @@
 package unibo.cineradar.model.login;
 
+import unibo.cineradar.model.db.AdminOps;
+import unibo.cineradar.model.db.RegistrarOps;
+import unibo.cineradar.model.db.UserOps;
 import unibo.cineradar.utilities.security.HashingAlgorithm;
 import unibo.cineradar.utilities.security.HashingUtilities;
 import unibo.cineradar.utilities.security.PasswordChecker;
@@ -50,23 +53,33 @@ public final class Logger {
      * @param type     The type of account to fetch.
      * @return An instance of Account inside an Optional if successful, empty otherwise.
      */
-    public static Optional<? extends Account> logIn(final String username, final char[] password, final LoginType type) {
-        try (DBManager mgr = new DBManager()) {
-            final Optional<String> gotPassword = mgr.getAccountCredentials(username);
+    public static Optional<? extends Account> logIn(final String username,
+                                                    final char[] password,
+                                                    final LoginType type) {
+        try (DBManager def = new DBManager()) {
+            final Optional<String> gotPassword = def.getAccountCredentials(username);
             if (gotPassword.isPresent()
                     && new PasswordChecker(HashingAlgorithm.SHA_512)
                     .checkPassword(password, gotPassword.get())) {
                 switch (type) {
                     case ADMINISTRATION -> {
-                        return mgr.getAdministrationDetails(username);
+                        try (AdminOps mgr = new AdminOps()) {
+                            return mgr.getAdministrationDetails(username);
+                        }
                     }
                     case REGISTRATION -> {
-                        return mgr.getRegistrarDetails(username);
+                        try (RegistrarOps mgr = new RegistrarOps()) {
+                            return mgr.getRegistrarDetails(username);
+                        }
                     }
                     case USER -> {
-                        return mgr.getUserDetails(username);
+                        try (UserOps mgr = new UserOps()) {
+                            return mgr.getUserDetails(username);
+                        }
                     }
-                    default -> throw new IllegalStateException("Unhandled LoginType: " + type);
+                    default -> {
+                        throw new IllegalStateException("Unhandled LoginType: " + type);
+                    }
                 }
             }
         }

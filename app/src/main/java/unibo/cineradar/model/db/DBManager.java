@@ -1,27 +1,18 @@
 package unibo.cineradar.model.db;
 
-import unibo.cineradar.model.serie.Serie;
-import unibo.cineradar.model.request.Request;
-import unibo.cineradar.model.utente.Administrator;
-import unibo.cineradar.model.utente.Registrar;
-import unibo.cineradar.model.utente.User;
-import unibo.cineradar.model.film.Film;
-
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 /**
  * Class used to manage database connections and queries.
  */
-public final class DBManager implements AutoCloseable {
+public class DBManager implements AutoCloseable {
     private static final int FALLBACK_LOGIN_TIMEOUT = 5;
     private final Connection dbConnection;
     private ResultSet resultSet;
@@ -43,6 +34,52 @@ public final class DBManager implements AutoCloseable {
             }
         }
         this.dbConnection = tmpDbConn;
+    }
+
+    /**
+     * Lets the sub-operators get the statement.
+     *
+     * @return The current prepared statement.
+     */
+    protected final PreparedStatement getPreparedStatement() {
+        return preparedStatement;
+    }
+
+    /**
+     * Sets the statement.
+     *
+     * @param preparedStatement The statement to set.
+     */
+    protected void setPreparedStatement(final PreparedStatement preparedStatement) {
+        this.preparedStatement = preparedStatement;
+    }
+
+    /**
+     * Lets the sub-operators get the result set.
+     *
+     * @return The current prepared result set.
+     */
+    protected final ResultSet getResultSet() {
+        return resultSet;
+    }
+
+    /**
+     * Sets the result set.
+     *
+     * @param resultSet The result set to set.
+     */
+    protected void setResultSet(final ResultSet resultSet) {
+        this.resultSet = resultSet;
+    }
+
+    /**
+     * Lets the sub-operators get the connection.
+     *
+     * @return The current connection.
+     */
+    protected final Connection getConnection() {
+        Objects.requireNonNull(this.dbConnection);
+        return this.dbConnection;
     }
 
     private Connection getDbConnection() throws SQLException {
@@ -94,168 +131,6 @@ public final class DBManager implements AutoCloseable {
             return result;
         } catch (SQLException ex) {
             throw new IllegalStateException(ex);
-        }
-    }
-
-    /**
-     * Gets the details of a user given its username.
-     *
-     * @param username The username of the user.
-     * @return A list of details of the retrieved account.
-     */
-    public Optional<User> getUserDetails(final String username) {
-        Objects.requireNonNull(this.dbConnection);
-        try {
-            final String query = "SELECT utente.Username, Nome, Cognome, TargaPremio, utente.DataNascita "
-                    + "FROM utente JOIN account "
-                    + "ON utente.Username = account.Username "
-                    + "WHERE account.Username = ?";
-            this.preparedStatement = this.dbConnection.prepareStatement(query);
-            this.preparedStatement.setString(1, username);
-            this.resultSet = this.preparedStatement.executeQuery();
-            if (this.resultSet.next()) {
-                return Optional.of(new User(
-                        this.resultSet.getString("Username"),
-                        this.resultSet.getString("Nome"),
-                        this.resultSet.getString("Cognome"),
-                        this.resultSet.getDate("DataNascita").toLocalDate(),
-                        this.resultSet.getBoolean("TargaPremio")
-                ));
-            } else {
-                return Optional.empty();
-            }
-        } catch (SQLException ex) {
-            throw new IllegalStateException(ex);
-        }
-    }
-
-    /**
-     * Gets the details of a registrar given its username.
-     *
-     * @param username The username of the registrar.
-     * @return A list of details of the retrieved account.
-     */
-    public Optional<Registrar> getRegistrarDetails(final String username) {
-        Objects.requireNonNull(this.dbConnection);
-        try {
-            final String query = "SELECT registratore.Username, Nome, Cognome, registratore.EmailCinema, "
-                    + "registratore.CodiceCinema "
-                    + "FROM registratore JOIN account "
-                    + "ON registratore.Username = account.Username "
-                    + "WHERE account.Username = ?";
-            this.preparedStatement = this.dbConnection.prepareStatement(query);
-            this.preparedStatement.setString(1, username);
-            this.resultSet = this.preparedStatement.executeQuery();
-            if (this.resultSet.next()) {
-                return Optional.of(new Registrar(
-                        this.resultSet.getString("Username"),
-                        this.resultSet.getString("Nome"),
-                        this.resultSet.getString("Cognome"),
-                        this.resultSet.getString("EmailCinema"),
-                        this.resultSet.getInt("CodiceCinema")
-                ));
-            } else {
-                return Optional.empty();
-            }
-        } catch (SQLException ex) {
-            throw new IllegalStateException(ex);
-        }
-    }
-
-    /**
-     * Gets the details of an administrator given its username.
-     *
-     * @param username The username of the administrator to fetch.
-     * @return A list of details of the retrieved account.
-     */
-    public Optional<Administrator> getAdministrationDetails(final String username) {
-        Objects.requireNonNull(this.dbConnection);
-        try {
-            final String query = "SELECT amministratore.Username, Nome, Cognome, NumeroTelefono "
-                    + "FROM amministratore JOIN account "
-                    + "ON amministratore.Username = account.Username "
-                    + "WHERE account.Username = ?";
-            this.preparedStatement = this.dbConnection.prepareStatement(query);
-            this.preparedStatement.setString(1, username);
-            this.resultSet = this.preparedStatement.executeQuery();
-            if (this.resultSet.next()) {
-                return Optional.of(new Administrator(
-                        this.resultSet.getString("Username"),
-                        this.resultSet.getString("Nome"),
-                        this.resultSet.getString("Cognome"),
-                        this.resultSet.getString("NumeroTelefono")
-                ));
-            } else {
-                return Optional.empty();
-            }
-        } catch (SQLException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-    }
-
-    /**
-     * Retrieves the list of all films.
-     *
-     * @param userAge The limited age to be respected.
-     * @return The list of all films.
-     */
-    public List<Film> getFilms(final int userAge) {
-        Objects.requireNonNull(this.dbConnection);
-        try {
-            final String query = "SELECT * "
-                    + "FROM film "
-                    + "WHERE film.EtaLimite <= ?";
-            this.preparedStatement = this.dbConnection.prepareStatement(query);
-            this.preparedStatement.setInt(1, userAge);
-            this.resultSet = this.preparedStatement.executeQuery();
-            final List<Film> films = new ArrayList<>();
-            while (this.resultSet.next()) {
-                final Film film = new Film(
-                        this.resultSet.getInt("Codice"),
-                        this.resultSet.getString("Titolo"),
-                        this.resultSet.getInt("EtaLimite"),
-                        this.resultSet.getString("Trama"),
-                        this.resultSet.getInt("Durata"),
-                        this.resultSet.getInt("CodiceCast")
-                );
-                films.add(film);
-            }
-            return films;
-        } catch (SQLException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-    }
-
-    /**
-     * Retrieves the list of all the series.
-     *
-     * @param userAge The limited age to be respected.
-     * @return The list of all the series.
-     */
-    public List<Serie> getSeries(final int userAge) {
-        Objects.requireNonNull(this.dbConnection);
-        try {
-            final String query = "SELECT * "
-                    + "FROM serie "
-                    + "WHERE serie.EtaLimite <= ?";
-            this.preparedStatement = this.dbConnection.prepareStatement(query);
-            this.preparedStatement.setInt(1, userAge);
-            this.resultSet = this.preparedStatement.executeQuery();
-            final List<Serie> series = new ArrayList<>();
-            while (this.resultSet.next()) {
-                final Serie serie = new Serie(
-                        this.resultSet.getInt("Codice"),
-                        this.resultSet.getString("Titolo"),
-                        this.resultSet.getInt("EtaLimite"),
-                        this.resultSet.getString("Trama"),
-                        this.resultSet.getInt("DurataComplessiva"),
-                        this.resultSet.getInt("NumeroEpisodi")
-                );
-                series.add(serie);
-            }
-            return series;
-        } catch (SQLException ex) {
-            throw new IllegalArgumentException(ex);
         }
     }
 
@@ -335,37 +210,6 @@ public final class DBManager implements AutoCloseable {
                     }
                 }
             }
-        }
-    }
-
-    /**
-     * Retrieves the list of all requests.
-     *
-     * @return The list of all requests.
-     */
-    public List<Request> getRequests() {
-        Objects.requireNonNull(this.dbConnection);
-        try {
-            final String query = "SELECT * "
-                    + "FROM richiesta ";
-            this.preparedStatement = this.dbConnection.prepareStatement(query);
-            this.resultSet = this.preparedStatement.executeQuery();
-            final List<Request> requests = new ArrayList<>();
-            while (this.resultSet.next()) {
-                final Request request = new Request(
-                        this.resultSet.getInt("Numero"),
-                        this.resultSet.getString("UsernameUtente"),
-                        this.resultSet.getBoolean("Tipo"),
-                        this.resultSet.getString("Titolo"),
-                        this.resultSet.getString("Descrizione"),
-                        this.resultSet.getBoolean("Chiusa"),
-                        this.resultSet.getDate("AnnoUscita")
-                );
-                requests.add(request);
-            }
-            return requests;
-        } catch (SQLException ex) {
-            throw new IllegalArgumentException(ex);
         }
     }
 }
