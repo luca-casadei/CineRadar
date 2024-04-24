@@ -64,17 +64,13 @@ public final class RegistrarHomePageView extends CineRadarViewFrameImpl {
 
     private JButton getGotoRegButton() {
         final JButton regButton = new JButton("REGISTRAZIONE TESSERATI");
-        regButton.addActionListener(e -> {
-            cards.show(cardPane, REG_NAME);
-        });
+        regButton.addActionListener(e -> cards.show(cardPane, REG_NAME));
         return regButton;
     }
 
     private JButton getGotoCineButton() {
         final JButton cineButton = new JButton("INFO CINEMA");
-        cineButton.addActionListener(e -> {
-            cards.show(cardPane, CINE_NAME);
-        });
+        cineButton.addActionListener(e -> cards.show(cardPane, CINE_NAME));
         return cineButton;
     }
 }
