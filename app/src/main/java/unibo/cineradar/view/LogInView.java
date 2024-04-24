@@ -1,24 +1,19 @@
 package unibo.cineradar.view;
 
 import unibo.cineradar.model.db.DBManager;
-import unibo.cineradar.model.login.LoginType;
 import unibo.cineradar.view.homepage.AdminHomePageView;
 import unibo.cineradar.view.homepage.RegistrarHomePageView;
 import unibo.cineradar.view.homepage.UserHomePageView;
 import unibo.cineradar.view.utilities.ViewUtilities;
 
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
@@ -41,7 +36,6 @@ public final class LogInView extends CineRadarViewFrameImpl {
     private final JTextField usernameField = new JTextField();
     private final JPasswordField passwordField = new JPasswordField();
     private final JLabel statusLabel = new JLabel();
-    private LoginType currentlySelectedLoginType = LoginType.USER;
     private ViewContext context;
 
     /**
@@ -124,12 +118,6 @@ public final class LogInView extends CineRadarViewFrameImpl {
                 new Insets(0, 0, 20, 0));
         contentPane.add(passwordField, gbc);
 
-        //Row 3 Col 1 - Radios
-        ViewUtilities.setGridBagConstraints(gbc, 0, 3, 2, 1,
-                new Insets(0, 0, 20, 0));
-        final JPanel radPanel = getRadioPanel();
-        contentPane.add(radPanel, gbc);
-
         //Row 4 - Col 0-1 - Login Button
         ViewUtilities.setGridBagConstraints(gbc, 0, 5, 2, 1,
                 new Insets(0, 0, 20, 0));
@@ -156,36 +144,14 @@ public final class LogInView extends CineRadarViewFrameImpl {
         this.getMainFrame().setContentPane(contentPane);
     }
 
-    private JPanel getRadioPanel() {
-        final JRadioButton radUserLogin = new JRadioButton("Accedi come utente");
-        radUserLogin.addActionListener(e -> this.currentlySelectedLoginType = LoginType.USER);
-        final JRadioButton radAdmLogin = new JRadioButton("Accedi come amministratore");
-        radAdmLogin.addActionListener(e -> this.currentlySelectedLoginType = LoginType.ADMINISTRATION);
-        final JRadioButton radRegLogin = new JRadioButton("Accedi come registratore");
-        radRegLogin.addActionListener(e -> this.currentlySelectedLoginType = LoginType.REGISTRATION);
-        final JPanel radPanel = new JPanel();
-        radPanel.setLayout(new BoxLayout(radPanel, BoxLayout.Y_AXIS));
-        radPanel.setBorder(new LineBorder(Color.black));
-        final ButtonGroup loginGroup = new ButtonGroup();
-        radUserLogin.setSelected(true);
-        loginGroup.add(radUserLogin);
-        loginGroup.add(radAdmLogin);
-        loginGroup.add(radRegLogin);
-        radPanel.add(radUserLogin);
-        radPanel.add(radAdmLogin);
-        radPanel.add(radRegLogin);
-        return radPanel;
-    }
-
     private JButton createLoginButton() {
         final JButton loginButton = new JButton("Login");
         loginButton.addActionListener(e -> {
             final char[] pw = passwordField.getPassword();
             this.context = new ViewContext(usernameField.getText(),
-                    pw,
-                    this.currentlySelectedLoginType);
+                    pw);
             Arrays.fill(pw, '0');
-            if (context.getController().isSessionValid()) {
+            if (context.isValid()) {
                 this.statusLabel.setForeground(Color.BLUE);
                 this.statusLabel.setText("AUTORIZZATO");
                 switch (this.context.getController().getType()) {

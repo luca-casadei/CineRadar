@@ -4,9 +4,6 @@ import unibo.cineradar.view.CineRadarViewFrameImpl;
 import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.homepage.admin.AdminRankingsView;
 import unibo.cineradar.view.homepage.admin.AdminRequestsView;
-import unibo.cineradar.view.homepage.user.UserFilmView;
-import unibo.cineradar.view.homepage.user.UserProfileView;
-import unibo.cineradar.view.homepage.user.UserSerieView;
 import unibo.cineradar.view.utilities.ViewUtilities;
 
 import javax.swing.JButton;
@@ -39,11 +36,11 @@ public final class AdminHomePageView extends CineRadarViewFrameImpl {
                 + currentSessionContext.getController().getAccountDetails().get(0));
 
         this.jPanelList = List.of(
-                new UserFilmView(currentSessionContext),
-                new UserProfileView(currentSessionContext),
+                //new UserFilmView(currentSessionContext),
+                //new UserProfileView(currentSessionContext),
                 new AdminRequestsView(currentSessionContext),
-                new AdminRankingsView(currentSessionContext),
-                new UserSerieView(currentSessionContext)
+                new AdminRankingsView(currentSessionContext)
+                //new UserSerieView(currentSessionContext)
         );
 
         this.setInternalComponents();
@@ -62,6 +59,7 @@ public final class AdminHomePageView extends CineRadarViewFrameImpl {
         final JLabel imageLabel = new JLabel();
         imageLabel.setIcon(new ImageIcon(logoImage));
         topNavigationPanel.add(imageLabel);
+        /*
         final JButton filmButton = new JButton("FILM");
         topNavigationPanel.add(filmButton);
         filmButton.addActionListener(e -> displayHide(UserFilmView.class.getCanonicalName()));
@@ -71,12 +69,15 @@ public final class AdminHomePageView extends CineRadarViewFrameImpl {
         final JButton requestsButton = new JButton("RICHIESTE");
         topNavigationPanel.add(requestsButton);
         requestsButton.addActionListener(e -> displayHide(AdminRequestsView.class.getCanonicalName()));
+        */
         final JButton rankingsButton = new JButton("CLASSIFICHE");
         topNavigationPanel.add(rankingsButton);
         rankingsButton.addActionListener(e -> displayHide(AdminRankingsView.class.getCanonicalName()));
+        /*
         final JButton profileButton = new JButton("PROFILO");
         topNavigationPanel.add(profileButton);
         profileButton.addActionListener(e -> displayHide(UserProfileView.class.getCanonicalName()));
+         */
 
         this.contentPane.add(topNavigationPanel, BorderLayout.NORTH);
 

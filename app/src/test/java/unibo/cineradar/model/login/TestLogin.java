@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class TestLogin {
     @Test
     void testAdministrationLogin() {
-        final Account tmpAdm = Logger.logIn("admin", "panettone!".toCharArray(), LoginType.ADMINISTRATION).get();
+        final Account tmpAdm = Logger.logIn("admin", "panettone!".toCharArray()).get();
         assertTrue(tmpAdm instanceof Administrator);
         assertEquals("1234567890", ((Administrator) tmpAdm).getPhoneNumber());
     }

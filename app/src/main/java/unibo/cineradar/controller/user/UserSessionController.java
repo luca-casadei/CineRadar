@@ -1,9 +1,9 @@
 package unibo.cineradar.controller.user;
 
+import unibo.cineradar.controller.SessionController;
 import unibo.cineradar.controller.SessionControllerImpl;
 import unibo.cineradar.model.context.user.UserContext;
 import unibo.cineradar.model.film.Film;
-import unibo.cineradar.model.login.LoginType;
 import unibo.cineradar.model.serie.Serie;
 
 import java.util.List;
@@ -16,14 +16,12 @@ public class UserSessionController extends SessionControllerImpl {
     private final UserContext userContext;
 
     /**
-     * Constructs the user session controller.
+     * Creates the session controller of the user.
      *
-     * @param username  The username of the user.
-     * @param password  The password of the user.
-     * @param loginType The login type of the user.
+     * @param ctr The existing generic controller.
      */
-    public UserSessionController(final String username, final char[] password, final LoginType loginType) {
-        super(username, password, loginType);
+    public UserSessionController(final SessionController ctr) {
+        super(ctr);
         this.userContext = (UserContext) getGenericContext();
     }
 

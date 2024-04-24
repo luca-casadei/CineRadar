@@ -50,17 +50,16 @@ public final class Logger {
      *
      * @param username The username of the account to log.
      * @param password The password of the account to log.
-     * @param type     The type of account to fetch.
      * @return An instance of Account inside an Optional if successful, empty otherwise.
      */
     public static Optional<? extends Account> logIn(final String username,
-                                                    final char[] password,
-                                                    final LoginType type) {
+                                                    final char[] password) {
         try (DBManager def = new DBManager()) {
             final Optional<String> gotPassword = def.getAccountCredentials(username);
             if (gotPassword.isPresent()
                     && new PasswordChecker(HashingAlgorithm.SHA_512)
                     .checkPassword(password, gotPassword.get())) {
+                final LoginType type = def.getAccountType(username);
                 switch (type) {
                     case ADMINISTRATION -> {
                         try (AdminOps mgr = new AdminOps()) {

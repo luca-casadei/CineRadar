@@ -1,5 +1,7 @@
 package unibo.cineradar.model.db;
 
+import unibo.cineradar.model.login.LoginType;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -129,6 +131,43 @@ public class DBManager implements AutoCloseable {
                 result = Optional.empty();
             }
             return result;
+        } catch (SQLException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
+     * Returns the type of the account that has been requested.
+     *
+     * @param username The username to check.
+     * @return The corresponding login type.
+     */
+    public LoginType getAccountType(final String username) {
+        Objects.requireNonNull(this.dbConnection);
+        try {
+            final String query = "SELECT account.Username AS ACC_NAME,"
+                    + " registratore.username AS IS_REG, utente.Username AS IS_USR,"
+                    + " amministratore.username AS IS_AMM "
+                    + "FROM account LEFT JOIN registratore ON registratore.username = account.username "
+                    + "LEFT JOIN utente ON utente.Username = account.Username "
+                    + "LEFT JOIN amministratore ON amministratore.username = account.username\n"
+                    + "WHERE account.username = ?";
+            this.preparedStatement = this.dbConnection.prepareStatement(query);
+            this.preparedStatement.setString(1, username);
+            this.resultSet = this.preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                if (!Objects.isNull(resultSet.getString("IS_USR"))) {
+                    return LoginType.USER;
+                } else if (!Objects.isNull(resultSet.getString("IS_AMM"))) {
+                    return LoginType.ADMINISTRATION;
+                } else if (!Objects.isNull(resultSet.getString("IS_REG"))) {
+                    return LoginType.REGISTRATION;
+                } else {
+                    throw new IllegalStateException("No account type found.");
+                }
+            } else {
+                throw new IllegalStateException("No account found for username " + username);
+            }
         } catch (SQLException ex) {
             throw new IllegalStateException(ex);
         }

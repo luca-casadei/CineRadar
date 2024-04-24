@@ -43,7 +43,7 @@ VALUES ("reguci1",
 INSERT INTO account(Username, PASSWORD, Nome, Cognome)
 VALUES ("reg",
         "cc37ae468020f0e2a7c450ca95bddbaa9dde4406ac6e89172a7784c0ed7e148888e705b86917d038906735dc598e927f2bda3b7036b5886d78d19eca5c6bdcc1",
-        "Ernesto", "Scandoli");
+        "Ernesto", "Scandoli"); -- Pw: romolo --
 INSERT INTO registratore(Username, EmailCinema, CodiceCinema)
 VALUES ("reguci1", NULL, 1);
 INSERT INTO registratore(Username, EmailCinema, CodiceCinema)

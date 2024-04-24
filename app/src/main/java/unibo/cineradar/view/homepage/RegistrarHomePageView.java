@@ -2,8 +2,8 @@ package unibo.cineradar.view.homepage;
 
 import unibo.cineradar.view.CineRadarViewFrameImpl;
 import unibo.cineradar.view.ViewContext;
-import unibo.cineradar.view.registrar.CardedCinemaPanel;
-import unibo.cineradar.view.registrar.CardedRegistrationForm;
+import unibo.cineradar.view.homepage.registrar.CardedCinemaPanel;
+import unibo.cineradar.view.homepage.registrar.CardedRegistrationForm;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;

@@ -20,6 +20,11 @@ public abstract class SessionContextImpl implements SessionContext {
     }
 
     @Override
+    public final Account getAccount() {
+        return this.loggedAccount;
+    }
+
+    @Override
     public final String getUsername() {
         return loggedAccount.getUsername();
     }

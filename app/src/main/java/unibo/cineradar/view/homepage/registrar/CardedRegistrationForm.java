@@ -1,4 +1,4 @@
-package unibo.cineradar.view.registrar;
+package unibo.cineradar.view.homepage.registrar;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;

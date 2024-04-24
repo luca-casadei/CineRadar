@@ -1,5 +1,7 @@
 package unibo.cineradar.model.context;
 
+import unibo.cineradar.model.utente.Account;
+
 import java.util.List;
 
 /**
@@ -33,4 +35,11 @@ public interface SessionContext {
      * @return A list of strings containing the every information of the generic account.
      */
     List<String> getAccountDetails();
+
+    /**
+     * Gets the account object.
+     *
+     * @return The account object.
+     */
+    Account getAccount();
 }

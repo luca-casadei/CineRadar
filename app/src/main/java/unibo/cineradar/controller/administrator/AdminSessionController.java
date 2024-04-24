@@ -1,8 +1,8 @@
 package unibo.cineradar.controller.administrator;
 
+import unibo.cineradar.controller.SessionController;
 import unibo.cineradar.controller.SessionControllerImpl;
 import unibo.cineradar.model.context.administrator.AdministratorContext;
-import unibo.cineradar.model.login.LoginType;
 import unibo.cineradar.model.request.Request;
 
 import java.util.List;
@@ -15,14 +15,12 @@ public final class AdminSessionController extends SessionControllerImpl {
     private final AdministratorContext administratorContext;
 
     /**
-     * Creates the controller for an admin session.
+     * Creates the session controller of the administrator.
      *
-     * @param username  The username of the admin.
-     * @param password  The password of the admin.
-     * @param loginType ADMINISTRATOR.
+     * @param ctr The existing generic controller.
      */
-    public AdminSessionController(final String username, final char[] password, final LoginType loginType) {
-        super(username, password, loginType);
+    public AdminSessionController(final SessionController ctr) {
+        super(ctr);
         this.administratorContext = (AdministratorContext) getGenericContext();
     }
 

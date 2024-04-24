@@ -1,6 +1,7 @@
 package unibo.cineradar.controller;
 
 import unibo.cineradar.model.login.LoginType;
+import unibo.cineradar.model.utente.Account;
 
 import java.util.List;
 
@@ -28,4 +29,11 @@ public interface SessionController {
      * @return The list of account details.
      */
     List<String> getAccountDetails();
+
+    /**
+     * Gets the account as an object.
+     *
+     * @return The whole account.
+     */
+    Account getAccount();
 }
