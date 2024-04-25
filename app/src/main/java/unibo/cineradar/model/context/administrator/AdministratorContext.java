@@ -2,9 +2,10 @@ package unibo.cineradar.model.context.administrator;
 
 import unibo.cineradar.model.context.SessionContextImpl;
 import unibo.cineradar.model.db.AdminOps;
+import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.request.Request;
+import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.Account;
-import unibo.cineradar.model.utente.Administrator;
 
 import java.util.List;
 
@@ -12,7 +13,6 @@ import java.util.List;
  * The context of an administrator session.
  */
 public final class AdministratorContext extends SessionContextImpl {
-    private final Administrator admin;
 
     /**
      * Constructs the context of an administrator.
@@ -21,19 +21,6 @@ public final class AdministratorContext extends SessionContextImpl {
      */
     public AdministratorContext(final Account loggedAccount) {
         super(loggedAccount);
-        try (AdminOps mgr = new AdminOps()) {
-            this.admin = mgr.getAdministrationDetails(super.getUsername()).orElse(null);
-        }
-    }
-
-    /**
-     * To be removed.
-     *
-     * @return Nothing useful.
-     */
-    public String placeHolder() {
-        //TODO: Rimuovi quando usi admin, è per evitare il rosso nella compilazione.
-        return admin.getPhoneNumber();
     }
 
     /**
@@ -44,6 +31,28 @@ public final class AdministratorContext extends SessionContextImpl {
     public List<Request> getInsertionsRequests() {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.getRequests();
+        }
+    }
+
+    /**
+     * Gets the list of all series.
+     *
+     * @return A list of series.
+     */
+    public List<Serie> getSeries() {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getSeries();
+        }
+    }
+
+    /**
+     * Gets the list of all films.
+     *
+     * @return A list of Films.
+     */
+    public List<Film> getFilms() {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getFilms();
         }
     }
 }
