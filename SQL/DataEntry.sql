@@ -1,4 +1,6 @@
 DELETE
+FROM tessera;
+DELETE
 FROM richiesta;
 DELETE
 FROM recfilm;
@@ -56,7 +58,15 @@ INSERT INTO recfilm(UsernameUtente, CodiceFilm, Titolo, Descrizione, VotoComples
 VALUES ("luca", 1, "Bello ma poco coinvolgente",
         "Mi è piaciuto il film, lo ho trovato molto realistico e crudo, però troppo poco coinvolgente per lo spettatore",
         8);
-INSERT INTO account(Username, PASSWORD,Nome,Cognome)
-VALUES ("tes","a3be67122051b5362984184e412dc47ed61347e610588a9e3c639d3a99de8aa80595207f2001d6c40439f141aac5927b3dbdf254bbc4d0073393bb13d5962078","Rato","Tesse");
+INSERT INTO account(Username, PASSWORD, Nome, Cognome)
+VALUES ("tes",
+        "a3be67122051b5362984184e412dc47ed61347e610588a9e3c639d3a99de8aa80595207f2001d6c40439f141aac5927b3dbdf254bbc4d0073393bb13d5962078",
+        "Rato", "Tesse");
 INSERT INTO utente(Username, DataNascita) -- Pw: tes --
 VALUES ("tes", "2001-10-11");
+INSERT INTO tessera(CodiceCinema, UsernameUtente, NumeroTessera, DataRinnovo)
+VALUES (1, "tes", 1, "2026-03-30");
+INSERT INTO tessera(CodiceCinema, UsernameUtente, NumeroTessera, DataRinnovo)
+VALUES (2, "tes", 1, "2025-02-15");
+INSERT INTO tessera(CodiceCinema, UsernameUtente, NumeroTessera, DataRinnovo)
+VALUES (1, "luca", 1, "2026-02-5");
