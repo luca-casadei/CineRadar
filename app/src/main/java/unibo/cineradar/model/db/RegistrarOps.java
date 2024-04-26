@@ -1,9 +1,11 @@
 package unibo.cineradar.model.db;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import unibo.cineradar.model.card.CardReg;
 import unibo.cineradar.model.cinema.Cinema;
 import unibo.cineradar.model.utente.Registrar;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,8 +30,11 @@ public final class RegistrarOps extends DBManager {
     public Optional<Cinema> getAssociatedCinema(final int cinemaCode) {
         Objects.requireNonNull(super.getConnection());
         try {
-            final String query = "SELECT cinema.* "
-                    + "FROM cinema WHERE cinema.Codice = ?";
+            final String query = "SELECT cinema.*, COUNT(*) AS NumeroTesserati FROM cinema "
+                    + "JOIN tessera ON cinema.Codice = tessera.CodiceCinema "
+                    + "JOIN registratore ON registratore.CodiceCinema = cinema.Codice "
+                    + "WHERE registratore.Username = ? "
+                    + "GROUP BY cinema.Codice";
             super.setPreparedStatement(super.getConnection().prepareStatement(query));
             super.getPreparedStatement().setInt(1, cinemaCode);
             super.setResultSet(super.getPreparedStatement().executeQuery());
@@ -41,7 +46,8 @@ public final class RegistrarOps extends DBManager {
                                 getResultSet().getString("Ind_Via"),
                                 getResultSet().getString("Ind_CAP"),
                                 getResultSet().getString("Ind_Citta"),
-                                getResultSet().getInt("Ind_Civico")
+                                getResultSet().getInt("Ind_Civico"),
+                                getResultSet().getInt("NumeroTesserati")
                         )
                 );
             } else {
@@ -49,6 +55,29 @@ public final class RegistrarOps extends DBManager {
             }
         } catch (SQLException ex) {
             throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
+     * Registers a new card in the database.
+     *
+     * @param card The card to add.
+     * @return True if the insertion was successful, false otherwise.
+     */
+    public boolean registerCard(final CardReg card) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "INSERT INTO tessera(CodiceCinema, UsernameUtente, NumeroTessera, DataRinnovo) "
+                    + "VALUES (?,?,?,?)";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setInt(1, card.getCinemaCode());
+            this.getPreparedStatement().setString(2, card.getUser());
+            this.getPreparedStatement().setInt(3, card.getCardNr());
+            this.getPreparedStatement().setDate(4, Date.valueOf(card.getDate()));
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            return true;
+        } catch (SQLException ex) {
+            return false;
         }
     }
 

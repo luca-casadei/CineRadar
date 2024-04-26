@@ -5,6 +5,7 @@ import unibo.cineradar.model.context.SessionContextImpl;
 import unibo.cineradar.model.db.RegistrarOps;
 import unibo.cineradar.model.utente.Account;
 import unibo.cineradar.model.utente.Registrar;
+import unibo.cineradar.model.card.CardReg;
 
 /**
  * The context of a registrar session.
@@ -32,6 +33,18 @@ public final class RegistrarContext extends SessionContextImpl {
     public Cinema getCinema() {
         try (RegistrarOps mgr = new RegistrarOps()) {
             return mgr.getAssociatedCinema(registrar.getCinema()).orElse(null);
+        }
+    }
+
+    /**
+     * Inserts a new card into the database.
+     *
+     * @param card The card to add.
+     * @return True if the insertion was successful, false otherwise.
+     */
+    public boolean registerCard(final CardReg card) {
+        try (RegistrarOps mgr = new RegistrarOps()) {
+            return mgr.registerCard(card);
         }
     }
 }

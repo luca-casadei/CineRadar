@@ -3,7 +3,7 @@ package unibo.cineradar.view.homepage;
 import unibo.cineradar.view.CineRadarViewFrameImpl;
 import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.homepage.registrar.CardedCinemaPanel;
-import unibo.cineradar.view.homepage.registrar.CardedRegistrationForm;
+import unibo.cineradar.view.homepage.registrar.RegInfoPanel;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -16,7 +16,7 @@ import java.awt.FlowLayout;
  */
 public final class RegistrarHomePageView extends CineRadarViewFrameImpl {
 
-    private static final String REG_NAME = "reg";
+    private static final String REG_NAME = "inf";
     private static final String CINE_NAME = "cin";
     private final ViewContext context;
     private CardLayout cards;
@@ -45,8 +45,8 @@ public final class RegistrarHomePageView extends CineRadarViewFrameImpl {
         contentPane.add(cardPane, BorderLayout.CENTER);
 
         //Home panel
-        cardPane.add("reg", new CardedRegistrationForm());
-        cardPane.add("cin", new CardedCinemaPanel(context));
+        cardPane.add(REG_NAME, new RegInfoPanel());
+        cardPane.add(CINE_NAME, new CardedCinemaPanel(context));
 
         cards.first(cardPane);
     }
@@ -63,13 +63,13 @@ public final class RegistrarHomePageView extends CineRadarViewFrameImpl {
     }
 
     private JButton getGotoRegButton() {
-        final JButton regButton = new JButton("REGISTRAZIONE TESSERATI");
+        final JButton regButton = new JButton("INFORMAZIONI UTENTE");
         regButton.addActionListener(e -> cards.show(cardPane, REG_NAME));
         return regButton;
     }
 
     private JButton getGotoCineButton() {
-        final JButton cineButton = new JButton("INFO CINEMA");
+        final JButton cineButton = new JButton("INFO CINEMA E REGISTRAZIONE TESSERATI");
         cineButton.addActionListener(e -> cards.show(cardPane, CINE_NAME));
         return cineButton;
     }
