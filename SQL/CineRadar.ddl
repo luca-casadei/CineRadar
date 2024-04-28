@@ -480,6 +480,20 @@ BEGIN
     END IF;
 END;
 //
+CREATE TRIGGER CK_VISUAL_BEFORE_REC
+    BEFORE INSERT
+    ON recfilm
+    FOR EACH ROW
+BEGIN
+    IF NOT EXISTS(SELECT UsernameUtente, CodiceFilm
+                  FROM visualizzazioni_film
+                  WHERE UsernameUtente = NEW.UsernameUtente
+                    AND CodiceFilm = NEW.CodiceFilm)
+    THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Per poter recensire un film va prima visualizzato.';
+    END IF;
+END;
+//
 DELIMITER ;
 
 -- Index Section
