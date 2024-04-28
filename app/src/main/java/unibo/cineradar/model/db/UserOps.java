@@ -2,6 +2,7 @@ package unibo.cineradar.model.db;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.User;
 
@@ -117,6 +118,58 @@ public final class UserOps extends DBManager {
             return series;
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);
+        }
+    }
+
+    public Optional<Film> getFilm(final int id) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "SELECT * "
+                    + "FROM film "
+                    + "WHERE film.Codice = ?";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setInt(1, id);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            if (this.getResultSet().next()) {
+                return Optional.of(new Film(
+                        this.getResultSet().getInt("Codice"),
+                        this.getResultSet().getString("Titolo"),
+                        this.getResultSet().getInt("EtaLimite"),
+                        this.getResultSet().getString("Trama"),
+                        this.getResultSet().getInt("Durata"),
+                        this.getResultSet().getInt("CodiceCast")
+                ));
+            } else {
+                return Optional.empty();
+            }
+        } catch (SQLException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    public Optional<Serie> getSerie(final int id) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "SELECT * "
+                    + "FROM serie "
+                    + "WHERE serie.Codice = ?";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setInt(1, id);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            if (this.getResultSet().next()) {
+                return Optional.of(new Serie(
+                        this.getResultSet().getInt("Codice"),
+                        this.getResultSet().getString("Titolo"),
+                        this.getResultSet().getInt("EtaLimite"),
+                        this.getResultSet().getString("Trama"),
+                        this.getResultSet().getInt("Durata"),
+                        this.getResultSet().getInt("NumeroEpisodi")
+                ));
+            } else {
+                return Optional.empty();
+            }
+        } catch (SQLException ex) {
+            throw new IllegalStateException(ex);
         }
     }
 }

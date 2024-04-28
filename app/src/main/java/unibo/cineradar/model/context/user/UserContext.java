@@ -10,6 +10,7 @@ import unibo.cineradar.model.utente.User;
 
 import java.time.Year;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * The context of a user session.
@@ -29,6 +30,10 @@ public final class UserContext extends SessionContextImpl {
         }
     }
 
+    private int getUserAge() {
+        return Year.now().getValue() - (user.getBirthDate().getYear());
+    }
+
     /**
      * Gets the films.
      *
@@ -42,10 +47,6 @@ public final class UserContext extends SessionContextImpl {
         }
     }
 
-    private int getUserAge() {
-        return Year.now().getValue() - (user.getBirthDate().getYear());
-    }
-
     /**
      * Gets the series that this user can watch.
      *
@@ -54,6 +55,20 @@ public final class UserContext extends SessionContextImpl {
     public List<Serie> getSeries() {
         try (UserOps mgr = new UserOps()) {
             return mgr.getSeries(getUserAge());
+        }
+    }
+
+    public Film getFilm(final int id) {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.getFilm(id)
+                    .orElseThrow(() -> new NoSuchElementException("Film non trovato con id: " + id));
+        }
+    }
+
+    public Serie getSerie(final int id) {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.getSerie(id)
+                    .orElseThrow(() -> new NoSuchElementException("Serie non trovata con id: " + id));
         }
     }
 }

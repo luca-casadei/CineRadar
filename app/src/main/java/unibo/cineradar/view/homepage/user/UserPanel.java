@@ -98,7 +98,27 @@ public abstract class UserPanel extends JPanel {
         table.setBackground(Color.WHITE);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
+        // Set table as READ ONLY
+        table.setDefaultEditor(Object.class, null);
+
+        // Add ListSelectionListener to handle row selection events
+        table.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow != -1) {
+                    int multimediaId = (int) table.getValueAt(selectedRow, 0); // Assuming ID is in the first column
+
+                    openMultimediaDetailsView(currentSessionContext, multimediaId);
+                }
+            }
+        });
+
         return table;
+    }
+
+    private void openMultimediaDetailsView(final ViewContext currentSessionContext, final Integer multimediaId) {
+        MultimediaDetailsView detailsView = new MultimediaDetailsView(currentSessionContext, multimediaId);
+        detailsView.setVisible(true);
     }
 }
 
