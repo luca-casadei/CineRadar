@@ -147,6 +147,10 @@ VALUES ("tes","a3be67122051b5362984184e412dc47ed61347e610588a9e3c639d3a99de8aa80
 INSERT INTO utente(Username, DataNascita) -- Pw: tes --
 VALUES ("tes", "2001-10-11");
 
+--
+-- PARTE FILM
+--
+
 -- Inserisci il primo cast
 INSERT INTO casting(Nome) VALUES ('Unbroken Cast');
 
@@ -244,6 +248,12 @@ VALUES
     (11, 5),
     (12, 5);
 
+-- Visualizzazioni per il primo film
+INSERT INTO visualizzazioni_film(CodiceFilm, UsernameUtente)
+VALUES (1, "luca"),
+       (1, "giulia"),
+       (1, "marco");
+
 -- Recensioni per il primo film
 INSERT INTO recfilm(UsernameUtente, CodiceFilm, Titolo, Descrizione, VotoComplessivo)
 VALUES
@@ -257,6 +267,11 @@ VALUES
      "Uno dei migliori film di guerra che abbia mai visto. La regia è impeccabile e la trama tiene con il fiato sospeso fino alla fine",
      10);
 
+-- Visualizzazioni per il secondo film
+INSERT INTO visualizzazioni_film(CodiceFilm, UsernameUtente)
+VALUES (2, "anna"),
+       (2, "mario");
+
 -- Recensioni per il secondo film
 INSERT INTO recfilm(UsernameUtente, CodiceFilm, Titolo, Descrizione, VotoComplessivo)
 VALUES
@@ -266,6 +281,11 @@ VALUES
     ("mario", 2, "Molto deludente",
      "Mi aspettavo di più da questo film. La trama è banale e gli effetti speciali non sono all'altezza",
      5);
+
+-- Visualizzazioni per il terzo film
+INSERT INTO visualizzazioni_film(CodiceFilm, UsernameUtente)
+VALUES (3, "eleonora"),
+       (3, "giorgio");
 
 -- Recensioni per il terzo film
 INSERT INTO recfilm(UsernameUtente, CodiceFilm, Titolo, Descrizione, VotoComplessivo)
@@ -277,6 +297,11 @@ VALUES
      "Non sono riuscito a seguire la trama, mi è sembrato tutto molto confuso. Peccato perché aveva delle ottime premesse",
      6);
 
+-- Visualizzazioni per il quarto film
+INSERT INTO visualizzazioni_film(CodiceFilm, UsernameUtente)
+VALUES (4, "francesca"),
+       (4, "paolo");
+
 -- Recensioni per il quarto film
 INSERT INTO recfilm(UsernameUtente, CodiceFilm, Titolo, Descrizione, VotoComplessivo)
 VALUES
@@ -286,6 +311,11 @@ VALUES
     ("paolo", 4, "Non all'altezza delle aspettative",
      "Mi aspettavo di più da Christopher Nolan. Il film è troppo prolisso e ha alcuni buchi nella trama",
      7);
+
+-- Visualizzazioni per il quinto film
+INSERT INTO visualizzazioni_film(CodiceFilm, UsernameUtente)
+VALUES (5, "giulia"),
+       (5, "luca");
 
 -- Recensioni per il quinto film
 INSERT INTO recfilm(UsernameUtente, CodiceFilm, Titolo, Descrizione, VotoComplessivo)
