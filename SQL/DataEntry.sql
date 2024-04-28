@@ -15,6 +15,12 @@ FROM cinema;
 DELETE
 FROM film;
 DELETE
+FROM episodio;
+DELETE
+FROM stagione;
+DELETE
+FROM serie;
+DELETE
 FROM partecipazione_cast;
 DELETE
 FROM membrocast;
@@ -290,3 +296,180 @@ VALUES
     ("luca", 5, "Trama avvincente e attori fantastici",
      "Un film che tiene con il fiato sospeso dall'inizio alla fine. Christian Bale e Heath Ledger sono incredibili",
      9);
+
+
+--
+-- PARTE SERIE
+--
+
+-- Inserisci la serie Breaking Bad
+INSERT INTO serie(Codice, Titolo, EtaLimite, Trama, DurataComplessiva, NumeroEpisodi)
+VALUES (1, 'Breaking Bad', 14, 'Droga, polizia e Walter White', 2832, 62);
+
+-- Inserisci il cast per Breaking Bad
+INSERT INTO casting(Nome) VALUES ('Breaking Bad Cast');
+
+-- Inserisci membri del cast della prima stagione di Breaking Bad
+INSERT INTO membrocast (Codice, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
+VALUES
+    (13, 'Bryan', 'Cranston', '1956-03-07', true, false, '1980-05-06', 'Bryan Cranston'),
+    (14, 'Aaron', 'Paul', '1979-08-27', true, false, '1998-02-19', 'Aaron Paul');
+
+-- Associa i membri del cast al cast della prima stagione di Breaking Bad
+INSERT INTO partecipazione_cast (CodiceMembro, CodiceCast)
+VALUES
+    (13, 6),
+    (14, 6);
+
+-- Inserisci la prima stagione di Breaking Bad
+INSERT INTO stagione(CodiceSerie, NumeroStagione, Sunto, CodiceCast)
+VALUES (1, 1, 'Stagione molto bella', 6);
+
+-- Inserisci episodi per la prima stagione di Breaking Bad
+INSERT INTO episodio(CodiceSerie, NumeroStagione, NumeroEpisodio, DurataMin)
+VALUES
+    (1, 1, 1, 20),
+    (1, 1, 2, 20),
+    (1, 1, 3, 20),
+    (1, 1, 4, 20),
+    (1, 1, 5, 20);
+
+-- Inserisci un nuovo cast per la seconda stagione di Breaking Bad
+INSERT INTO casting(Nome) VALUES ('Breaking Bad Cast - Stagione 2');
+-- Inserisci membri del cast della seconda stagione di Breaking Bad
+INSERT INTO membrocast (Codice, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
+VALUES
+    (15, 'Anna', 'Gunn', '1968-08-11', true, false, '1992-06-19', 'Anna Gunn'),
+    (16, 'Dean', 'Norris', '1963-04-08', true, false, '1986-01-19', 'Dean Norris');
+
+-- Associa i membri del cast al cast della seconda stagione di Breaking Bad
+INSERT INTO partecipazione_cast (CodiceMembro, CodiceCast)
+VALUES
+    (15, 7),
+    (16, 7);
+
+-- Inserisci la seconda stagione di Breaking Bad
+INSERT INTO stagione(CodiceSerie, NumeroStagione, Sunto, CodiceCast)
+VALUES (1, 2, 'Stagione della crescita del business di Heisenberg', 7);
+
+-- Inserisci episodi per la seconda stagione di Breaking Bad
+INSERT INTO episodio(CodiceSerie, NumeroStagione, NumeroEpisodio, DurataMin)
+VALUES
+    (1, 2, 1, 45),
+    (1, 2, 2, 45),
+    (1, 2, 3, 45),
+    (1, 2, 4, 45),
+    (1, 2, 5, 45);
+
+-- Inserisci un nuovo cast per la terza stagione di Breaking Bad
+INSERT INTO casting(Nome) VALUES ('Breaking Bad Cast - Stagione 3');
+-- Inserisci membri del cast della terza stagione di Breaking Bad
+INSERT INTO membrocast (Codice, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
+VALUES
+    (17, 'Giancarlo', 'Esposito', '1958-04-26', true, false, '1980-03-19', 'Giancarlo Esposito'),
+    (18, 'Jonathan', 'Banks', '1947-01-31', true, false, '1972-11-15', 'Jonathan Banks');
+
+-- Associa i membri del cast al cast della terza stagione di Breaking Bad
+INSERT INTO partecipazione_cast (CodiceMembro, CodiceCast)
+VALUES
+    (17, 8),
+    (18, 8);
+
+-- Inserisci la terza stagione di Breaking Bad
+INSERT INTO stagione(CodiceSerie, NumeroStagione, Sunto, CodiceCast)
+VALUES (1, 3, 'La vendetta di Heisenberg', 8);
+
+-- Inserisci episodi per la terza stagione di Breaking Bad
+INSERT INTO episodio(CodiceSerie, NumeroStagione, NumeroEpisodio, DurataMin)
+VALUES
+    (1, 3, 1, 50),
+    (1, 3, 2, 50),
+    (1, 3, 3, 50),
+    (1, 3, 4, 50),
+    (1, 3, 5, 50);
+
+-- Inserisci un nuovo cast per la quarta stagione di Breaking Bad
+INSERT INTO casting(Nome) VALUES ('Breaking Bad Cast - Stagione 4');
+-- Inserisci membri del cast della quarta stagione di Breaking Bad
+INSERT INTO membrocast (Codice, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
+VALUES
+    (19, 'Bob', 'Odenkirk', '1962-10-22', true, false, '1987-09-12', 'Bob Odenkirk'),
+    (20, 'Betsy', 'Brandt', '1973-03-14', true, false, '1998-06-28', 'Betsy Brandt');
+
+-- Associa i membri del cast al cast della quarta stagione di Breaking Bad
+INSERT INTO partecipazione_cast (CodiceMembro, CodiceCast)
+VALUES
+    (19, 9),
+    (20, 9);
+
+-- Inserisci la quarta stagione di Breaking Bad
+INSERT INTO stagione(CodiceSerie, NumeroStagione, Sunto, CodiceCast)
+VALUES (1, 4, 'La discesa di Heisenberg', 9);
+
+-- Inserisci episodi per la quarta stagione di Breaking Bad
+INSERT INTO episodio(CodiceSerie, NumeroStagione, NumeroEpisodio, DurataMin)
+VALUES
+    (1, 4, 1, 55),
+    (1, 4, 2, 55),
+    (1, 4, 3, 55),
+    (1, 4, 4, 55),
+    (1, 4, 5, 55);
+
+-- Inserisci la serie Game of Thrones
+INSERT INTO serie(Codice, Titolo, EtaLimite, Trama, DurataComplessiva, NumeroEpisodi)
+VALUES (2, 'Game of Thrones', 18, 'Intrighi, tradimenti e lotte per il potere nei Sette Regni di Westeros', 4560, 73);
+
+-- Inserisci il cast per Game of Thrones
+INSERT INTO casting(Nome) VALUES ('Game of Thrones Cast');
+
+-- Inserisci membri del cast della prima stagione di Game of Thrones
+INSERT INTO membrocast (Codice, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
+VALUES
+    (21, 'Emilia', 'Clarke', '1986-10-23', true, false, '2009-04-08', 'Emilia Clarke'),
+    (22, 'Kit', 'Harington', '1986-12-26', true, false, '2008-09-11', 'Kit Harington');
+
+-- Associa i membri del cast al cast della prima stagione di Game of Thrones
+INSERT INTO partecipazione_cast (CodiceMembro, CodiceCast)
+VALUES
+    (21, 10),
+    (22, 10);
+
+-- Inserisci la prima stagione di Game of Thrones
+INSERT INTO stagione(CodiceSerie, NumeroStagione, Sunto, CodiceCast)
+VALUES (2, 1, 'La lotta per il Trono di Spade inizia', 10);
+
+-- Inserisci episodi per la prima stagione di Game of Thrones
+INSERT INTO episodio(CodiceSerie, NumeroStagione, NumeroEpisodio, DurataMin)
+VALUES
+    (2, 1, 1, 60),
+    (2, 1, 2, 60),
+    (2, 1, 3, 60),
+    (2, 1, 4, 60),
+    (2, 1, 5, 60);
+
+-- Inserisci un nuovo cast per la seconda stagione di Game of Thrones
+INSERT INTO casting(Nome) VALUES ('Game of Thrones Cast - Stagione 2');
+-- Inserisci membri del cast della seconda stagione di Game of Thrones
+INSERT INTO membrocast (Codice, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
+VALUES
+    (23, 'Peter', 'Dinklage', '1969-06-11', true, false, '1991-12-15', 'Peter Dinklage'),
+    (24, 'Lena', 'Headey', '1973-10-03', true, false, '1992-06-28', 'Lena Headey');
+
+-- Associa i membri del cast al cast della seconda stagione di Game of Thrones
+INSERT INTO partecipazione_cast (CodiceMembro, CodiceCast)
+VALUES
+    (23, 11),
+    (24, 11);
+
+-- Inserisci la seconda stagione di Game of Thrones
+INSERT INTO stagione(CodiceSerie, NumeroStagione, Sunto, CodiceCast)
+VALUES (2, 2, 'La guerra dei Cinque Re infuria', 11);
+
+-- Inserisci episodi per la seconda stagione di Game of Thrones
+INSERT INTO episodio(CodiceSerie, NumeroStagione, NumeroEpisodio, DurataMin)
+VALUES
+    (2, 2, 1, 60),
+    (2, 2, 2, 60),
+    (2, 2, 3, 60),
+    (2, 2, 4, 60),
+    (2, 2, 5, 60);
