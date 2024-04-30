@@ -1,7 +1,12 @@
 package unibo.cineradar.model.db;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import unibo.cineradar.model.cast.Actor;
+import unibo.cineradar.model.cast.Cast;
+import unibo.cineradar.model.cast.CastMember;
+import unibo.cineradar.model.cast.Director;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.review.FilmReview;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.review.SerieReview;
@@ -9,10 +14,7 @@ import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.User;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static java.sql.Types.NULL;
 
@@ -275,5 +277,78 @@ public final class UserOps extends DBManager {
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);
         }
+    }
+
+    /**/
+    public Map<Multimedia, Cast> getFilmsDetails() {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "SELECT film.Codice AS CodiceFilm, \n" +
+                    "film.Titolo AS TitoloFilm, \n" +
+                    "film.EtaLimite AS EtaLimiteFilm, \n" +
+                    "film.Trama AS TramaFilm, \n" +
+                    "film.Durata AS DurataFilm, \n" +
+                    "film.CodiceCast AS CodiceCastFilm,\n" +
+                    "membrocast.Codice AS CodiceMembroCast, \n" +
+                    "membrocast.Nome AS NomeMembroCast, \n" +
+                    "membrocast.Cognome AS CognomeMembroCast, \n" +
+                    "membrocast.DataNascita AS DataNascitaMembroCast, \n" +
+                    "membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast,\n" +
+                    "membrocast.NomeArte AS NomeArteMembroCast\n" +
+                    "membrocast.TipoAttore AS TipoAttoreMembroCast\n" +
+                    "membrocast.TipoRegista AS TipoRegistaMembroCast\n" +
+                    "FROM film \n" +
+                    "JOIN casting ON film.CodiceCast = casting.Codice \n" +
+                    "JOIN partecipazione_cast ON casting.codice = partecipazione_cast.CodiceCast\n" +
+                    "JOIN membrocast ON partecipazione_cast.CodiceMembro = membrocast.Codice";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            final Map<Film, Cast> detailedFilms = new HashMap<>();
+            while (this.getResultSet().next()) {
+                final Film film = new Film(
+                        this.getResultSet().getInt("CodiceFilm"),
+                        this.getResultSet().getString("TitoloFilm"),
+                        this.getResultSet().getInt("EtaLimiteFilm"),
+                        this.getResultSet().getString("TramaFilm"),
+                        this.getResultSet().getInt("DurataFilm"),
+                        this.getResultSet().getInt("CodiceCastFilm")
+                );
+                if (!detailedFilms.containsKey(film)) {
+                    Cast newCast = new Cast();
+                    newCast.addCastMember(getNewCastMember());
+                    detailedFilms.put(film, newCast);
+                } else {
+                    detailedFilms.get(film).addCastMember(getNewCastMember());
+                }
+            }
+            return Map.copyOf(detailedFilms);
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    private CastMember getNewCastMember() throws SQLException {
+        if (this.getResultSet().getBoolean("TipoAttoreMembroCast")
+                && !this.getResultSet().getBoolean("TipoAttoreMembroCast")) {
+            return new Actor(
+                    this.getResultSet().getInt("CodiceMembroCast"),
+                    this.getResultSet().getString("NomeMembroCast"),
+                    this.getResultSet().getString("CognomeMembroCast"),
+                    this.getResultSet().getDate("DataNascitaMembroCast"),
+                    this.getResultSet().getDate("DataDebuttoCarrieraMembroCast"),
+                    this.getResultSet().getString("NomeArteMembroCast")
+            );
+        } else if (!this.getResultSet().getBoolean("TipoAttoreMembroCast")
+                && this.getResultSet().getBoolean("TipoAttoreMembroCast")) {
+            return new Director(
+                    this.getResultSet().getInt("CodiceMembroCast"),
+                    this.getResultSet().getString("NomeMembroCast"),
+                    this.getResultSet().getString("CognomeMembroCast"),
+                    this.getResultSet().getDate("DataNascitaMembroCast"),
+                    this.getResultSet().getDate("DataDebuttoCarrieraMembroCast"),
+                    this.getResultSet().getString("NomeArteMembroCast")
+            );
+        }
+        throw new IllegalArgumentException();
     }
 }

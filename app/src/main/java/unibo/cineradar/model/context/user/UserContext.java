@@ -1,9 +1,11 @@
 package unibo.cineradar.model.context.user;
 
+import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.context.SessionContextImpl;
 
 import unibo.cineradar.model.db.UserOps;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.Account;
@@ -11,6 +13,7 @@ import unibo.cineradar.model.utente.User;
 
 import java.time.Year;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
@@ -18,6 +21,7 @@ import java.util.NoSuchElementException;
  */
 public final class UserContext extends SessionContextImpl {
     private final User user;
+    private final Map<Multimedia, Cast> detailedFilms;
 
     /**
      * Constructs the context of a user.
@@ -28,6 +32,7 @@ public final class UserContext extends SessionContextImpl {
         super(loggedAccount);
         try (UserOps mgr = new UserOps()) {
             this.user = mgr.getUserDetails(super.getUsername()).orElse(null);
+            this.detailedFilms = mgr.getFilmsDetails();
         }
     }
 
@@ -47,6 +52,13 @@ public final class UserContext extends SessionContextImpl {
             );
         }
     }
+
+    /**
+     * Gets detailed films.
+     *
+     * @return The list of all detailed films.
+     */
+    public Map<Multimedia, Cast> getDetailedFilms() { return Map.copyOf(detailedFilms); }
 
     /**
      * Gets the series that this user can watch.

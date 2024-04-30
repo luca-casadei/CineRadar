@@ -2,12 +2,15 @@ package unibo.cineradar.controller.user;
 
 import unibo.cineradar.controller.SessionController;
 import unibo.cineradar.controller.SessionControllerImpl;
+import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.context.user.UserContext;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.serie.Serie;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * The user session controller class.
@@ -34,6 +37,14 @@ public class UserSessionController extends SessionControllerImpl {
     public List<Film> getFilms() {
         return userContext.getFilms();
     }
+
+    /**
+     * Gets detailed films.
+     *
+     * @return The list of all detailed films.
+     */
+    public Map<Multimedia, Cast> getDetailedFilms() { return userContext.getDetailedFilms(); }
+
 
     /**
      * Gets the list of series that the user can view.

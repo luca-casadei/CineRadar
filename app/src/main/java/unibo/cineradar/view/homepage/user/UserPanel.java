@@ -1,11 +1,12 @@
 package unibo.cineradar.view.homepage.user;
 
+import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.review.FilmReview;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.review.SerieReview;
 import unibo.cineradar.view.ViewContext;
-import unibo.cineradar.view.homepage.user.details.MultimediaDetailsView;
+import unibo.cineradar.view.homepage.user.details.FilmDetailsView;
 import unibo.cineradar.view.homepage.user.details.ReviewDetailsView;
 
 import javax.swing.JLabel;
@@ -127,11 +128,12 @@ public abstract class UserPanel extends JPanel {
                 if (selectedRow != -1) {
                     final int multimediaId = (int) ((JTable) e.getSource()).getValueAt(selectedRow, 0);
 
-                    openMultimediaDetailsView(currentSessionContext, multimediaId);
+                    openFilmDetailsView(currentSessionContext, multimediaId);
                 }
             }
         });
     }
+
 
     /**
      * Creates the table of the reviews.
@@ -181,9 +183,9 @@ public abstract class UserPanel extends JPanel {
         });
     }
 
-    private void openMultimediaDetailsView(final ViewContext currentSessionContext, final Integer multimediaId) {
-        final MultimediaDetailsView multimediaDetailsView = new MultimediaDetailsView(currentSessionContext, multimediaId);
-        multimediaDetailsView.setVisible(true);
+    private void openFilmDetailsView(final ViewContext currentSessionContext, final Integer multimediaId) {
+        final FilmDetailsView filmDetailsView = new FilmDetailsView(currentSessionContext, multimediaId);
+        filmDetailsView.setVisible(true);
     }
 
     private void openReviewDetailsView(final ViewContext currentSessionContext, final Integer multimediaId) {
