@@ -3,6 +3,12 @@ FROM richiesta;
 DELETE
 FROM recfilm;
 DELETE
+FROM visualizzazioni_film;
+DELETE
+FROM recserie;
+DELETE
+FROM visualizzazioni_episodio;
+DELETE
 FROM amministratore;
 DELETE
 FROM utente;
