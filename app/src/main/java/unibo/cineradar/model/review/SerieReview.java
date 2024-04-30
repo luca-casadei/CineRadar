@@ -16,7 +16,12 @@ public class SerieReview extends Review {
      * @param description   The description of the review.
      * @param overallRating The overall rating of the review.
      */
-    public SerieReview(final int idSerie, final String serieTitle, final String username, final String title, final String description, final int overallRating) {
+    public SerieReview(final int idSerie,
+                       final String serieTitle,
+                       final String username,
+                       final String title,
+                       final String description,
+                       final int overallRating) {
         super(username, title, description, overallRating);
         this.idSerie = idSerie;
         this.serieTitle = serieTitle;

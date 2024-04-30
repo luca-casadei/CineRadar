@@ -2,7 +2,6 @@ package unibo.cineradar.model.db;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import unibo.cineradar.model.film.Film;
-import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.review.FilmReview;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.review.SerieReview;
@@ -28,6 +27,11 @@ import static java.sql.Types.NULL;
 )
 public final class UserOps extends DBManager {
 
+    private static final String ID_NAME = "Codice";
+    private static final String TITLE_NAME = "Titolo";
+    private static final String LIMIT_AGE_NAME = "EtaLimite";
+    private static final String PLOT_NAME = "Trama";
+
     /**
      * Retrieves the list of all films.
      *
@@ -37,8 +41,7 @@ public final class UserOps extends DBManager {
     public List<Film> getFilms(final int userAge) {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = "SELECT * "
-                    + "FROM film "
+            final String query = "SELECT * FROM film "
                     + "WHERE film.EtaLimite <= ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setInt(1, userAge);
@@ -46,10 +49,10 @@ public final class UserOps extends DBManager {
             final List<Film> films = new ArrayList<>();
             while (this.getResultSet().next()) {
                 final Film film = new Film(
-                        this.getResultSet().getInt("Codice"),
-                        this.getResultSet().getString("Titolo"),
-                        this.getResultSet().getInt("EtaLimite"),
-                        this.getResultSet().getString("Trama"),
+                        this.getResultSet().getInt(ID_NAME),
+                        this.getResultSet().getString(TITLE_NAME),
+                        this.getResultSet().getInt(LIMIT_AGE_NAME),
+                        this.getResultSet().getString(PLOT_NAME),
                         this.getResultSet().getInt("Durata"),
                         this.getResultSet().getInt("CodiceCast")
                 );
@@ -102,8 +105,7 @@ public final class UserOps extends DBManager {
     public List<Serie> getSeries(final int userAge) {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = "SELECT * "
-                    + "FROM serie "
+            final String query = "SELECT * FROM serie "
                     + "WHERE serie.EtaLimite <= ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setInt(1, userAge);
@@ -111,10 +113,10 @@ public final class UserOps extends DBManager {
             final List<Serie> series = new ArrayList<>();
             while (this.getResultSet().next()) {
                 final Serie serie = new Serie(
-                        this.getResultSet().getInt("Codice"),
-                        this.getResultSet().getString("Titolo"),
-                        this.getResultSet().getInt("EtaLimite"),
-                        this.getResultSet().getString("Trama"),
+                        this.getResultSet().getInt(ID_NAME),
+                        this.getResultSet().getString(TITLE_NAME),
+                        this.getResultSet().getInt(LIMIT_AGE_NAME),
+                        this.getResultSet().getString(PLOT_NAME),
                         this.getResultSet().getInt("DurataComplessiva"),
                         this.getResultSet().getInt("NumeroEpisodi")
                 );
@@ -136,18 +138,17 @@ public final class UserOps extends DBManager {
     public Optional<Film> getFilm(final int id) {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = "SELECT * "
-                    + "FROM film "
+            final String query = "SELECT * FROM film "
                     + "WHERE film.Codice = ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setInt(1, id);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             if (this.getResultSet().next()) {
                 return Optional.of(new Film(
-                        this.getResultSet().getInt("Codice"),
-                        this.getResultSet().getString("Titolo"),
-                        this.getResultSet().getInt("EtaLimite"),
-                        this.getResultSet().getString("Trama"),
+                        this.getResultSet().getInt(ID_NAME),
+                        this.getResultSet().getString(TITLE_NAME),
+                        this.getResultSet().getInt(LIMIT_AGE_NAME),
+                        this.getResultSet().getString(PLOT_NAME),
                         this.getResultSet().getInt("Durata"),
                         this.getResultSet().getInt("CodiceCast")
                 ));
@@ -169,18 +170,17 @@ public final class UserOps extends DBManager {
     public Optional<Serie> getSerie(final int id) {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = "SELECT * "
-                    + "FROM serie "
+            final String query = "SELECT * FROM serie "
                     + "WHERE serie.Codice = ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setInt(1, id);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             if (this.getResultSet().next()) {
                 return Optional.of(new Serie(
-                        this.getResultSet().getInt("Codice"),
-                        this.getResultSet().getString("Titolo"),
-                        this.getResultSet().getInt("EtaLimite"),
-                        this.getResultSet().getString("Trama"),
+                        this.getResultSet().getInt(ID_NAME),
+                        this.getResultSet().getString(TITLE_NAME),
+                        this.getResultSet().getInt(LIMIT_AGE_NAME),
+                        this.getResultSet().getString(PLOT_NAME),
                         this.getResultSet().getInt("Durata"),
                         this.getResultSet().getInt("NumeroEpisodi")
                 ));
@@ -202,43 +202,43 @@ public final class UserOps extends DBManager {
     public List<Review> getReviews(final String username) {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = "SELECT \n" +
-                    "    recensioni_totali.UsernameUtente,\n" +
-                    "    recensioni_totali.CodiceFilm,\n" +
-                    "    film.Titolo AS TitoloFilm,\n" +
-                    "    recensioni_totali.CodiceSerie,\n" +
-                    "    serie.Titolo AS TitoloSerie,\n" +
-                    "    recensioni_totali.TitoloRecensione,\n" +
-                    "    recensioni_totali.DescrizioneRecensione,\n" +
-                    "    recensioni_totali.VotoComplessivoRecensione\n" +
-                    "FROM (\n" +
-                    "    SELECT \n" +
-                    "        UsernameUtente,\n" +
-                    "        CodiceSerie,\n" +
-                    "        NULL AS CodiceFilm,\n" +
-                    "        Titolo AS TitoloSerie,\n" +
-                    "        NULL AS TitoloFilm,\n" +
-                    "        Titolo AS TitoloRecensione,\n" +
-                    "        Descrizione AS DescrizioneRecensione,\n" +
-                    "        VotoComplessivo AS VotoComplessivoRecensione\n" +
-                    "    FROM \n" +
-                    "        recserie\n" +
-                    "    UNION ALL\n" +
-                    "    SELECT \n" +
-                    "        UsernameUtente,\n" +
-                    "        NULL AS CodiceSerie,\n" +
-                    "        CodiceFilm,\n" +
-                    "        NULL AS TitoloSerie,\n" +
-                    "        Titolo AS TitoloFilm,\n" +
-                    "        Titolo AS TitoloRecensione,\n" +
-                    "        Descrizione AS DescrizioneRecensione,\n" +
-                    "        VotoComplessivo AS VotoComplessivoRecensione\n" +
-                    "    FROM \n" +
-                    "        recfilm\n" +
-                    ") AS recensioni_totali\n" +
-                    "LEFT JOIN film ON recensioni_totali.CodiceFilm = film.Codice\n" +
-                    "LEFT JOIN serie ON recensioni_totali.CodiceSerie = serie.Codice\n" +
-                    "WHERE UsernameUtente = ?";
+            final String query = "SELECT \n"
+                    + "    recensioni_totali.UsernameUtente,\n"
+                    + "    recensioni_totali.CodiceFilm,\n"
+                    + "    film.Titolo AS TitoloFilm,\n"
+                    + "    recensioni_totali.CodiceSerie,\n"
+                    + "    serie.Titolo AS TitoloSerie,\n"
+                    + "    recensioni_totali.TitoloRecensione,\n"
+                    + "    recensioni_totali.DescrizioneRecensione,\n"
+                    + "    recensioni_totali.VotoComplessivoRecensione\n"
+                    + "FROM (\n"
+                    + "    SELECT \n"
+                    + "        UsernameUtente,\n"
+                    + "        CodiceSerie,\n"
+                    + "        NULL AS CodiceFilm,\n"
+                    + "        Titolo AS TitoloSerie,\n"
+                    + "        NULL AS TitoloFilm,\n"
+                    + "        Titolo AS TitoloRecensione,\n"
+                    + "        Descrizione AS DescrizioneRecensione,\n"
+                    + "        VotoComplessivo AS VotoComplessivoRecensione\n"
+                    + "    FROM \n"
+                    + "        recserie\n"
+                    + "    UNION ALL\n"
+                    + "    SELECT \n"
+                    + "        UsernameUtente,\n"
+                    + "        NULL AS CodiceSerie,\n"
+                    + "        CodiceFilm,\n"
+                    + "        NULL AS TitoloSerie,\n"
+                    + "        Titolo AS TitoloFilm,\n"
+                    + "        Titolo AS TitoloRecensione,\n"
+                    + "        Descrizione AS DescrizioneRecensione,\n"
+                    + "        VotoComplessivo AS VotoComplessivoRecensione\n"
+                    + "    FROM \n"
+                    + "        recfilm\n"
+                    + ") AS recensioni_totali\n"
+                    + "LEFT JOIN film ON recensioni_totali.CodiceFilm = film.Codice\n"
+                    + "LEFT JOIN serie ON recensioni_totali.CodiceSerie = serie.Codice\n"
+                    + "WHERE UsernameUtente = ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setString(1, username);
             this.setResultSet(this.getPreparedStatement().executeQuery());

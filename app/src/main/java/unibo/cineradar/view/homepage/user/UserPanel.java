@@ -8,13 +8,18 @@ import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.homepage.user.details.MultimediaDetailsView;
 import unibo.cineradar.view.homepage.user.details.ReviewDetailsView;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
 import java.util.List;
 
 // CHECKSTYLE: MagicNumber OFF
@@ -50,11 +55,11 @@ public abstract class UserPanel extends JPanel {
     /**
      * Creates a JTable with custom renderer for alternating row colors and the specified action listener.
      *
-     * @param model        The table model to use.
+     * @param model          The table model to use.
      * @param actionListener The action listener for row selection events.
      * @return The created JTable.
      */
-    protected JTable createStyledTable(DefaultTableModel model, ListSelectionListener actionListener) {
+    protected JTable createStyledTable(final DefaultTableModel model, final ListSelectionListener actionListener) {
         // Creates the table with custom renderer for alternating row colors
         final JTable table = new JTable(model) {
             @Override
@@ -118,9 +123,9 @@ public abstract class UserPanel extends JPanel {
 
         return createStyledTable(model, e -> {
             if (!e.getValueIsAdjusting()) {
-                int selectedRow = ((JTable) e.getSource()).getSelectedRow();
+                final int selectedRow = ((JTable) e.getSource()).getSelectedRow();
                 if (selectedRow != -1) {
-                    int multimediaId = (int) ((JTable) e.getSource()).getValueAt(selectedRow, 0); // Assuming ID is in the first column
+                    final int multimediaId = (int) ((JTable) e.getSource()).getValueAt(selectedRow, 0);
 
                     openMultimediaDetailsView(currentSessionContext, multimediaId);
                 }
@@ -146,19 +151,29 @@ public abstract class UserPanel extends JPanel {
         for (final Review review : reviewList) {
             if (review instanceof FilmReview) {
                 final FilmReview filmReview = (FilmReview) review;
-                model.addRow(new Object[]{filmReview.getFilmTitle(), filmReview.getTitle(), filmReview.getDescription(), filmReview.getOverallRating()});
+                model.addRow(new Object[]{
+                        filmReview.getFilmTitle(),
+                        filmReview.getTitle(),
+                        filmReview.getDescription(),
+                        filmReview.getOverallRating()
+                });
             } else {
                 final SerieReview serieReview = (SerieReview) review;
-                model.addRow(new Object[]{serieReview.getSerieTitle(), serieReview.getTitle(), serieReview.getDescription(), serieReview.getOverallRating()});
+                model.addRow(new Object[]{
+                        serieReview.getSerieTitle(),
+                        serieReview.getTitle(),
+                        serieReview.getDescription(),
+                        serieReview.getOverallRating()
+                });
             }
         }
 
         return createStyledTable(model, e -> {
             if (!e.getValueIsAdjusting()) {
-                int selectedRow = ((JTable) e.getSource()).getSelectedRow();
+                final int selectedRow = ((JTable) e.getSource()).getSelectedRow();
                 if (selectedRow != -1) {
                     // Get review ID from the table (assuming it's in the first column)
-                    int reviewId = (int) ((JTable) e.getSource()).getValueAt(selectedRow, 0);
+                    final int reviewId = (int) ((JTable) e.getSource()).getValueAt(selectedRow, 0);
 
                     openReviewDetailsView(currentSessionContext, reviewId);
                 }
@@ -167,12 +182,12 @@ public abstract class UserPanel extends JPanel {
     }
 
     private void openMultimediaDetailsView(final ViewContext currentSessionContext, final Integer multimediaId) {
-        MultimediaDetailsView multimediaDetailsView = new MultimediaDetailsView(currentSessionContext, multimediaId);
+        final MultimediaDetailsView multimediaDetailsView = new MultimediaDetailsView(currentSessionContext, multimediaId);
         multimediaDetailsView.setVisible(true);
     }
 
     private void openReviewDetailsView(final ViewContext currentSessionContext, final Integer multimediaId) {
-        ReviewDetailsView reviewDetailsView = new ReviewDetailsView(currentSessionContext, multimediaId);
+        final ReviewDetailsView reviewDetailsView = new ReviewDetailsView(currentSessionContext, multimediaId);
         reviewDetailsView.setVisible(true);
     }
 }

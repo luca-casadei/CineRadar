@@ -59,6 +59,13 @@ public final class UserContext extends SessionContextImpl {
         }
     }
 
+    /**
+     * Retrieves a film by its ID.
+     *
+     * @param id The ID of the film to retrieve.
+     * @return The film corresponding to the given ID.
+     * @throws NoSuchElementException if no film is found with the specified ID.
+     */
     public Film getFilm(final int id) {
         try (UserOps mgr = new UserOps()) {
             return mgr.getFilm(id)
@@ -66,6 +73,13 @@ public final class UserContext extends SessionContextImpl {
         }
     }
 
+    /**
+     * Retrieves a series by its ID.
+     *
+     * @param id The ID of the series to retrieve.
+     * @return The series corresponding to the given ID.
+     * @throws NoSuchElementException if no series is found with the specified ID.
+     */
     public Serie getSerie(final int id) {
         try (UserOps mgr = new UserOps()) {
             return mgr.getSerie(id)
@@ -73,11 +87,14 @@ public final class UserContext extends SessionContextImpl {
         }
     }
 
+    /**
+     * Retrieves the reviews associated with the user.
+     *
+     * @return The list of reviews associated with the user.
+     */
     public List<Review> getReviews() {
         try (UserOps mgr = new UserOps()) {
-            return mgr.getReviews(
-                    super.getUsername()
-            );
+            return mgr.getReviews(super.getUsername());
         }
     }
 }

@@ -3,8 +3,12 @@ package unibo.cineradar.view.homepage.user;
 import unibo.cineradar.controller.user.UserSessionController;
 import unibo.cineradar.view.ViewContext;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
+import java.awt.Font;
+
 
 /**
  * Review view of the user.

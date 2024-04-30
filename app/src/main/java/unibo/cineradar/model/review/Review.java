@@ -3,11 +3,11 @@ package unibo.cineradar.model.review;
 /**
  * Represents a review for a multimedia item (e.g., film, series).
  */
-public abstract class Review {
-    protected final String username;
-    protected final String title;
-    protected final String description;
-    protected final int overallRating;
+public class Review {
+    private final String username;
+    private final String title;
+    private final String description;
+    private final int overallRating;
 
     /**
      * Constructs a review for a multimedia item.

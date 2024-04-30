@@ -4,7 +4,6 @@ import unibo.cineradar.controller.SessionController;
 import unibo.cineradar.controller.SessionControllerImpl;
 import unibo.cineradar.model.context.user.UserContext;
 import unibo.cineradar.model.film.Film;
-import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.serie.Serie;
 
@@ -51,7 +50,9 @@ public class UserSessionController extends SessionControllerImpl {
      * @param id The id of the film to retrieve.
      * @return The film to a specific id.
      */
-    public Film getFilm(final int id) { return userContext.getFilm(id); }
+    public Film getFilm(final int id) {
+        return userContext.getFilm(id);
+    }
 
     /**
      * Get the serie with a particular id.
@@ -59,12 +60,16 @@ public class UserSessionController extends SessionControllerImpl {
      * @param id The id of the serie to retrieve.
      * @return The serie to a specific id.
      */
-    public Serie getSerie(final int id) { return userContext.getSerie(id); }
+    public Serie getSerie(final int id) {
+        return userContext.getSerie(id);
+    }
 
     /**
      * Gets the list of reviews that the user has written.
      *
      * @return A list of Reviews.
      */
-    public List<Review> getReviews() {return userContext.getReviews(); }
+    public List<Review> getReviews() {
+        return userContext.getReviews();
+    }
 }

@@ -17,7 +17,12 @@ public class FilmReview extends Review {
      * @param description   The description of the review.
      * @param overallRating The overall rating of the review.
      */
-    public FilmReview(final int idFilm, final String filmTitle, final String username, final String title, final String description, final int overallRating) {
+    public FilmReview(final int idFilm,
+                      final String filmTitle,
+                      final String username,
+                      final String title,
+                      final String description,
+                      final int overallRating) {
         super(username, title, description, overallRating);
         this.idFilm = idFilm;
         this.filmTitle = filmTitle;
