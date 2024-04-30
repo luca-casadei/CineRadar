@@ -4,6 +4,7 @@ import unibo.cineradar.model.context.SessionContextImpl;
 
 import unibo.cineradar.model.db.UserOps;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.Account;
 import unibo.cineradar.model.utente.User;
@@ -69,6 +70,14 @@ public final class UserContext extends SessionContextImpl {
         try (UserOps mgr = new UserOps()) {
             return mgr.getSerie(id)
                     .orElseThrow(() -> new NoSuchElementException("Serie non trovata con id: " + id));
+        }
+    }
+
+    public List<Review> getReviews() {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.getReviews(
+                    super.getUsername()
+            );
         }
     }
 }

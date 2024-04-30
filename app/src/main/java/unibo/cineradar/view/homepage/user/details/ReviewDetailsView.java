@@ -1,6 +1,5 @@
-package unibo.cineradar.view.homepage.user;
+package unibo.cineradar.view.homepage.user.details;
 
-import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.*;
@@ -10,7 +9,7 @@ import java.util.List;
 /**
  * A view to display detailed information about a multimedia, including reviews.
  */
-public class MultimediaDetailsView extends JFrame {
+public class ReviewDetailsView extends JFrame {
     private final ViewContext currentSessionContext;
     private final int multimediaId;
 
@@ -20,7 +19,7 @@ public class MultimediaDetailsView extends JFrame {
      * @param currentSessionContext The current session context.
      * @param multimediaId          The ID of the multimedia.
      */
-    public MultimediaDetailsView(ViewContext currentSessionContext, int multimediaId) {
+    public ReviewDetailsView(ViewContext currentSessionContext, int multimediaId) {
         this.currentSessionContext = currentSessionContext;
         this.multimediaId = multimediaId;
         initComponents();

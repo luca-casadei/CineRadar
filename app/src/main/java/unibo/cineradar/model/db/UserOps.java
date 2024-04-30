@@ -3,6 +3,9 @@ package unibo.cineradar.model.db;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Multimedia;
+import unibo.cineradar.model.review.FilmReview;
+import unibo.cineradar.model.review.Review;
+import unibo.cineradar.model.review.SerieReview;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.User;
 
@@ -11,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static java.sql.Types.NULL;
 
 /**
  * Database operations that the user can perform.
@@ -121,6 +126,13 @@ public final class UserOps extends DBManager {
         }
     }
 
+    /**
+     * Retrieves a film from the database by its ID.
+     *
+     * @param id The ID of the film.
+     * @return An Optional containing the film if found, otherwise empty.
+     * @throws IllegalStateException If an SQL exception occurs.
+     */
     public Optional<Film> getFilm(final int id) {
         Objects.requireNonNull(this.getConnection());
         try {
@@ -147,6 +159,13 @@ public final class UserOps extends DBManager {
         }
     }
 
+    /**
+     * Retrieves a series from the database by its ID.
+     *
+     * @param id The ID of the series.
+     * @return An Optional containing the series if found, otherwise empty.
+     * @throws IllegalStateException If an SQL exception occurs.
+     */
     public Optional<Serie> getSerie(final int id) {
         Objects.requireNonNull(this.getConnection());
         try {
@@ -170,6 +189,91 @@ public final class UserOps extends DBManager {
             }
         } catch (SQLException ex) {
             throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
+     * Retrieves reviews for a user from the database.
+     *
+     * @param username The username of the user.
+     * @return A list of reviews written by the user.
+     * @throws IllegalArgumentException If an SQL exception occurs.
+     */
+    public List<Review> getReviews(final String username) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "SELECT \n" +
+                    "    recensioni_totali.UsernameUtente,\n" +
+                    "    recensioni_totali.CodiceFilm,\n" +
+                    "    film.Titolo AS TitoloFilm,\n" +
+                    "    recensioni_totali.CodiceSerie,\n" +
+                    "    serie.Titolo AS TitoloSerie,\n" +
+                    "    recensioni_totali.TitoloRecensione,\n" +
+                    "    recensioni_totali.DescrizioneRecensione,\n" +
+                    "    recensioni_totali.VotoComplessivoRecensione\n" +
+                    "FROM (\n" +
+                    "    SELECT \n" +
+                    "        UsernameUtente,\n" +
+                    "        CodiceSerie,\n" +
+                    "        NULL AS CodiceFilm,\n" +
+                    "        Titolo AS TitoloSerie,\n" +
+                    "        NULL AS TitoloFilm,\n" +
+                    "        Titolo AS TitoloRecensione,\n" +
+                    "        Descrizione AS DescrizioneRecensione,\n" +
+                    "        VotoComplessivo AS VotoComplessivoRecensione\n" +
+                    "    FROM \n" +
+                    "        recserie\n" +
+                    "    UNION ALL\n" +
+                    "    SELECT \n" +
+                    "        UsernameUtente,\n" +
+                    "        NULL AS CodiceSerie,\n" +
+                    "        CodiceFilm,\n" +
+                    "        NULL AS TitoloSerie,\n" +
+                    "        Titolo AS TitoloFilm,\n" +
+                    "        Titolo AS TitoloRecensione,\n" +
+                    "        Descrizione AS DescrizioneRecensione,\n" +
+                    "        VotoComplessivo AS VotoComplessivoRecensione\n" +
+                    "    FROM \n" +
+                    "        recfilm\n" +
+                    ") AS recensioni_totali\n" +
+                    "LEFT JOIN film ON recensioni_totali.CodiceFilm = film.Codice\n" +
+                    "LEFT JOIN serie ON recensioni_totali.CodiceSerie = serie.Codice\n" +
+                    "WHERE UsernameUtente = ?";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setString(1, username);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            final List<Review> reviews = new ArrayList<>();
+            while (this.getResultSet().next()) {
+                final Review review;
+                if (this.getResultSet().getInt("CodiceFilm") != NULL
+                        && this.getResultSet().getInt("CodiceSerie") == NULL) {
+                    review = new FilmReview(
+                            this.getResultSet().getInt("CodiceFilm"),
+                            this.getResultSet().getString("TitoloFilm"),
+                            this.getResultSet().getString("UsernameUtente"),
+                            this.getResultSet().getString("TitoloRecensione"),
+                            this.getResultSet().getString("DescrizioneRecensione"),
+                            this.getResultSet().getInt("VotoComplessivoRecensione")
+                    );
+                } else if (this.getResultSet().getInt("CodiceFilm") == NULL
+                        && this.getResultSet().getInt("CodiceSerie") != NULL) {
+                    review = new SerieReview(
+                            this.getResultSet().getInt("CodiceSerie"),
+                            this.getResultSet().getString("TitoloSerie"),
+                            this.getResultSet().getString("UsernameUtente"),
+                            this.getResultSet().getString("TitoloRecensione"),
+                            this.getResultSet().getString("DescrizioneRecensione"),
+                            this.getResultSet().getInt("VotoComplessivoRecensione")
+                    );
+                } else {
+                    throw new IllegalArgumentException();
+                }
+
+                reviews.add(review);
+            }
+            return reviews;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
         }
     }
 }

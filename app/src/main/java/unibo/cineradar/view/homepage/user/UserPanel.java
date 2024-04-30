@@ -1,19 +1,20 @@
 package unibo.cineradar.view.homepage.user;
 
 import unibo.cineradar.model.multimedia.Multimedia;
+import unibo.cineradar.model.review.FilmReview;
+import unibo.cineradar.model.review.Review;
+import unibo.cineradar.model.review.SerieReview;
 import unibo.cineradar.view.ViewContext;
+import unibo.cineradar.view.homepage.user.details.MultimediaDetailsView;
+import unibo.cineradar.view.homepage.user.details.ReviewDetailsView;
 
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JTable;
+import javax.swing.*;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
+import java.awt.*;
 import java.util.List;
 
 // CHECKSTYLE: MagicNumber OFF
@@ -47,26 +48,13 @@ public abstract class UserPanel extends JPanel {
     }
 
     /**
-     * Creates the table of the multimedia.
+     * Creates a JTable with custom renderer for alternating row colors and the specified action listener.
      *
-     * @param multimediaList The list of multimedia.
-     * @return A JTable of a multimedia list.
+     * @param model        The table model to use.
+     * @param actionListener The action listener for row selection events.
+     * @return The created JTable.
      */
-    protected JTable createTable(final List<? extends Multimedia> multimediaList) {
-        // Creates the table model
-        final DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("ID");
-        model.addColumn("Titolo");
-        model.addColumn("Limite di eta'");
-        model.addColumn("Trama");
-        model.addColumn("Durata(min)");
-
-        // Adds film data to the model
-        for (final Multimedia multimedia : multimediaList) {
-            model.addRow(new Object[]{multimedia.getId(), multimedia.getTitle(),
-                    multimedia.getAgeLimit(), multimedia.getPlot(), multimedia.getDuration()});
-        }
-
+    protected JTable createStyledTable(DefaultTableModel model, ListSelectionListener actionListener) {
         // Creates the table with custom renderer for alternating row colors
         final JTable table = new JTable(model) {
             @Override
@@ -101,24 +89,91 @@ public abstract class UserPanel extends JPanel {
         // Set table as READ ONLY
         table.setDefaultEditor(Object.class, null);
 
-        // Add ListSelectionListener to handle row selection events
-        table.getSelectionModel().addListSelectionListener(e -> {
+        // Add action listener for row selection events
+        table.getSelectionModel().addListSelectionListener(actionListener);
+
+        return table;
+    }
+
+    /**
+     * Creates the table of the multimedia.
+     *
+     * @param multimediaList The list of multimedia.
+     * @return A JTable of a multimedia list.
+     */
+    protected JTable createMultimediaTable(final List<? extends Multimedia> multimediaList) {
+        // Creates the table model
+        final DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("ID");
+        model.addColumn("Titolo");
+        model.addColumn("Limite di eta'");
+        model.addColumn("Trama");
+        model.addColumn("Durata(min)");
+
+        // Adds film data to the model
+        for (final Multimedia multimedia : multimediaList) {
+            model.addRow(new Object[]{multimedia.getId(), multimedia.getTitle(),
+                    multimedia.getAgeLimit(), multimedia.getPlot(), multimedia.getDuration()});
+        }
+
+        return createStyledTable(model, e -> {
             if (!e.getValueIsAdjusting()) {
-                int selectedRow = table.getSelectedRow();
+                int selectedRow = ((JTable) e.getSource()).getSelectedRow();
                 if (selectedRow != -1) {
-                    int multimediaId = (int) table.getValueAt(selectedRow, 0); // Assuming ID is in the first column
+                    int multimediaId = (int) ((JTable) e.getSource()).getValueAt(selectedRow, 0); // Assuming ID is in the first column
 
                     openMultimediaDetailsView(currentSessionContext, multimediaId);
                 }
             }
         });
+    }
 
-        return table;
+    /**
+     * Creates the table of the reviews.
+     *
+     * @param reviewList The list of reviews.
+     * @return A JTable of a review list.
+     */
+    protected JTable createReviewTable(final List<Review> reviewList) {
+        // Creates the table model
+        final DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Titolo multimedia");
+        model.addColumn("Titolo recensione");
+        model.addColumn("Descrizione");
+        model.addColumn("Voto complessivo");
+
+        // Adds review data to the model
+        for (final Review review : reviewList) {
+            if (review instanceof FilmReview) {
+                final FilmReview filmReview = (FilmReview) review;
+                model.addRow(new Object[]{filmReview.getFilmTitle(), filmReview.getTitle(), filmReview.getDescription(), filmReview.getOverallRating()});
+            } else {
+                final SerieReview serieReview = (SerieReview) review;
+                model.addRow(new Object[]{serieReview.getSerieTitle(), serieReview.getTitle(), serieReview.getDescription(), serieReview.getOverallRating()});
+            }
+        }
+
+        return createStyledTable(model, e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = ((JTable) e.getSource()).getSelectedRow();
+                if (selectedRow != -1) {
+                    // Get review ID from the table (assuming it's in the first column)
+                    int reviewId = (int) ((JTable) e.getSource()).getValueAt(selectedRow, 0);
+
+                    openReviewDetailsView(currentSessionContext, reviewId);
+                }
+            }
+        });
     }
 
     private void openMultimediaDetailsView(final ViewContext currentSessionContext, final Integer multimediaId) {
-        MultimediaDetailsView detailsView = new MultimediaDetailsView(currentSessionContext, multimediaId);
-        detailsView.setVisible(true);
+        MultimediaDetailsView multimediaDetailsView = new MultimediaDetailsView(currentSessionContext, multimediaId);
+        multimediaDetailsView.setVisible(true);
+    }
+
+    private void openReviewDetailsView(final ViewContext currentSessionContext, final Integer multimediaId) {
+        ReviewDetailsView reviewDetailsView = new ReviewDetailsView(currentSessionContext, multimediaId);
+        reviewDetailsView.setVisible(true);
     }
 }
 
