@@ -1,15 +1,27 @@
 package unibo.cineradar.model.db;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import unibo.cineradar.model.cast.Actor;
+import unibo.cineradar.model.cast.Cast;
+import unibo.cineradar.model.cast.CastMember;
+import unibo.cineradar.model.cast.Director;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.multimedia.Multimedia;
+import unibo.cineradar.model.review.FilmReview;
+import unibo.cineradar.model.review.Review;
+import unibo.cineradar.model.review.SerieReview;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.User;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
+import static java.sql.Types.NULL;
 
 /**
  * Database operations that the user can perform.
@@ -22,6 +34,12 @@ import java.util.Optional;
 )
 public final class UserOps extends DBManager {
 
+    private static final String ID_NAME = "Codice";
+    private static final String TITLE_NAME = "Titolo";
+    private static final String LIMIT_AGE_NAME = "EtaLimite";
+    private static final String PLOT_NAME = "Trama";
+    private static final String ID_FILM_NAME = "CodiceFilm";
+
     /**
      * Retrieves the list of all films.
      *
@@ -31,8 +49,7 @@ public final class UserOps extends DBManager {
     public List<Film> getFilms(final int userAge) {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = "SELECT * "
-                    + "FROM film "
+            final String query = "SELECT * FROM film "
                     + "WHERE film.EtaLimite <= ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setInt(1, userAge);
@@ -40,10 +57,10 @@ public final class UserOps extends DBManager {
             final List<Film> films = new ArrayList<>();
             while (this.getResultSet().next()) {
                 final Film film = new Film(
-                        this.getResultSet().getInt("Codice"),
-                        this.getResultSet().getString("Titolo"),
-                        this.getResultSet().getInt("EtaLimite"),
-                        this.getResultSet().getString("Trama"),
+                        this.getResultSet().getInt(ID_NAME),
+                        this.getResultSet().getString(TITLE_NAME),
+                        this.getResultSet().getInt(LIMIT_AGE_NAME),
+                        this.getResultSet().getString(PLOT_NAME),
                         this.getResultSet().getInt("Durata"),
                         this.getResultSet().getInt("CodiceCast")
                 );
@@ -96,8 +113,7 @@ public final class UserOps extends DBManager {
     public List<Serie> getSeries(final int userAge) {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = "SELECT * "
-                    + "FROM serie "
+            final String query = "SELECT * FROM serie "
                     + "WHERE serie.EtaLimite <= ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setInt(1, userAge);
@@ -105,10 +121,10 @@ public final class UserOps extends DBManager {
             final List<Serie> series = new ArrayList<>();
             while (this.getResultSet().next()) {
                 final Serie serie = new Serie(
-                        this.getResultSet().getInt("Codice"),
-                        this.getResultSet().getString("Titolo"),
-                        this.getResultSet().getInt("EtaLimite"),
-                        this.getResultSet().getString("Trama"),
+                        this.getResultSet().getInt(ID_NAME),
+                        this.getResultSet().getString(TITLE_NAME),
+                        this.getResultSet().getInt(LIMIT_AGE_NAME),
+                        this.getResultSet().getString(PLOT_NAME),
                         this.getResultSet().getInt("DurataComplessiva"),
                         this.getResultSet().getInt("NumeroEpisodi")
                 );
@@ -118,5 +134,232 @@ public final class UserOps extends DBManager {
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);
         }
+    }
+
+    /**
+     * Retrieves a film from the database by its ID.
+     *
+     * @param id The ID of the film.
+     * @return An Optional containing the film if found, otherwise empty.
+     * @throws IllegalStateException If an SQL exception occurs.
+     */
+    public Optional<Film> getFilm(final int id) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "SELECT * FROM film "
+                    + "WHERE film.Codice = ?";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setInt(1, id);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            if (this.getResultSet().next()) {
+                return Optional.of(new Film(
+                        this.getResultSet().getInt(ID_NAME),
+                        this.getResultSet().getString(TITLE_NAME),
+                        this.getResultSet().getInt(LIMIT_AGE_NAME),
+                        this.getResultSet().getString(PLOT_NAME),
+                        this.getResultSet().getInt("Durata"),
+                        this.getResultSet().getInt("CodiceCast")
+                ));
+            } else {
+                return Optional.empty();
+            }
+        } catch (SQLException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
+     * Retrieves a series from the database by its ID.
+     *
+     * @param id The ID of the series.
+     * @return An Optional containing the series if found, otherwise empty.
+     * @throws IllegalStateException If an SQL exception occurs.
+     */
+    public Optional<Serie> getSerie(final int id) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "SELECT * FROM serie "
+                    + "WHERE serie.Codice = ?";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setInt(1, id);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            if (this.getResultSet().next()) {
+                return Optional.of(new Serie(
+                        this.getResultSet().getInt(ID_NAME),
+                        this.getResultSet().getString(TITLE_NAME),
+                        this.getResultSet().getInt(LIMIT_AGE_NAME),
+                        this.getResultSet().getString(PLOT_NAME),
+                        this.getResultSet().getInt("Durata"),
+                        this.getResultSet().getInt("NumeroEpisodi")
+                ));
+            } else {
+                return Optional.empty();
+            }
+        } catch (SQLException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
+     * Retrieves reviews for a user from the database.
+     *
+     * @param username The username of the user.
+     * @return A list of reviews written by the user.
+     * @throws IllegalArgumentException If an SQL exception occurs.
+     */
+    public List<Review> getReviews(final String username) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "SELECT \n"
+                    + "    recensioni_totali.UsernameUtente,\n"
+                    + "    recensioni_totali.CodiceFilm,\n"
+                    + "    film.Titolo AS TitoloFilm,\n"
+                    + "    recensioni_totali.CodiceSerie,\n"
+                    + "    serie.Titolo AS TitoloSerie,\n"
+                    + "    recensioni_totali.TitoloRecensione,\n"
+                    + "    recensioni_totali.DescrizioneRecensione,\n"
+                    + "    recensioni_totali.VotoComplessivoRecensione\n"
+                    + "FROM (\n"
+                    + "    SELECT \n"
+                    + "        UsernameUtente,\n"
+                    + "        CodiceSerie,\n"
+                    + "        NULL AS CodiceFilm,\n"
+                    + "        Titolo AS TitoloSerie,\n"
+                    + "        NULL AS TitoloFilm,\n"
+                    + "        Titolo AS TitoloRecensione,\n"
+                    + "        Descrizione AS DescrizioneRecensione,\n"
+                    + "        VotoComplessivo AS VotoComplessivoRecensione\n"
+                    + "    FROM \n"
+                    + "        recserie\n"
+                    + "    UNION ALL\n"
+                    + "    SELECT \n"
+                    + "        UsernameUtente,\n"
+                    + "        NULL AS CodiceSerie,\n"
+                    + "        CodiceFilm,\n"
+                    + "        NULL AS TitoloSerie,\n"
+                    + "        Titolo AS TitoloFilm,\n"
+                    + "        Titolo AS TitoloRecensione,\n"
+                    + "        Descrizione AS DescrizioneRecensione,\n"
+                    + "        VotoComplessivo AS VotoComplessivoRecensione\n"
+                    + "    FROM \n"
+                    + "        recfilm\n"
+                    + ") AS recensioni_totali\n"
+                    + "LEFT JOIN film ON recensioni_totali.CodiceFilm = film.Codice\n"
+                    + "LEFT JOIN serie ON recensioni_totali.CodiceSerie = serie.Codice\n"
+                    + "WHERE UsernameUtente = ?";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setString(1, username);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            final List<Review> reviews = new ArrayList<>();
+            while (this.getResultSet().next()) {
+                final Review review;
+                if (this.getResultSet().getInt(ID_FILM_NAME) != NULL
+                        && this.getResultSet().getInt("CodiceSerie") == NULL) {
+                    review = new FilmReview(
+                            this.getResultSet().getInt(ID_FILM_NAME),
+                            this.getResultSet().getString("TitoloFilm"),
+                            this.getResultSet().getString("UsernameUtente"),
+                            this.getResultSet().getString("TitoloRecensione"),
+                            this.getResultSet().getString("DescrizioneRecensione"),
+                            this.getResultSet().getInt("VotoComplessivoRecensione")
+                    );
+                } else if (this.getResultSet().getInt(ID_FILM_NAME) == NULL
+                        && this.getResultSet().getInt("CodiceSerie") != NULL) {
+                    review = new SerieReview(
+                            this.getResultSet().getInt("CodiceSerie"),
+                            this.getResultSet().getString("TitoloSerie"),
+                            this.getResultSet().getString("UsernameUtente"),
+                            this.getResultSet().getString("TitoloRecensione"),
+                            this.getResultSet().getString("DescrizioneRecensione"),
+                            this.getResultSet().getInt("VotoComplessivoRecensione")
+                    );
+                } else {
+                    throw new IllegalArgumentException();
+                }
+
+                reviews.add(review);
+            }
+            return reviews;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Retrieves details of films including their cast from the database.
+     *
+     * @return A map containing films as keys and their corresponding cast as values.
+     * @throws IllegalArgumentException If an SQL exception occurs.
+     */
+    public Map<Multimedia, Cast> getFilmsDetails() {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "SELECT film.Codice AS CodiceFilm, \n"
+                    + "film.Titolo AS TitoloFilm, \n"
+                    + "film.EtaLimite AS EtaLimiteFilm, \n"
+                    + "film.Trama AS TramaFilm, \n"
+                    + "film.Durata AS DurataFilm, \n"
+                    + "film.CodiceCast AS CodiceCastFilm,\n"
+                    + "membrocast.Codice AS CodiceMembroCast, \n"
+                    + "membrocast.Nome AS NomeMembroCast, \n"
+                    + "membrocast.Cognome AS CognomeMembroCast, \n"
+                    + "membrocast.DataNascita AS DataNascitaMembroCast, \n"
+                    + "membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast, \n"
+                    + "membrocast.NomeArte AS NomeArteMembroCast, \n"
+                    + "membrocast.TipoAttore AS TipoAttoreMembroCast, \n"
+                    + "membrocast.TipoRegista AS TipoRegistaMembroCast \n"
+                    + "FROM film \n"
+                    + "JOIN casting ON film.CodiceCast = casting.Codice \n"
+                    + "JOIN partecipazione_cast ON casting.codice = partecipazione_cast.CodiceCast\n"
+                    + "JOIN membrocast ON partecipazione_cast.CodiceMembro = membrocast.Codice";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            final Map<Film, Cast> detailedFilms = new HashMap<>();
+            while (this.getResultSet().next()) {
+                final Film film = new Film(
+                        this.getResultSet().getInt(ID_FILM_NAME),
+                        this.getResultSet().getString("TitoloFilm"),
+                        this.getResultSet().getInt("EtaLimiteFilm"),
+                        this.getResultSet().getString("TramaFilm"),
+                        this.getResultSet().getInt("DurataFilm"),
+                        this.getResultSet().getInt("CodiceCastFilm")
+                );
+                if (!detailedFilms.containsKey(film)) {
+                    final Cast newCast = new Cast();
+                    newCast.addCastMember(getNewCastMember());
+                    detailedFilms.put(film, newCast);
+                } else {
+                    detailedFilms.get(film).addCastMember(getNewCastMember());
+                }
+            }
+            return Map.copyOf(detailedFilms);
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    private CastMember getNewCastMember() throws SQLException {
+        if (this.getResultSet().getBoolean("TipoAttoreMembroCast")
+                && !this.getResultSet().getBoolean("TipoRegistaMembroCast")) {
+            return new Actor(
+                    this.getResultSet().getInt("CodiceMembroCast"),
+                    this.getResultSet().getString("NomeMembroCast"),
+                    this.getResultSet().getString("CognomeMembroCast"),
+                    this.getResultSet().getDate("DataNascitaMembroCast"),
+                    this.getResultSet().getDate("DataDebuttoCarrieraMembroCast"),
+                    this.getResultSet().getString("NomeArteMembroCast")
+            );
+        } else if (!this.getResultSet().getBoolean("TipoAttoreMembroCast")
+                && this.getResultSet().getBoolean("TipoRegistaMembroCast")) {
+            return new Director(
+                    this.getResultSet().getInt("CodiceMembroCast"),
+                    this.getResultSet().getString("NomeMembroCast"),
+                    this.getResultSet().getString("CognomeMembroCast"),
+                    this.getResultSet().getDate("DataNascitaMembroCast"),
+                    this.getResultSet().getDate("DataDebuttoCarrieraMembroCast"),
+                    this.getResultSet().getString("NomeArteMembroCast")
+            );
+        }
+        throw new IllegalArgumentException();
     }
 }
