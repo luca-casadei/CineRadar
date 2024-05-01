@@ -146,10 +146,16 @@ INSERT INTO account(Username, PASSWORD, Nome, Cognome)
 VALUES ("reg",
         "cc37ae468020f0e2a7c450ca95bddbaa9dde4406ac6e89172a7784c0ed7e148888e705b86917d038906735dc598e927f2bda3b7036b5886d78d19eca5c6bdcc1",
         "Ernesto", "Scandoli"); -- Pw: romolo --
+INSERT INTO account(Username, PASSWORD, Nome, Cognome)
+VALUES ("reg2",
+        "cc37ae468020f0e2a7c450ca95bddbaa9dde4406ac6e89172a7784c0ed7e148888e705b86917d038906735dc598e927f2bda3b7036b5886d78d19eca5c6bdcc1",
+        "Pietrello", "Amiri"); -- Pw: romolo --
 INSERT INTO registratore(Username, EmailCinema, CodiceCinema)
 VALUES ("reguci1", NULL, 1);
 INSERT INTO registratore(Username, EmailCinema, CodiceCinema)
 VALUES ("reg", "ersca@ucicinemas.it", 1);
+INSERT INTO registratore(Username, EmailCinema, CodiceCinema)
+VALUES ("reg2", NULL, 2);
 INSERT INTO account(Username, PASSWORD,Nome,Cognome)
 VALUES ("tes","a3be67122051b5362984184e412dc47ed61347e610588a9e3c639d3a99de8aa80595207f2001d6c40439f141aac5927b3dbdf254bbc4d0073393bb13d5962078","Rato","Tesse");
 INSERT INTO utente(Username, DataNascita) -- Pw: tes --
@@ -534,6 +540,11 @@ VALUES
     ("luca",1,4,3,NOW()),
     ("luca",1,4,4,NOW()),
     ("luca",1,4,5,NOW());
+
+-- Tesserine!
+INSERT INTO tessera(CodiceCinema,UsernameUtente,NumeroTessera,DataRinnovo)
+VALUES (1,"luca",1,NOW()),
+       (1,"mario",2,NOW());
 
 -- Recensioni per Breaking Bad
 INSERT INTO recserie(UsernameUtente, CodiceSerie, Titolo, Descrizione, VotoComplessivo)

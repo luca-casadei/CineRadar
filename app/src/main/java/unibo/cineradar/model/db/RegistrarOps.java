@@ -30,10 +30,9 @@ public final class RegistrarOps extends DBManager {
     public Optional<Cinema> getAssociatedCinema(final int cinemaCode) {
         Objects.requireNonNull(super.getConnection());
         try {
-            final String query = "SELECT cinema.*, COUNT(*) AS NumeroTesserati FROM cinema "
-                    + "JOIN tessera ON cinema.Codice = tessera.CodiceCinema "
-                    + "JOIN registratore ON registratore.CodiceCinema = cinema.Codice "
-                    + "WHERE registratore.Username = ? "
+            final String query = "SELECT cinema.*, COUNT(tessera.UsernameUtente) AS NumeroTesserati FROM cinema "
+                    + "LEFT JOIN tessera ON cinema.Codice = tessera.CodiceCinema "
+                    + "WHERE cinema.Codice = ? "
                     + "GROUP BY cinema.Codice";
             super.setPreparedStatement(super.getConnection().prepareStatement(query));
             super.getPreparedStatement().setInt(1, cinemaCode);

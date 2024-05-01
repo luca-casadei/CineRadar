@@ -6,6 +6,7 @@ import unibo.cineradar.model.cinema.Cinema;
 import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.utilities.ViewUtilities;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -18,6 +19,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.Serial;
+import java.time.LocalDate;
+import java.util.Objects;
 
 // CHECKSTYLE: MagicNumber OFF
 
@@ -31,6 +34,9 @@ public final class CardedCinemaPanel extends JPanel {
     private static final int UP_DOWN_MARGIN = 50;
     @Serial
     private static final long serialVersionUID = 6466145857318357871L;
+    private final DatePicker dPr;
+    private final JSpinner cardNr;
+    private final JTextField userSelFld;
 
     /**
      * The constructor of the component.
@@ -127,7 +133,7 @@ public final class CardedCinemaPanel extends JPanel {
 
         ViewUtilities.setGridBagConstraints(gbc, 1, 6, 1, 1,
                 new Insets(0, 0, 0, 0));
-        final JTextField userSelFld = new JTextField();
+        userSelFld = new JTextField();
         userSelFld.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, LABEL_FONT_SIZE));
         userSelFld.setHorizontalAlignment(JTextField.CENTER);
         cinemaPanel.add(userSelFld, gbc);
@@ -139,21 +145,65 @@ public final class CardedCinemaPanel extends JPanel {
         cinemaPanel.add(cardNrL, gbc);
 
         ViewUtilities.setGridBagConstraints(gbc, 1, 7, 1, 1,
-                new Insets(0, 0, 0, MARGIN_RIGHT_LABEL));
-        final JSpinner cardNr = new JSpinner(new SpinnerNumberModel(0, 0, 3500, 1));
-        cardNr.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, LABEL_FONT_SIZE));
-        cinemaPanel.add(cardNr, gbc);
+                new Insets(0, 0, 0, 0));
+        this.cardNr = new JSpinner(new SpinnerNumberModel(0, 0, 3500, 1));
+        this.cardNr.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, LABEL_FONT_SIZE));
+        cinemaPanel.add(this.cardNr, gbc);
 
         ViewUtilities.setGridBagConstraints(gbc, 0, 8, 1, 1,
-                new Insets(0, 0, 0, MARGIN_RIGHT_LABEL));
+                new Insets(0, 0, 0, 0));
         final JLabel dateL = new JLabel("Data rinnovo:");
         dateL.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, LABEL_FONT_SIZE));
         cinemaPanel.add(dateL, gbc);
 
         ViewUtilities.setGridBagConstraints(gbc, 1, 8, 1, 1,
-                new Insets(0, 0, 0, MARGIN_RIGHT_LABEL));
-        final DatePicker dPr = new DatePicker();
+                new Insets(0, 0, 0, 0));
+        this.dPr = new DatePicker();
         cinemaPanel.add(dPr, gbc);
+
+        ViewUtilities.setGridBagConstraints(gbc, 0, 10, 2, 1,
+                new Insets(0, 0, 0, 0));
+        final JLabel statusLbl = new JLabel();
+        statusLbl.setHorizontalAlignment(JLabel.CENTER);
+        statusLbl.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, LABEL_FONT_SIZE));
+        cinemaPanel.add(statusLbl, gbc);
+
+        gbc.ipady = 20;
+        ViewUtilities.setGridBagConstraints(gbc, 0, 9, 2, 1,
+                new Insets(UP_DOWN_MARGIN, 0, 0, 0));
+        final JButton registerButton = getRegisterButton(context, statusLbl);
+        cinemaPanel.add(registerButton, gbc);
+        gbc.ipady = 0;
+    }
+
+    private JButton getRegisterButton(final ViewContext context, final JLabel statusLbl) {
+        final JButton registerButton = new JButton("REGISTRA");
+        registerButton.addActionListener(e -> {
+            if (
+                    !userSelFld.getText().isBlank()
+                            && !userSelFld.getText().isEmpty()
+                            && !Objects.isNull(dPr.getDate())) {
+                final int cardNumber = (Integer) this.cardNr.getValue();
+                final String regUser = this.userSelFld.getText();
+                final LocalDate renDate = this.dPr.getDate();
+                final RegistrarSessionController sct = (RegistrarSessionController) context.getController();
+                final int cineId = sct.getCinemaDetails().codice();
+                if (sct.insertCard(regUser, renDate, cardNumber, cineId)) {
+                    statusLbl.setText("INSERIMENTO RIUSCITO!");
+                    statusLbl.setForeground(Color.GREEN);
+                    cardNr.setValue(0);
+                    userSelFld.setText("");
+                    dPr.clear();
+                } else {
+                    statusLbl.setText("INSERIMENTO NON RIUSCITO!");
+                    statusLbl.setForeground(Color.RED);
+                }
+            } else {
+                statusLbl.setText("RIEMPIRE TUTTI I CAMPI!");
+                statusLbl.setForeground(Color.ORANGE);
+            }
+        });
+        return registerButton;
     }
 }
 

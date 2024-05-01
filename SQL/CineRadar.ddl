@@ -228,6 +228,7 @@ CREATE TABLE TESSERA
     UsernameUtente CHAR(20) NOT NULL,
     NumeroTessera  INT      NOT NULL,
     DataRinnovo    DATE     NOT NULL,
+    UNIQUE(CodiceCinema,NumeroTessera),
     CONSTRAINT IDTESSERA PRIMARY KEY (CodiceCinema, UsernameUtente)
 );
 CREATE TABLE UTENTE
