@@ -1,7 +1,15 @@
 DELETE
 FROM richiesta;
 DELETE
+FROM tessera;
+DELETE
 FROM recfilm;
+DELETE
+FROM visualizzazioni_film;
+DELETE
+FROM recserie;
+DELETE
+FROM visualizzazioni_episodio;
 DELETE
 FROM amministratore;
 DELETE
@@ -503,3 +511,40 @@ VALUES
     (2, 2, 3, 60),
     (2, 2, 4, 60),
     (2, 2, 5, 60);
+
+INSERT INTO visualizzazioni_episodio(UsernameUtente,CodiceSerie,NumeroEpisodio,NumeroStagione,DATA)
+VALUES
+    ("luca",1,1,1,NOW()),
+    ("luca",1,1,2,NOW()),
+    ("luca",1,1,3,NOW()),
+    ("luca",1,1,4,NOW()),
+    ("luca",1,1,5,NOW()),
+    ("luca",1,2,1,NOW()),
+    ("luca",1,2,2,NOW()),
+    ("luca",1,2,3,NOW()),
+    ("luca",1,2,4,NOW()),
+    ("luca",1,2,5,NOW()),
+    ("luca",1,3,1,NOW()),
+    ("luca",1,3,2,NOW()),
+    ("luca",1,3,3,NOW()),
+    ("luca",1,3,4,NOW()),
+    ("luca",1,3,5,NOW()),
+    ("luca",1,4,1,NOW()),
+    ("luca",1,4,2,NOW()),
+    ("luca",1,4,3,NOW()),
+    ("luca",1,4,4,NOW()),
+    ("luca",1,4,5,NOW());
+
+-- Recensioni per Breaking Bad
+INSERT INTO recserie(UsernameUtente, CodiceSerie, Titolo, Descrizione, VotoComplessivo)
+VALUES
+    ("luca", 1, "Capolavoro assoluto", "Breaking Bad è una delle migliori serie TV mai realizzate. La trama è avvincente, i personaggi sono ben sviluppati e le performance degli attori sono straordinarie.", 10),
+    ("giulia", 1, "Indimenticabile", "Questa serie mi ha tenuto incollata allo schermo dall'inizio alla fine. Una storia coinvolgente e piena di suspense.", 9),
+    ("mario", 1, "Pura eccellenza", "Breaking Bad è un capolavoro di storytelling. Bryan Cranston e Aaron Paul sono semplicemente fantastici.", 10);
+
+-- Recensioni per Game of Thrones
+INSERT INTO recserie(UsernameUtente, CodiceSerie, Titolo, Descrizione, VotoComplessivo)
+VALUES
+    ("eleonora", 2, "Fantasy epico", "Game of Thrones ha una trama complessa e personaggi ben definiti. Le location e gli effetti speciali sono incredibili.", 9),
+    ("giorgio", 2, "Deludente finale", "La serie ha avuto dei momenti incredibili, ma il finale è stato una delusione. Troppe trame non risolte e decisioni discutibili.", 7),
+    ("francesca", 2, "Un viaggio emozionante", "Game of Thrones è stata un'esperienza incredibile. Nonostante qualche svista nelle ultime stagioni, rimarrà sempre una delle mie serie preferite.", 9);

@@ -20,7 +20,7 @@ public final class DBConfig {
     /**
      * MariaDB username.
      */
-    private static final String USERNAME = "master@cineradar";
+    private static final String USERNAME = "cinemgr";
     /**
      * Password to log into MariaDB.
      */

@@ -494,6 +494,26 @@ BEGIN
     END IF;
 END;
 //
+CREATE TRIGGER CK_VISUAL_BEFORE_REC_SERIES
+    BEFORE INSERT
+    ON recserie
+    FOR EACH ROW
+BEGIN
+    IF NOT EXISTS ( SELECT COUNT(*) AS NumeroVisualizzati
+                    FROM visualizzazioni_episodio
+                    WHERE visualizzazioni_episodio.CodiceSerie = NEW.CodiceSerie
+                      AND visualizzazioni_episodio.UsernameUtente = NEW.UsernameUtente
+                    HAVING NumeroVisualizzati = (
+                        SELECT COUNT(*)
+                        FROM episodio
+                        WHERE episodio.CodiceSerie = NEW.CodiceSerie
+                    )
+    )
+    THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Per poter recensire una serie vanno prima visualizzati tutti i suoi episodi.';
+    END IF;
+END;
+//
 DELIMITER ;
 
 -- Index Section
