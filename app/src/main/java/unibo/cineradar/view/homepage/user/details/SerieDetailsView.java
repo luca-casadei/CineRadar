@@ -12,7 +12,7 @@ import javax.swing.JFrame;
 public final class SerieDetailsView extends JFrame {
     private static final long serialVersionUID = 1L;
 
-    private final ViewContext currentSessionContext;
+    private final transient ViewContext currentSessionContext;
 
     /**
      * Constructs a new SerieDetailsView.
