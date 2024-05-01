@@ -5,10 +5,13 @@ import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.review.FilmReview;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.review.SerieReview;
+import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.homepage.user.details.FilmDetailsView;
 import unibo.cineradar.view.homepage.user.details.ReviewDetailsView;
+import unibo.cineradar.view.homepage.user.details.SerieDetailsView;
 
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -60,7 +63,7 @@ public abstract class UserPanel extends JPanel {
      * @param actionListener The action listener for row selection events.
      * @return The created JTable.
      */
-    protected JTable createStyledTable(final DefaultTableModel model, final ListSelectionListener actionListener) {
+    private JTable createStyledTable(final DefaultTableModel model, final ListSelectionListener actionListener) {
         // Creates the table with custom renderer for alternating row colors
         final JTable table = new JTable(model) {
             @Override
@@ -102,36 +105,64 @@ public abstract class UserPanel extends JPanel {
     }
 
     /**
-     * Creates the table of the multimedia.
+     * Creates a table of multimedia items.
      *
-     * @param multimediaList The list of multimedia.
-     * @return A JTable of a multimedia list.
+     * @param multimediaList The list of multimedia items.
+     * @param action         The action to perform when a row is selected.
+     * @return A JTable of multimedia items.
      */
-    protected JTable createMultimediaTable(final List<? extends Multimedia> multimediaList) {
+    private JTable createMultimediaTable(final List<? extends Multimedia> multimediaList, ListSelectionListener action) {
         // Creates the table model
         final DefaultTableModel model = new DefaultTableModel();
         model.addColumn("ID");
-        model.addColumn("Titolo");
-        model.addColumn("Limite di eta'");
-        model.addColumn("Trama");
-        model.addColumn("Durata(min)");
+        model.addColumn("Title");
+        model.addColumn("Age Limit");
+        model.addColumn("Plot");
+        model.addColumn("Duration (min)");
 
-        // Adds film data to the model
+        // Adds multimedia data to the model
         for (final Multimedia multimedia : multimediaList) {
             model.addRow(new Object[]{multimedia.getId(), multimedia.getTitle(),
                     multimedia.getAgeLimit(), multimedia.getPlot(), multimedia.getDuration()});
         }
 
-        return createStyledTable(model, e -> {
-            if (!e.getValueIsAdjusting()) {
-                final int selectedRow = ((JTable) e.getSource()).getSelectedRow();
-                if (selectedRow != -1) {
-                    final int multimediaId = (int) ((JTable) e.getSource()).getValueAt(selectedRow, 0);
+        return createStyledTable(model, action);
+    }
 
-                    openFilmDetailsView(currentSessionContext, multimediaId);
+    /**
+     * Creates a table of films.
+     *
+     * @param filmList The list of films.
+     * @return A JTable of films.
+     */
+    protected JTable createFilmTable(final List<Film> filmList) {
+        ListSelectionListener filmSelectionListener = e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = ((DefaultListSelectionModel) e.getSource()).getLeadSelectionIndex();
+                if (selectedRow != -1) {
+                    openFilmDetailsView(this.getCurrentSessionContext());
                 }
             }
-        });
+        };
+        return createMultimediaTable(filmList, filmSelectionListener);
+    }
+
+    /**
+     * Creates a table of series.
+     *
+     * @param serieList The list of series.
+     * @return A JTable of series.
+     */
+    protected JTable createSerieTable(final List<Serie> serieList) {
+        ListSelectionListener serieSelectionListener = e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = ((DefaultListSelectionModel) e.getSource()).getLeadSelectionIndex();
+                if (selectedRow != -1) {
+                    openSerieDetailsView(this.getCurrentSessionContext());
+                }
+            }
+        };
+        return createMultimediaTable(serieList, serieSelectionListener);
     }
 
 
@@ -183,9 +214,14 @@ public abstract class UserPanel extends JPanel {
         });
     }
 
-    private void openFilmDetailsView(final ViewContext currentSessionContext, final Integer multimediaId) {
-        final FilmDetailsView filmDetailsView = new FilmDetailsView(currentSessionContext, multimediaId);
+    private void openFilmDetailsView(final ViewContext currentSessionContext) {
+        final FilmDetailsView filmDetailsView = new FilmDetailsView(currentSessionContext);
         filmDetailsView.setVisible(true);
+    }
+
+    private void openSerieDetailsView(final ViewContext currentSessionContext){
+        final SerieDetailsView serieDetailsView = new SerieDetailsView(currentSessionContext);
+        serieDetailsView.setVisible(true);
     }
 
     private void openReviewDetailsView(final ViewContext currentSessionContext, final Integer multimediaId) {

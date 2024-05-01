@@ -33,7 +33,7 @@ public final class UserFilmView extends UserPanel {
         this.add(welcomeLabel, BorderLayout.NORTH);
 
         // Adds the film table to the view
-        final JTable filmTable = super.createMultimediaTable(
+        final JTable filmTable = super.createFilmTable(
                 ((UserSessionController) currentSessionContext.getController()).getFilms()
         );
         final JScrollPane scrollPane = new JScrollPane(filmTable);

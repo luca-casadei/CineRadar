@@ -8,20 +8,21 @@ import javax.swing.JFrame;
 // CHECKSTYLE: MagicNumber OFF
 
 /**
- * A view to display detailed information about a film, including reviews.
+ * A view to display detailed information about a serie, including reviews.
  */
-public class FilmDetailsView extends JFrame {
+public class SerieDetailsView extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private final ViewContext currentSessionContext;
 
     /**
-     * Constructs a new FilmDetailsView.
+     * Constructs a new SerieDetailsView.
      *
      * @param currentSessionContext The current session context.
      */
-    public FilmDetailsView(final ViewContext currentSessionContext) {
+    public SerieDetailsView(final ViewContext currentSessionContext) {
         this.currentSessionContext = currentSessionContext;
+        //((UserSessionController) this.currentSessionContext.getController()).getDetailedSeries(); TODO: da fare ancora la query
     }
 
 }

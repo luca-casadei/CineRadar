@@ -31,7 +31,7 @@ public final class UserSerieView extends UserPanel {
         welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
         this.add(welcomeLabel, BorderLayout.NORTH);
 
-        final JTable serieTable = super.createMultimediaTable(
+        final JTable serieTable = super.createSerieTable(
                 ((UserSessionController) currentSessionContext.getController()).getSeries()
         );
         final JScrollPane scrollPane = new JScrollPane(serieTable);
