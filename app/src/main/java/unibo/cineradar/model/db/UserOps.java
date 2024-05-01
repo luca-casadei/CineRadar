@@ -293,10 +293,10 @@ public final class UserOps extends DBManager {
                     "membrocast.Nome AS NomeMembroCast, \n" +
                     "membrocast.Cognome AS CognomeMembroCast, \n" +
                     "membrocast.DataNascita AS DataNascitaMembroCast, \n" +
-                    "membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast,\n" +
-                    "membrocast.NomeArte AS NomeArteMembroCast\n" +
-                    "membrocast.TipoAttore AS TipoAttoreMembroCast\n" +
-                    "membrocast.TipoRegista AS TipoRegistaMembroCast\n" +
+                    "membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast, \n" +
+                    "membrocast.NomeArte AS NomeArteMembroCast, \n" +
+                    "membrocast.TipoAttore AS TipoAttoreMembroCast, \n" +
+                    "membrocast.TipoRegista AS TipoRegistaMembroCast \n" +
                     "FROM film \n" +
                     "JOIN casting ON film.CodiceCast = casting.Codice \n" +
                     "JOIN partecipazione_cast ON casting.codice = partecipazione_cast.CodiceCast\n" +
@@ -329,7 +329,7 @@ public final class UserOps extends DBManager {
 
     private CastMember getNewCastMember() throws SQLException {
         if (this.getResultSet().getBoolean("TipoAttoreMembroCast")
-                && !this.getResultSet().getBoolean("TipoAttoreMembroCast")) {
+                && !this.getResultSet().getBoolean("TipoRegistaMembroCast")) {
             return new Actor(
                     this.getResultSet().getInt("CodiceMembroCast"),
                     this.getResultSet().getString("NomeMembroCast"),
@@ -339,7 +339,7 @@ public final class UserOps extends DBManager {
                     this.getResultSet().getString("NomeArteMembroCast")
             );
         } else if (!this.getResultSet().getBoolean("TipoAttoreMembroCast")
-                && this.getResultSet().getBoolean("TipoAttoreMembroCast")) {
+                && this.getResultSet().getBoolean("TipoRegistaMembroCast")) {
             return new Director(
                     this.getResultSet().getInt("CodiceMembroCast"),
                     this.getResultSet().getString("NomeMembroCast"),
