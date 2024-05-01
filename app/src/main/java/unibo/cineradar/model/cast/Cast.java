@@ -17,15 +17,6 @@ public final class Cast {
     }
 
     /**
-     * Constructs a Cast instance with the given list of cast members.
-     *
-     * @param castMemberList the list of cast members
-     */
-    public Cast(final List<CastMember> castMemberList) {
-        this.castMemberList = castMemberList;
-    }
-
-    /**
      * Adds a cast member to the cast.
      *
      * @param castMember the cast member to add

@@ -13,7 +13,7 @@ import java.awt.Font;
 /**
  * Review view of the user.
  */
-public class UserReviewView extends UserPanel {
+public final class UserReviewView extends UserPanel {
     private static final long serialVersionUID = 1L; // TODO: sostituire
 
     /**

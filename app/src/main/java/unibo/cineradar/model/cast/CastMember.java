@@ -43,7 +43,7 @@ public class CastMember {
      * @return the ID of the cast member
      */
     protected int getId() {
-        return id;
+        return this.id;
     }
 
     /**
@@ -52,7 +52,7 @@ public class CastMember {
      * @return the name of the cast member
      */
     protected String getName() {
-        return name;
+        return this.name;
     }
 
     /**
@@ -60,8 +60,8 @@ public class CastMember {
      *
      * @return the last name of the cast member
      */
-    protected String getLastname() {
-        return lastname;
+    protected String getLastName() {
+        return this.lastname;
     }
 
     /**
@@ -70,7 +70,7 @@ public class CastMember {
      * @return the birth date of the cast member
      */
     protected Date getBirthDate() {
-        return birthDate;
+        return this.birthDate;
     }
 
     /**
@@ -79,7 +79,7 @@ public class CastMember {
      * @return the career debut date of the cast member
      */
     protected Date getCareerDebutDate() {
-        return careerDebutDate;
+        return this.careerDebutDate;
     }
 
     /**
@@ -88,6 +88,6 @@ public class CastMember {
      * @return the stage name of the cast member
      */
     protected String getStageName() {
-        return stageName;
+        return this.stageName;
     }
 }

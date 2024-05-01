@@ -184,9 +184,11 @@ public abstract class UserPanel extends JPanel {
             if (review instanceof FilmReview) {
                 final FilmReview filmReview = (FilmReview) review;
                 multimediaTitle = filmReview.getFilmTitle();
-            } else {
+            } else if (review instanceof SerieReview) {
                 final SerieReview serieReview = (SerieReview) review;
                 multimediaTitle = serieReview.getSerieTitle();
+            } else {
+                throw new IllegalArgumentException();
             }
             model.addRow(new Object[]{
                     multimediaTitle,

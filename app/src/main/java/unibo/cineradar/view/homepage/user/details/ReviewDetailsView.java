@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 /**
  * A view to display detailed information about a multimedia, including reviews.
  */
-public class ReviewDetailsView extends JFrame {
+public final class ReviewDetailsView extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private final ViewContext currentSessionContext;
@@ -22,6 +22,16 @@ public class ReviewDetailsView extends JFrame {
     public ReviewDetailsView(final ViewContext currentSessionContext) {
         this.currentSessionContext = currentSessionContext;
     }
+
+    /**
+     * Retrieves the current session context.
+     *
+     * @return The current session context.
+     */
+    public ViewContext getCurrentSessionContext() {
+        return currentSessionContext;
+    }
+
 }
 
 // CHECKSTYLE: MagicNumber ON

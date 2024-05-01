@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 /**
  * A view to display detailed information about a film, including reviews.
  */
-public class FilmDetailsView extends JFrame {
+public final class FilmDetailsView extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private final ViewContext currentSessionContext;
@@ -21,6 +21,15 @@ public class FilmDetailsView extends JFrame {
      */
     public FilmDetailsView(final ViewContext currentSessionContext) {
         this.currentSessionContext = currentSessionContext;
+    }
+
+    /**
+     * Retrieves the current session context.
+     *
+     * @return The current session context.
+     */
+    public ViewContext getCurrentSessionContext() {
+        return currentSessionContext;
     }
 
 }

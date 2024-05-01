@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 /**
  * A view to display detailed information about a serie, including reviews.
  */
-public class SerieDetailsView extends JFrame {
+public final class SerieDetailsView extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private final ViewContext currentSessionContext;
@@ -22,6 +22,15 @@ public class SerieDetailsView extends JFrame {
     public SerieDetailsView(final ViewContext currentSessionContext) {
         this.currentSessionContext = currentSessionContext;
         //((UserSessionController) this.currentSessionContext.getController()).getDetailedSeries(); TODO: da fare ancora la query
+    }
+
+    /**
+     * Retrieves the current session context.
+     *
+     * @return The current session context.
+     */
+    public ViewContext getCurrentSessionContext() {
+        return currentSessionContext;
     }
 
 }

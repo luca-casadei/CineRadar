@@ -15,7 +15,7 @@ import java.awt.BorderLayout;
 /**
  * Profile view of the user.
  */
-public class UserProfileView extends UserPanel {
+public final class UserProfileView extends UserPanel {
     private static final long serialVersionUID = 1L; // TODO: sostituire
 
     /**
