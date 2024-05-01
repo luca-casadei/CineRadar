@@ -1,11 +1,9 @@
 package unibo.cineradar.view.homepage.user;
 
-import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.review.FilmReview;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.review.SerieReview;
-import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.homepage.user.details.FilmDetailsView;
 import unibo.cineradar.view.homepage.user.details.ReviewDetailsView;
@@ -37,7 +35,7 @@ public abstract class UserPanel extends JPanel {
     private final ViewContext currentSessionContext;
 
     /**
-     * Constructs an istance of UserPanel.
+     * Constructs an instance of UserPanel.
      *
      * @param currentSessionContext The session context of the user.
      */
@@ -111,14 +109,14 @@ public abstract class UserPanel extends JPanel {
      * @param action         The action to perform when a row is selected.
      * @return A JTable of multimedia items.
      */
-    private JTable createMultimediaTable(final List<? extends Multimedia> multimediaList, ListSelectionListener action) {
+    private JTable createMultimediaTable(final List<? extends Multimedia> multimediaList, final ListSelectionListener action) {
         // Creates the table model
         final DefaultTableModel model = new DefaultTableModel();
         model.addColumn("ID");
-        model.addColumn("Title");
-        model.addColumn("Age Limit");
-        model.addColumn("Plot");
-        model.addColumn("Duration (min)");
+        model.addColumn("Titolo");
+        model.addColumn("Limite di età");
+        model.addColumn("Trama");
+        model.addColumn("Durata (min)");
 
         // Adds multimedia data to the model
         for (final Multimedia multimedia : multimediaList) {
@@ -135,10 +133,10 @@ public abstract class UserPanel extends JPanel {
      * @param filmList The list of films.
      * @return A JTable of films.
      */
-    protected JTable createFilmTable(final List<Film> filmList) {
-        ListSelectionListener filmSelectionListener = e -> {
+    protected JTable createFilmTable(final List<? extends Multimedia> filmList) {
+        final ListSelectionListener filmSelectionListener = e -> {
             if (!e.getValueIsAdjusting()) {
-                int selectedRow = ((DefaultListSelectionModel) e.getSource()).getLeadSelectionIndex();
+                final int selectedRow = ((DefaultListSelectionModel) e.getSource()).getLeadSelectionIndex();
                 if (selectedRow != -1) {
                     openFilmDetailsView(this.getCurrentSessionContext());
                 }
@@ -153,10 +151,10 @@ public abstract class UserPanel extends JPanel {
      * @param serieList The list of series.
      * @return A JTable of series.
      */
-    protected JTable createSerieTable(final List<Serie> serieList) {
-        ListSelectionListener serieSelectionListener = e -> {
+    protected JTable createSerieTable(final List<? extends Multimedia> serieList) {
+        final ListSelectionListener serieSelectionListener = e -> {
             if (!e.getValueIsAdjusting()) {
-                int selectedRow = ((DefaultListSelectionModel) e.getSource()).getLeadSelectionIndex();
+                final int selectedRow = ((DefaultListSelectionModel) e.getSource()).getLeadSelectionIndex();
                 if (selectedRow != -1) {
                     openSerieDetailsView(this.getCurrentSessionContext());
                 }
@@ -182,50 +180,45 @@ public abstract class UserPanel extends JPanel {
 
         // Adds review data to the model
         for (final Review review : reviewList) {
+            final String multimediaTitle;
             if (review instanceof FilmReview) {
                 final FilmReview filmReview = (FilmReview) review;
-                model.addRow(new Object[]{
-                        filmReview.getFilmTitle(),
-                        filmReview.getTitle(),
-                        filmReview.getDescription(),
-                        filmReview.getOverallRating()
-                });
+                multimediaTitle = filmReview.getFilmTitle();
             } else {
                 final SerieReview serieReview = (SerieReview) review;
-                model.addRow(new Object[]{
-                        serieReview.getSerieTitle(),
-                        serieReview.getTitle(),
-                        serieReview.getDescription(),
-                        serieReview.getOverallRating()
-                });
+                multimediaTitle = serieReview.getSerieTitle();
             }
+            model.addRow(new Object[]{
+                    multimediaTitle,
+                    review.getTitle(),
+                    review.getDescription(),
+                    review.getOverallRating()
+            });
         }
 
         return createStyledTable(model, e -> {
             if (!e.getValueIsAdjusting()) {
-                final int selectedRow = ((JTable) e.getSource()).getSelectedRow();
+                final int selectedRow = ((DefaultListSelectionModel) e.getSource()).getLeadSelectionIndex();
                 if (selectedRow != -1) {
-                    // Get review ID from the table (assuming it's in the first column)
-                    final int reviewId = (int) ((JTable) e.getSource()).getValueAt(selectedRow, 0);
-
-                    openReviewDetailsView(currentSessionContext, reviewId);
+                    openReviewDetailsView(this.getCurrentSessionContext());
                 }
             }
         });
     }
+
 
     private void openFilmDetailsView(final ViewContext currentSessionContext) {
         final FilmDetailsView filmDetailsView = new FilmDetailsView(currentSessionContext);
         filmDetailsView.setVisible(true);
     }
 
-    private void openSerieDetailsView(final ViewContext currentSessionContext){
+    private void openSerieDetailsView(final ViewContext currentSessionContext) {
         final SerieDetailsView serieDetailsView = new SerieDetailsView(currentSessionContext);
         serieDetailsView.setVisible(true);
     }
 
-    private void openReviewDetailsView(final ViewContext currentSessionContext, final Integer multimediaId) {
-        final ReviewDetailsView reviewDetailsView = new ReviewDetailsView(currentSessionContext, multimediaId);
+    private void openReviewDetailsView(final ViewContext currentSessionContext) {
+        final ReviewDetailsView reviewDetailsView = new ReviewDetailsView(currentSessionContext);
         reviewDetailsView.setVisible(true);
     }
 }

@@ -58,7 +58,9 @@ public final class UserContext extends SessionContextImpl {
      *
      * @return The list of all detailed films.
      */
-    public Map<Multimedia, Cast> getDetailedFilms() { return Map.copyOf(detailedFilms); }
+    public Map<Multimedia, Cast> getDetailedFilms() {
+        return Map.copyOf(detailedFilms);
+    }
 
     /**
      * Gets the series that this user can watch.

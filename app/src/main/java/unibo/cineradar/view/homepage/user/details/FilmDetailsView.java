@@ -1,6 +1,5 @@
 package unibo.cineradar.view.homepage.user.details;
 
-import unibo.cineradar.controller.user.UserSessionController;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.JFrame;

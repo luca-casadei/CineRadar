@@ -43,7 +43,9 @@ public class UserSessionController extends SessionControllerImpl {
      *
      * @return The list of all detailed films.
      */
-    public Map<Multimedia, Cast> getDetailedFilms() { return userContext.getDetailedFilms(); }
+    public Map<Multimedia, Cast> getDetailedFilms() {
+        return userContext.getDetailedFilms();
+    }
 
 
     /**

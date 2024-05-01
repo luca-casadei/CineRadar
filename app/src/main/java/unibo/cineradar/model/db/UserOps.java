@@ -14,7 +14,12 @@ import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.User;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 import static java.sql.Types.NULL;
 
@@ -33,6 +38,7 @@ public final class UserOps extends DBManager {
     private static final String TITLE_NAME = "Titolo";
     private static final String LIMIT_AGE_NAME = "EtaLimite";
     private static final String PLOT_NAME = "Trama";
+    private static final String ID_FILM_NAME = "CodiceFilm";
 
     /**
      * Retrieves the list of all films.
@@ -247,17 +253,17 @@ public final class UserOps extends DBManager {
             final List<Review> reviews = new ArrayList<>();
             while (this.getResultSet().next()) {
                 final Review review;
-                if (this.getResultSet().getInt("CodiceFilm") != NULL
+                if (this.getResultSet().getInt(ID_FILM_NAME) != NULL
                         && this.getResultSet().getInt("CodiceSerie") == NULL) {
                     review = new FilmReview(
-                            this.getResultSet().getInt("CodiceFilm"),
+                            this.getResultSet().getInt(ID_FILM_NAME),
                             this.getResultSet().getString("TitoloFilm"),
                             this.getResultSet().getString("UsernameUtente"),
                             this.getResultSet().getString("TitoloRecensione"),
                             this.getResultSet().getString("DescrizioneRecensione"),
                             this.getResultSet().getInt("VotoComplessivoRecensione")
                     );
-                } else if (this.getResultSet().getInt("CodiceFilm") == NULL
+                } else if (this.getResultSet().getInt(ID_FILM_NAME) == NULL
                         && this.getResultSet().getInt("CodiceSerie") != NULL) {
                     review = new SerieReview(
                             this.getResultSet().getInt("CodiceSerie"),
@@ -279,34 +285,39 @@ public final class UserOps extends DBManager {
         }
     }
 
-    /**/
+    /**
+     * Retrieves details of films including their cast from the database.
+     *
+     * @return A map containing films as keys and their corresponding cast as values.
+     * @throws IllegalArgumentException If an SQL exception occurs.
+     */
     public Map<Multimedia, Cast> getFilmsDetails() {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = "SELECT film.Codice AS CodiceFilm, \n" +
-                    "film.Titolo AS TitoloFilm, \n" +
-                    "film.EtaLimite AS EtaLimiteFilm, \n" +
-                    "film.Trama AS TramaFilm, \n" +
-                    "film.Durata AS DurataFilm, \n" +
-                    "film.CodiceCast AS CodiceCastFilm,\n" +
-                    "membrocast.Codice AS CodiceMembroCast, \n" +
-                    "membrocast.Nome AS NomeMembroCast, \n" +
-                    "membrocast.Cognome AS CognomeMembroCast, \n" +
-                    "membrocast.DataNascita AS DataNascitaMembroCast, \n" +
-                    "membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast, \n" +
-                    "membrocast.NomeArte AS NomeArteMembroCast, \n" +
-                    "membrocast.TipoAttore AS TipoAttoreMembroCast, \n" +
-                    "membrocast.TipoRegista AS TipoRegistaMembroCast \n" +
-                    "FROM film \n" +
-                    "JOIN casting ON film.CodiceCast = casting.Codice \n" +
-                    "JOIN partecipazione_cast ON casting.codice = partecipazione_cast.CodiceCast\n" +
-                    "JOIN membrocast ON partecipazione_cast.CodiceMembro = membrocast.Codice";
+            final String query = "SELECT film.Codice AS CodiceFilm, \n"
+                    + "film.Titolo AS TitoloFilm, \n"
+                    + "film.EtaLimite AS EtaLimiteFilm, \n"
+                    + "film.Trama AS TramaFilm, \n"
+                    + "film.Durata AS DurataFilm, \n"
+                    + "film.CodiceCast AS CodiceCastFilm,\n"
+                    + "membrocast.Codice AS CodiceMembroCast, \n"
+                    + "membrocast.Nome AS NomeMembroCast, \n"
+                    + "membrocast.Cognome AS CognomeMembroCast, \n"
+                    + "membrocast.DataNascita AS DataNascitaMembroCast, \n"
+                    + "membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast, \n"
+                    + "membrocast.NomeArte AS NomeArteMembroCast, \n"
+                    + "membrocast.TipoAttore AS TipoAttoreMembroCast, \n"
+                    + "membrocast.TipoRegista AS TipoRegistaMembroCast \n"
+                    + "FROM film \n"
+                    + "JOIN casting ON film.CodiceCast = casting.Codice \n"
+                    + "JOIN partecipazione_cast ON casting.codice = partecipazione_cast.CodiceCast\n"
+                    + "JOIN membrocast ON partecipazione_cast.CodiceMembro = membrocast.Codice";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.setResultSet(this.getPreparedStatement().executeQuery());
             final Map<Film, Cast> detailedFilms = new HashMap<>();
             while (this.getResultSet().next()) {
                 final Film film = new Film(
-                        this.getResultSet().getInt("CodiceFilm"),
+                        this.getResultSet().getInt(ID_FILM_NAME),
                         this.getResultSet().getString("TitoloFilm"),
                         this.getResultSet().getInt("EtaLimiteFilm"),
                         this.getResultSet().getString("TramaFilm"),
@@ -314,7 +325,7 @@ public final class UserOps extends DBManager {
                         this.getResultSet().getInt("CodiceCastFilm")
                 );
                 if (!detailedFilms.containsKey(film)) {
-                    Cast newCast = new Cast();
+                    final Cast newCast = new Cast();
                     newCast.addCastMember(getNewCastMember());
                     detailedFilms.put(film, newCast);
                 } else {

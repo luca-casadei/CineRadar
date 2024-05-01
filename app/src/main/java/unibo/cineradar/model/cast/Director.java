@@ -2,7 +2,10 @@ package unibo.cineradar.model.cast;
 
 import java.util.Date;
 
-public class Director extends CastMember{
+/**
+ * Represents a director in the cast of a film or a production.
+ */
+public class Director extends CastMember {
 
 
     /**
@@ -15,7 +18,12 @@ public class Director extends CastMember{
      * @param careerDebutDate the career debut date of the director
      * @param stageName       the stage name of the director
      */
-    public Director(int id, String name, String lastname, Date birthDate, Date careerDebutDate, String stageName) {
+    public Director(final int id,
+                    final String name,
+                    final String lastname,
+                    final Date birthDate,
+                    final Date careerDebutDate,
+                    final String stageName) {
         super(id, name, lastname, birthDate, careerDebutDate, stageName);
     }
 }

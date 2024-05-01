@@ -23,7 +23,12 @@ public class CastMember {
      * @param careerDebutDate the career debut date of the cast member
      * @param stageName       the stage name of the cast member
      */
-    protected CastMember(int id, String name, String lastname, Date birthDate, Date careerDebutDate, String stageName) {
+    protected CastMember(final int id,
+                         final String name,
+                         final String lastname,
+                         final Date birthDate,
+                         final Date careerDebutDate,
+                         final String stageName) {
         this.id = id;
         this.name = name;
         this.lastname = lastname;

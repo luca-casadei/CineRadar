@@ -13,17 +13,14 @@ public class ReviewDetailsView extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private final ViewContext currentSessionContext;
-    private final int multimediaId;
 
     /**
      * Constructs a new MultimediaDetailsView.
      *
      * @param currentSessionContext The current session context.
-     * @param multimediaId          The ID of the multimedia.
      */
-    public ReviewDetailsView(final ViewContext currentSessionContext, final int multimediaId) {
+    public ReviewDetailsView(final ViewContext currentSessionContext) {
         this.currentSessionContext = currentSessionContext;
-        this.multimediaId = multimediaId;
     }
 }
 
