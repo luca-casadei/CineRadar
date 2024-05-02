@@ -45,7 +45,7 @@ public final class RegistrarHomePageView extends CineRadarViewFrameImpl {
         contentPane.add(cardPane, BorderLayout.CENTER);
 
         //Home panel
-        cardPane.add(REG_NAME, new RegInfoPanel());
+        cardPane.add(REG_NAME, new RegInfoPanel(context));
         cardPane.add(CINE_NAME, new CardedCinemaPanel(context));
 
         cards.first(cardPane);
