@@ -5,7 +5,6 @@ import unibo.cineradar.controller.SessionControllerImpl;
 import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.context.user.UserContext;
 import unibo.cineradar.model.film.Film;
-import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.serie.Serie;
 
@@ -43,7 +42,7 @@ public class UserSessionController extends SessionControllerImpl {
      *
      * @return The list of all detailed films.
      */
-    public Map<Multimedia, Cast> getDetailedFilms() {
+    public Map<Film, Cast> getDetailedFilms() {
         return userContext.getDetailedFilms();
     }
 

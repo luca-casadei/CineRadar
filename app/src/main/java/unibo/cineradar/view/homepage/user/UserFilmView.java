@@ -1,6 +1,5 @@
 package unibo.cineradar.view.homepage.user;
 
-import unibo.cineradar.controller.user.UserSessionController;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.JLabel;
@@ -33,9 +32,7 @@ public final class UserFilmView extends UserPanel {
         this.add(welcomeLabel, BorderLayout.NORTH);
 
         // Adds the film table to the view
-        final JTable filmTable = super.createFilmTable(
-                ((UserSessionController) currentSessionContext.getController()).getFilms()
-        );
+        final JTable filmTable = super.createFilmTable();
         final JScrollPane scrollPane = new JScrollPane(filmTable);
         this.add(scrollPane, BorderLayout.CENTER);
     }

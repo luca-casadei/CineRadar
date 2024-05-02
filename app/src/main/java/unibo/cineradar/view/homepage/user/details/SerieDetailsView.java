@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 // CHECKSTYLE: MagicNumber OFF
 
 /**
- * A view to display detailed information about a serie, including reviews.
+ * A view to display detailed information about a serie.
  */
 public final class SerieDetailsView extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -18,10 +18,12 @@ public final class SerieDetailsView extends JFrame {
      * Constructs a new SerieDetailsView.
      *
      * @param currentSessionContext The current session context.
+     * @param serieId
      */
-    public SerieDetailsView(final ViewContext currentSessionContext) {
+    public SerieDetailsView(final ViewContext currentSessionContext, final int serieId) {
         this.currentSessionContext = currentSessionContext;
         //((UserSessionController) this.currentSessionContext.getController()).getDetailedSeries(); TODO: da fare ancora la query
+        setTitle(String.valueOf(serieId));
     }
 
     /**
