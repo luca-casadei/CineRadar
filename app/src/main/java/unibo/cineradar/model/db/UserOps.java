@@ -344,8 +344,8 @@ public final class UserOps extends DBManager {
                     this.getResultSet().getInt("CodiceMembroCast"),
                     this.getResultSet().getString("NomeMembroCast"),
                     this.getResultSet().getString("CognomeMembroCast"),
-                    this.getResultSet().getDate("DataNascitaMembroCast"),
-                    this.getResultSet().getDate("DataDebuttoCarrieraMembroCast"),
+                    this.getResultSet().getDate("DataNascitaMembroCast").toLocalDate(),
+                    this.getResultSet().getDate("DataDebuttoCarrieraMembroCast").toLocalDate(),
                     this.getResultSet().getString("NomeArteMembroCast")
             );
         } else if (!this.getResultSet().getBoolean("TipoAttoreMembroCast")
@@ -354,8 +354,8 @@ public final class UserOps extends DBManager {
                     this.getResultSet().getInt("CodiceMembroCast"),
                     this.getResultSet().getString("NomeMembroCast"),
                     this.getResultSet().getString("CognomeMembroCast"),
-                    this.getResultSet().getDate("DataNascitaMembroCast"),
-                    this.getResultSet().getDate("DataDebuttoCarrieraMembroCast"),
+                    this.getResultSet().getDate("DataNascitaMembroCast").toLocalDate(),
+                    this.getResultSet().getDate("DataDebuttoCarrieraMembroCast").toLocalDate(),
                     this.getResultSet().getString("NomeArteMembroCast")
             );
         }

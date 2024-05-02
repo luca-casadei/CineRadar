@@ -1,6 +1,6 @@
 package unibo.cineradar.model.cast;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Represents a director in the cast of a film or a production.
@@ -21,8 +21,8 @@ public class Director extends CastMember {
     public Director(final int id,
                     final String name,
                     final String lastname,
-                    final Date birthDate,
-                    final Date careerDebutDate,
+                    final LocalDate birthDate,
+                    final LocalDate careerDebutDate,
                     final String stageName) {
         super(id, name, lastname, birthDate, careerDebutDate, stageName);
     }

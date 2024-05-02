@@ -1,6 +1,6 @@
 package unibo.cineradar.model.cast;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Represents an actor in the cast of a film or a production.
@@ -20,8 +20,8 @@ public class Actor extends CastMember {
     public Actor(final int id,
                  final String name,
                  final String lastname,
-                 final Date birthDate,
-                 final Date careerDebutDate,
+                 final LocalDate birthDate,
+                 final LocalDate careerDebutDate,
                  final String stageName) {
         super(id, name, lastname, birthDate, careerDebutDate, stageName);
     }

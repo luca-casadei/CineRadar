@@ -15,9 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -63,14 +62,14 @@ public final class FilmDetailsView extends JFrame {
 
         // Film details panel
         final JPanel filmDetailsPanel = new JPanel(new GridLayout(0, 2));
-        filmDetailsPanel.setBorder(BorderFactory.createTitledBorder("Film Details"));
-        filmDetailsPanel.add(new JLabel("Title:"));
+        filmDetailsPanel.setBorder(BorderFactory.createTitledBorder("Dettagli film"));
+        filmDetailsPanel.add(new JLabel("Titolo:"));
         filmDetailsPanel.add(new JLabel(detailedFilm.getTitle()));
-        filmDetailsPanel.add(new JLabel("Age Limit:"));
+        filmDetailsPanel.add(new JLabel("Limite di eta':"));
         filmDetailsPanel.add(new JLabel(String.valueOf(detailedFilm.getAgeLimit())));
-        filmDetailsPanel.add(new JLabel("Plot:"));
+        filmDetailsPanel.add(new JLabel("Trama:"));
         filmDetailsPanel.add(new JLabel(detailedFilm.getPlot()));
-        filmDetailsPanel.add(new JLabel("Duration (minutes):"));
+        filmDetailsPanel.add(new JLabel("Durata (min):"));
         filmDetailsPanel.add(new JLabel(String.valueOf(detailedFilm.getDuration())));
 
         mainPanel.add(filmDetailsPanel, BorderLayout.NORTH);
@@ -91,7 +90,7 @@ public final class FilmDetailsView extends JFrame {
                         + " "
                         + castMember.getLastName()
                         + " - "
-                        + new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY).format(castMember.getBirthDate());
+                        + castMember.getBirthDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                 castListModel.addElement(castMemberInfo);
             }
         }

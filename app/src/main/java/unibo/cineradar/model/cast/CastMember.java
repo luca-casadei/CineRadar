@@ -1,6 +1,6 @@
 package unibo.cineradar.model.cast;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Represents a cast member of a film or cinematographic production.
@@ -9,8 +9,8 @@ public class CastMember {
     private final int id;
     private final String name;
     private final String lastname;
-    private final Date birthDate;
-    private final Date careerDebutDate;
+    private final LocalDate birthDate;
+    private final LocalDate careerDebutDate;
     private final String stageName;
 
     /**
@@ -26,8 +26,8 @@ public class CastMember {
     protected CastMember(final int id,
                          final String name,
                          final String lastname,
-                         final Date birthDate,
-                         final Date careerDebutDate,
+                         final LocalDate birthDate,
+                         final LocalDate careerDebutDate,
                          final String stageName) {
         this.id = id;
         this.name = name;
@@ -69,8 +69,8 @@ public class CastMember {
      *
      * @return a copy of the birth date of the cast member
      */
-    public Date getBirthDate() {
-        return new Date(this.birthDate.getTime());
+    public LocalDate getBirthDate() {
+        return this.birthDate;
     }
 
     /**
@@ -78,8 +78,8 @@ public class CastMember {
      *
      * @return a copy of the career debut date of the cast member
      */
-    public Date getCareerDebutDate() {
-        return new Date(this.careerDebutDate.getTime());
+    public LocalDate getCareerDebutDate() {
+        return this.careerDebutDate;
     }
 
     /**
