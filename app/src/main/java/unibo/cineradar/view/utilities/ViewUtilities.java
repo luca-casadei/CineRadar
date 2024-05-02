@@ -70,4 +70,23 @@ public final class ViewUtilities {
         gbc.gridheight = rowSpan;
         gbc.insets = newInsets;
     }
+
+    /**
+     * Sets every constraint of a GridBagLayout.
+     *
+     * @param gbc     The GridBagConstraints to set.
+     * @param gridX   The column where to place the element.
+     * @param gridY   The row where to place the element.
+     * @param colSpan The span of the element between columns.
+     * @param rowSpan The span of the element between rows.
+     */
+    public static void setGridBagConstraints(
+            final GridBagConstraints gbc,
+            final int gridX,
+            final int gridY,
+            final int colSpan,
+            final int rowSpan) {
+        setGridBagConstraints(gbc, gridX, gridY, colSpan, rowSpan,
+                new Insets(0, 0, 0, 0));
+    }
 }
