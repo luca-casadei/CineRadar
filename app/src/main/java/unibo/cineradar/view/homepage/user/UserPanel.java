@@ -23,6 +23,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.io.Serial;
 import java.util.List;
 
 // CHECKSTYLE: MagicNumber OFF
@@ -31,7 +32,9 @@ import java.util.List;
  * The panel used in the user part.
  */
 public abstract class UserPanel extends JPanel {
-    private static final long serialVersionUID = 1L; // TODO: sostituire
+
+    @Serial
+    private static final long serialVersionUID = 8510766881767725989L;
 
     private final ViewContext currentSessionContext;
 
@@ -58,7 +61,7 @@ public abstract class UserPanel extends JPanel {
     /**
      * Creates a JTable with custom renderer for alternating row colors and the specified action listener.
      *
-     * @param model          The table model to use.
+     * @param model The table model to use.
      * @return The created JTable.
      */
     private JTable createStyledTable(final DefaultTableModel model) {

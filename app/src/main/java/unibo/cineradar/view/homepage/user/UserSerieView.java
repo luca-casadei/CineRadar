@@ -7,6 +7,7 @@ import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.io.Serial;
 
 // CHECKSTYLE: MagicNumber OFF
 
@@ -14,7 +15,8 @@ import java.awt.Font;
  * Serie view of the user.
  */
 public final class UserSerieView extends UserPanel {
-    private static final long serialVersionUID = 1L; // TODO: sostituire
+    @Serial
+    private static final long serialVersionUID = -2884190954467853020L;
 
     /**
      * Constructor of the user serie view.

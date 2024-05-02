@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.BorderFactory;
 import java.awt.GridLayout;
 import java.awt.BorderLayout;
+import java.io.Serial;
 
 // CHECKSTYLE: MagicNumber OFF
 
@@ -16,7 +17,8 @@ import java.awt.BorderLayout;
  * Profile view of the user.
  */
 public final class UserProfileView extends UserPanel {
-    private static final long serialVersionUID = 1L; // TODO: sostituire
+    @Serial
+    private static final long serialVersionUID = -6223416854460075865L;
 
     /**
      * Constructor of the user profile view.

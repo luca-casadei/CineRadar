@@ -8,13 +8,15 @@ import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.io.Serial;
 
 
 /**
  * Review view of the user.
  */
 public final class UserReviewView extends UserPanel {
-    private static final long serialVersionUID = 1L; // TODO: sostituire
+    @Serial
+    private static final long serialVersionUID = -636784351989220399L;
 
     /**
      * Constructor of the user review view.
