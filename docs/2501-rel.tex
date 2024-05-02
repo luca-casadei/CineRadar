@@ -1817,10 +1817,43 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\item Un UTENTE può effettuare una RICHIESTA per aggiungere un FILM/SERIE, se non disponibile nel Database.
 \end{itemize}
 
-\section{Schema relazionale finale}
-\todo{TBD}
 \section{Traduzione delle operazioni in query SQL}
 \todo{TBD}
+
 \chapter{Progettazione dell'applicazione}
+\section{Architettura generale}
+\subsection{Infrastruttura}
+L'applicazione e la relativa interfaccia è stata realizzata con il linguaggio \textbf{Java 17} con l'intenzione di renderla multi-piattaforma. Come DBMS invece, abbiamo scelto l'alternativa open-source a MySQL ma completamente compatibile, ovvero \textbf{MariaDB}, la cui installazione può essere effettuata sia in locale che su un server remoto per potervi accedere. Per il collegamento a questo DBMS è stato usata la libreria \textbf{JDBC} con il \href{https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client}{driver apposito per MariaDB}.\\
+La compilazione e la gestione delle dipendenze è stata gestita con \textbf{Gradle} e il versioning con \textbf{Git}, le repository remote sono salvaguardate su \textbf{Github}.
+\subsection{Pattern architetturale}
+Tutta l'infrastruttura del software si basa sul modello \textbf{MVC} (Model-View-Controller) che rende indipendente la controparte grafica del software (realizzata con la libreria del jdk \textbf{Swing}) a quella di modellazione (che consiste nella definizione delle classi che rispecchiano la struttura del database progettato nelle sezioni precedenti).
+
+\section{Interfaccia}
+\subsection{Login}
+Come specificato in precedenza, per l'interfaccia è stata utilizzata la libreria Java Swing, all'aprirsi dell'applicativo, la prima schermata ad apparire è quella di Login, che consente di inserire Username e Password per effettuare l'accesso, il tipo di utente che effettua il login è stabilito tramite query, quindi avviene in automatico senza doverlo specificare esplicitamente. Per come è stato progettato il database, non è possibile avere utenti con lo stesso username, anche se di tipo diverso.\\
+Questa è la procedura generica che è possibile effettuare qualora la connessione al database locale o remoto avvenga con successo, altrimenti, verrà visualizzato un messaggio di avviso, tutti i componenti dell'interfaccia verranno disabilitati e l'applicazione verrà chiusa.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=300pt]{appimg/loginjw.png}
+	\caption{Pagina di login.}
+\end{figure}
+\subsection{Registratore}
+Se viene effettuato l'accesso con un account di amministrazione, si verrà portati nella sezione che consente di visualizzare le proprie informazioni di profilo (centro pagina), nella porzione superiore dell'interfaccia invece, vi è una barra di navigazione che consente di spostarsi nell'area che permette di registrare utenti tesserati al proprio cinema, le cui informazioni sono anch'esse contenute in quest'ultima.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=300pt]{appimg/reginfojw.png}
+	\caption{Pagina iniziale del registratore.}
+\end{figure}
+Nella seconda pagina accessibile sono presentati in ordine le informazioni del cinema a cui il registratore che ha effettuato l'accesso è associato, e un pannello di registrazione di una tessera per il suddetto cinema.\\
+Della tessera è necessario inserire il nome utente dell'intestatario, la data di rinnovo prevista attraverso il selezionatore, ed un numero di tessera che deve essere univoco nel cinema di appartenenza (altrimenti la registrazione non potrà avvenire e verrà richiesta chiaramente una modifica dei campi).
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=300pt]{appimg/regregjw.png}
+	\caption{Pagina di registrazione del registratore.}
+\end{figure}
+Quando una tessera viene aggiunta correttamente al DB verrà mostrato un prompt verde a schermo che ne conferma il successo, i campi verranno azzerati e sarà possibile procedere con un'altra registrazione.
+\subsection{Utente}
+\todo{TBD}
+\subsection{Amministratore}
 \todo{TBD}
 \end{document}
