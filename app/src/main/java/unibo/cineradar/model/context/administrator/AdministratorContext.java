@@ -55,4 +55,28 @@ public final class AdministratorContext extends SessionContextImpl {
             return mgr.getFilms();
         }
     }
+
+    public void addFilm(final Film film) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.addFilm(film);
+        }
+    }
+
+    public void addSerie(final Serie serie) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.addSeries(serie);
+        }
+    }
+
+    public boolean deleteFilm(final int code) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.deleteFilm(code);
+        }
+    }
+
+    public boolean deleteSeries(final int code) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.deleteSeries(code);
+        }
+    }
 }

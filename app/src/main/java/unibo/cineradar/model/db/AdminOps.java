@@ -113,7 +113,6 @@ public final class AdminOps extends DBManager {
         }
     }
 
-
     /**
      * Retrieves the list of all the series.
      *
@@ -140,6 +139,101 @@ public final class AdminOps extends DBManager {
             return series;
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Deletes a series from the database based on its unique identifier (Codice).
+     *
+     * @param codice The unique identifier of the series to delete.
+     * @return true if the series was successfully deleted, false otherwise.
+     */
+    public boolean deleteSeries(final int codice) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "DELETE FROM serie WHERE Codice = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, codice);
+            int rowsAffected = getPreparedStatement().executeUpdate();
+
+            if (rowsAffected > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error deleting series", ex);
+        }
+    }
+
+    /**
+     * Deletes a film from the database based on its unique identifier (Codice).
+     *
+     * @param codice The unique identifier of the film to delete.
+     * @return true if the film was successfully deleted, false otherwise.
+     */
+    public boolean deleteFilm(final int code) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "DELETE FROM film WHERE Codice = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, code);
+            int rowsAffected = getPreparedStatement().executeUpdate();
+
+            if (rowsAffected > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error deleting film", ex);
+        }
+    }
+
+    /**
+     * Adds a new film to the database.
+     *
+     * @param film The film object to add to the database.
+     */
+    public void addFilm(final Film film) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "INSERT " +
+                    "INTO film (Titolo, EtaLimite, Trama, Durata, CodiceCast) " +
+                    "VALUES (?, ?, ?, ?, ?)";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setString(1, film.getTitle());
+            getPreparedStatement().setInt(2, film.getAgeLimit());
+            getPreparedStatement().setString(3, film.getPlot());
+            getPreparedStatement().setInt(4, film.getDuration());
+            getPreparedStatement().setInt(5, film.getCastId());
+            getPreparedStatement().executeUpdate();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error adding film", ex);
+        }
+    }
+
+    /**
+     * Adds a new series to the database.
+     *
+     * @param serie The series object to add to the database.
+     */
+    public void addSeries(Serie serie) {
+        Objects.requireNonNull(getConnection());
+        try {
+            // Prepare the SQL INSERT statement
+            final String query = "INSERT " +
+                    "INTO serie (Titolo, EtaLimite, Trama, DurataComplessiva, NumeroEpisodi) " +
+                    "VALUES (?, ?, ?, ?, ?)";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setString(1, serie.getTitle());
+            getPreparedStatement().setInt(2, serie.getAgeLimit());
+            getPreparedStatement().setString(3, serie.getPlot());
+            getPreparedStatement().setInt(4, serie.getDuration());
+            getPreparedStatement().setInt(5, serie.getNumberOfEpisodes());
+            getPreparedStatement().executeUpdate();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error adding series", ex);
         }
     }
 }

@@ -52,4 +52,20 @@ public final class AdminSessionController extends SessionControllerImpl {
     public List<Serie> getSeries() {
         return this.administratorContext.getSeries();
     }
+
+    public void addFilm(String titolo, int etaLimite, String trama, int durata) {
+        this.administratorContext.addFilm(new Film(0, titolo, etaLimite, trama, durata, 0));
+    }
+
+    public void addSeries(String titolo, int etaLimite, String trama, int durataComplessiva, int numeroEpisodi) {
+        this.administratorContext.addSerie(new Serie(0, titolo, etaLimite, trama, durataComplessiva, numeroEpisodi));
+    }
+
+    public boolean deleteFilm(final int code) {
+        return this.administratorContext.deleteFilm(code);
+    }
+
+    public boolean deleteSeries(final int code) {
+        return this.administratorContext.deleteSeries(code);
+    }
 }
