@@ -9,6 +9,7 @@ import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.review.FilmReview;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.review.SerieReview;
+import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.User;
 
@@ -337,6 +338,85 @@ public final class UserOps extends DBManager {
         }
     }
 
+    public Map<Serie, Map<Season, Cast>> getDetailedSeries() {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "SELECT serie.Codice AS CodiceSerie, " +
+                    "stagione.NumeroStagione, " +
+                    "episodio.NumeroEpisodio, " +
+                    "serie.Titolo AS TitoloSerie, " +
+                    "serie.EtaLimite AS EtaLimiteSerie, " +
+                    "serie.Trama AS TramaSerie, " +
+                    "serie.DurataComplessiva AS DurataComplessivaSerie, " +
+                    "serie.NumeroEpisodi AS NumeroEpisodiSerie, " +
+                    "stagione.Sunto AS SuntoStagione, " +
+                    "episodio.DurataMin AS DurataEpisodio, " +
+                    "casting.Nome AS NomeCasting, " +
+                    "membrocast.Codice AS CodiceMembroCast, " +
+                    "membrocast.Nome AS NomeMembroCast, " +
+                    "membrocast.Cognome AS CognomeMembroCast, " +
+                    "membrocast.DataNascita AS DataNascitaMembroCast, " +
+                    "membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast, " +
+                    "membrocast.NomeArte AS NomeArteMembroCast, " +
+                    "membrocast.TipoAttore AS TipoAttoreMembroCast, " +
+                    "membrocast.TipoRegista AS TipoRegistaMembroCast " +
+                    "FROM serie " +
+                    "JOIN stagione ON serie.Codice = stagione.CodiceSerie " +
+                    "JOIN episodio ON episodio.NumeroStagione = stagione.NumeroStagione " +
+                    "AND episodio.CodiceSerie = stagione.CodiceSerie " +
+                    "JOIN casting ON casting.Codice = stagione.CodiceCast " +
+                    "AND episodio.CodiceSerie = stagione.CodiceSerie " +
+                    "JOIN partecipazione_cast ON partecipazione_cast.CodiceCast = casting.Codice " +
+                    "JOIN membrocast ON membrocast.Codice = partecipazione_cast.CodiceMembro " +
+                    "ORDER BY CodiceSerie";
+
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+
+            final Map<Serie, Map<Season, Cast>> detailedSeries = new HashMap<>();
+
+            while (this.getResultSet().next()) {
+                final Serie serie = new Serie(
+                        this.getResultSet().getInt("CodiceSerie"),
+                        this.getResultSet().getString("TitoloSerie"),
+                        this.getResultSet().getInt("EtaLimiteSerie"),
+                        this.getResultSet().getString("TramaSerie"),
+                        this.getResultSet().getInt("DurataComplessivaSerie"),
+                        this.getResultSet().getInt("NumeroEpisodiSerie")
+                );
+
+                final Season season = new Season(
+                        this.getResultSet().getInt("NumeroStagione"),
+                        this.getResultSet().getString("SuntoStagione")
+                );
+
+                final CastMember castMember = getNewCastMember();
+
+                if (!detailedSeries.containsKey(serie)) {
+                    final Map<Season, Cast> seasonCastMap = new HashMap<>();
+                    final Cast newCast = new Cast();
+                    newCast.addCastMember(castMember);
+                    seasonCastMap.put(season, newCast);
+                    detailedSeries.put(serie, seasonCastMap);
+                } else {
+                    final Map<Season, Cast> seasonCastMap = detailedSeries.get(serie);
+                    if (!seasonCastMap.containsKey(season)) {
+                        final Cast newCast = new Cast();
+                        newCast.addCastMember(castMember);
+                        seasonCastMap.put(season, newCast);
+                    } else {
+                        seasonCastMap.get(season).addCastMember(castMember);
+                    }
+                }
+            }
+
+            return Map.copyOf(detailedSeries);
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+
     private CastMember getNewCastMember() throws SQLException {
         if (this.getResultSet().getBoolean("TipoAttoreMembroCast")
                 && !this.getResultSet().getBoolean("TipoRegistaMembroCast")) {
@@ -361,6 +441,8 @@ public final class UserOps extends DBManager {
         }
         throw new IllegalArgumentException();
     }
+
+
 
 
 }
