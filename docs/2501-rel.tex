@@ -8,6 +8,7 @@
 \usepackage{longtable}
 \usepackage{graphicx}
 \usepackage{todonotes}
+\usepackage{fancyvrb}
 
 \title{\textbf{CineRadar}\\Progetto di Basi di dati\\\textit{Università di Bologna}}
 \author{Martin Tomassi; 0001077737\\Francesco Pazzaglia; 0001077423\\Luca Casadei; 0001069237}
@@ -395,7 +396,7 @@ Quello che segue rappresenta lo schema derivato dalla composizione di tutte le s
 	
 	\\ \hline
 	4.6                                                                                                                                                                                                          &
-	\begin{tabular}[c]{@{}c@{}}Aggiunta di un \\ nuovo episodio per una \\ specifica stagione di una serie TV.\end{tabular}                                                   &
+	\begin{tabular}[c]{@{}c@{}}Aggiunta di un \\ nuovo episodio per una \\ specifica stagione di \\ una serie TV.\end{tabular}                                                   &
 	10																						&
 	
 	\\ \hline
@@ -1818,7 +1819,67 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 \end{itemize}
 
 \section{Traduzione delle operazioni in query SQL}
-\todo{TBD}
+\begin{itemize}
+	\item Op. 1 \\
+	Questa operazione avviene alla registrazione di un utente, è un'operazione di inserimento, per evitare che ci siano account non associati a nessuno dei tre tipi di utenza previsti, avvengono due query in successione, una che registra l'account generico, e la seconda quello specifico.\\
+	Prima query:
+	\begin{verbatim}
+		INSERT INTO account(Username, Password, Nome, Cognome) 
+			VALUES(?, ?, ?, ?)
+	\end{verbatim}
+	Seconda query:
+	\begin{verbatim}
+		INSERT INTO utente(Username, TargaPremio, DataNascita)
+			VALUES(?, ?, ?)
+	\end{verbatim}
+	\item Op. 2.1-3 \\ Questa operazione è divisa in due query diverse, una per controllare la validità della password senza reperire subito le informazioni dell'account, la seconda per reperirle una volta che l'utente è stato autenticato.\\
+	Prima query:
+	\begin{verbatim}
+		SELECT Password FROM ACCOUNT WHERE Username = ?
+	\end{verbatim}
+	Seconda query:
+	\begin{verbatim}
+		SELECT
+		account.Username AS ACC_NAME,
+		registratore.username AS IS_REG,
+		utente.Username AS IS_USR,
+		amministratore.username AS IS_AMM 
+		FROM 
+		account 
+		LEFT JOIN registratore 
+			ON registratore.username = account.username 
+		LEFT JOIN utente 
+			ON utente.Username = account.Username 
+		LEFT JOIN amministratore 
+			ON amministratore.username = account.username
+		WHERE account.username = ?
+	\end{verbatim}
+	Così strutturata, la query ritorna il valore del nome utente del tipo associato all'account, negli altri invece sarà presente il valore nullo, questo consente una gestione automatica della scelta del tipo di login da effettuare lato software.
+	\item Op. 3.1: \todo{TBD}
+	\item Op. 3.2: \todo{TBD}
+	\item Op. 4.1: \todo{TBD}
+	\item Op. 4.2: \todo{TBD}
+	\item Op. 4.3: \todo{TBD}
+	\item Op. 4.4: \todo{TBD}
+	\item Op. 4.5: \todo{TBD}
+	\item Op. 4.6: \todo{TBD}
+	\item Op. 5.1: \todo{TBD}
+	\item Op. 5.2: \todo{TBD}
+	\item Op. 6: \todo{TBD}
+	\item Op. 7.1: \todo{TBD}
+	\item Op. 7.2: \todo{TBD}
+	\item Op. 7.3: \todo{TBD}
+	\item Op. 7.4: \todo{TBD}
+	\item Op. 7.5: \todo{TBD}
+	\item Op. 8.1: \todo{TBD}
+	\item Op. 8.2: \todo{TBD}
+	\item Op. 9.1: \todo{TBD}
+	\item Op. 9.2: \todo{TBD}
+	\item Op. 10: \todo{TBD}
+	\item Op. 11.1: \todo{TBD}
+	\item Op. 11.2: \todo{TBD}
+	\item Op. 12: \todo{TBD}
+\end{itemize}
 
 \chapter{Progettazione dell'applicazione}
 \section{Architettura generale}
