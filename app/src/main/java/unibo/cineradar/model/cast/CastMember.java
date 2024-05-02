@@ -42,7 +42,7 @@ public class CastMember {
      *
      * @return the ID of the cast member
      */
-    protected int getId() {
+    public int getId() {
         return this.id;
     }
 
@@ -51,7 +51,7 @@ public class CastMember {
      *
      * @return the name of the cast member
      */
-    protected String getName() {
+    public String getName() {
         return this.name;
     }
 
@@ -60,26 +60,26 @@ public class CastMember {
      *
      * @return the last name of the cast member
      */
-    protected String getLastName() {
+    public String getLastName() {
         return this.lastname;
     }
 
     /**
-     * Returns the birth date of the cast member.
+     * Returns a copy of the birth date of the cast member.
      *
-     * @return the birth date of the cast member
+     * @return a copy of the birth date of the cast member
      */
-    protected Date getBirthDate() {
-        return this.birthDate;
+    public Date getBirthDate() {
+        return new Date(this.birthDate.getTime());
     }
 
     /**
-     * Returns the career debut date of the cast member.
+     * Returns a copy of the career debut date of the cast member.
      *
-     * @return the career debut date of the cast member
+     * @return a copy of the career debut date of the cast member
      */
-    protected Date getCareerDebutDate() {
-        return this.careerDebutDate;
+    public Date getCareerDebutDate() {
+        return new Date(this.careerDebutDate.getTime());
     }
 
     /**
@@ -87,7 +87,7 @@ public class CastMember {
      *
      * @return the stage name of the cast member
      */
-    protected String getStageName() {
+    public String getStageName() {
         return this.stageName;
     }
 }

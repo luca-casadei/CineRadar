@@ -24,4 +24,13 @@ public final class Cast {
     public void addCastMember(final CastMember castMember) {
         this.castMemberList.add(castMember);
     }
+
+    /**
+     * Retrieves the cast member list.
+     *
+     * @return The list of cast member.
+     */
+    public List<CastMember> getCastMemberList() {
+        return List.copyOf(castMemberList);
+    }
 }

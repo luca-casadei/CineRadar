@@ -6,7 +6,6 @@ import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.cast.Director;
 import unibo.cineradar.model.film.Film;
-import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.review.FilmReview;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.review.SerieReview;
@@ -291,7 +290,7 @@ public final class UserOps extends DBManager {
      * @return A map containing films as keys and their corresponding cast as values.
      * @throws IllegalArgumentException If an SQL exception occurs.
      */
-    public Map<Multimedia, Cast> getFilmsDetails() {
+    public Map<Film, Cast> getFilmsDetails() {
         Objects.requireNonNull(this.getConnection());
         try {
             final String query = "SELECT film.Codice AS CodiceFilm, \n"
