@@ -8,11 +8,13 @@ import unibo.cineradar.view.ViewContext;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.io.Serial;
@@ -99,7 +101,30 @@ public final class FilmDetailsView extends JFrame {
 
         mainPanel.add(castPanel, BorderLayout.CENTER);
 
+        final JCheckBox cb = getViewedSelector();
+        mainPanel.add(cb, BorderLayout.SOUTH);
+
         add(mainPanel);
         setVisible(true);
+    }
+
+    private JCheckBox getViewedSelector() {
+        final UserSessionController ctr = (UserSessionController) currentSessionContext.getController();
+        final JCheckBox cb = new JCheckBox("Gia' visto!");
+        cb.setHorizontalAlignment(SwingConstants.CENTER);
+        cb.setSelected(ctr.isFilmViewed(detailedFilm.getFilmId()));
+        cb.addActionListener(e -> {
+            final JCheckBox cbe = (JCheckBox) e.getSource();
+            if (cb.isSelected()) {
+                if (!ctr.visualizeFilm(detailedFilm.getFilmId())) {
+                    cbe.setSelected(false);
+                }
+            } else {
+                if (!ctr.forgetFilm(detailedFilm.getFilmId())) {
+                    cbe.setSelected(true);
+                }
+            }
+        });
+        return cb;
     }
 }

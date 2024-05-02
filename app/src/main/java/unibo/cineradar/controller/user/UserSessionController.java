@@ -77,6 +77,36 @@ public class UserSessionController extends SessionControllerImpl {
     }
 
     /**
+     * Visualizes a film.
+     *
+     * @param filmId The film to be visualized.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean visualizeFilm(final int filmId) {
+        return this.userContext.visualizeFilm(filmId);
+    }
+
+    /**
+     * Un-visualizes a film.
+     *
+     * @param filmId The film to be un-visualized.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean forgetFilm(final int filmId) {
+        return this.userContext.forgetFilm(filmId);
+    }
+
+    /**
+     * Checks if the film has been viewed or not.
+     *
+     * @param filmId The ID of the film.
+     * @return True if the film has been viewed, false otherwise.
+     */
+    public boolean isFilmViewed(final int filmId) {
+        return this.userContext.isFilmViewed(filmId);
+    }
+
+    /**
      * Gets the list of reviews that the user has written.
      *
      * @return A list of Reviews.
