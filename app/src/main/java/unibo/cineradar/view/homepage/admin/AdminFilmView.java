@@ -8,6 +8,7 @@ import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.io.Serial;
 
 // CHECKSTYLE: MagicNumber OFF
 
@@ -15,7 +16,8 @@ import java.awt.Font;
  * Film view of the user.
  */
 public final class AdminFilmView extends AdminPanel {
-    private static final long serialVersionUID = 2L;
+    @Serial
+    private static final long serialVersionUID = -2417782855116749418L;
 
     /**
      * Constructor of the admin film view.

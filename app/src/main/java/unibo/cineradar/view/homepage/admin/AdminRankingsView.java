@@ -10,8 +10,6 @@ import java.io.Serial;
  * Rankings view of the Admin.
  */
 public class AdminRankingsView extends UserPanel {
-
-
     @Serial
     private static final long serialVersionUID = -924897837300851458L;
 

@@ -1,6 +1,8 @@
 package unibo.cineradar.view.homepage.admin;
 
+import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Multimedia;
+import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.JPanel;
@@ -14,6 +16,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.io.Serial;
 import java.util.List;
 
 // CHECKSTYLE: MagicNumber OFF
@@ -22,7 +25,8 @@ import java.util.List;
  * The panel used in the user part.
  */
 public abstract class AdminPanel extends JPanel {
-    private static final long serialVersionUID = 2L;
+    @Serial
+    private static final long serialVersionUID = 5442349602104022450L;
 
     private final ViewContext currentSessionContext;
 
@@ -64,7 +68,9 @@ public abstract class AdminPanel extends JPanel {
         // Adds film data to the model
         for (final Multimedia multimedia : multimediaList) {
             filmTableModel.addRow(new Object[]{
-                    multimedia.getId(),
+                    multimedia instanceof Film film
+                            ? film.getFilmId() : multimedia instanceof Serie serie
+                            ? serie.getSeriesId() : -1,
                     multimedia.getTitle(),
                     multimedia.getAgeLimit(),
                     multimedia.getPlot(),
@@ -97,31 +103,36 @@ public abstract class AdminPanel extends JPanel {
         // Imposta il renderer personalizzato per alternare i colori delle righe
         table.setDefaultRenderer(
                 Object.class, new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(
-                    final JTable table,
-                    final Object value,
-                    final boolean isSelected,
-                    final boolean hasFocus,
-                    final int row,
-                    final int column) {
-                // Ottiene il componente renderer di default
-                final Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    @Override
+                    public Component getTableCellRendererComponent(
+                            final JTable table,
+                            final Object value,
+                            final boolean isSelected,
+                            final boolean hasFocus,
+                            final int row,
+                            final int column) {
+                        // Ottiene il componente renderer di default
+                        final Component component = super.getTableCellRendererComponent(table,
+                                value,
+                                isSelected,
+                                hasFocus,
+                                row,
+                                column);
 
-                // Imposta il colore di sfondo basato sulla selezione della riga
-                if (isSelected) {
-                    // Colore per riga selezionata
-                    component.setBackground(new Color(254, 250, 246));
-                } else if (row % 2 == 0) {
-                    // Colore per riga pari
-                    component.setBackground(Color.WHITE);
-                } else {
-                    // Colore per riga dispari
-                    component.setBackground(new Color(240, 240, 240));
-                }
-                return component;
-            }
-        });
+                        // Imposta il colore di sfondo basato sulla selezione della riga
+                        if (isSelected) {
+                            // Colore per riga selezionata
+                            component.setBackground(new Color(254, 250, 246));
+                        } else if (row % 2 == 0) {
+                            // Colore per riga pari
+                            component.setBackground(Color.WHITE);
+                        } else {
+                            // Colore per riga dispari
+                            component.setBackground(new Color(240, 240, 240));
+                        }
+                        return component;
+                    }
+                });
         return table;
     }
 

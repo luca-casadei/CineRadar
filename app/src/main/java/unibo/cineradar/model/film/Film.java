@@ -2,11 +2,14 @@ package unibo.cineradar.model.film;
 
 import unibo.cineradar.model.multimedia.Multimedia;
 
+import java.util.Objects;
+
 /**
  * The film class.
  */
-public class Film extends Multimedia {
+public final class Film extends Multimedia {
     private final int castId;
+    private final int filmId;
 
     /**
      * Constructs a film instance.
@@ -24,8 +27,32 @@ public class Film extends Multimedia {
                 final String plot,
                 final int duration,
                 final int castId) {
-        super(id, title, ageLimit, plot, duration);
+        super(title, ageLimit, plot, duration);
         this.castId = castId;
+        this.filmId = id;
+    }
+
+    /**
+     * Gets the film's identifier.
+     *
+     * @return The unique ID of the film.
+     */
+    public int getFilmId() {
+        return filmId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.filmId);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof Film film) {
+            return film.filmId == this.filmId;
+        } else {
+            return false;
+        }
     }
 
     /**
