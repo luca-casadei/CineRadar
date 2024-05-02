@@ -1,9 +1,12 @@
 package unibo.cineradar.model.serie;
 
+import java.util.Objects;
+
 /**
  * Represents an episode of a TV series.
  */
 public class Episode {
+    // TODO: mettere idSeason e idSerie
     private final int id;
     private final int duration;
 
@@ -34,5 +37,19 @@ public class Episode {
      */
     public int getDuration() {
         return duration;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.id);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof Episode episode) {
+            return episode.id == this.id;
+        } else {
+            return false;
+        }
     }
 }

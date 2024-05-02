@@ -1,6 +1,7 @@
 package unibo.cineradar.model.db;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.checkerframework.checker.units.qual.C;
 import unibo.cineradar.model.cast.Actor;
 import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.cast.CastMember;
@@ -9,6 +10,7 @@ import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.review.FilmReview;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.review.SerieReview;
+import unibo.cineradar.model.serie.Episode;
 import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.User;
@@ -372,9 +374,7 @@ public final class UserOps extends DBManager {
 
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.setResultSet(this.getPreparedStatement().executeQuery());
-
             final Map<Serie, Map<Season, Cast>> detailedSeries = new HashMap<>();
-
             while (this.getResultSet().next()) {
                 final Serie serie = new Serie(
                         this.getResultSet().getInt("CodiceSerie"),
@@ -384,32 +384,44 @@ public final class UserOps extends DBManager {
                         this.getResultSet().getInt("DurataComplessivaSerie"),
                         this.getResultSet().getInt("NumeroEpisodiSerie")
                 );
-
                 final Season season = new Season(
                         this.getResultSet().getInt("NumeroStagione"),
                         this.getResultSet().getString("SuntoStagione")
                 );
-
+                final Episode episode = new Episode(
+                        this.getResultSet().getInt("NumeroEpisodio"),
+                        this.getResultSet().getInt("DurataEpisodio")
+                );
                 final CastMember castMember = getNewCastMember();
-
                 if (!detailedSeries.containsKey(serie)) {
                     final Map<Season, Cast> seasonCastMap = new HashMap<>();
                     final Cast newCast = new Cast();
                     newCast.addCastMember(castMember);
+                    season.addEpisode(episode);
                     seasonCastMap.put(season, newCast);
                     detailedSeries.put(serie, seasonCastMap);
                 } else {
-                    final Map<Season, Cast> seasonCastMap = detailedSeries.get(serie);
-                    if (!seasonCastMap.containsKey(season)) {
+                    if(!detailedSeries.get(serie).containsKey(season)) {
                         final Cast newCast = new Cast();
                         newCast.addCastMember(castMember);
-                        seasonCastMap.put(season, newCast);
+                        season.addEpisode(episode);
+                        detailedSeries.get(serie).put(season, newCast);
                     } else {
-                        seasonCastMap.get(season).addCastMember(castMember);
+                        if (detailedSeries.get(serie)
+                                .keySet()
+                                .stream()
+                                .filter(s -> s.equals(season))
+                                .findAny()
+                                .map(s -> !s.getEpisodes().contains(episode)).orElse(false)) {
+                            detailedSeries.get(serie)
+                                    .keySet()
+                                    .stream()
+                                    .filter(s -> s.equals(season)).findAny().ifPresent(s -> s.addEpisode(episode));
+                        }
+                        detailedSeries.get(serie).get(season).addCastMember(castMember);
                     }
                 }
             }
-
             return Map.copyOf(detailedSeries);
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);

@@ -1,6 +1,9 @@
 package unibo.cineradar.model.cast;
 
+import unibo.cineradar.model.serie.Season;
+
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * Represents a cast member of a film or cinematographic production.
@@ -89,5 +92,19 @@ public class CastMember {
      */
     public String getStageName() {
         return this.stageName;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.id);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof CastMember castMember) {
+            return castMember.id == this.id;
+        } else {
+            return false;
+        }
     }
 }
