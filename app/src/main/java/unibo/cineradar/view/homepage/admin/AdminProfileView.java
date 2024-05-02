@@ -3,12 +3,14 @@ package unibo.cineradar.view.homepage.admin;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.JLabel;
+import java.io.Serial;
 
 /**
  * Profile view of the user.
  */
 public class AdminProfileView extends AdminPanel {
-    private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = -1671465329372673262L;
 
     /**
      * Constructor of the user profile view.

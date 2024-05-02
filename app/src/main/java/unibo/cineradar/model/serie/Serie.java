@@ -2,11 +2,14 @@ package unibo.cineradar.model.serie;
 
 import unibo.cineradar.model.multimedia.Multimedia;
 
+import java.util.Objects;
+
 /**
  * The TV serie class.
  */
-public class Serie extends Multimedia {
+public final class Serie extends Multimedia {
     private final int numEpisodes;
+    private final int seriesId;
 
     /**
      * Constructs a tv serie instance.
@@ -24,8 +27,32 @@ public class Serie extends Multimedia {
                  final String plot,
                  final int duration,
                  final int numEpisodes) {
-        super(id, title, ageLimit, plot, duration);
+        super(title, ageLimit, plot, duration);
         this.numEpisodes = numEpisodes;
+        this.seriesId = id;
+    }
+
+    /**
+     * Gets the series' identifier.
+     *
+     * @return The unique ID of the series.
+     */
+    public int getSeriesId() {
+        return seriesId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(seriesId);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof Serie serie) {
+            return serie.seriesId == this.seriesId;
+        } else {
+            return false;
+        }
     }
 
     /**

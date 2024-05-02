@@ -1,10 +1,12 @@
 package unibo.cineradar.view.homepage.user;
 
 import unibo.cineradar.controller.user.UserSessionController;
+import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.review.FilmReview;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.review.SerieReview;
+import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.homepage.user.details.FilmDetailsView;
 import unibo.cineradar.view.homepage.user.details.ReviewDetailsView;
@@ -122,7 +124,10 @@ public abstract class UserPanel extends JPanel {
 
         // Adds multimedia data to the model
         for (final Multimedia multimedia : multimediaList) {
-            model.addRow(new Object[]{multimedia.getId(), multimedia.getTitle(),
+            model.addRow(new Object[]{multimedia instanceof Film film
+                    ? film.getFilmId() : multimedia instanceof Serie serie
+                    ? serie.getSeriesId() : -1,
+                    multimedia.getTitle(),
                     multimedia.getAgeLimit(), multimedia.getPlot(), multimedia.getDuration()});
         }
 
@@ -197,13 +202,11 @@ public abstract class UserPanel extends JPanel {
         for (final Review review : reviewList) {
             final String multimediaId;
             final String multimediaTitle;
-            if (review instanceof FilmReview) {
-                final FilmReview filmReview = (FilmReview) review;
+            if (review instanceof FilmReview filmReview) {
                 multimediaId = filmReview.getIdFilm()
                         + " - [Film]";
                 multimediaTitle = filmReview.getFilmTitle();
-            } else if (review instanceof SerieReview) {
-                final SerieReview serieReview = (SerieReview) review;
+            } else if (review instanceof SerieReview serieReview) {
                 multimediaId = serieReview.getIdSerie()
                         + " - [Serie]";
                 multimediaTitle = serieReview.getSerieTitle();

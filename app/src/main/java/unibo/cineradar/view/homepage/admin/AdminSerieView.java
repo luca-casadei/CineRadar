@@ -8,6 +8,7 @@ import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.io.Serial;
 
 // CHECKSTYLE: MagicNumber OFF
 
@@ -15,7 +16,8 @@ import java.awt.Font;
  * Serie view of the user.
  */
 public final class AdminSerieView extends AdminPanel {
-    private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 2801951662303493283L;
 
     /**
      * Constructor of the admin TV series view.

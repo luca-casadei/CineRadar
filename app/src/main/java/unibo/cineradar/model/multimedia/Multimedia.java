@@ -4,7 +4,6 @@ package unibo.cineradar.model.multimedia;
  * The multimedia class.
  */
 public class Multimedia {
-    private final int id;
     private final String title;
     private final int ageLimit;
     private final String plot;
@@ -13,27 +12,16 @@ public class Multimedia {
     /**
      * Constructs a multimedia instance.
      *
-     * @param id       The id of the film.
      * @param title    The title of the film.
      * @param ageLimit The age limit of the film.
      * @param plot     The plot of the film.
      * @param duration The duration of the film(in minutes).
      */
-    public Multimedia(final int id, final String title, final int ageLimit, final String plot, final int duration) {
-        this.id = id;
+    protected Multimedia(final String title, final int ageLimit, final String plot, final int duration) {
         this.title = title;
         this.ageLimit = ageLimit;
         this.plot = plot;
         this.duration = duration;
-    }
-
-    /**
-     * Gets the id of the multimedia.
-     *
-     * @return An integer containing the id of the multimedia.
-     */
-    public int getId() {
-        return this.id;
     }
 
     /**

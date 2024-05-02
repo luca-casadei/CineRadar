@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.io.Serial;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,8 @@ import java.util.Map;
  * A view to display detailed information about a film.
  */
 public final class FilmDetailsView extends JFrame {
-    private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = -5729493403413904557L;
     private static final int FRAME_WIDTH = 600;
     private static final int FRAME_HEIGHT = 400;
 
@@ -42,7 +44,7 @@ public final class FilmDetailsView extends JFrame {
         final Map<Film, Cast> detailedFilms =
                 ((UserSessionController) currentSessionContext.getController()).getDetailedFilms();
         for (final Map.Entry<Film, Cast> entry : detailedFilms.entrySet()) {
-            if (entry.getKey().getId() == filmId) {
+            if (entry.getKey().getFilmId() == filmId) {
                 this.detailedFilm = entry.getKey();
                 this.detailedFilmCast = entry.getValue();
                 initComponents();
