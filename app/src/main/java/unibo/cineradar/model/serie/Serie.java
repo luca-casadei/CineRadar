@@ -8,6 +8,7 @@ import java.util.Objects;
  * The TV serie class.
  */
 public final class Serie extends Multimedia {
+
     private final int numEpisodes;
     private final int seriesId;
 

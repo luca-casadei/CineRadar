@@ -5,7 +5,7 @@ import java.time.LocalDate;
 /**
  * Represents a director in the cast of a film or a production.
  */
-public class Director extends CastMember {
+public final class Director extends CastMember {
 
 
     /**

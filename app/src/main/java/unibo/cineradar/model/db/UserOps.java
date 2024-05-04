@@ -10,6 +10,8 @@ import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.FilmReview;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.review.SerieReview;
+import unibo.cineradar.model.serie.Episode;
+import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.User;
 
@@ -39,6 +41,7 @@ public final class UserOps extends DBManager {
     private static final String LIMIT_AGE_NAME = "EtaLimite";
     private static final String PLOT_NAME = "Trama";
     private static final String ID_FILM_NAME = "CodiceFilm";
+    private static final String ID_SERIE_NAME = "CodiceSerie";
 
     /**
      * Retrieves the list of all films.
@@ -254,7 +257,7 @@ public final class UserOps extends DBManager {
             while (this.getResultSet().next()) {
                 final Review review;
                 if (this.getResultSet().getInt(ID_FILM_NAME) != NULL
-                        && this.getResultSet().getInt("CodiceSerie") == NULL) {
+                        && this.getResultSet().getInt(ID_SERIE_NAME) == NULL) {
                     review = new FilmReview(
                             this.getResultSet().getInt(ID_FILM_NAME),
                             this.getResultSet().getString("TitoloFilm"),
@@ -264,9 +267,9 @@ public final class UserOps extends DBManager {
                             this.getResultSet().getInt("VotoComplessivoRecensione")
                     );
                 } else if (this.getResultSet().getInt(ID_FILM_NAME) == NULL
-                        && this.getResultSet().getInt("CodiceSerie") != NULL) {
+                        && this.getResultSet().getInt(ID_SERIE_NAME) != NULL) {
                     review = new SerieReview(
-                            this.getResultSet().getInt("CodiceSerie"),
+                            this.getResultSet().getInt(ID_SERIE_NAME),
                             this.getResultSet().getString("TitoloSerie"),
                             this.getResultSet().getString("UsernameUtente"),
                             this.getResultSet().getString("TitoloRecensione"),
@@ -470,6 +473,101 @@ public final class UserOps extends DBManager {
             throw new IllegalArgumentException(ex);
         }
     }
+
+    /**
+     * Retrieves details of series including their cast from the database.
+     *
+     * @return A map containing Series as keys and their corresponding Seasons and relative Cast as values.
+     * @throws IllegalArgumentException If an SQL exception occurs.
+     */
+    public Map<Serie, Map<Season, Cast>> getDetailedSeries() {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "SELECT serie.Codice AS CodiceSerie, "
+                    + "stagione.NumeroStagione, "
+                    + "episodio.NumeroEpisodio, "
+                    + "serie.Titolo AS TitoloSerie, "
+                    + "serie.EtaLimite AS EtaLimiteSerie, "
+                    + "serie.Trama AS TramaSerie, "
+                    + "serie.DurataComplessiva AS DurataComplessivaSerie, "
+                    + "serie.NumeroEpisodi AS NumeroEpisodiSerie, "
+                    + "stagione.Sunto AS SuntoStagione, "
+                    + "episodio.DurataMin AS DurataEpisodio, "
+                    + "casting.Nome AS NomeCasting, "
+                    + "membrocast.Codice AS CodiceMembroCast, "
+                    + "membrocast.Nome AS NomeMembroCast, "
+                    + "membrocast.Cognome AS CognomeMembroCast, "
+                    + "membrocast.DataNascita AS DataNascitaMembroCast, "
+                    + "membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast, "
+                    + "membrocast.NomeArte AS NomeArteMembroCast, "
+                    + "membrocast.TipoAttore AS TipoAttoreMembroCast, "
+                    + "membrocast.TipoRegista AS TipoRegistaMembroCast "
+                    + "FROM serie "
+                    + "JOIN stagione ON serie.Codice = stagione.CodiceSerie "
+                    + "JOIN episodio ON episodio.NumeroStagione = stagione.NumeroStagione "
+                    + "AND episodio.CodiceSerie = stagione.CodiceSerie "
+                    + "JOIN casting ON casting.Codice = stagione.CodiceCast "
+                    + "AND episodio.CodiceSerie = stagione.CodiceSerie "
+                    + "JOIN partecipazione_cast ON partecipazione_cast.CodiceCast = casting.Codice "
+                    + "JOIN membrocast ON membrocast.Codice = partecipazione_cast.CodiceMembro "
+                    + "ORDER BY CodiceSerie";
+
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            final Map<Serie, Map<Season, Cast>> detailedSeries = new HashMap<>();
+            while (this.getResultSet().next()) {
+                final Serie serie = new Serie(
+                        this.getResultSet().getInt(ID_SERIE_NAME),
+                        this.getResultSet().getString("TitoloSerie"),
+                        this.getResultSet().getInt("EtaLimiteSerie"),
+                        this.getResultSet().getString("TramaSerie"),
+                        this.getResultSet().getInt("DurataComplessivaSerie"),
+                        this.getResultSet().getInt("NumeroEpisodiSerie")
+                );
+                final Season season = new Season(
+                        this.getResultSet().getInt("NumeroStagione"),
+                        this.getResultSet().getString("SuntoStagione")
+                );
+                final Episode episode = new Episode(
+                        this.getResultSet().getInt("NumeroEpisodio"),
+                        this.getResultSet().getInt("DurataEpisodio")
+                );
+                final CastMember castMember = getNewCastMember();
+                if (!detailedSeries.containsKey(serie)) {
+                    final Map<Season, Cast> seasonCastMap = new HashMap<>();
+                    final Cast newCast = new Cast();
+                    newCast.addCastMember(castMember);
+                    season.addEpisode(episode);
+                    seasonCastMap.put(season, newCast);
+                    detailedSeries.put(serie, seasonCastMap);
+                } else {
+                    if (!detailedSeries.get(serie).containsKey(season)) {
+                        final Cast newCast = new Cast();
+                        newCast.addCastMember(castMember);
+                        season.addEpisode(episode);
+                        detailedSeries.get(serie).put(season, newCast);
+                    } else {
+                        if (detailedSeries.get(serie)
+                                .keySet()
+                                .stream()
+                                .filter(s -> s.equals(season))
+                                .findAny()
+                                .map(s -> !s.getEpisodes().contains(episode)).orElse(false)) {
+                            detailedSeries.get(serie)
+                                    .keySet()
+                                    .stream()
+                                    .filter(s -> s.equals(season)).findAny().ifPresent(s -> s.addEpisode(episode));
+                        }
+                        detailedSeries.get(serie).get(season).addCastMember(castMember);
+                    }
+                }
+            }
+            return Map.copyOf(detailedSeries);
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
 
     private CastMember getNewCastMember() throws SQLException {
         if (this.getResultSet().getBoolean("TipoAttoreMembroCast")

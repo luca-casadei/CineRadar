@@ -1,6 +1,7 @@
 package unibo.cineradar.model.cast;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * Represents a cast member of a film or cinematographic production.
@@ -23,12 +24,12 @@ public class CastMember {
      * @param careerDebutDate the career debut date of the cast member
      * @param stageName       the stage name of the cast member
      */
-    protected CastMember(final int id,
-                         final String name,
-                         final String lastname,
-                         final LocalDate birthDate,
-                         final LocalDate careerDebutDate,
-                         final String stageName) {
+    CastMember(final int id,
+               final String name,
+               final String lastname,
+               final LocalDate birthDate,
+               final LocalDate careerDebutDate,
+               final String stageName) {
         this.id = id;
         this.name = name;
         this.lastname = lastname;
@@ -90,4 +91,30 @@ public class CastMember {
     public String getStageName() {
         return this.stageName;
     }
+
+    /**
+     * Returns a hash code value for the object.
+     *
+     * @return a hash code value for this object
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.id);
+    }
+
+    /**
+     * Indicates whether some other CastMember is equal to this one.
+     *
+     * @param obj the reference object with which to compare
+     * @return true if this object is the same as the obj argument; false otherwise
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof CastMember castMember) {
+            return castMember.id == this.id;
+        } else {
+            return false;
+        }
+    }
+
 }

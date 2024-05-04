@@ -7,6 +7,7 @@ import unibo.cineradar.model.context.user.UserContext;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.Review;
+import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
 
 import java.util.List;
@@ -47,6 +48,14 @@ public final class UserSessionController extends SessionControllerImpl {
         return userContext.getDetailedFilms();
     }
 
+    /**
+     * Gets detailed series.
+     *
+     * @return The list of all detailed series.
+     */
+    public Map<Serie, Map<Season, Cast>> getDetailedSeries() {
+        return userContext.getDetailedSeries();
+    }
 
     /**
      * Gets the list of series that the user can view.
