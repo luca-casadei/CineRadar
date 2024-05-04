@@ -213,43 +213,44 @@ public final class UserOps extends DBManager {
     public List<Review> getReviews(final String username) {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = "SELECT \n"
-                    + "    recensioni_totali.UsernameUtente,\n"
-                    + "    recensioni_totali.CodiceFilm,\n"
-                    + "    film.Titolo AS TitoloFilm,\n"
-                    + "    recensioni_totali.CodiceSerie,\n"
-                    + "    serie.Titolo AS TitoloSerie,\n"
-                    + "    recensioni_totali.TitoloRecensione,\n"
-                    + "    recensioni_totali.DescrizioneRecensione,\n"
-                    + "    recensioni_totali.VotoComplessivoRecensione\n"
-                    + "FROM (\n"
-                    + "    SELECT \n"
-                    + "        UsernameUtente,\n"
-                    + "        CodiceSerie,\n"
-                    + "        NULL AS CodiceFilm,\n"
-                    + "        Titolo AS TitoloSerie,\n"
-                    + "        NULL AS TitoloFilm,\n"
-                    + "        Titolo AS TitoloRecensione,\n"
-                    + "        Descrizione AS DescrizioneRecensione,\n"
-                    + "        VotoComplessivo AS VotoComplessivoRecensione\n"
-                    + "    FROM \n"
-                    + "        recserie\n"
-                    + "    UNION ALL\n"
-                    + "    SELECT \n"
-                    + "        UsernameUtente,\n"
-                    + "        NULL AS CodiceSerie,\n"
-                    + "        CodiceFilm,\n"
-                    + "        NULL AS TitoloSerie,\n"
-                    + "        Titolo AS TitoloFilm,\n"
-                    + "        Titolo AS TitoloRecensione,\n"
-                    + "        Descrizione AS DescrizioneRecensione,\n"
-                    + "        VotoComplessivo AS VotoComplessivoRecensione\n"
-                    + "    FROM \n"
-                    + "        recfilm\n"
-                    + ") AS recensioni_totali\n"
-                    + "LEFT JOIN film ON recensioni_totali.CodiceFilm = film.Codice\n"
-                    + "LEFT JOIN serie ON recensioni_totali.CodiceSerie = serie.Codice\n"
-                    + "WHERE UsernameUtente = ?";
+            final String query = """
+                    SELECT\s
+                        recensioni_totali.UsernameUtente,
+                        recensioni_totali.CodiceFilm,
+                        film.Titolo AS TitoloFilm,
+                        recensioni_totali.CodiceSerie,
+                        serie.Titolo AS TitoloSerie,
+                        recensioni_totali.TitoloRecensione,
+                        recensioni_totali.DescrizioneRecensione,
+                        recensioni_totali.VotoComplessivoRecensione
+                    FROM (
+                        SELECT\s
+                            UsernameUtente,
+                            CodiceSerie,
+                            NULL AS CodiceFilm,
+                            Titolo AS TitoloSerie,
+                            NULL AS TitoloFilm,
+                            Titolo AS TitoloRecensione,
+                            Descrizione AS DescrizioneRecensione,
+                            VotoComplessivo AS VotoComplessivoRecensione
+                        FROM\s
+                            recserie
+                        UNION ALL
+                        SELECT\s
+                            UsernameUtente,
+                            NULL AS CodiceSerie,
+                            CodiceFilm,
+                            NULL AS TitoloSerie,
+                            Titolo AS TitoloFilm,
+                            Titolo AS TitoloRecensione,
+                            Descrizione AS DescrizioneRecensione,
+                            VotoComplessivo AS VotoComplessivoRecensione
+                        FROM\s
+                            recfilm
+                    ) AS recensioni_totali
+                    LEFT JOIN film ON recensioni_totali.CodiceFilm = film.Codice
+                    LEFT JOIN serie ON recensioni_totali.CodiceSerie = serie.Codice
+                    WHERE UsernameUtente = ?""";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setString(1, username);
             this.setResultSet(this.getPreparedStatement().executeQuery());

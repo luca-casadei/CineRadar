@@ -1855,18 +1855,121 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 		WHERE account.username = ?
 	\end{verbatim}
 	Così strutturata, la query ritorna il valore del nome utente del tipo associato all'account, negli altri invece sarà presente il valore nullo, questo consente una gestione automatica della scelta del tipo di login da effettuare lato software.
-	\item Op. 3.1: \todo{TBD}
-	\item Op. 3.2: \todo{TBD}
-	\item Op. 4.1: \todo{TBD}
+	\item Op. 3.1-2: \\
+	La scelta delle preferenze avviene in due passaggi: come prima cosa la totale rimozione di quelle precedentemente salvate, come secondo passaggio l'inserimento di quelle nuove.\\
+	Prima query:
+	\begin{verbatim}
+		DELETE FROM preferenze WHERE UsernameUtente = ?
+	\end{verbatim}
+	Seconda query (avviene ciclicamente per quanti sono i generi totali):
+	\begin{verbatim}
+		INSERT INTO preferenze(NomeGenere, UsernameUtente)
+			VALUES(?, ?)
+	\end{verbatim}
+	\item Op. 4.1:
+	\begin{verbatim}
+		SELECT * FROM film
+		WHERE film.EtaLimite <= ?
+	\end{verbatim}
+	Dove ? viene sostituito con l'età dell'utente che effettua la richiesta, calcolata mediante la sua data di nascita nel software.
 	\item Op. 4.2: \todo{TBD}
-	\item Op. 4.3: \todo{TBD}
-	\item Op. 4.4: \todo{TBD}
+	\item Op. 4.3:
+	\begin{verbatim}
+		SELECT * FROM serie
+		WHERE serie.EtaLimite <= ?
+	\end{verbatim}
+	Dove ? viene sostituito con l'età dell'utente che effettua la richiesta, calcolata mediante la sua data di nascita nel software.
+	\item Op. 4.4:
+	\begin{verbatim}
+		SELECT 
+			serie.Codice AS CodiceSerie,
+			stagione.NumeroStagione,
+			episodio.NumeroEpisodio,
+			serie.Titolo AS TitoloSerie,
+			serie.EtaLimite AS EtaLimiteSerie,
+			serie.Trama AS TramaSerie,
+			serie.DurataComplessiva AS DurataComplessivaSerie,
+			serie.NumeroEpisodi AS NumeroEpisodiSerie,
+			stagione.Sunto AS SuntoStagione,
+			episodio.DurataMin AS DurataEpisodio,
+			casting.Nome AS NomeCasting,
+			membrocast.Codice AS CodiceMembroCast,
+			membrocast.Nome AS NomeMembroCast,
+			membrocast.Cognome AS CognomeMembroCast,
+			membrocast.DataNascita AS DataNascitaMembroCast,
+			membrocast.DataDebuttoCarriera 
+				AS DataDebuttoCarrieraMembroCast,
+			membrocast.NomeArte AS NomeArteMembroCast,
+			membrocast.TipoAttore AS TipoAttoreMembroCast,
+			membrocast.TipoRegista AS TipoRegistaMembroCast
+		FROM serie
+			JOIN stagione ON serie.Codice = stagione.CodiceSerie
+			JOIN episodio ON episodio.NumeroStagione 
+				= stagione.NumeroStagione
+				AND episodio.CodiceSerie = stagione.CodiceSerie
+			JOIN casting ON casting.Codice = stagione.CodiceCast
+				AND episodio.CodiceSerie = stagione.CodiceSerie 
+			JOIN partecipazione_cast 
+				ON partecipazione_cast.CodiceCast = casting.Codice
+			JOIN membrocast ON membrocast.Codice 
+				= partecipazione_cast.CodiceMembro
+		ORDER BY CodiceSerie
+	\end{verbatim}
 	\item Op. 4.5: \todo{TBD}
 	\item Op. 4.6: \todo{TBD}
-	\item Op. 5.1: \todo{TBD}
+	\item Op. 5.1:
+	Per la visualizzazione:
+	\begin{verbatim}
+		INSERT INTO visualizzazioni_film(CodiceFilm, UsernameUtente)
+			VALUES(?, ?)
+	\end{verbatim}
+	Per la rimozione della visualizzazione (forget)
+	\begin{verbatim}
+		DELETE FROM visualizzazioni_film 
+			WHERE CodiceFilm = ? AND UsernameUtente = ?
+	\end{verbatim}
 	\item Op. 5.2: \todo{TBD}
 	\item Op. 6: \todo{TBD}
-	\item Op. 7.1: \todo{TBD}
+	\item Op. 7.1:
+	\begin{verbatim}
+		SELECT
+			recensioni_totali.UsernameUtente,
+			recensioni_totali.CodiceFilm,
+			film.Titolo AS TitoloFilm,
+			recensioni_totali.CodiceSerie,
+			serie.Titolo AS TitoloSerie,
+			recensioni_totali.TitoloRecensione,
+			recensioni_totali.DescrizioneRecensione,
+			recensioni_totali.VotoComplessivoRecensione
+		FROM (
+			SELECT
+				UsernameUtente,
+				CodiceSerie,
+				NULL AS CodiceFilm,
+				Titolo AS TitoloSerie,
+				NULL AS TitoloFilm,
+				Titolo AS TitoloRecensione,
+				Descrizione AS DescrizioneRecensione,
+				VotoComplessivo AS VotoComplessivoRecensione
+			FROM
+				recserie
+			UNION ALL
+			SELECT
+				UsernameUtente,
+				NULL AS CodiceSerie,
+				CodiceFilm,
+				NULL AS TitoloSerie,
+				Titolo AS TitoloFilm,
+				Titolo AS TitoloRecensione,
+				Descrizione AS DescrizioneRecensione,
+				VotoComplessivo AS VotoComplessivoRecensione
+			FROM
+				recfilm
+		) AS recensioni_totali
+		LEFT JOIN film ON recensioni_totali.CodiceFilm = film.Codice
+		LEFT JOIN serie ON recensioni_totali.CodiceSerie = serie.Codice
+		WHERE UsernameUtente = ?
+	\end{verbatim}
 	\item Op. 7.2: \todo{TBD}
 	\item Op. 7.3: \todo{TBD}
 	\item Op. 7.4: \todo{TBD}
