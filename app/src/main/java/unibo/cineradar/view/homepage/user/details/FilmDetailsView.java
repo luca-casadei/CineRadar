@@ -6,16 +6,8 @@ import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.view.ViewContext;
 
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.io.Serial;
+import javax.swing.*;
+import java.awt.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +16,6 @@ import java.util.Map;
  * A view to display detailed information about a film.
  */
 public final class FilmDetailsView extends JFrame {
-    @Serial
     private static final long serialVersionUID = -5729493403413904557L;
     private static final int FRAME_WIDTH = 600;
     private static final int FRAME_HEIGHT = 400;
@@ -77,27 +68,22 @@ public final class FilmDetailsView extends JFrame {
         mainPanel.add(filmDetailsPanel, BorderLayout.NORTH);
 
         // Cast details panel
-        final JPanel castPanel = new JPanel(new BorderLayout());
+        final JPanel castPanel = new JPanel();
+        castPanel.setLayout(new BoxLayout(castPanel, BoxLayout.Y_AXIS));
         castPanel.setBorder(BorderFactory.createTitledBorder("Cast"));
-
-        final DefaultListModel<String> castListModel = new DefaultListModel<>();
-        final JList<String> castList = new JList<>(castListModel);
-        final JScrollPane scrollPane = new JScrollPane(castList);
-        castPanel.add(scrollPane, BorderLayout.CENTER);
 
         if (detailedFilmCast != null) {
             final List<CastMember> castMembers = detailedFilmCast.getCastMemberList();
             for (final CastMember castMember : castMembers) {
-                final String castMemberInfo = castMember.getName()
-                        + " "
-                        + castMember.getLastName()
-                        + " - "
-                        + castMember.getBirthDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-                castListModel.addElement(castMemberInfo);
+                final JLabel castMemberLabel = new JLabel(castMember.getName() + " " +
+                        castMember.getLastName() + " - " +
+                        castMember.getBirthDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                castPanel.add(castMemberLabel);
+                castPanel.add(Box.createVerticalStrut(5));
             }
         }
 
-        mainPanel.add(castPanel, BorderLayout.CENTER);
+        mainPanel.add(new JScrollPane(castPanel), BorderLayout.CENTER);
 
         add(mainPanel);
         setVisible(true);

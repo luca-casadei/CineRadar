@@ -7,15 +7,18 @@ import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.view.ViewContext;
 
+import javax.swing.*;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JList;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.Serial;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -78,25 +81,29 @@ public final class SerieDetailsView extends JFrame {
         mainPanel.add(serieDetailsPanel, BorderLayout.NORTH);
 
         // Seasons details panel
-        final JPanel seasonsPanel = new JPanel(new BorderLayout());
+        final JPanel seasonsPanel = new JPanel();
+        seasonsPanel.setLayout(new BoxLayout(seasonsPanel, BoxLayout.Y_AXIS));
         seasonsPanel.setBorder(BorderFactory.createTitledBorder("Stagioni"));
 
         for (final Map.Entry<Season, Cast> seasonEntry : seasonsMap.entrySet()) {
             final JPanel seasonPanel = new JPanel(new BorderLayout());
             seasonPanel.setBorder(BorderFactory.createTitledBorder("Stagione " + seasonEntry.getKey().getId()));
 
-            final DefaultListModel<String> castListModel = new DefaultListModel<>();
-            final JList<String> castList = new JList<>(castListModel);
-            final JScrollPane castScrollPane = new JScrollPane(castList);
-            seasonPanel.add(castScrollPane, BorderLayout.CENTER);
+            final JPanel castPanel = new JPanel();
+            castPanel.setLayout(new BoxLayout(castPanel, BoxLayout.Y_AXIS));
 
             if (seasonEntry.getValue() != null) {
                 final List<CastMember> castMembers = seasonEntry.getValue().getCastMemberList();
                 for (final CastMember castMember : castMembers) {
-                    final String castMemberInfo = castMember.getName() + " " + castMember.getLastName();
-                    castListModel.addElement(castMemberInfo);
+                    final JLabel castMemberLabel = new JLabel(castMember.getName() + " " +
+                            castMember.getLastName() + " - " +
+                            castMember.getBirthDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                    castPanel.add(castMemberLabel);
+                    castPanel.add(Box.createVerticalStrut(5));
                 }
             }
+
+            seasonPanel.add(new JScrollPane(castPanel), BorderLayout.CENTER);
 
             final JPanel episodesPanel = new JPanel(new GridLayout(0, 2));
             episodesPanel.setBorder(BorderFactory.createTitledBorder("Episodi"));
@@ -108,10 +115,20 @@ public final class SerieDetailsView extends JFrame {
 
             seasonPanel.add(episodesPanel, BorderLayout.SOUTH);
 
-            seasonsPanel.add(seasonPanel, BorderLayout.CENTER);
+            seasonsPanel.add(seasonPanel);
         }
 
-        mainPanel.add(seasonsPanel, BorderLayout.CENTER);
+        mainPanel.add(new JScrollPane(seasonsPanel), BorderLayout.CENTER);
+
+        // Review button
+        final JButton reviewButton = new JButton("Recensisci la serie");
+        reviewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO: metodo per recensire una serie in particolare.
+            }
+        });
+        mainPanel.add(reviewButton, BorderLayout.SOUTH);
 
         add(mainPanel);
         setVisible(true);
