@@ -52,7 +52,7 @@ public class UserSessionController extends SessionControllerImpl {
      *
      * @return The list of all detailed series.
      */
-    public Map<Serie, Map<Season, Cast>> getDetailedSeries(){
+    public Map<Serie, Map<Season, Cast>> getDetailedSeries() {
         return userContext.getDetailedSeries();
     }
 

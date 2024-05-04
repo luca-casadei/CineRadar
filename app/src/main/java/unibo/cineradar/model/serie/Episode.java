@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * Represents an episode of a TV series.
  */
-public class Episode {
+public final class Episode {
     // TODO: mettere idSeason e idSerie
     private final int id;
     private final int duration;

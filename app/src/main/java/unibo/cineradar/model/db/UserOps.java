@@ -1,7 +1,6 @@
 package unibo.cineradar.model.db;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.checkerframework.checker.units.qual.C;
 import unibo.cineradar.model.cast.Actor;
 import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.cast.CastMember;
@@ -41,6 +40,7 @@ public final class UserOps extends DBManager {
     private static final String LIMIT_AGE_NAME = "EtaLimite";
     private static final String PLOT_NAME = "Trama";
     private static final String ID_FILM_NAME = "CodiceFilm";
+    private static final String ID_SERIE_NAME = "CodiceSerie";
 
     /**
      * Retrieves the list of all films.
@@ -256,7 +256,7 @@ public final class UserOps extends DBManager {
             while (this.getResultSet().next()) {
                 final Review review;
                 if (this.getResultSet().getInt(ID_FILM_NAME) != NULL
-                        && this.getResultSet().getInt("CodiceSerie") == NULL) {
+                        && this.getResultSet().getInt(ID_SERIE_NAME) == NULL) {
                     review = new FilmReview(
                             this.getResultSet().getInt(ID_FILM_NAME),
                             this.getResultSet().getString("TitoloFilm"),
@@ -266,9 +266,9 @@ public final class UserOps extends DBManager {
                             this.getResultSet().getInt("VotoComplessivoRecensione")
                     );
                 } else if (this.getResultSet().getInt(ID_FILM_NAME) == NULL
-                        && this.getResultSet().getInt("CodiceSerie") != NULL) {
+                        && this.getResultSet().getInt(ID_SERIE_NAME) != NULL) {
                     review = new SerieReview(
-                            this.getResultSet().getInt("CodiceSerie"),
+                            this.getResultSet().getInt(ID_SERIE_NAME),
                             this.getResultSet().getString("TitoloSerie"),
                             this.getResultSet().getString("UsernameUtente"),
                             this.getResultSet().getString("TitoloRecensione"),
@@ -340,44 +340,50 @@ public final class UserOps extends DBManager {
         }
     }
 
+    /**
+     * Retrieves details of series including their cast from the database.
+     *
+     * @return A map containing Series as keys and their corresponding Seasons and relative Cast as values.
+     * @throws IllegalArgumentException If an SQL exception occurs.
+     */
     public Map<Serie, Map<Season, Cast>> getDetailedSeries() {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = "SELECT serie.Codice AS CodiceSerie, " +
-                    "stagione.NumeroStagione, " +
-                    "episodio.NumeroEpisodio, " +
-                    "serie.Titolo AS TitoloSerie, " +
-                    "serie.EtaLimite AS EtaLimiteSerie, " +
-                    "serie.Trama AS TramaSerie, " +
-                    "serie.DurataComplessiva AS DurataComplessivaSerie, " +
-                    "serie.NumeroEpisodi AS NumeroEpisodiSerie, " +
-                    "stagione.Sunto AS SuntoStagione, " +
-                    "episodio.DurataMin AS DurataEpisodio, " +
-                    "casting.Nome AS NomeCasting, " +
-                    "membrocast.Codice AS CodiceMembroCast, " +
-                    "membrocast.Nome AS NomeMembroCast, " +
-                    "membrocast.Cognome AS CognomeMembroCast, " +
-                    "membrocast.DataNascita AS DataNascitaMembroCast, " +
-                    "membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast, " +
-                    "membrocast.NomeArte AS NomeArteMembroCast, " +
-                    "membrocast.TipoAttore AS TipoAttoreMembroCast, " +
-                    "membrocast.TipoRegista AS TipoRegistaMembroCast " +
-                    "FROM serie " +
-                    "JOIN stagione ON serie.Codice = stagione.CodiceSerie " +
-                    "JOIN episodio ON episodio.NumeroStagione = stagione.NumeroStagione " +
-                    "AND episodio.CodiceSerie = stagione.CodiceSerie " +
-                    "JOIN casting ON casting.Codice = stagione.CodiceCast " +
-                    "AND episodio.CodiceSerie = stagione.CodiceSerie " +
-                    "JOIN partecipazione_cast ON partecipazione_cast.CodiceCast = casting.Codice " +
-                    "JOIN membrocast ON membrocast.Codice = partecipazione_cast.CodiceMembro " +
-                    "ORDER BY CodiceSerie";
+            final String query = "SELECT serie.Codice AS CodiceSerie, "
+                    + "stagione.NumeroStagione, "
+                    + "episodio.NumeroEpisodio, "
+                    + "serie.Titolo AS TitoloSerie, "
+                    + "serie.EtaLimite AS EtaLimiteSerie, "
+                    + "serie.Trama AS TramaSerie, "
+                    + "serie.DurataComplessiva AS DurataComplessivaSerie, "
+                    + "serie.NumeroEpisodi AS NumeroEpisodiSerie, "
+                    + "stagione.Sunto AS SuntoStagione, "
+                    + "episodio.DurataMin AS DurataEpisodio, "
+                    + "casting.Nome AS NomeCasting, "
+                    + "membrocast.Codice AS CodiceMembroCast, "
+                    + "membrocast.Nome AS NomeMembroCast, "
+                    + "membrocast.Cognome AS CognomeMembroCast, "
+                    + "membrocast.DataNascita AS DataNascitaMembroCast, "
+                    + "membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast, "
+                    + "membrocast.NomeArte AS NomeArteMembroCast, "
+                    + "membrocast.TipoAttore AS TipoAttoreMembroCast, "
+                    + "membrocast.TipoRegista AS TipoRegistaMembroCast "
+                    + "FROM serie "
+                    + "JOIN stagione ON serie.Codice = stagione.CodiceSerie "
+                    + "JOIN episodio ON episodio.NumeroStagione = stagione.NumeroStagione "
+                    + "AND episodio.CodiceSerie = stagione.CodiceSerie "
+                    + "JOIN casting ON casting.Codice = stagione.CodiceCast "
+                    + "AND episodio.CodiceSerie = stagione.CodiceSerie "
+                    + "JOIN partecipazione_cast ON partecipazione_cast.CodiceCast = casting.Codice "
+                    + "JOIN membrocast ON membrocast.Codice = partecipazione_cast.CodiceMembro "
+                    + "ORDER BY CodiceSerie";
 
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.setResultSet(this.getPreparedStatement().executeQuery());
             final Map<Serie, Map<Season, Cast>> detailedSeries = new HashMap<>();
             while (this.getResultSet().next()) {
                 final Serie serie = new Serie(
-                        this.getResultSet().getInt("CodiceSerie"),
+                        this.getResultSet().getInt(ID_SERIE_NAME),
                         this.getResultSet().getString("TitoloSerie"),
                         this.getResultSet().getInt("EtaLimiteSerie"),
                         this.getResultSet().getString("TramaSerie"),
@@ -401,7 +407,7 @@ public final class UserOps extends DBManager {
                     seasonCastMap.put(season, newCast);
                     detailedSeries.put(serie, seasonCastMap);
                 } else {
-                    if(!detailedSeries.get(serie).containsKey(season)) {
+                    if (!detailedSeries.get(serie).containsKey(season)) {
                         final Cast newCast = new Cast();
                         newCast.addCastMember(castMember);
                         season.addEpisode(episode);
@@ -453,8 +459,6 @@ public final class UserOps extends DBManager {
         }
         throw new IllegalArgumentException();
     }
-
-
 
 
 }

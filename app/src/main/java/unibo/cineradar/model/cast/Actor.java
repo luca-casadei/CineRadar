@@ -5,7 +5,7 @@ import java.time.LocalDate;
 /**
  * Represents an actor in the cast of a film or a production.
  */
-public class Actor extends CastMember {
+public final class Actor extends CastMember {
 
     /**
      * Constructs a new Actor instance.

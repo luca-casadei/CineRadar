@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * Represents a season of a TV series.
  */
-public class Season {
+public final class Season {
     // TODO: mettere idSerie
     private final int id;
     private final String summary;
@@ -58,7 +58,7 @@ public class Season {
      * @param episode The episode to add to the list.
      */
     public void addEpisode(final Episode episode) {
-        if(!this.episodes.contains(episode)){
+        if (!this.episodes.contains(episode)) {
             this.episodes.add(episode);
         }
     }

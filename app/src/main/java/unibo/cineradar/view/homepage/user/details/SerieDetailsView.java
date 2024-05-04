@@ -7,14 +7,14 @@ import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.view.ViewContext;
 
-import javax.swing.*;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JList;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -30,9 +30,10 @@ import java.util.Map;
 public final class SerieDetailsView extends JFrame {
     @Serial
     private static final long serialVersionUID = 1366976476336457844L;
-
     private static final int FRAME_WIDTH = 600;
     private static final int FRAME_HEIGHT = 400;
+    private static final int VERTICAL_MARGIN = 5;
+
 
     private final transient ViewContext currentSessionContext;
 
@@ -95,11 +96,13 @@ public final class SerieDetailsView extends JFrame {
             if (seasonEntry.getValue() != null) {
                 final List<CastMember> castMembers = seasonEntry.getValue().getCastMemberList();
                 for (final CastMember castMember : castMembers) {
-                    final JLabel castMemberLabel = new JLabel(castMember.getName() + " " +
-                            castMember.getLastName() + " - " +
-                            castMember.getBirthDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                    final JLabel castMemberLabel = new JLabel(castMember.getName()
+                            + " "
+                            + castMember.getLastName()
+                            + " - "
+                            + castMember.getBirthDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
                     castPanel.add(castMemberLabel);
-                    castPanel.add(Box.createVerticalStrut(5));
+                    castPanel.add(Box.createVerticalStrut(VERTICAL_MARGIN));
                 }
             }
 
@@ -124,7 +127,7 @@ public final class SerieDetailsView extends JFrame {
         final JButton reviewButton = new JButton("Recensisci la serie");
         reviewButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 // TODO: metodo per recensire una serie in particolare.
             }
         });

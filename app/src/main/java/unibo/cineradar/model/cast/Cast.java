@@ -22,7 +22,7 @@ public final class Cast {
      * @param castMember the cast member to add
      */
     public void addCastMember(final CastMember castMember) {
-        if(!this.castMemberList.contains(castMember)){
+        if (!this.castMemberList.contains(castMember)) {
             this.castMemberList.add(castMember);
         }
     }

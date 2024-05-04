@@ -3,25 +3,22 @@ package unibo.cineradar.view.homepage.user;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.JLabel;
-import javax.swing.JTable;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import java.awt.BorderLayout;
 import java.awt.Font;
-import java.io.Serial;
-
-// CHECKSTYLE: MagicNumber OFF
 
 /**
  * Serie view of the user.
  */
 public final class UserSerieView extends UserPanel {
-    @Serial
     private static final long serialVersionUID = -2884190954467853020L;
 
     /**
      * Constructor of the user serie view.
      *
-     * @param currentSessionContext The context of the current user.
+     * @param currentSessionContext The context of the current session.
      */
     public UserSerieView(final ViewContext currentSessionContext) {
         super(currentSessionContext);
@@ -30,12 +27,14 @@ public final class UserSerieView extends UserPanel {
                 + " nella pagina delle serie.");
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
         welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
-        this.add(welcomeLabel, BorderLayout.NORTH);
 
+        final JPanel mainPanel = new JPanel(new BorderLayout());
         final JTable serieTable = super.createSerieTable();
         final JScrollPane scrollPane = new JScrollPane(serieTable);
-        this.add(scrollPane, BorderLayout.CENTER);
-    }
+        mainPanel.add(welcomeLabel, BorderLayout.NORTH);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
 
+        add(mainPanel);
+        setVisible(true);
+    }
 }
-// CHECKSTYLE: MagicNumber ON

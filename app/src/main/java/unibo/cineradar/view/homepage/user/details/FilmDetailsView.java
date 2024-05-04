@@ -6,8 +6,15 @@ import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.view.ViewContext;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +26,7 @@ public final class FilmDetailsView extends JFrame {
     private static final long serialVersionUID = -5729493403413904557L;
     private static final int FRAME_WIDTH = 600;
     private static final int FRAME_HEIGHT = 400;
+    private static final int VERTICAL_MARGIN = 5;
 
     private final transient ViewContext currentSessionContext;
     private final transient Film detailedFilm;
@@ -75,11 +83,12 @@ public final class FilmDetailsView extends JFrame {
         if (detailedFilmCast != null) {
             final List<CastMember> castMembers = detailedFilmCast.getCastMemberList();
             for (final CastMember castMember : castMembers) {
-                final JLabel castMemberLabel = new JLabel(castMember.getName() + " " +
-                        castMember.getLastName() + " - " +
-                        castMember.getBirthDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                final JLabel castMemberLabel = new JLabel(castMember.getName()
+                        + " "
+                        + castMember.getLastName() + " - "
+                        + castMember.getBirthDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
                 castPanel.add(castMemberLabel);
-                castPanel.add(Box.createVerticalStrut(5));
+                castPanel.add(Box.createVerticalStrut(VERTICAL_MARGIN));
             }
         }
 
