@@ -7,15 +7,12 @@ import unibo.cineradar.model.film.Film;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -86,11 +83,6 @@ public final class FilmDetailsView extends JFrame {
         castPanel.setLayout(new BoxLayout(castPanel, BoxLayout.Y_AXIS));
         castPanel.setBorder(BorderFactory.createTitledBorder("Cast"));
 
-        final DefaultListModel<String> castListModel = new DefaultListModel<>();
-        final JList<String> castList = new JList<>(castListModel);
-        final JScrollPane scrollPane = new JScrollPane(castList);
-        castPanel.add(scrollPane, BorderLayout.CENTER);
-
         if (detailedFilmCast != null) {
             final List<CastMember> castMembers = detailedFilmCast.getCastMemberList();
             for (final CastMember castMember : castMembers) {
@@ -104,7 +96,7 @@ public final class FilmDetailsView extends JFrame {
             }
         }
 
-        mainPanel.add(new JScrollPane(castPanel), BorderLayout.CENTER);
+        mainPanel.add(castPanel, BorderLayout.CENTER);
 
         final JCheckBox cb = getViewedSelector();
         mainPanel.add(cb, BorderLayout.SOUTH);
