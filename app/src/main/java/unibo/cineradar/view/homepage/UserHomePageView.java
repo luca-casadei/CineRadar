@@ -3,6 +3,7 @@ package unibo.cineradar.view.homepage;
 import unibo.cineradar.view.CineRadarViewFrameImpl;
 import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.homepage.user.UserFilmView;
+import unibo.cineradar.view.homepage.user.UserPreferenceView;
 import unibo.cineradar.view.homepage.user.UserProfileView;
 import unibo.cineradar.view.homepage.user.UserReviewView;
 import unibo.cineradar.view.homepage.user.UserSerieView;
@@ -66,10 +67,12 @@ public final class UserHomePageView extends CineRadarViewFrameImpl {
         final JButton serieButton = getGotoSerieButton();
         final JButton reviewButton = getGotoReviewButton();
         final JButton profileButton = getGotoProfileButton();
+        final JButton preferenceButton = getGotoPreferencesButton();
         navBar.add(filmButton);
         navBar.add(serieButton);
         navBar.add(reviewButton);
         navBar.add(profileButton);
+        navBar.add(preferenceButton);
         return navBar;
     }
 
@@ -95,5 +98,15 @@ public final class UserHomePageView extends CineRadarViewFrameImpl {
         final JButton profileButton = new JButton("PROFILO");
         profileButton.addActionListener(e -> cards.show(cardPane, PROFILE_NAME));
         return profileButton;
+    }
+
+    private JButton getGotoPreferencesButton() {
+        final JButton preferenceButton = new JButton("SCEGLI PREFERENZE");
+        preferenceButton.addActionListener(e -> {
+            final UserPreferenceView pfv = new UserPreferenceView(this, context);
+            pfv.display(false);
+            this.disable();
+        });
+        return preferenceButton;
     }
 }

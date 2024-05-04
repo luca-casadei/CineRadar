@@ -5,6 +5,7 @@ import unibo.cineradar.controller.SessionControllerImpl;
 import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.context.user.UserContext;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.serie.Serie;
 
@@ -14,7 +15,7 @@ import java.util.Map;
 /**
  * The user session controller class.
  */
-public class UserSessionController extends SessionControllerImpl {
+public final class UserSessionController extends SessionControllerImpl {
 
     private final UserContext userContext;
 
@@ -87,6 +88,22 @@ public class UserSessionController extends SessionControllerImpl {
     }
 
     /**
+     * Removes all the preferences from the current user.
+     */
+    public void clearPreferences() {
+        this.userContext.clearPreferences();
+    }
+
+    /**
+     * Sets the preferences of the current user.
+     *
+     * @param preferences The preferences to set.
+     */
+    public void addPreference(final List<Genre> preferences) {
+        this.userContext.addPreferences(preferences);
+    }
+
+    /**
      * Un-visualizes a film.
      *
      * @param filmId The film to be un-visualized.
@@ -113,5 +130,14 @@ public class UserSessionController extends SessionControllerImpl {
      */
     public List<Review> getReviews() {
         return userContext.getReviews();
+    }
+
+    /**
+     * Gets the list of current preferences.
+     *
+     * @return A list of genres.
+     */
+    public List<Genre> getUserPrefs() {
+        return userContext.getUserPrefs();
     }
 }

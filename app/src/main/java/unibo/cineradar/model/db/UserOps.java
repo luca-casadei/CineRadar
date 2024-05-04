@@ -6,6 +6,7 @@ import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.cast.Director;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.FilmReview;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.review.SerieReview;
@@ -285,6 +286,72 @@ public final class UserOps extends DBManager {
     }
 
     /**
+     * Removes every genre preference of the user.
+     *
+     * @param username The username of the user.
+     */
+    public void clearPreferences(final String username) {
+        try {
+            final String query = "DELETE FROM preferenze WHERE UsernameUtente = ?";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setString(1, username);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Gets the preferences of a user.
+     *
+     * @param username The username whose preferences are to be got.
+     * @return A list of genre preferences.
+     */
+    public List<Genre> getUserPrefs(final String username) {
+        try {
+            final List<Genre> g = new ArrayList<>();
+            final String query =
+                    "SELECT Nome,Descrizione,NumeroVisualizzati "
+                            + "FROM preferenze "
+                            + "join genere on genere.Nome = preferenze.NomeGenere "
+                            + "WHERE preferenze.UsernameUtente = ?";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setString(1, username);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            while (this.getResultSet().next()) {
+                g.add(
+                        new Genre(this.getResultSet().getString("Nome"),
+                                this.getResultSet().getString("Descrizione"),
+                                this.getResultSet().getInt("NumeroVisualizzati"))
+                );
+            }
+            return List.copyOf(g);
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Adds a preference for the user.
+     *
+     * @param genre    The genre to add.
+     * @param username The username of the user.
+     */
+    public void addPreference(final String genre, final String username) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "INSERT INTO preferenze(NomeGenere, UsernameUtente)"
+                    + " VALUES(?, ?)";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setString(1, genre);
+            this.getPreparedStatement().setString(2, username);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
      * Adds visualization of a film.
      *
      * @param filmId   The ID of the film to visualize.
@@ -305,6 +372,7 @@ public final class UserOps extends DBManager {
             return false;
         }
     }
+
 
     /**
      * Removes visualization of a film.

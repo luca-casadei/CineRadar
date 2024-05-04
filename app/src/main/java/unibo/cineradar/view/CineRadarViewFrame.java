@@ -25,4 +25,14 @@ public interface CineRadarViewFrame {
      * Enables every internal component of the main frame.
      */
     void enableEveryInternalComponent();
+
+    /**
+     * Enables the frame.
+     */
+    void enable();
+
+    /**
+     * Disables the frame.
+     */
+    void disable();
 }

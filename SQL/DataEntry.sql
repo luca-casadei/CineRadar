@@ -34,6 +34,8 @@ DELETE
 FROM membrocast;
 DELETE
 FROM casting;
+DELETE
+FROM genere;
 ALTER TABLE cinema
     AUTO_INCREMENT 1;
 ALTER TABLE casting
@@ -545,3 +547,12 @@ VALUES ("luca", 1, "Capolavoro assoluto",
 -- ("eleonora", 2, "Fantasy epico", "Game of Thrones ha una trama complessa e personaggi ben definiti. Le location e gli effetti speciali sono incredibili.", 9),
 -- ("giorgio", 2, "Deludente finale", "La serie ha avuto dei momenti incredibili, ma il finale è stato una delusione. Troppe trame non risolte e decisioni discutibili.", 7),
 -- ("francesca", 2, "Un viaggio emozionante", "Game of Thrones è stata un'esperienza incredibile. Nonostante qualche svista nelle ultime stagioni, rimarrà sempre una delle mie serie preferite.", 9);
+
+INSERT INTO genere(Nome, Descrizione)
+VALUES ("Horror", "Storie che fanno paura con cose soprannaturali"),
+       ("Thriller", "Storie che fanno paura ma più realistiche"),
+       ("Commedia", "Storie che fanno ridere"),
+       ("Giallo", "Storie con spie e poliziotti"),
+       ("Rosa", "Storie d'amore"),
+       ("Storico", "Documentari o elementi storici"),
+       ("Azione", "Boom, bang, pow!");

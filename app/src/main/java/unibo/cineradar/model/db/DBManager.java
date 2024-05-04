@@ -1,6 +1,7 @@
 package unibo.cineradar.model.db;
 
 import unibo.cineradar.model.login.LoginType;
+import unibo.cineradar.model.multimedia.Genre;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -8,6 +9,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -222,6 +225,30 @@ public class DBManager implements AutoCloseable {
             return true;
         } else {
             return false;
+        }
+    }
+
+    /**
+     * Gets a list of currently inserted genres.
+     *
+     * @return A list of genres.
+     */
+    public final List<Genre> getGenres() {
+        Objects.requireNonNull(this.dbConnection);
+        try {
+            final String query = "SELECT * FROM genere";
+            this.setPreparedStatement(this.dbConnection.prepareStatement(query));
+            this.resultSet = this.preparedStatement.executeQuery();
+            final List<Genre> genres = new ArrayList<>();
+            while (this.resultSet.next()) {
+                genres.add(new Genre(
+                        this.resultSet.getString("Nome"),
+                        this.resultSet.getString("Descrizione"),
+                        this.resultSet.getInt("NumeroVisualizzati")));
+            }
+            return List.copyOf(genres);
+        } catch (SQLException ex) {
+            throw new IllegalStateException(ex);
         }
     }
 

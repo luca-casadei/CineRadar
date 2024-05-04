@@ -5,6 +5,7 @@ import unibo.cineradar.model.context.SessionContextImpl;
 
 import unibo.cineradar.model.db.UserOps;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.Account;
@@ -109,6 +110,41 @@ public final class UserContext extends SessionContextImpl {
     public boolean visualizeFilm(final int id) {
         try (UserOps mgr = new UserOps()) {
             return mgr.visualizeFilm(id, this.user.getUsername());
+        }
+    }
+
+    /**
+     * Clears the current user preferences.
+     */
+    public void clearPreferences() {
+        try (UserOps mgr = new UserOps()) {
+            mgr.clearPreferences(this.user.getUsername());
+        }
+    }
+
+    /**
+     * Gets the current user preferences.
+     *
+     * @return A list of preferences.
+     */
+    public List<Genre> getUserPrefs() {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.getUserPrefs(this.user.getUsername());
+        }
+    }
+
+    /**
+     * Adds every preference in the list for the user.
+     *
+     * @param preferencesToAdd The list of genres to add to the preferences of the user.
+     */
+    public void addPreferences(final List<Genre> preferencesToAdd) {
+        try (UserOps mgr = new UserOps()) {
+            preferencesToAdd.forEach(
+                    pref -> {
+                        mgr.addPreference(pref.name(), this.user.getUsername());
+                    }
+            );
         }
     }
 

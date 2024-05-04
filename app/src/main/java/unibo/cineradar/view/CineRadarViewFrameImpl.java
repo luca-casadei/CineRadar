@@ -56,6 +56,16 @@ public class CineRadarViewFrameImpl implements CineRadarViewFrame {
                 .forEach(component -> component.setEnabled(true));
     }
 
+    @Override
+    public final void enable() {
+        this.mainFrame.setEnabled(true);
+    }
+
+    @Override
+    public final void disable() {
+        this.mainFrame.setEnabled(false);
+    }
+
     /**
      * Gets the main frame of the view.
      *
