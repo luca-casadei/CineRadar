@@ -288,6 +288,72 @@ public final class UserOps extends DBManager {
     }
 
     /**
+     * Adds visualization of a film.
+     *
+     * @param filmId   The ID of the film to visualize.
+     * @param userName The username of the visualizer.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean visualizeFilm(final int filmId, final String userName) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "INSERT INTO visualizzazioni_film(CodiceFilm, UsernameUtente)"
+                    + " VALUES(?, ?)";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setInt(1, filmId);
+            this.getPreparedStatement().setString(2, userName);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            return true;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    /**
+     * Removes visualization of a film.
+     *
+     * @param filmId   The ID of the film to visualize.
+     * @param userName The username of the visualizer.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean forgetFilm(final int filmId, final String userName) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "DELETE FROM visualizzazioni_film WHERE CodiceFilm = ? AND UsernameUtente = ?";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setInt(1, filmId);
+            this.getPreparedStatement().setString(2, userName);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            return true;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    /**
+     * Checks if the film has been viewed or not.
+     *
+     * @param filmId   The ID of the film.
+     * @param userName The username of the user.
+     * @return True if the film has been viewed, false otherwise.
+     */
+    public boolean isFilmViewed(final int filmId, final String userName) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "SELECT UsernameUtente "
+                    + "FROM visualizzazioni_film "
+                    + "WHERE CodiceFilm = ? AND UsernameUtente = ?";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setInt(1, filmId);
+            this.getPreparedStatement().setString(2, userName);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            return this.getResultSet().next();
+        } catch (SQLException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
      * Retrieves details of films including their cast from the database.
      *
      * @return A map containing films as keys and their corresponding cast as values.

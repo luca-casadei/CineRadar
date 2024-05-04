@@ -7,14 +7,19 @@ import unibo.cineradar.model.film.Film;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JCheckBox;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.io.Serial;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +28,7 @@ import java.util.Map;
  * A view to display detailed information about a film.
  */
 public final class FilmDetailsView extends JFrame {
+    @Serial
     private static final long serialVersionUID = -5729493403413904557L;
     private static final int FRAME_WIDTH = 600;
     private static final int FRAME_HEIGHT = 400;
@@ -80,12 +86,18 @@ public final class FilmDetailsView extends JFrame {
         castPanel.setLayout(new BoxLayout(castPanel, BoxLayout.Y_AXIS));
         castPanel.setBorder(BorderFactory.createTitledBorder("Cast"));
 
+        final DefaultListModel<String> castListModel = new DefaultListModel<>();
+        final JList<String> castList = new JList<>(castListModel);
+        final JScrollPane scrollPane = new JScrollPane(castList);
+        castPanel.add(scrollPane, BorderLayout.CENTER);
+
         if (detailedFilmCast != null) {
             final List<CastMember> castMembers = detailedFilmCast.getCastMemberList();
             for (final CastMember castMember : castMembers) {
                 final JLabel castMemberLabel = new JLabel(castMember.getName()
                         + " "
-                        + castMember.getLastName() + " - "
+                        + castMember.getLastName()
+                        + " - "
                         + castMember.getBirthDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
                 castPanel.add(castMemberLabel);
                 castPanel.add(Box.createVerticalStrut(VERTICAL_MARGIN));
@@ -94,7 +106,30 @@ public final class FilmDetailsView extends JFrame {
 
         mainPanel.add(new JScrollPane(castPanel), BorderLayout.CENTER);
 
+        final JCheckBox cb = getViewedSelector();
+        mainPanel.add(cb, BorderLayout.SOUTH);
+
         add(mainPanel);
         setVisible(true);
+    }
+
+    private JCheckBox getViewedSelector() {
+        final UserSessionController ctr = (UserSessionController) currentSessionContext.getController();
+        final JCheckBox cb = new JCheckBox("Gia' visto!");
+        cb.setHorizontalAlignment(SwingConstants.CENTER);
+        cb.setSelected(ctr.isFilmViewed(detailedFilm.getFilmId()));
+        cb.addActionListener(e -> {
+            final JCheckBox cbe = (JCheckBox) e.getSource();
+            if (cb.isSelected()) {
+                if (!ctr.visualizeFilm(detailedFilm.getFilmId())) {
+                    cbe.setSelected(false);
+                }
+            } else {
+                if (!ctr.forgetFilm(detailedFilm.getFilmId())) {
+                    cbe.setSelected(true);
+                }
+            }
+        });
+        return cb;
     }
 }

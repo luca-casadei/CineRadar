@@ -69,7 +69,7 @@ CREATE TABLE EPISODIO
 );
 CREATE TABLE FILM
 (
-    Codice     INT          NOT NULL,
+    Codice     INT          NOT NULL AUTO_INCREMENT,
     Titolo     VARCHAR(50)  NOT NULL,
     EtaLimite  INT          NOT NULL CHECK (EtaLimite >= 0),
     Trama      VARCHAR(500) NOT NULL,
@@ -171,7 +171,7 @@ CREATE TABLE RICHIESTA
 );
 CREATE TABLE SERIE
 (
-    Codice            INT          NOT NULL,
+    Codice            INT          NOT NULL AUTO_INCREMENT,
     Titolo            VARCHAR(50)  NOT NULL,
     EtaLimite         INT          NOT NULL,
     Trama             VARCHAR(500) NOT NULL,

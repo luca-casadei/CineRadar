@@ -113,6 +113,42 @@ public final class UserContext extends SessionContextImpl {
     }
 
     /**
+     * Visualizes a film.
+     *
+     * @param id The film's id.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean visualizeFilm(final int id) {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.visualizeFilm(id, this.user.getUsername());
+        }
+    }
+
+    /**
+     * Removes film's visualization.
+     *
+     * @param id The film's id.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean forgetFilm(final int id) {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.forgetFilm(id, this.user.getUsername());
+        }
+    }
+
+    /**
+     * Checks if the film has been viewed or not.
+     *
+     * @param id The ID of the film.
+     * @return True if the film has been viewed, false otherwise.
+     */
+    public boolean isFilmViewed(final int id) {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.isFilmViewed(id, this.user.getUsername());
+        }
+    }
+
+    /**
      * Retrieves the reviews associated with the user.
      *
      * @return The list of reviews associated with the user.
