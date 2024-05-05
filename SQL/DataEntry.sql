@@ -1,6 +1,10 @@
 DELETE
 FROM richiesta;
 DELETE
+FROM preferenze;
+DELETE
+FROM sezione;
+DELETE
 FROM tessera;
 DELETE
 FROM recfilm;
@@ -556,3 +560,10 @@ VALUES ("Horror", "Storie che fanno paura con cose soprannaturali"),
        ("Rosa", "Storie d'amore"),
        ("Storico", "Documentari o elementi storici"),
        ("Azione", "Boom, bang, pow!");
+
+INSERT INTO sezione(Nome, Dettaglio)
+VALUES ("Trama", "La storia e il proseguio degli eventi."),
+       ("Sonoro", "Una buona composizione musicale è fondamentale per mantenere attiva l'attenzione."),
+       ("Effetti",
+        "Se un elemento è animato, si riferisce alla qualità dell'animazione, senno' agli effetti cinematici."),
+       ("Casting", "Come si sono comportati gli attori.");

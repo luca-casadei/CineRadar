@@ -400,6 +400,107 @@ public final class UserOps extends DBManager {
     }
 
     /**
+     * Adds a review to the specified series.
+     *
+     * @param seriesId The id of the series.
+     * @param username The username of the reviewer.
+     * @param title    The title of the review (caption).
+     * @param desc     Full description of the review.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean reviewSeries(final int seriesId,
+                                final String username,
+                                final String title,
+                                final String desc) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "INSERT INTO recserie(CodiceSerie, UsernameUtente, Titolo, Descrizione) "
+                    + "VALUES (?,?,?,?)";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setInt(1, seriesId);
+            this.getPreparedStatement().setString(2, username);
+            this.getPreparedStatement().setString(3, title);
+            this.getPreparedStatement().setString(4, desc);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            return true;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    /**
+     * Sets the sections of the series review.
+     *
+     * @param sectName The name of the section to review.
+     * @param username The username of the reviewer.
+     * @param revCode  The code of the review.
+     * @param score    The score of the section.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean addSeriesReviewSection(final String sectName,
+                                          final String username,
+                                          final int revCode,
+                                          final int score) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "INSERT INTO sezionamento_serie (NomeSezione, UsernameUtente, CodiceRecSerie, Voto) "
+                    + "VALUES (?,?,?,?)";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setString(1, sectName);
+            this.getPreparedStatement().setString(2, username);
+            this.getPreparedStatement().setInt(3, revCode);
+            this.getPreparedStatement().setInt(4, score);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            return true;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    /**
+     * Gets the viewed episodes of a series.
+     *
+     * @param seriesCode   The series code.
+     * @param seasonNumber The season number.
+     * @param userName     The username.
+     * @return True if the episode has been viewed, false otherwise.
+     */
+    public List<Episode> getViewedEpisodes(final int seriesCode,
+                                           final int seasonNumber,
+                                           final String userName) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = """
+                         SELECT episodio.* FROM episodio
+                         JOIN visualizzazioni_episodio\s
+                             ON visualizzazioni_episodio.NumeroEpisodio = episodio.NumeroEpisodio
+                             AND visualizzazioni_episodio.NumeroStagione = episodio.NumeroStagione
+                             AND visualizzazioni_episodio.CodiceSerie = episodio.CodiceSerie
+                         WHERE visualizzazioni_episodio.UsernameUtente = ?
+                             AND visualizzazioni_episodio.CodiceSerie = ?
+                             AND visualizzazioni_episodio.NumeroStagione = ?
+                    """;
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setInt(3, seasonNumber);
+            this.getPreparedStatement().setInt(2, seriesCode);
+            this.getPreparedStatement().setString(1, userName);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            final List<Episode> eps = new ArrayList<>();
+            while (this.getResultSet().next()) {
+                eps.add(
+                        new Episode(this.getResultSet().getInt("NumeroEpisodio"),
+                                this.getResultSet().getInt("CodiceSerie"),
+                                this.getResultSet().getInt("NumeroStagione"),
+                                this.getResultSet().getInt("DurataMin"))
+                );
+            }
+            return List.copyOf(eps);
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
      * Checks if the film has been viewed or not.
      *
      * @param filmId   The ID of the film.
@@ -431,24 +532,25 @@ public final class UserOps extends DBManager {
     public Map<Film, Cast> getFilmsDetails() {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = "SELECT film.Codice AS CodiceFilm, \n"
-                    + "film.Titolo AS TitoloFilm, \n"
-                    + "film.EtaLimite AS EtaLimiteFilm, \n"
-                    + "film.Trama AS TramaFilm, \n"
-                    + "film.Durata AS DurataFilm, \n"
-                    + "film.CodiceCast AS CodiceCastFilm,\n"
-                    + "membrocast.Codice AS CodiceMembroCast, \n"
-                    + "membrocast.Nome AS NomeMembroCast, \n"
-                    + "membrocast.Cognome AS CognomeMembroCast, \n"
-                    + "membrocast.DataNascita AS DataNascitaMembroCast, \n"
-                    + "membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast, \n"
-                    + "membrocast.NomeArte AS NomeArteMembroCast, \n"
-                    + "membrocast.TipoAttore AS TipoAttoreMembroCast, \n"
-                    + "membrocast.TipoRegista AS TipoRegistaMembroCast \n"
-                    + "FROM film \n"
-                    + "JOIN casting ON film.CodiceCast = casting.Codice \n"
-                    + "JOIN partecipazione_cast ON casting.codice = partecipazione_cast.CodiceCast\n"
-                    + "JOIN membrocast ON partecipazione_cast.CodiceMembro = membrocast.Codice";
+            final String query = """
+                    SELECT film.Codice AS CodiceFilm,\s
+                    film.Titolo AS TitoloFilm,\s
+                    film.EtaLimite AS EtaLimiteFilm,\s
+                    film.Trama AS TramaFilm,\s
+                    film.Durata AS DurataFilm,\s
+                    film.CodiceCast AS CodiceCastFilm,
+                    membrocast.Codice AS CodiceMembroCast,\s
+                    membrocast.Nome AS NomeMembroCast,\s
+                    membrocast.Cognome AS CognomeMembroCast,\s
+                    membrocast.DataNascita AS DataNascitaMembroCast,\s
+                    membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast,\s
+                    membrocast.NomeArte AS NomeArteMembroCast,\s
+                    membrocast.TipoAttore AS TipoAttoreMembroCast,\s
+                    membrocast.TipoRegista AS TipoRegistaMembroCast\s
+                    FROM film\s
+                    JOIN casting ON film.CodiceCast = casting.Codice\s
+                    JOIN partecipazione_cast ON casting.codice = partecipazione_cast.CodiceCast
+                    JOIN membrocast ON partecipazione_cast.CodiceMembro = membrocast.Codice""";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.setResultSet(this.getPreparedStatement().executeQuery());
             final Map<Film, Cast> detailedFilms = new HashMap<>();
@@ -526,11 +628,14 @@ public final class UserOps extends DBManager {
                         this.getResultSet().getInt("NumeroEpisodiSerie")
                 );
                 final Season season = new Season(
+                        this.getResultSet().getInt(ID_SERIE_NAME),
                         this.getResultSet().getInt("NumeroStagione"),
                         this.getResultSet().getString("SuntoStagione")
                 );
                 final Episode episode = new Episode(
                         this.getResultSet().getInt("NumeroEpisodio"),
+                        this.getResultSet().getInt(ID_SERIE_NAME),
+                        this.getResultSet().getInt("NumeroStagione"),
                         this.getResultSet().getInt("DurataEpisodio")
                 );
                 final CastMember castMember = getNewCastMember();

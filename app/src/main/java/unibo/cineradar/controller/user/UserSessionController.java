@@ -7,6 +7,7 @@ import unibo.cineradar.model.context.user.UserContext;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.Review;
+import unibo.cineradar.model.serie.Episode;
 import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
 
@@ -139,6 +140,17 @@ public final class UserSessionController extends SessionControllerImpl {
      */
     public List<Review> getReviews() {
         return userContext.getReviews();
+    }
+
+    /**
+     * Cheks if an episode has been viewed.
+     *
+     * @param seriesCode   The series code.
+     * @param seasonNumber The season number.
+     * @return A list of viewed episodes.
+     */
+    public List<Episode> getViewedEpisodes(final int seriesCode, final int seasonNumber) {
+        return userContext.getViewedEpisodesOfSeries(seriesCode, seasonNumber);
     }
 
     /**

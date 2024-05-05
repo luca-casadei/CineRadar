@@ -4,50 +4,24 @@ import java.util.Objects;
 
 /**
  * Represents an episode of a TV series.
+ *
+ * @param id           The episode number,
+ * @param seriesCode   The code of the series.
+ * @param seasonNumber The number of the season of this episode.
+ * @param duration     The duration of the episode in minutes.
  */
-public final class Episode {
-    // TODO: mettere idSeason e idSerie
-    private final int id;
-    private final int duration;
-
-    /**
-     * Constructs an Episode object.
-     *
-     * @param id The ID of the episode.
-     * @param duration The duration of the episode.
-     */
-    public Episode(final int id, final int duration) {
-        this.id = id;
-        this.duration = duration;
-    }
-
-    /**
-     * Gets the ID of the episode.
-     *
-     * @return The ID of the episode.
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * Gets the duration of the episode.
-     *
-     * @return The duration of the episode.
-     */
-    public int getDuration() {
-        return duration;
-    }
-
+public record Episode(int id, int seriesCode, int seasonNumber, int duration) {
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.id);
+        return Objects.hash(this.id, this.seriesCode, this.seasonNumber);
     }
 
     @Override
     public boolean equals(final Object obj) {
         if (obj instanceof Episode episode) {
-            return episode.id == this.id;
+            return episode.id == this.id
+                    && episode.seriesCode == this.seriesCode
+                    && episode.seasonNumber == this.seasonNumber;
         } else {
             return false;
         }

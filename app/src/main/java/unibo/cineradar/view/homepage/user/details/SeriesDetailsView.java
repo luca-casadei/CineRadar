@@ -19,8 +19,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.Serial;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -29,33 +27,35 @@ import java.util.Map;
 /**
  * A view to display detailed information about a serie.
  */
-public final class SerieDetailsView extends JFrame {
+public final class SeriesDetailsView extends JFrame {
     @Serial
     private static final long serialVersionUID = 1366976476336457844L;
     private static final int FRAME_WIDTH = 600;
     private static final int FRAME_HEIGHT = 400;
     private static final int VERTICAL_MARGIN = 5;
-
+    private final transient UserSessionController uc;
     private JButton reviewButton;
     private int totalEpisodes;
     private int viewedEpisodes;
 
     /**
-     * Constructs a new SerieDetailsView.
+     * Constructs a new SeriesDetailsView.
      *
      * @param currentSessionContext The current session context.
      * @param serieId               The ID of the series to get the details of.
      */
-    public SerieDetailsView(final ViewContext currentSessionContext, final int serieId) {
+    public SeriesDetailsView(final ViewContext currentSessionContext, final int serieId) {
         setSize(FRAME_WIDTH, FRAME_HEIGHT);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.uc = (UserSessionController) currentSessionContext.getController();
 
         final Map<Serie, Map<Season, Cast>> detailedSeries =
-                ((UserSessionController) currentSessionContext.getController()).getDetailedSeries();
+                uc.getDetailedSeries();
 
         for (final Map.Entry<Serie, Map<Season, Cast>> serieEntry : detailedSeries.entrySet()) {
             if (serieEntry.getKey().getSeriesId() == serieId) {
-                setTitle(serieEntry.getKey().getTitle() + " - " + currentSessionContext.getController().getAccount().getName());
+                setTitle(serieEntry.getKey().getTitle() + " - "
+                        + currentSessionContext.getController().getAccount().getName());
                 initComponents(serieEntry.getKey(), serieEntry.getValue());
                 return;
             }
@@ -113,10 +113,11 @@ public final class SerieDetailsView extends JFrame {
             final JPanel episodesPanel = new JPanel(new GridLayout(0, 3));
             episodesPanel.setBorder(BorderFactory.createTitledBorder("Episodi"));
 
+            final List<Episode> viewed = uc.getViewedEpisodes(serie.getSeriesId(), seasonEntry.getKey().getId());
             for (final Episode episode : seasonEntry.getKey().getEpisodes()) {
-                episodesPanel.add(new JLabel("Episodio " + episode.getId()));
-                episodesPanel.add(new JLabel("Durata: " + episode.getDuration()));
-                final JCheckBox checkBox = createEpisodeCheckBox();
+                episodesPanel.add(new JLabel("Episodio " + episode.id()));
+                episodesPanel.add(new JLabel("Durata: " + episode.duration()));
+                final JCheckBox checkBox = createEpisodeCheckBox(episode, viewed);
                 episodesPanel.add(checkBox);
             }
 
@@ -130,11 +131,8 @@ public final class SerieDetailsView extends JFrame {
         // Review button
         reviewButton = new JButton("Recensisci la serie");
         reviewButton.setEnabled(false); // Inizialmente disabilitato
-        reviewButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                // TODO: metodo per recensire una serie in particolare.
-            }
+        reviewButton.addActionListener(e -> {
+            // TODO: Manca la divisione in sezioni nella GUI?
         });
 
         mainPanel.add(reviewButton, BorderLayout.SOUTH);
@@ -152,26 +150,21 @@ public final class SerieDetailsView extends JFrame {
         viewedEpisodes = 0;
     }
 
+    //TODO: Brutto il conteggio lato client, va fatto tramite query!!
     private void updateReviewButtonState() {
-        if (viewedEpisodes == totalEpisodes) {
-            reviewButton.setEnabled(true);
-        } else {
-            reviewButton.setEnabled(false);
-        }
+        reviewButton.setEnabled(viewedEpisodes == totalEpisodes);
     }
 
-    private JCheckBox createEpisodeCheckBox() {
+    private JCheckBox createEpisodeCheckBox(final Episode ep, final List<Episode> viewed) {
         final JCheckBox checkBox = new JCheckBox("Visto");
-        checkBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                if (checkBox.isSelected()) {
-                    viewedEpisodes++;
-                } else {
-                    viewedEpisodes--;
-                }
-                updateReviewButtonState();
+        checkBox.setSelected(viewed.contains(ep));
+        checkBox.addActionListener(e -> {
+            if (checkBox.isSelected()) {
+                viewedEpisodes++;
+            } else {
+                viewedEpisodes--;
             }
+            updateReviewButtonState();
         });
         return checkBox;
     }

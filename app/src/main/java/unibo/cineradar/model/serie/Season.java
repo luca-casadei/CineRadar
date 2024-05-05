@@ -8,21 +8,23 @@ import java.util.Objects;
  * Represents a season of a TV series.
  */
 public final class Season {
-    // TODO: mettere idSerie
     private final int id;
+    private final int seriesCode;
     private final String summary;
     private final List<Episode> episodes;
 
     /**
      * Constructs a Season object.
      *
-     * @param id      The code of the season.
-     * @param summary Summary of the season.
+     * @param id         The code of the season.
+     * @param summary    Summary of the season.
+     * @param seriesCode The code of the series.
      */
-    public Season(final int id, final String summary) {
+    public Season(final int seriesCode, final int id, final String summary) {
         this.id = id;
         this.summary = summary;
         this.episodes = new ArrayList<>();
+        this.seriesCode = seriesCode;
     }
 
     /**
@@ -65,13 +67,14 @@ public final class Season {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.id);
+        return Objects.hash(this.id, this.seriesCode);
     }
 
     @Override
     public boolean equals(final Object obj) {
         if (obj instanceof Season season) {
-            return season.id == this.id;
+            return season.id == this.id
+                    && season.seriesCode == this.seriesCode;
         } else {
             return false;
         }

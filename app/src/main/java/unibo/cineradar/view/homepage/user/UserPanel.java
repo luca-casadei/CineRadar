@@ -10,7 +10,7 @@ import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.homepage.user.details.FilmDetailsView;
 import unibo.cineradar.view.homepage.user.details.ReviewDetailsView;
-import unibo.cineradar.view.homepage.user.details.SerieDetailsView;
+import unibo.cineradar.view.homepage.user.details.SeriesDetailsView;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JLabel;
@@ -243,8 +243,8 @@ public abstract class UserPanel extends JPanel {
     }
 
     private void openSerieDetailsView(final ViewContext currentSessionContext, final int serieId) {
-        final SerieDetailsView serieDetailsView = new SerieDetailsView(currentSessionContext, serieId);
-        serieDetailsView.setVisible(true);
+        final SeriesDetailsView seriesDetailsView = new SeriesDetailsView(currentSessionContext, serieId);
+        seriesDetailsView.setVisible(true);
     }
 
     private void openReviewDetailsView(final ViewContext currentSessionContext) {

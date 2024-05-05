@@ -7,6 +7,7 @@ import unibo.cineradar.model.db.UserOps;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.Review;
+import unibo.cineradar.model.serie.Episode;
 import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.Account;
@@ -142,6 +143,19 @@ public final class UserContext extends SessionContextImpl {
     public List<Genre> getUserPrefs() {
         try (UserOps mgr = new UserOps()) {
             return mgr.getUserPrefs(this.user.getUsername());
+        }
+    }
+
+    /**
+     * Cheks if an episode has been viewed.
+     *
+     * @param seriesCode    The series code.
+     * @param seasonNumber  The season number.
+     * @return A list of viewed episodes.
+     */
+    public List<Episode> getViewedEpisodesOfSeries(final int seriesCode, final int seasonNumber) {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.getViewedEpisodes(seriesCode, seasonNumber, this.user.getUsername());
         }
     }
 

@@ -148,7 +148,7 @@ CREATE TABLE RECSERIE
     CodiceSerie     INT          NOT NULL,
     Titolo          VARCHAR(50)  NOT NULL,
     Descrizione     VARCHAR(500) NOT NULL,
-    VotoComplessivo INT          NOT NULL CHECK (VotoComplessivo >= 0),
+    VotoComplessivo INT          NOT NULL DEFAULT 0 CHECK (VotoComplessivo >= 0),
     CONSTRAINT IDRECSERIE_ID PRIMARY KEY (UsernameUtente, CodiceSerie)
 );
 CREATE TABLE REGISTRATORE
