@@ -2,6 +2,7 @@ package unibo.cineradar.view.homepage;
 
 import unibo.cineradar.view.CineRadarViewFrameImpl;
 import unibo.cineradar.view.ViewContext;
+import unibo.cineradar.view.homepage.admin.AdminControlsView;
 import unibo.cineradar.view.homepage.admin.AdminProfileView;
 import unibo.cineradar.view.homepage.admin.AdminRankingsView;
 import unibo.cineradar.view.homepage.admin.AdminRequestsView;
@@ -43,7 +44,8 @@ public final class AdminHomePageView extends CineRadarViewFrameImpl {
                 new AdminProfileView(currentSessionContext),
                 new AdminRequestsView(currentSessionContext),
                 new AdminRankingsView(currentSessionContext),
-                new AdminSerieView(currentSessionContext)
+                new AdminSerieView(currentSessionContext),
+                new AdminControlsView(currentSessionContext)
         );
 
         this.setInternalComponents();
@@ -74,6 +76,9 @@ public final class AdminHomePageView extends CineRadarViewFrameImpl {
         final JButton rankingsButton = new JButton("CLASSIFICHE");
         topNavigationPanel.add(rankingsButton);
         rankingsButton.addActionListener(e -> displayHide(AdminRankingsView.class.getCanonicalName()));
+        final JButton controlsButton = new JButton("PANNELLO DI CONTROLLO");
+        topNavigationPanel.add(controlsButton);
+        controlsButton.addActionListener(e -> displayHide(AdminControlsView.class.getCanonicalName()));
         final JButton profileButton = new JButton("PROFILO");
         topNavigationPanel.add(profileButton);
         profileButton.addActionListener(e -> displayHide(AdminProfileView.class.getCanonicalName()));
