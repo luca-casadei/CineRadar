@@ -3,6 +3,7 @@ package unibo.cineradar.view.homepage.user.details;
 import unibo.cineradar.controller.user.UserSessionController;
 import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.cast.CastMember;
+import unibo.cineradar.model.serie.Episode;
 import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.view.ViewContext;
@@ -11,6 +12,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -34,8 +36,9 @@ public final class SerieDetailsView extends JFrame {
     private static final int FRAME_HEIGHT = 400;
     private static final int VERTICAL_MARGIN = 5;
 
-
-    private final transient ViewContext currentSessionContext;
+    private JButton reviewButton;
+    private int totalEpisodes;
+    private int viewedEpisodes;
 
     /**
      * Constructs a new SerieDetailsView.
@@ -44,7 +47,6 @@ public final class SerieDetailsView extends JFrame {
      * @param serieId               The ID of the series to get the details of.
      */
     public SerieDetailsView(final ViewContext currentSessionContext, final int serieId) {
-        this.currentSessionContext = currentSessionContext;
         setSize(FRAME_WIDTH, FRAME_HEIGHT);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -53,9 +55,7 @@ public final class SerieDetailsView extends JFrame {
 
         for (final Map.Entry<Serie, Map<Season, Cast>> serieEntry : detailedSeries.entrySet()) {
             if (serieEntry.getKey().getSeriesId() == serieId) {
-                setTitle(serieEntry.getKey().getTitle()
-                        + " - "
-                        + currentSessionContext.getController().getAccount().getName());
+                setTitle(serieEntry.getKey().getTitle() + " - " + currentSessionContext.getController().getAccount().getName());
                 initComponents(serieEntry.getKey(), serieEntry.getValue());
                 return;
             }
@@ -110,15 +110,17 @@ public final class SerieDetailsView extends JFrame {
 
             seasonPanel.add(new JScrollPane(castPanel), BorderLayout.CENTER);
 
-            final JPanel episodesPanel = new JPanel(new GridLayout(0, 2));
+            final JPanel episodesPanel = new JPanel(new GridLayout(0, 3));
             episodesPanel.setBorder(BorderFactory.createTitledBorder("Episodi"));
 
-            for (final unibo.cineradar.model.serie.Episode episode : seasonEntry.getKey().getEpisodes()) {
+            for (final Episode episode : seasonEntry.getKey().getEpisodes()) {
                 episodesPanel.add(new JLabel("Episodio " + episode.getId()));
                 episodesPanel.add(new JLabel("Durata: " + episode.getDuration()));
+                final JCheckBox checkBox = createEpisodeCheckBox();
+                episodesPanel.add(checkBox);
             }
 
-            seasonPanel.add(episodesPanel, BorderLayout.SOUTH);
+            seasonPanel.add(new JScrollPane(episodesPanel), BorderLayout.SOUTH);
 
             seasonsPanel.add(seasonPanel);
         }
@@ -126,25 +128,52 @@ public final class SerieDetailsView extends JFrame {
         mainPanel.add(new JScrollPane(seasonsPanel), BorderLayout.CENTER);
 
         // Review button
-        final JButton reviewButton = new JButton("Recensisci la serie");
+        reviewButton = new JButton("Recensisci la serie");
+        reviewButton.setEnabled(false); // Inizialmente disabilitato
         reviewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 // TODO: metodo per recensire una serie in particolare.
             }
         });
+
         mainPanel.add(reviewButton, BorderLayout.SOUTH);
 
         add(mainPanel);
         setVisible(true);
+
+        // Conta il numero totale di episodi
+        totalEpisodes = 0;
+        for (final Map.Entry<Season, Cast> seasonEntry : seasonsMap.entrySet()) {
+            totalEpisodes += seasonEntry.getKey().getEpisodes().size();
+        }
+
+        // Conta gli episodi visti
+        viewedEpisodes = 0;
     }
 
-    /**
-     * Retrieves the current session context.
-     *
-     * @return The current session context.
-     */
-    public ViewContext getCurrentSessionContext() {
-        return currentSessionContext;
+    private void updateReviewButtonState() {
+        if (viewedEpisodes == totalEpisodes) {
+            reviewButton.setEnabled(true);
+        } else {
+            reviewButton.setEnabled(false);
+        }
+    }
+
+    private JCheckBox createEpisodeCheckBox() {
+        final JCheckBox checkBox = new JCheckBox("Visto");
+        checkBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                if (checkBox.isSelected()) {
+                    viewedEpisodes++;
+                } else {
+                    viewedEpisodes--;
+                }
+                updateReviewButtonState();
+            }
+        });
+        return checkBox;
     }
 }
+
