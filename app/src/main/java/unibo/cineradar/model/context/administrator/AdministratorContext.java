@@ -11,6 +11,8 @@ import java.util.List;
 
 /**
  * The context of an administrator session.
+ * This class manages the context specific to an administrator,
+ * including operations related to films, TV series, and insertion requests.
  */
 public final class AdministratorContext extends SessionContextImpl {
 
@@ -56,24 +58,46 @@ public final class AdministratorContext extends SessionContextImpl {
         }
     }
 
+    /**
+     * Adds a new film to the database.
+     *
+     * @param film The film to be added.
+     */
     public void addFilm(final Film film) {
         try (AdminOps mgr = new AdminOps()) {
             mgr.addFilm(film);
         }
     }
 
+    /**
+     * Adds a new TV series to the database.
+     *
+     * @param serie The TV series to be added.
+     */
     public void addSerie(final Serie serie) {
         try (AdminOps mgr = new AdminOps()) {
             mgr.addSeries(serie);
         }
     }
 
+    /**
+     * Deletes a film from the database with the specified code.
+     *
+     * @param code The code of the film to be deleted.
+     * @return True if the film was successfully deleted, false otherwise.
+     */
     public boolean deleteFilm(final int code) {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.deleteFilm(code);
         }
     }
 
+    /**
+     * Deletes a TV series from the database with the specified code.
+     *
+     * @param code The code of the TV series to be deleted.
+     * @return True if the TV series was successfully deleted, false otherwise.
+     */
     public boolean deleteSeries(final int code) {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.deleteSeries(code);
