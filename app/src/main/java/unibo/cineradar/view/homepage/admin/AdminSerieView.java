@@ -53,7 +53,7 @@ public final class AdminSerieView extends AdminPanel {
         model.setRowCount(0);
         for (final Serie serie : ((AdminSessionController) this.getCurrentSessionContext().getController()).getSeries()) {
             model.addRow(new Object[]{
-                    serie.getId(),
+                    serie.getSeriesId(),
                     serie.getTitle(),
                     serie.getAgeLimit(),
                     serie.getPlot(),

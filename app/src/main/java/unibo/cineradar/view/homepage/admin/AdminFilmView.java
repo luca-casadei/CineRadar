@@ -56,7 +56,7 @@ public final class AdminFilmView extends AdminPanel {
         model.setRowCount(0);
         for (final Film film : ((AdminSessionController) this.getCurrentSessionContext().getController()).getFilms()) {
             model.addRow(new Object[]{
-                    film.getId(),
+                    film.getFilmId(),
                     film.getTitle(),
                     film.getAgeLimit(),
                     film.getPlot(),
