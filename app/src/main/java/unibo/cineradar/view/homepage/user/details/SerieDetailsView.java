@@ -45,7 +45,6 @@ public final class SerieDetailsView extends JFrame {
      */
     public SerieDetailsView(final ViewContext currentSessionContext, final int serieId) {
         this.currentSessionContext = currentSessionContext;
-        setTitle(String.valueOf(serieId));
         setSize(FRAME_WIDTH, FRAME_HEIGHT);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -54,6 +53,9 @@ public final class SerieDetailsView extends JFrame {
 
         for (final Map.Entry<Serie, Map<Season, Cast>> serieEntry : detailedSeries.entrySet()) {
             if (serieEntry.getKey().getSeriesId() == serieId) {
+                setTitle(serieEntry.getKey().getTitle()
+                        + " - "
+                        + currentSessionContext.getController().getAccount().getName());
                 initComponents(serieEntry.getKey(), serieEntry.getValue());
                 return;
             }

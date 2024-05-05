@@ -7,15 +7,18 @@ import unibo.cineradar.model.film.Film;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.Serial;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -58,7 +61,9 @@ public final class FilmDetailsView extends JFrame {
     }
 
     private void initComponents() {
-        setTitle(detailedFilm.getTitle() + currentSessionContext.getController().getAccount().getName());
+        setTitle(detailedFilm.getTitle()
+                + " - "
+                + currentSessionContext.getController().getAccount().getName());
         setSize(FRAME_WIDTH, FRAME_HEIGHT);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -98,11 +103,30 @@ public final class FilmDetailsView extends JFrame {
 
         mainPanel.add(castPanel, BorderLayout.CENTER);
 
-        final JCheckBox cb = getViewedSelector();
-        mainPanel.add(cb, BorderLayout.SOUTH);
+        final JPanel bottomPanel = getBottomPanel();
+
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
         setVisible(true);
+    }
+
+    private JPanel getBottomPanel() {
+        final JCheckBox cb = getViewedSelector();
+        final JButton reviewButton = new JButton("Recensisci");
+        cb.addActionListener(e -> reviewButton.setEnabled(cb.isSelected()));
+        reviewButton.setEnabled(cb.isSelected());
+        reviewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                // TODO: metodo per recensire un film in particolare.
+            }
+        });
+
+        final JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.add(cb, BorderLayout.WEST);
+        bottomPanel.add(reviewButton, BorderLayout.CENTER);
+        return bottomPanel;
     }
 
     private JCheckBox getViewedSelector() {
@@ -116,6 +140,7 @@ public final class FilmDetailsView extends JFrame {
                 if (!ctr.visualizeFilm(detailedFilm.getFilmId())) {
                     cbe.setSelected(false);
                 }
+
             } else {
                 if (!ctr.forgetFilm(detailedFilm.getFilmId())) {
                     cbe.setSelected(true);
