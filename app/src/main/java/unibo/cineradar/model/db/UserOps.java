@@ -15,6 +15,7 @@ import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.User;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +43,11 @@ public final class UserOps extends DBManager {
     private static final String PLOT_NAME = "Trama";
     private static final String ID_FILM_NAME = "CodiceFilm";
     private static final String ID_SERIE_NAME = "CodiceSerie";
+    private static final int FIRST_PARAMETER = 1;
+    private static final int SECOND_PARAMETER = 2;
+    private static final int THIRD_PARAMETER = 3;
+    private static final int FOURTH_PARAMETER = 4;
+    private static final int FIFTH_PARAMETER = 5;
 
     /**
      * Retrieves the list of all films.
@@ -55,7 +61,7 @@ public final class UserOps extends DBManager {
             final String query = "SELECT * FROM film "
                     + "WHERE film.EtaLimite <= ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setInt(1, userAge);
+            this.getPreparedStatement().setInt(FIRST_PARAMETER, userAge);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             final List<Film> films = new ArrayList<>();
             while (this.getResultSet().next()) {
@@ -89,7 +95,7 @@ public final class UserOps extends DBManager {
                     + "ON utente.Username = account.Username "
                     + "WHERE account.Username = ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setString(1, username);
+            this.getPreparedStatement().setString(FIRST_PARAMETER, username);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             if (this.getResultSet().next()) {
                 return Optional.of(new User(
@@ -119,7 +125,7 @@ public final class UserOps extends DBManager {
             final String query = "SELECT * FROM serie "
                     + "WHERE serie.EtaLimite <= ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setInt(1, userAge);
+            this.getPreparedStatement().setInt(FIRST_PARAMETER, userAge);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             final List<Serie> series = new ArrayList<>();
             while (this.getResultSet().next()) {
@@ -152,7 +158,7 @@ public final class UserOps extends DBManager {
             final String query = "SELECT * FROM film "
                     + "WHERE film.Codice = ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setInt(1, id);
+            this.getPreparedStatement().setInt(FIRST_PARAMETER, id);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             if (this.getResultSet().next()) {
                 return Optional.of(new Film(
@@ -184,7 +190,7 @@ public final class UserOps extends DBManager {
             final String query = "SELECT * FROM serie "
                     + "WHERE serie.Codice = ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setInt(1, id);
+            this.getPreparedStatement().setInt(FIRST_PARAMETER, id);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             if (this.getResultSet().next()) {
                 return Optional.of(new Serie(
@@ -252,7 +258,7 @@ public final class UserOps extends DBManager {
                     LEFT JOIN serie ON recensioni_totali.CodiceSerie = serie.Codice
                     WHERE UsernameUtente = ?""";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setString(1, username);
+            this.getPreparedStatement().setString(FIRST_PARAMETER, username);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             final List<Review> reviews = new ArrayList<>();
             while (this.getResultSet().next()) {
@@ -298,7 +304,7 @@ public final class UserOps extends DBManager {
         try {
             final String query = "DELETE FROM preferenze WHERE UsernameUtente = ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setString(1, username);
+            this.getPreparedStatement().setString(FIRST_PARAMETER, username);
             this.setResultSet(this.getPreparedStatement().executeQuery());
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);
@@ -320,7 +326,7 @@ public final class UserOps extends DBManager {
                             + "join genere on genere.Nome = preferenze.NomeGenere "
                             + "WHERE preferenze.UsernameUtente = ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setString(1, username);
+            this.getPreparedStatement().setString(FIRST_PARAMETER, username);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             while (this.getResultSet().next()) {
                 g.add(
@@ -347,8 +353,8 @@ public final class UserOps extends DBManager {
             final String query = "INSERT INTO preferenze(NomeGenere, UsernameUtente)"
                     + " VALUES(?, ?)";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setString(1, genre);
-            this.getPreparedStatement().setString(2, username);
+            this.getPreparedStatement().setString(FIRST_PARAMETER, genre);
+            this.getPreparedStatement().setString(SECOND_PARAMETER, username);
             this.setResultSet(this.getPreparedStatement().executeQuery());
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);
@@ -368,8 +374,8 @@ public final class UserOps extends DBManager {
             final String query = "INSERT INTO visualizzazioni_film(CodiceFilm, UsernameUtente)"
                     + " VALUES(?, ?)";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setInt(1, filmId);
-            this.getPreparedStatement().setString(2, userName);
+            this.getPreparedStatement().setInt(FIRST_PARAMETER, filmId);
+            this.getPreparedStatement().setString(SECOND_PARAMETER, userName);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             return true;
         } catch (SQLException ex) {
@@ -377,6 +383,36 @@ public final class UserOps extends DBManager {
         }
     }
 
+    /**
+     * Adds visualization of an episode.
+     *
+     * @param seriesId  The specific series id.
+     * @param seasonId  The specific season id.
+     * @param episodeId The specific episode id.
+     * @param userName  The username of the visualizer.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean visualizeEpisode(final int seriesId, final int seasonId, final int episodeId, final String userName) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "INSERT INTO visualizzazioni_episodio(UsernameUtente, "
+                    + "CodiceSerie, "
+                    + "NumeroEpisodio, "
+                    + "NumeroStagione, "
+                    + "DATA)"
+                    + " VALUES(?, ?, ?, ?, ?)";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setString(FIRST_PARAMETER, userName);
+            this.getPreparedStatement().setInt(SECOND_PARAMETER, seriesId);
+            this.getPreparedStatement().setInt(THIRD_PARAMETER, episodeId);
+            this.getPreparedStatement().setInt(FOURTH_PARAMETER, seasonId);
+            this.getPreparedStatement().setDate(FIFTH_PARAMETER, new Date(System.currentTimeMillis()));
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            return true;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
 
     /**
      * Removes visualization of a film.
@@ -390,8 +426,37 @@ public final class UserOps extends DBManager {
         try {
             final String query = "DELETE FROM visualizzazioni_film WHERE CodiceFilm = ? AND UsernameUtente = ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setInt(1, filmId);
-            this.getPreparedStatement().setString(2, userName);
+            this.getPreparedStatement().setInt(FIRST_PARAMETER, filmId);
+            this.getPreparedStatement().setString(SECOND_PARAMETER, userName);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            return true;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    /**
+     * Remove a visualization of an episode.
+     *
+     * @param seriesId  The specific series id.
+     * @param seasonId  The specific season id.
+     * @param episodeId The specific episode id.
+     * @param userName  The username of the visualizer.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean forgetEpisode(final int seriesId, final int seasonId, final int episodeId, final String userName) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "DELETE FROM visualizzazioni_episodio WHERE "
+                    + "UsernameUtente = ? AND "
+                    + "CodiceSerie = ? AND "
+                    + "NumeroEpisodio = ? AND "
+                    + "NumeroStagione = ?";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setString(FIRST_PARAMETER, userName);
+            this.getPreparedStatement().setInt(SECOND_PARAMETER, seriesId);
+            this.getPreparedStatement().setInt(THIRD_PARAMETER, episodeId);
+            this.getPreparedStatement().setInt(FOURTH_PARAMETER, seasonId);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             return true;
         } catch (SQLException ex) {
@@ -417,10 +482,10 @@ public final class UserOps extends DBManager {
             final String query = "INSERT INTO recserie(CodiceSerie, UsernameUtente, Titolo, Descrizione) "
                     + "VALUES (?,?,?,?)";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setInt(1, seriesId);
-            this.getPreparedStatement().setString(2, username);
-            this.getPreparedStatement().setString(3, title);
-            this.getPreparedStatement().setString(4, desc);
+            this.getPreparedStatement().setInt(FIRST_PARAMETER, seriesId);
+            this.getPreparedStatement().setString(SECOND_PARAMETER, username);
+            this.getPreparedStatement().setString(THIRD_PARAMETER, title);
+            this.getPreparedStatement().setString(FOURTH_PARAMETER, desc);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             return true;
         } catch (SQLException ex) {
@@ -446,10 +511,10 @@ public final class UserOps extends DBManager {
             final String query = "INSERT INTO sezionamento_serie (NomeSezione, UsernameUtente, CodiceRecSerie, Voto) "
                     + "VALUES (?,?,?,?)";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setString(1, sectName);
-            this.getPreparedStatement().setString(2, username);
-            this.getPreparedStatement().setInt(3, revCode);
-            this.getPreparedStatement().setInt(4, score);
+            this.getPreparedStatement().setString(FIRST_PARAMETER, sectName);
+            this.getPreparedStatement().setString(SECOND_PARAMETER, username);
+            this.getPreparedStatement().setInt(THIRD_PARAMETER, revCode);
+            this.getPreparedStatement().setInt(FOURTH_PARAMETER, score);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             return true;
         } catch (SQLException ex) {
@@ -481,9 +546,9 @@ public final class UserOps extends DBManager {
                              AND visualizzazioni_episodio.NumeroStagione = ?
                     """;
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setInt(3, seasonNumber);
-            this.getPreparedStatement().setInt(2, seriesCode);
-            this.getPreparedStatement().setString(1, userName);
+            this.getPreparedStatement().setInt(THIRD_PARAMETER, seasonNumber);
+            this.getPreparedStatement().setInt(SECOND_PARAMETER, seriesCode);
+            this.getPreparedStatement().setString(FIRST_PARAMETER, userName);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             final List<Episode> eps = new ArrayList<>();
             while (this.getResultSet().next()) {
@@ -514,8 +579,39 @@ public final class UserOps extends DBManager {
                     + "FROM visualizzazioni_film "
                     + "WHERE CodiceFilm = ? AND UsernameUtente = ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setInt(1, filmId);
-            this.getPreparedStatement().setString(2, userName);
+            this.getPreparedStatement().setInt(FIRST_PARAMETER, filmId);
+            this.getPreparedStatement().setString(SECOND_PARAMETER, userName);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            return this.getResultSet().next();
+        } catch (SQLException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
+     * Checks if the episode has been viewed or not.
+     *
+     * @param seriesId  The specific series id.
+     * @param seasonId  The specific season id.
+     * @param episodeId The specific episode id.
+     * @param userName  The username of the user.
+     * @return True if the film has been viewed, false otherwise.
+     */
+    public boolean isEpisodeViewed(final int seriesId, final int seasonId, final int episodeId, final String userName) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "SELECT UsernameUtente "
+                    + "FROM visualizzazioni_episodio "
+                    + "WHERE "
+                    + "UsernameUtente = ? AND "
+                    + "CodiceSerie = ? AND "
+                    + "NumeroEpisodio = ? AND "
+                    + "NumeroStagione = ?";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setString(FIRST_PARAMETER, userName);
+            this.getPreparedStatement().setInt(SECOND_PARAMETER, seriesId);
+            this.getPreparedStatement().setInt(THIRD_PARAMETER, episodeId);
+            this.getPreparedStatement().setInt(FOURTH_PARAMETER, seasonId);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             return this.getResultSet().next();
         } catch (SQLException ex) {
@@ -529,7 +625,7 @@ public final class UserOps extends DBManager {
      * @return A map containing films as keys and their corresponding cast as values.
      * @throws IllegalArgumentException If an SQL exception occurs.
      */
-    public Map<Film, Cast> getFilmsDetails() {
+    public Map<Film, Cast> getDetailedFilms() {
         Objects.requireNonNull(this.getConnection());
         try {
             final String query = """
@@ -583,7 +679,7 @@ public final class UserOps extends DBManager {
      * @return A map containing Series as keys and their corresponding Seasons and relative Cast as values.
      * @throws IllegalArgumentException If an SQL exception occurs.
      */
-    public Map<Serie, Map<Season, Cast>> getDetailedSeries() {
+    public List<Serie> getDetailedSeries() {
         Objects.requireNonNull(this.getConnection());
         try {
             final String query = "SELECT serie.Codice AS CodiceSerie, "
@@ -617,7 +713,7 @@ public final class UserOps extends DBManager {
 
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.setResultSet(this.getPreparedStatement().executeQuery());
-            final Map<Serie, Map<Season, Cast>> detailedSeries = new HashMap<>();
+            final List<Serie> detailedSeries = new ArrayList<>();
             while (this.getResultSet().next()) {
                 final Serie serie = new Serie(
                         this.getResultSet().getInt(ID_SERIE_NAME),
@@ -633,42 +729,36 @@ public final class UserOps extends DBManager {
                         this.getResultSet().getString("SuntoStagione")
                 );
                 final Episode episode = new Episode(
-                        this.getResultSet().getInt("NumeroEpisodio"),
                         this.getResultSet().getInt(ID_SERIE_NAME),
                         this.getResultSet().getInt("NumeroStagione"),
+                        this.getResultSet().getInt("NumeroEpisodio"),
                         this.getResultSet().getInt("DurataEpisodio")
                 );
                 final CastMember castMember = getNewCastMember();
-                if (!detailedSeries.containsKey(serie)) {
-                    final Map<Season, Cast> seasonCastMap = new HashMap<>();
-                    final Cast newCast = new Cast();
-                    newCast.addCastMember(castMember);
+
+                if (!detailedSeries.contains(serie)) {
                     season.addEpisode(episode);
-                    seasonCastMap.put(season, newCast);
-                    detailedSeries.put(serie, seasonCastMap);
+                    season.addCastMember(castMember);
+                    serie.addSeason(season);
+                    detailedSeries.add(serie);
                 } else {
-                    if (!detailedSeries.get(serie).containsKey(season)) {
-                        final Cast newCast = new Cast();
-                        newCast.addCastMember(castMember);
-                        season.addEpisode(episode);
-                        detailedSeries.get(serie).put(season, newCast);
+                    if (!detailedSeries.get(detailedSeries.indexOf(serie))
+                            .getSeasons()
+                            .contains(season)) {
+                        season.addCastMember(castMember);
+                        detailedSeries.get(detailedSeries.indexOf(serie)).addSeason(season);
                     } else {
-                        if (detailedSeries.get(serie)
-                                .keySet()
-                                .stream()
-                                .filter(s -> s.equals(season))
-                                .findAny()
-                                .map(s -> !s.getEpisodes().contains(episode)).orElse(false)) {
-                            detailedSeries.get(serie)
-                                    .keySet()
-                                    .stream()
-                                    .filter(s -> s.equals(season)).findAny().ifPresent(s -> s.addEpisode(episode));
+                        if (!detailedSeries.get(detailedSeries.indexOf(serie))
+                                .getSeason(season)
+                                .getEpisodes()
+                                .contains(episode)) {
+                            detailedSeries.get(detailedSeries.indexOf(serie)).getSeason(season).addCastMember(castMember);
+                            detailedSeries.get(detailedSeries.indexOf(serie)).getSeason(season).addEpisode(episode);
                         }
-                        detailedSeries.get(serie).get(season).addCastMember(castMember);
                     }
                 }
             }
-            return Map.copyOf(detailedSeries);
+            return List.copyOf(detailedSeries);
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);
         }
@@ -699,6 +789,4 @@ public final class UserOps extends DBManager {
         }
         throw new IllegalArgumentException();
     }
-
-
 }

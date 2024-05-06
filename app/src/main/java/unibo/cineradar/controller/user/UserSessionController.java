@@ -8,7 +8,6 @@ import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.serie.Episode;
-import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
 
 import java.util.List;
@@ -54,7 +53,7 @@ public final class UserSessionController extends SessionControllerImpl {
      *
      * @return The list of all detailed series.
      */
-    public Map<Serie, Map<Season, Cast>> getDetailedSeries() {
+    public List<Serie> getDetailedSeries() {
         return userContext.getDetailedSeries();
     }
 
@@ -98,6 +97,19 @@ public final class UserSessionController extends SessionControllerImpl {
     }
 
     /**
+     * Visualizes an episode of a particular season of a series.
+     *
+     * @param seriesId  The specific series id.
+     * @param seasonId  The specific season id.
+     * @param episodeId The specific episode id.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean visualizeEpisode(final int seriesId, final int seasonId, final int episodeId) {
+        return this.userContext.visualizeEpisode(seriesId, seasonId, episodeId);
+    }
+
+
+    /**
      * Removes all the preferences from the current user.
      */
     public void clearPreferences() {
@@ -124,6 +136,18 @@ public final class UserSessionController extends SessionControllerImpl {
     }
 
     /**
+     * Removes episode's visualization.
+     *
+     * @param seriesId  The specific series id.
+     * @param seasonId  The specific season id.
+     * @param episodeId The specific episode id.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean forgetEpisode(final int seriesId, final int seasonId, final int episodeId) {
+        return this.userContext.forgetEpisode(seriesId, seasonId, episodeId);
+    }
+
+    /**
      * Checks if the film has been viewed or not.
      *
      * @param filmId The ID of the film.
@@ -131,6 +155,18 @@ public final class UserSessionController extends SessionControllerImpl {
      */
     public boolean isFilmViewed(final int filmId) {
         return this.userContext.isFilmViewed(filmId);
+    }
+
+    /**
+     * Checks if the episode has been viewed or not.
+     *
+     * @param seriesId  The specific series id.
+     * @param seasonId  The specific season id.
+     * @param episodeId The specific episode id.
+     * @return True if the episode has been viewed, false otherwise.
+     */
+    public boolean isEpisodeViewed(final int seriesId, final int seasonId, final int episodeId) {
+        return this.userContext.isEpisodeViewed(seriesId, seasonId, episodeId);
     }
 
     /**

@@ -8,7 +8,6 @@ import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.serie.Episode;
-import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.Account;
 import unibo.cineradar.model.utente.User;
@@ -24,7 +23,7 @@ import java.util.NoSuchElementException;
 public final class UserContext extends SessionContextImpl {
     private final User user;
     private final Map<Film, Cast> detailedFilms;
-    private final Map<Serie, Map<Season, Cast>> detailedSeries;
+    private final List<Serie> detailedSeries;
 
     /**
      * Constructs the context of a user.
@@ -35,7 +34,7 @@ public final class UserContext extends SessionContextImpl {
         super(loggedAccount);
         try (UserOps mgr = new UserOps()) {
             this.user = mgr.getUserDetails(super.getUsername()).orElse(null);
-            this.detailedFilms = mgr.getFilmsDetails();
+            this.detailedFilms = mgr.getDetailedFilms();
             this.detailedSeries = mgr.getDetailedSeries();
         }
     }
@@ -71,8 +70,8 @@ public final class UserContext extends SessionContextImpl {
      *
      * @return The list of all detailed series.
      */
-    public Map<Serie, Map<Season, Cast>> getDetailedSeries() {
-        return Map.copyOf(detailedSeries);
+    public List<Serie> getDetailedSeries() {
+        return List.copyOf(detailedSeries);
     }
 
     /**
@@ -127,6 +126,20 @@ public final class UserContext extends SessionContextImpl {
     }
 
     /**
+     * Visualizes an episode of a series.
+     *
+     * @param seriesId  The specific series id.
+     * @param seasonId  The specific season id.
+     * @param episodeId The specific episode id.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean visualizeEpisode(final int seriesId, final int seasonId, final int episodeId) {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.visualizeEpisode(seriesId, seasonId, episodeId, this.user.getUsername());
+        }
+    }
+
+    /**
      * Clears the current user preferences.
      */
     public void clearPreferences() {
@@ -149,8 +162,8 @@ public final class UserContext extends SessionContextImpl {
     /**
      * Cheks if an episode has been viewed.
      *
-     * @param seriesCode    The series code.
-     * @param seasonNumber  The season number.
+     * @param seriesCode   The series code.
+     * @param seasonNumber The season number.
      * @return A list of viewed episodes.
      */
     public List<Episode> getViewedEpisodesOfSeries(final int seriesCode, final int seasonNumber) {
@@ -187,6 +200,20 @@ public final class UserContext extends SessionContextImpl {
     }
 
     /**
+     * Removes episode's visualization.
+     *
+     * @param seriesId  The specific series id.
+     * @param seasonId  The specific season id.
+     * @param episodeId The specific episode id.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean forgetEpisode(final int seriesId, final int seasonId, final int episodeId) {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.forgetEpisode(seriesId, seasonId, episodeId, this.user.getUsername());
+        }
+    }
+
+    /**
      * Checks if the film has been viewed or not.
      *
      * @param id The ID of the film.
@@ -195,6 +222,20 @@ public final class UserContext extends SessionContextImpl {
     public boolean isFilmViewed(final int id) {
         try (UserOps mgr = new UserOps()) {
             return mgr.isFilmViewed(id, this.user.getUsername());
+        }
+    }
+
+    /**
+     * Checks if the episode has been viewed or not.
+     *
+     * @param seriesId  The specific series id.
+     * @param seasonId  The specific season id.
+     * @param episodeId The specific episode id.
+     * @return True if the episode has been viewed, false otherwise.
+     */
+    public boolean isEpisodeViewed(final int seriesId, final int seasonId, final int episodeId) {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.isEpisodeViewed(seriesId, seasonId, episodeId, this.user.getUsername());
         }
     }
 

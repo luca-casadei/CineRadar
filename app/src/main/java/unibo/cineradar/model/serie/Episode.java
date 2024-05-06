@@ -5,23 +5,23 @@ import java.util.Objects;
 /**
  * Represents an episode of a TV series.
  *
- * @param id           The episode number,
- * @param seriesCode   The code of the series.
- * @param seasonNumber The number of the season of this episode.
+ * @param seriesId     The id of the series.
+ * @param seasonId The number of the season of this episode.
+ * @param id           The episode number.
  * @param duration     The duration of the episode in minutes.
  */
-public record Episode(int id, int seriesCode, int seasonNumber, int duration) {
+public record Episode(int seriesId, int seasonId, int id, int duration) {
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.seriesCode, this.seasonNumber);
+        return Objects.hash(this.id, this.seriesId, this.seasonId);
     }
 
     @Override
     public boolean equals(final Object obj) {
         if (obj instanceof Episode episode) {
             return episode.id == this.id
-                    && episode.seriesCode == this.seriesCode
-                    && episode.seasonNumber == this.seasonNumber;
+                    && episode.seriesId == this.seriesId
+                    && episode.seasonId == this.seasonId;
         } else {
             return false;
         }

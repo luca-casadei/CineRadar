@@ -2,6 +2,8 @@ package unibo.cineradar.model.serie;
 
 import unibo.cineradar.model.multimedia.Multimedia;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -9,8 +11,9 @@ import java.util.Objects;
  */
 public final class Serie extends Multimedia {
 
-    private final int numEpisodes;
     private final int seriesId;
+    private final int numEpisodes;
+    private final List<Season> seasons;
 
     /**
      * Constructs a tv serie instance.
@@ -31,6 +34,7 @@ public final class Serie extends Multimedia {
         super(title, ageLimit, plot, duration);
         this.numEpisodes = numEpisodes;
         this.seriesId = id;
+        this.seasons = new ArrayList<>();
     }
 
     /**
@@ -40,6 +44,34 @@ public final class Serie extends Multimedia {
      */
     public int getSeriesId() {
         return seriesId;
+    }
+
+    /**
+     * Adds a season to the list of the seasons.
+     *
+     * @param season The season to add to the list.
+     */
+    public void addSeason(final Season season) {
+        if (!this.seasons.contains(season)) {
+            this.seasons.add(season);
+        }
+    }
+
+    /**
+     * Gets the specific season.
+     * @param seasonToGet The specific season of a series.
+     * @return The specific season in the series.
+     */
+    public Season getSeason(final Season seasonToGet) {
+        return this.seasons.get(this.seasons.indexOf(seasonToGet));
+    }
+    /**
+     * Gets the seasons of the series.
+     *
+     * @return The list of seasons.
+     */
+    public List<Season> getSeasons() {
+        return List.copyOf(this.seasons);
     }
 
     @Override

@@ -17,6 +17,15 @@ public final class Cast {
     }
 
     /**
+     * Constructs Cast instance from a castMemberList.
+     *
+     * @param castMemberList The list of cast member.
+     */
+    public Cast(final List<CastMember> castMemberList) {
+        this.castMemberList = List.copyOf(castMemberList);
+    }
+
+    /**
      * Adds a cast member to the cast.
      *
      * @param castMember the cast member to add

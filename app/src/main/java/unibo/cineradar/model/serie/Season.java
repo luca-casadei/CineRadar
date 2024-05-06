@@ -1,5 +1,8 @@
 package unibo.cineradar.model.serie;
 
+import unibo.cineradar.model.cast.Cast;
+import unibo.cineradar.model.cast.CastMember;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -8,23 +11,25 @@ import java.util.Objects;
  * Represents a season of a TV series.
  */
 public final class Season {
+    private final int seriesId;
     private final int id;
-    private final int seriesCode;
     private final String summary;
     private final List<Episode> episodes;
+    private final Cast castSeries;
 
     /**
      * Constructs a Season object.
      *
-     * @param id         The code of the season.
-     * @param summary    Summary of the season.
-     * @param seriesCode The code of the series.
+     * @param id       The code of the season.
+     * @param summary  Summary of the season.
+     * @param seriesId The code of the series.
      */
-    public Season(final int seriesCode, final int id, final String summary) {
+    public Season(final int seriesId, final int id, final String summary) {
         this.id = id;
         this.summary = summary;
+        this.seriesId = seriesId;
         this.episodes = new ArrayList<>();
-        this.seriesCode = seriesCode;
+        this.castSeries = new Cast();
     }
 
     /**
@@ -55,7 +60,16 @@ public final class Season {
     }
 
     /**
-     * Adds an episode to the list of the season.
+     * Gets the cast of the season.
+     *
+     * @return The cast of the season.
+     */
+    public Cast getCast() {
+        return new Cast(this.castSeries.getCastMemberList());
+    }
+
+    /**
+     * Adds an episode to the list of the episodes.
      *
      * @param episode The episode to add to the list.
      */
@@ -65,16 +79,25 @@ public final class Season {
         }
     }
 
+    /**
+     * Adds a cast member to the cast.
+     *
+     * @param castMember The cast member to add to the cast.
+     */
+    public void addCastMember(final CastMember castMember) {
+        this.castSeries.addCastMember(castMember);
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.seriesCode);
+        return Objects.hash(this.id, this.seriesId);
     }
 
     @Override
     public boolean equals(final Object obj) {
         if (obj instanceof Season season) {
             return season.id == this.id
-                    && season.seriesCode == this.seriesCode;
+                    && season.seriesId == this.seriesId;
         } else {
             return false;
         }
