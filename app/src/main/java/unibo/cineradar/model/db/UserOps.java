@@ -399,8 +399,8 @@ public final class UserOps extends DBManager {
                     + "CodiceSerie, "
                     + "NumeroEpisodio, "
                     + "NumeroStagione, "
-                    + "DATA)"
-                    + " VALUES(?, ?, ?, ?, ?)";
+                    + "DATA) "
+                    + "VALUES(?, ?, ?, ?, ?)";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setString(FIRST_PARAMETER, userName);
             this.getPreparedStatement().setInt(SECOND_PARAMETER, seriesId);

@@ -37,8 +37,6 @@ public final class SeriesDetailsView extends JFrame {
 
     private final transient UserSessionController uc;
     private JButton reviewButton;
-    private int totalEpisodes;
-    private int viewedEpisodes;
 
     /**
      * Constructs a new SeriesDetailsView.
@@ -152,18 +150,9 @@ public final class SeriesDetailsView extends JFrame {
         add(mainPanel);
         setVisible(true);
 
-        // Conta il numero totale di episodi
-        totalEpisodes = 0;
-        for (final Season actualSeason : serie.getSeasons()) {
-            totalEpisodes += actualSeason.getEpisodes().size();
-        }
-
-        // Conta gli episodi visti
-        viewedEpisodes = 0;
     }
 
-    //TODO: Brutto il conteggio lato client, va fatto tramite query!!
-    private void updateReviewButtonState() {
+    private void updateReviewButtonState(final int viewedEpisodes, final int totalEpisodes) {
         reviewButton.setEnabled(viewedEpisodes == totalEpisodes);
     }
 
@@ -175,15 +164,13 @@ public final class SeriesDetailsView extends JFrame {
             if (checkBox.isSelected()) {
                 if (!uc.visualizeEpisode(ep.seriesId(), ep.seasonId(), ep.id())) {
                     checkBox.setSelected(false);
-                    viewedEpisodes++;
                 }
             } else {
                 if (!uc.forgetEpisode(ep.seriesId(), ep.seasonId(), ep.id())) {
                     checkBox.setSelected(true);
-                    viewedEpisodes--;
                 }
             }
-            updateReviewButtonState();
+            updateReviewButtonState(viewed.size(), uc.getSerie(ep.seriesId()).getNumberOfEpisodes());
         });
         return checkBox;
     }
