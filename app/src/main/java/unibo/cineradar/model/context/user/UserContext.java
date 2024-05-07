@@ -278,13 +278,13 @@ public final class UserContext extends SessionContextImpl {
                               final String desc,
                               final List<ReviewSection> reviewSections) {
         try (UserOps mgr = new UserOps()) {
-            final boolean op1 = mgr.reviewSeries(filmId, this.user.getUsername(), title, desc);
+            final boolean op1 = mgr.reviewFilm(filmId, this.user.getUsername(), title, desc);
             final AtomicBoolean op2 = new AtomicBoolean(true);
             reviewSections.forEach(
                     reviewSection -> {
                         if (!mgr.addFilmReviewSections(reviewSection.section().getName(),
                                 this.user.getUsername(),
-                                reviewSection.reviewId(),
+                                reviewSection.multimediaId(),
                                 reviewSection.score())) {
                             op2.set(false);
                         }
@@ -314,7 +314,7 @@ public final class UserContext extends SessionContextImpl {
                     reviewSection -> {
                         if (!mgr.addSeriesReviewSection(reviewSection.section().getName(),
                                 this.user.getUsername(),
-                                reviewSection.reviewId(),
+                                reviewSection.multimediaId(),
                                 reviewSection.score())) {
                             op2.set(false);
                         }

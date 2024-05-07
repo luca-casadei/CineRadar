@@ -105,15 +105,15 @@ public abstract class WriteReviewView extends JFrame {
                 }
 
                 final List<ReviewSection> selectedSections = new ArrayList<>();
-                /*
+
                 for (final Section section : sectionRatingSpinners.keySet()) {
                     final JSpinner spinner = sectionRatingSpinners.get(section);
                     if (((JCheckBox) spinner.getParent().getComponent(1)).isSelected()) {
                         final int rating = (int) spinner.getValue();
-                        // TODO: selectedSections.add(new ReviewSection(section, rating));
+                        selectedSections.add(new ReviewSection(multimediaId, section, rating));
                     }
                 }
-                */
+
                 insertReview(multimediaId, titleField.getText(), descriptionArea.getText(), selectedSections);
             }
         });

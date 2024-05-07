@@ -595,19 +595,19 @@ public final class UserOps extends DBManager {
      *
      * @param sectName The name of the section to review.
      * @param username The username of the reviewer.
-     * @param revCode  The code of the film review.
+     * @param multimediaId  The code of the film.
      * @param score    The score of the section.
      * @return True if the operation was successful, false otherwise.
      */
     public boolean addFilmReviewSections(final String sectName,
                                          final String username,
-                                         final int revCode,
+                                         final int multimediaId,
                                          final int score) {
         Objects.requireNonNull(this.getConnection());
         try {
             final String query = "INSERT INTO sezionamento_film (NomeSezione, UsernameUtente, CodiceRecFilm, Voto) "
                     + FOUR_VALUES;
-            return commonSectionQueries(sectName, username, revCode, score, query);
+            return commonSectionQueries(sectName, username, multimediaId, score, query);
         } catch (SQLException ex) {
             return false;
         }
@@ -615,13 +615,13 @@ public final class UserOps extends DBManager {
 
     private boolean commonSectionQueries(final String sectName,
                                          final String username,
-                                         final int revCode,
+                                         final int multimediaId,
                                          final int score,
                                          final String query) throws SQLException {
         this.setPreparedStatement(this.getConnection().prepareStatement(query));
         this.getPreparedStatement().setString(FIRST_PARAMETER, sectName);
         this.getPreparedStatement().setString(SECOND_PARAMETER, username);
-        this.getPreparedStatement().setInt(THIRD_PARAMETER, revCode);
+        this.getPreparedStatement().setInt(THIRD_PARAMETER, multimediaId);
         this.getPreparedStatement().setInt(FOURTH_PARAMETER, score);
         this.setResultSet(this.getPreparedStatement().executeQuery());
         return true;
@@ -632,19 +632,19 @@ public final class UserOps extends DBManager {
      *
      * @param sectName The name of the section to review.
      * @param username The username of the reviewer.
-     * @param revCode  The code of the review.
+     * @param multimediaId  The code of the review.
      * @param score    The score of the section.
      * @return True if the operation was successful, false otherwise.
      */
     public boolean addSeriesReviewSection(final String sectName,
                                           final String username,
-                                          final int revCode,
+                                          final int multimediaId,
                                           final int score) {
         Objects.requireNonNull(this.getConnection());
         try {
             final String query = "INSERT INTO sezionamento_serie (NomeSezione, UsernameUtente, CodiceRecSerie, Voto) "
                     + FOUR_VALUES;
-            return commonSectionQueries(sectName, username, revCode, score, query);
+            return commonSectionQueries(sectName, username, multimediaId, score, query);
         } catch (SQLException ex) {
             return false;
         }
