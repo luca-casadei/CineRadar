@@ -2015,7 +2015,13 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\item Op. 10: \todo{TBD}
 	\item Op. 11.1: \todo{TBD}
 	\item Op. 11.2: \todo{TBD}
-	\item Op. 12: \todo{TBD}
+	\item Op. 12:\\
+	Operazione eseguita dal registratore.
+	\begin{verbatim}
+		INSERT INTO tessera(CodiceCinema, UsernameUtente,
+		 NumeroTessera, DataRinnovo)
+			VALUES (?,?,?,?)
+	\end{verbatim}
 \end{itemize}
 
 \chapter{Progettazione dell'applicazione}
