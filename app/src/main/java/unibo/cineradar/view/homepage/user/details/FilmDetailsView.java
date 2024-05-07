@@ -5,6 +5,8 @@ import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.view.ViewContext;
+import unibo.cineradar.view.homepage.user.review.WriteFilmReviewView;
+import unibo.cineradar.view.homepage.user.review.WriteReviewView;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -34,7 +36,7 @@ public final class FilmDetailsView extends JFrame {
     private static final int FRAME_HEIGHT = 400;
     private static final int VERTICAL_MARGIN = 5;
 
-    private final transient ViewContext currentSessionContext;
+    private final transient UserSessionController uc;
     private final transient Film detailedFilm;
     private final transient Cast detailedFilmCast;
 
@@ -45,14 +47,14 @@ public final class FilmDetailsView extends JFrame {
      * @param filmId                The id of the detailed film.
      */
     public FilmDetailsView(final ViewContext currentSessionContext, final int filmId) {
-        this.currentSessionContext = currentSessionContext;
+        this.uc = (UserSessionController) currentSessionContext.getController();
         final Map<Film, Cast> detailedFilms =
-                ((UserSessionController) currentSessionContext.getController()).getDetailedFilms();
+                this.uc.getDetailedFilms();
         for (final Map.Entry<Film, Cast> entry : detailedFilms.entrySet()) {
             if (entry.getKey().getFilmId() == filmId) {
                 this.detailedFilm = entry.getKey();
                 this.detailedFilmCast = entry.getValue();
-                initComponents();
+                initComponents(currentSessionContext);
                 return;
             }
         }
@@ -60,10 +62,10 @@ public final class FilmDetailsView extends JFrame {
         throw new IllegalStateException("Detailed film or detailed film cast not initialized");
     }
 
-    private void initComponents() {
+    private void initComponents(final ViewContext currentSessionContext) {
         setTitle(detailedFilm.getTitle()
                 + " - "
-                + currentSessionContext.getController().getAccount().getName());
+                + this.uc.getAccount().getName());
         setSize(FRAME_WIDTH, FRAME_HEIGHT);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -103,7 +105,7 @@ public final class FilmDetailsView extends JFrame {
 
         mainPanel.add(castPanel, BorderLayout.CENTER);
 
-        final JPanel bottomPanel = getBottomPanel();
+        final JPanel bottomPanel = getBottomPanel(currentSessionContext);
 
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
@@ -111,7 +113,7 @@ public final class FilmDetailsView extends JFrame {
         setVisible(true);
     }
 
-    private JPanel getBottomPanel() {
+    private JPanel getBottomPanel(final ViewContext currentSessionContext) {
         final JCheckBox cb = getViewedSelector();
         final JButton reviewButton = new JButton("Recensisci");
         cb.addActionListener(e -> reviewButton.setEnabled(cb.isSelected()));
@@ -119,7 +121,8 @@ public final class FilmDetailsView extends JFrame {
         reviewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                // TODO: metodo per recensire un film in particolare.
+                final WriteReviewView writeFilmReviewView = new WriteFilmReviewView(currentSessionContext, detailedFilm);
+                writeFilmReviewView.setVisible(true);
             }
         });
 
@@ -130,19 +133,18 @@ public final class FilmDetailsView extends JFrame {
     }
 
     private JCheckBox getViewedSelector() {
-        final UserSessionController ctr = (UserSessionController) currentSessionContext.getController();
         final JCheckBox cb = new JCheckBox("Gia' visto!");
         cb.setHorizontalAlignment(SwingConstants.CENTER);
-        cb.setSelected(ctr.isFilmViewed(detailedFilm.getFilmId()));
+        cb.setSelected(this.uc.isFilmViewed(detailedFilm.getFilmId()));
         cb.addActionListener(e -> {
             final JCheckBox cbe = (JCheckBox) e.getSource();
             if (cb.isSelected()) {
-                if (!ctr.visualizeFilm(detailedFilm.getFilmId())) {
+                if (!this.uc.visualizeFilm(detailedFilm.getFilmId())) {
                     cbe.setSelected(false);
                 }
 
             } else {
-                if (!ctr.forgetFilm(detailedFilm.getFilmId())) {
+                if (!this.uc.forgetFilm(detailedFilm.getFilmId())) {
                     cbe.setSelected(true);
                 }
             }

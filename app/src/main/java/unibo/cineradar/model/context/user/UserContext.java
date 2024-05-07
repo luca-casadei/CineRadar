@@ -8,6 +8,7 @@ import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.review.ReviewSection;
+import unibo.cineradar.model.review.Section;
 import unibo.cineradar.model.serie.Episode;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.Account;
@@ -59,6 +60,28 @@ public final class UserContext extends SessionContextImpl {
     }
 
     /**
+     * Gets the series that this user can watch.
+     *
+     * @return A list of series that the logged user can watch.
+     */
+    public List<Serie> getSeries() {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.getSeries(getUserAge());
+        }
+    }
+
+    /**
+     * Gets the list of sections.
+     *
+     * @return The list of sections.
+     */
+    public List<Section> getSections() {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.getSections();
+        }
+    }
+
+    /**
      * Gets detailed films.
      *
      * @return The list of all detailed films.
@@ -74,17 +97,6 @@ public final class UserContext extends SessionContextImpl {
      */
     public List<Serie> getDetailedSeries() {
         return List.copyOf(detailedSeries);
-    }
-
-    /**
-     * Gets the series that this user can watch.
-     *
-     * @return A list of series that the logged user can watch.
-     */
-    public List<Serie> getSeries() {
-        try (UserOps mgr = new UserOps()) {
-            return mgr.getSeries(getUserAge());
-        }
     }
 
     /**
@@ -258,22 +270,22 @@ public final class UserContext extends SessionContextImpl {
      * @param filmId   The id of the film to review.
      * @param title    The title of the review.
      * @param desc     The description of the review.
-     * @param sections The review sections.
+     * @param reviewSections The review sections.
      * @return The status of the operation (true, false).
      */
     public boolean reviewFilm(final int filmId,
                               final String title,
                               final String desc,
-                              final List<ReviewSection> sections) {
+                              final List<ReviewSection> reviewSections) {
         try (UserOps mgr = new UserOps()) {
             final boolean op1 = mgr.reviewSeries(filmId, this.user.getUsername(), title, desc);
             final AtomicBoolean op2 = new AtomicBoolean(true);
-            sections.forEach(
-                    section -> {
-                        if (!mgr.addFilmReviewSections(section.sectName(),
+            reviewSections.forEach(
+                    reviewSection -> {
+                        if (!mgr.addFilmReviewSections(reviewSection.section().getName(),
                                 this.user.getUsername(),
-                                section.reviewId(),
-                                section.score())) {
+                                reviewSection.reviewId(),
+                                reviewSection.score())) {
                             op2.set(false);
                         }
                     }
@@ -288,22 +300,22 @@ public final class UserContext extends SessionContextImpl {
      * @param seriesId The id of the series to review.
      * @param title    The title of the review.
      * @param desc     The description of the review.
-     * @param sections The review sections.
+     * @param reviewSections The review sections.
      * @return The status of the operation (true, false).
      */
     public boolean reviewSeries(final int seriesId,
                                 final String title,
                                 final String desc,
-                                final List<ReviewSection> sections) {
+                                final List<ReviewSection> reviewSections) {
         try (UserOps mgr = new UserOps()) {
             final boolean op1 = mgr.reviewSeries(seriesId, this.user.getUsername(), title, desc);
             final AtomicBoolean op2 = new AtomicBoolean(true);
-            sections.forEach(
-                    section -> {
-                        if (!mgr.addSeriesReviewSection(section.sectName(),
+            reviewSections.forEach(
+                    reviewSection -> {
+                        if (!mgr.addSeriesReviewSection(reviewSection.section().getName(),
                                 this.user.getUsername(),
-                                section.reviewId(),
-                                section.score())) {
+                                reviewSection.reviewId(),
+                                reviewSection.score())) {
                             op2.set(false);
                         }
                     }

@@ -7,6 +7,8 @@ import unibo.cineradar.model.context.user.UserContext;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.Review;
+import unibo.cineradar.model.review.ReviewSection;
+import unibo.cineradar.model.review.Section;
 import unibo.cineradar.model.serie.Episode;
 import unibo.cineradar.model.serie.Serie;
 
@@ -40,6 +42,24 @@ public final class UserSessionController extends SessionControllerImpl {
     }
 
     /**
+     * Gets the list of series that the user can view.
+     *
+     * @return A list of series.
+     */
+    public List<Serie> getSeries() {
+        return userContext.getSeries();
+    }
+
+    /**
+     * Gets the list of sections.
+     *
+     * @return The list of sections.
+     */
+    public List<Section> getSections() {
+        return userContext.getSections();
+    }
+
+    /**
      * Gets detailed films.
      *
      * @return The list of all detailed films.
@@ -55,15 +75,6 @@ public final class UserSessionController extends SessionControllerImpl {
      */
     public List<Serie> getDetailedSeries() {
         return userContext.getDetailedSeries();
-    }
-
-    /**
-     * Gets the list of series that the user can view.
-     *
-     * @return A list of series.
-     */
-    public List<Serie> getSeries() {
-        return userContext.getSeries();
     }
 
     /**
@@ -196,5 +207,37 @@ public final class UserSessionController extends SessionControllerImpl {
      */
     public List<Genre> getUserPrefs() {
         return userContext.getUserPrefs();
+    }
+
+    /**
+     * Adds a film review.
+     *
+     * @param filmId   The id of the film to review.
+     * @param title    The title of the review.
+     * @param desc     The description of the review.
+     * @param sections The review sections.
+     * @return The status of the operation (true, false).
+     */
+    public boolean reviewFilm(final int filmId,
+                              final String title,
+                              final String desc,
+                              final List<ReviewSection> sections) {
+        return this.userContext.reviewFilm(filmId, title, desc, sections);
+    }
+
+    /**
+     * Adds a series review.
+     *
+     * @param seriesId The id of the series to review.
+     * @param title    The title of the review.
+     * @param desc     The description of the review.
+     * @param sections The review sections.
+     * @return The status of the operation (true, false).
+     */
+    public boolean reviewSeries(final int seriesId,
+                                final String title,
+                                final String desc,
+                                final List<ReviewSection> sections) {
+        return this.userContext.reviewSeries(seriesId, title, desc, sections);
     }
 }

@@ -6,6 +6,8 @@ import unibo.cineradar.model.serie.Episode;
 import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.view.ViewContext;
+import unibo.cineradar.view.homepage.user.review.WriteReviewView;
+import unibo.cineradar.view.homepage.user.review.WriteSerieReviewView;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -55,7 +57,7 @@ public final class SeriesDetailsView extends JFrame {
             if (actualSerie.getSeriesId() == serieId) {
                 setTitle(actualSerie.getTitle() + " - "
                         + currentSessionContext.getController().getAccount().getName());
-                initComponents(actualSerie);
+                initComponents(currentSessionContext, actualSerie);
                 return;
             }
         }
@@ -63,7 +65,7 @@ public final class SeriesDetailsView extends JFrame {
         throw new IllegalStateException("Detailed series not initialized for ID: " + serieId);
     }
 
-    private void initComponents(final Serie serie) {
+    private void initComponents(final ViewContext currentSessionContext, final Serie serie) {
         final JPanel mainPanel = new JPanel(new BorderLayout());
 
         // Serie details panel
@@ -142,7 +144,8 @@ public final class SeriesDetailsView extends JFrame {
         reviewButton = new JButton("Recensisci la serie");
         reviewButton.setEnabled(false); // Inizialmente disabilitato
         reviewButton.addActionListener(e -> {
-            // TODO: Manca la divisione in sezioni nella GUI?
+            final WriteReviewView writeSerieReviewView = new WriteSerieReviewView(currentSessionContext, serie);
+            writeSerieReviewView.setVisible(true);
         });
 
         mainPanel.add(reviewButton, BorderLayout.SOUTH);

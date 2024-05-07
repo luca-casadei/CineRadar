@@ -9,6 +9,7 @@ import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.FilmReview;
 import unibo.cineradar.model.review.Review;
+import unibo.cineradar.model.review.Section;
 import unibo.cineradar.model.review.SerieReview;
 import unibo.cineradar.model.serie.Episode;
 import unibo.cineradar.model.serie.Season;
@@ -562,6 +563,32 @@ public final class UserOps extends DBManager {
         this.setResultSet(this.getPreparedStatement().executeQuery());
         return true;
     }
+
+    /**
+     * Retrieves the list of all sections.
+     *
+     * @return The list of all sections.
+     */
+    public List<Section> getSections() {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "SELECT * FROM sezione";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            final List<Section> sections = new ArrayList<>();
+            while (this.getResultSet().next()) {
+                final Section section = new Section(
+                        this.getResultSet().getString("Nome"),
+                        this.getResultSet().getString("Dettaglio")
+                );
+                sections.add(section);
+            }
+            return List.copyOf(sections);
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
 
     /**
      * Sets the sections of the film review.
