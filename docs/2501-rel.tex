@@ -1866,13 +1866,12 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 		INSERT INTO preferenze(NomeGenere, UsernameUtente)
 			VALUES(?, ?)
 	\end{verbatim}
-	\item Op. 4.1:
+	\item Op. 4.1-2:
 	\begin{verbatim}
 		SELECT * FROM film
 		WHERE film.EtaLimite <= ?
 	\end{verbatim}
 	Dove ? viene sostituito con l'età dell'utente che effettua la richiesta, calcolata mediante la sua data di nascita nel software.
-	\item Op. 4.2: \todo{TBD}
 	\item Op. 4.3:
 	\begin{verbatim}
 		SELECT * FROM serie
@@ -1928,7 +1927,24 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 		DELETE FROM visualizzazioni_film 
 			WHERE CodiceFilm = ? AND UsernameUtente = ?
 	\end{verbatim}
-	\item Op. 5.2: \todo{TBD}
+	\item Op. 5.2:
+	Query per la visualizzazione:
+	\begin{verbatim}
+		INSERT INTO visualizzazioni_episodio(UsernameUtente,
+											 CodiceSerie,
+											 NumeroEpisodio,
+											 NumeroStagione,
+											 DATA)
+			VALUES(?, ?, ?, ?, ?)
+	\end{verbatim}
+	Query per la rimozione della visualizzazione:
+	\begin{verbatim}
+		DELETE FROM visualizzazioni_episodio WHERE
+			UsernameUtente = ? 
+				AND CodiceSerie = ? 
+				AND NumeroEpisodio = ? 
+				AND NumeroStagione = ?
+	\end{verbatim}
 	\item Op. 6: \todo{TBD}
 	\item Op. 7.1:
 	\begin{verbatim}

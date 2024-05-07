@@ -42,7 +42,8 @@ public final class UserOps extends DBManager {
     private static final String LIMIT_AGE_NAME = "EtaLimite";
     private static final String PLOT_NAME = "Trama";
     private static final String ID_FILM_NAME = "CodiceFilm";
-    private static final String ID_SERIE_NAME = "CodiceSerie";
+    private static final String ID_SERIES_NAME = "CodiceSerie";
+    private static final String FOUR_VALUES = "VALUES (?,?,?,?)";
     private static final int FIRST_PARAMETER = 1;
     private static final int SECOND_PARAMETER = 2;
     private static final int THIRD_PARAMETER = 3;
@@ -264,7 +265,7 @@ public final class UserOps extends DBManager {
             while (this.getResultSet().next()) {
                 final Review review;
                 if (this.getResultSet().getInt(ID_FILM_NAME) != NULL
-                        && this.getResultSet().getInt(ID_SERIE_NAME) == NULL) {
+                        && this.getResultSet().getInt(ID_SERIES_NAME) == NULL) {
                     review = new FilmReview(
                             this.getResultSet().getInt(ID_FILM_NAME),
                             this.getResultSet().getString("TitoloFilm"),
@@ -274,9 +275,9 @@ public final class UserOps extends DBManager {
                             this.getResultSet().getInt("VotoComplessivoRecensione")
                     );
                 } else if (this.getResultSet().getInt(ID_FILM_NAME) == NULL
-                        && this.getResultSet().getInt(ID_SERIE_NAME) != NULL) {
+                        && this.getResultSet().getInt(ID_SERIES_NAME) != NULL) {
                     review = new SerieReview(
-                            this.getResultSet().getInt(ID_SERIE_NAME),
+                            this.getResultSet().getInt(ID_SERIES_NAME),
                             this.getResultSet().getString("TitoloSerie"),
                             this.getResultSet().getString("UsernameUtente"),
                             this.getResultSet().getString("TitoloRecensione"),
@@ -452,16 +453,24 @@ public final class UserOps extends DBManager {
                     + "CodiceSerie = ? AND "
                     + "NumeroEpisodio = ? AND "
                     + "NumeroStagione = ?";
-            this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setString(FIRST_PARAMETER, userName);
-            this.getPreparedStatement().setInt(SECOND_PARAMETER, seriesId);
-            this.getPreparedStatement().setInt(THIRD_PARAMETER, episodeId);
-            this.getPreparedStatement().setInt(FOURTH_PARAMETER, seasonId);
-            this.setResultSet(this.getPreparedStatement().executeQuery());
+            forgetCommons(seriesId, seasonId, episodeId, userName, query);
             return true;
         } catch (SQLException ex) {
             return false;
         }
+    }
+
+    private void forgetCommons(final int seriesId,
+                               final int seasonId,
+                               final int episodeId,
+                               final String userName,
+                               final String query) throws SQLException {
+        this.setPreparedStatement(this.getConnection().prepareStatement(query));
+        this.getPreparedStatement().setString(FIRST_PARAMETER, userName);
+        this.getPreparedStatement().setInt(SECOND_PARAMETER, seriesId);
+        this.getPreparedStatement().setInt(THIRD_PARAMETER, episodeId);
+        this.getPreparedStatement().setInt(FOURTH_PARAMETER, seasonId);
+        this.setResultSet(this.getPreparedStatement().executeQuery());
     }
 
     /**
@@ -480,17 +489,85 @@ public final class UserOps extends DBManager {
         Objects.requireNonNull(this.getConnection());
         try {
             final String query = "INSERT INTO recserie(CodiceSerie, UsernameUtente, Titolo, Descrizione) "
-                    + "VALUES (?,?,?,?)";
-            this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setInt(FIRST_PARAMETER, seriesId);
-            this.getPreparedStatement().setString(SECOND_PARAMETER, username);
-            this.getPreparedStatement().setString(THIRD_PARAMETER, title);
-            this.getPreparedStatement().setString(FOURTH_PARAMETER, desc);
-            this.setResultSet(this.getPreparedStatement().executeQuery());
-            return true;
+                    + FOUR_VALUES;
+            return commonReviewOperations(seriesId, username, title, desc, query);
         } catch (SQLException ex) {
             return false;
         }
+    }
+
+    /**
+     * Adds a review to the specified series.
+     *
+     * @param filmId   The id of the film.
+     * @param username The username of the reviewer.
+     * @param title    The title of the review (caption).
+     * @param desc     Full description of the review.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean reviewFilm(final int filmId,
+                              final String username,
+                              final String title,
+                              final String desc) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "INSERT INTO recfilm(CodiceFilm, UsernameUtente, Titolo, Descrizione) "
+                    + FOUR_VALUES;
+            return commonReviewOperations(filmId, username, title, desc, query);
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    private boolean commonReviewOperations(final int id,
+                                           final String username,
+                                           final String title,
+                                           final String desc,
+                                           final String query) throws SQLException {
+        this.setPreparedStatement(this.getConnection().prepareStatement(query));
+        this.getPreparedStatement().setInt(FIRST_PARAMETER, id);
+        this.getPreparedStatement().setString(SECOND_PARAMETER, username);
+        this.getPreparedStatement().setString(THIRD_PARAMETER, title);
+        this.getPreparedStatement().setString(FOURTH_PARAMETER, desc);
+        this.setResultSet(this.getPreparedStatement().executeQuery());
+        return true;
+    }
+
+    /**
+     * Sets the sections of the film review.
+     *
+     * @param sectName The name of the section to review.
+     * @param username The username of the reviewer.
+     * @param revCode  The code of the film review.
+     * @param score    The score of the section.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean addFilmReviewSections(final String sectName,
+                                         final String username,
+                                         final int revCode,
+                                         final int score) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "INSERT INTO sezionamento_film (NomeSezione, UsernameUtente, CodiceRecFilm, Voto) "
+                    + FOUR_VALUES;
+            return commonSectionQueries(sectName, username, revCode, score, query);
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    private boolean commonSectionQueries(final String sectName,
+                                         final String username,
+                                         final int revCode,
+                                         final int score,
+                                         final String query) throws SQLException {
+        this.setPreparedStatement(this.getConnection().prepareStatement(query));
+        this.getPreparedStatement().setString(FIRST_PARAMETER, sectName);
+        this.getPreparedStatement().setString(SECOND_PARAMETER, username);
+        this.getPreparedStatement().setInt(THIRD_PARAMETER, revCode);
+        this.getPreparedStatement().setInt(FOURTH_PARAMETER, score);
+        this.setResultSet(this.getPreparedStatement().executeQuery());
+        return true;
     }
 
     /**
@@ -509,14 +586,8 @@ public final class UserOps extends DBManager {
         Objects.requireNonNull(this.getConnection());
         try {
             final String query = "INSERT INTO sezionamento_serie (NomeSezione, UsernameUtente, CodiceRecSerie, Voto) "
-                    + "VALUES (?,?,?,?)";
-            this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setString(FIRST_PARAMETER, sectName);
-            this.getPreparedStatement().setString(SECOND_PARAMETER, username);
-            this.getPreparedStatement().setInt(THIRD_PARAMETER, revCode);
-            this.getPreparedStatement().setInt(FOURTH_PARAMETER, score);
-            this.setResultSet(this.getPreparedStatement().executeQuery());
-            return true;
+                    + FOUR_VALUES;
+            return commonSectionQueries(sectName, username, revCode, score, query);
         } catch (SQLException ex) {
             return false;
         }
@@ -528,7 +599,7 @@ public final class UserOps extends DBManager {
      * @param seriesCode   The series code.
      * @param seasonNumber The season number.
      * @param userName     The username.
-     * @return True if the episode has been viewed, false otherwise.
+     * @return A list of episodes.
      */
     public List<Episode> getViewedEpisodes(final int seriesCode,
                                            final int seasonNumber,
@@ -607,12 +678,7 @@ public final class UserOps extends DBManager {
                     + "CodiceSerie = ? AND "
                     + "NumeroEpisodio = ? AND "
                     + "NumeroStagione = ?";
-            this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setString(FIRST_PARAMETER, userName);
-            this.getPreparedStatement().setInt(SECOND_PARAMETER, seriesId);
-            this.getPreparedStatement().setInt(THIRD_PARAMETER, episodeId);
-            this.getPreparedStatement().setInt(FOURTH_PARAMETER, seasonId);
-            this.setResultSet(this.getPreparedStatement().executeQuery());
+            forgetCommons(seriesId, seasonId, episodeId, userName, query);
             return this.getResultSet().next();
         } catch (SQLException ex) {
             throw new IllegalStateException(ex);
@@ -716,7 +782,7 @@ public final class UserOps extends DBManager {
             final List<Serie> detailedSeries = new ArrayList<>();
             while (this.getResultSet().next()) {
                 final Serie serie = new Serie(
-                        this.getResultSet().getInt(ID_SERIE_NAME),
+                        this.getResultSet().getInt(ID_SERIES_NAME),
                         this.getResultSet().getString("TitoloSerie"),
                         this.getResultSet().getInt("EtaLimiteSerie"),
                         this.getResultSet().getString("TramaSerie"),
@@ -724,12 +790,12 @@ public final class UserOps extends DBManager {
                         this.getResultSet().getInt("NumeroEpisodiSerie")
                 );
                 final Season season = new Season(
-                        this.getResultSet().getInt(ID_SERIE_NAME),
+                        this.getResultSet().getInt(ID_SERIES_NAME),
                         this.getResultSet().getInt("NumeroStagione"),
                         this.getResultSet().getString("SuntoStagione")
                 );
                 final Episode episode = new Episode(
-                        this.getResultSet().getInt(ID_SERIE_NAME),
+                        this.getResultSet().getInt(ID_SERIES_NAME),
                         this.getResultSet().getInt("NumeroStagione"),
                         this.getResultSet().getInt("NumeroEpisodio"),
                         this.getResultSet().getInt("DurataEpisodio")

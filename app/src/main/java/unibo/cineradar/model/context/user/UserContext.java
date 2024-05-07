@@ -7,6 +7,7 @@ import unibo.cineradar.model.db.UserOps;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.Review;
+import unibo.cineradar.model.review.ReviewSection;
 import unibo.cineradar.model.serie.Episode;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.Account;
@@ -16,6 +17,7 @@ import java.time.Year;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The context of a user session.
@@ -247,6 +249,66 @@ public final class UserContext extends SessionContextImpl {
     public List<Review> getReviews() {
         try (UserOps mgr = new UserOps()) {
             return mgr.getReviews(super.getUsername());
+        }
+    }
+
+    /**
+     * Adds a film review.
+     *
+     * @param filmId   The id of the film to review.
+     * @param title    The title of the review.
+     * @param desc     The description of the review.
+     * @param sections The review sections.
+     * @return The status of the operation (true, false).
+     */
+    public boolean reviewFilm(final int filmId,
+                              final String title,
+                              final String desc,
+                              final List<ReviewSection> sections) {
+        try (UserOps mgr = new UserOps()) {
+            final boolean op1 = mgr.reviewSeries(filmId, this.user.getUsername(), title, desc);
+            final AtomicBoolean op2 = new AtomicBoolean(true);
+            sections.forEach(
+                    section -> {
+                        if (!mgr.addFilmReviewSections(section.sectName(),
+                                this.user.getUsername(),
+                                section.reviewId(),
+                                section.score())) {
+                            op2.set(false);
+                        }
+                    }
+            );
+            return op1 && op2.get();
+        }
+    }
+
+    /**
+     * Adds a series review.
+     *
+     * @param seriesId The id of the series to review.
+     * @param title    The title of the review.
+     * @param desc     The description of the review.
+     * @param sections The review sections.
+     * @return The status of the operation (true, false).
+     */
+    public boolean reviewSeries(final int seriesId,
+                                final String title,
+                                final String desc,
+                                final List<ReviewSection> sections) {
+        try (UserOps mgr = new UserOps()) {
+            final boolean op1 = mgr.reviewSeries(seriesId, this.user.getUsername(), title, desc);
+            final AtomicBoolean op2 = new AtomicBoolean(true);
+            sections.forEach(
+                    section -> {
+                        if (!mgr.addSeriesReviewSection(section.sectName(),
+                                this.user.getUsername(),
+                                section.reviewId(),
+                                section.score())) {
+                            op2.set(false);
+                        }
+                    }
+            );
+            return op1 && op2.get();
         }
     }
 }
