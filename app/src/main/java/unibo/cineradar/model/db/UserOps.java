@@ -211,7 +211,7 @@ public final class UserOps extends DBManager {
     }
 
     /**
-     * Retrieves reviews for a user from the database.
+     * Retrieves reviews made by a user from the database.
      *
      * @param username The username of the user.
      * @return A list of reviews written by the user.
@@ -491,6 +491,36 @@ public final class UserOps extends DBManager {
             final String query = "INSERT INTO recserie(CodiceSerie, UsernameUtente, Titolo, Descrizione) "
                     + FOUR_VALUES;
             return commonReviewOperations(seriesId, username, title, desc, query);
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    /**
+     * Adds a review evaluation.
+     *
+     * @param recUsername The username of the reviewed user.
+     * @param username    The username of the reviewer.
+     * @param filmRecId   The ID of the review.
+     * @param positive    If the review is positive or negative.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean evaluateFilmRec(final String recUsername,
+                                   final String username,
+                                   final int filmRecId,
+                                   final boolean positive) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "INSERT INTO valutazione_film "
+                    + "(UsernameUtenteValutato, CodiceRecFilm, UsernameUtente, positiva)"
+                    + FOUR_VALUES;
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setString(FIRST_PARAMETER, recUsername);
+            this.getPreparedStatement().setString(SECOND_PARAMETER, username);
+            this.getPreparedStatement().setInt(THIRD_PARAMETER, filmRecId);
+            this.getPreparedStatement().setBoolean(FOURTH_PARAMETER, positive);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            return true;
         } catch (SQLException ex) {
             return false;
         }

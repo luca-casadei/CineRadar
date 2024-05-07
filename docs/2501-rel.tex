@@ -1916,7 +1916,7 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\end{verbatim}
 	\item Op. 4.5: \todo{TBD}
 	\item Op. 4.6: \todo{TBD}
-	\item Op. 5.1:
+	\item Op. 5.1:\\
 	Per la visualizzazione:
 	\begin{verbatim}
 		INSERT INTO visualizzazioni_film(CodiceFilm, UsernameUtente)
@@ -1927,7 +1927,7 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 		DELETE FROM visualizzazioni_film 
 			WHERE CodiceFilm = ? AND UsernameUtente = ?
 	\end{verbatim}
-	\item Op. 5.2:
+	\item Op. 5.2:\\
 	Query per la visualizzazione:
 	\begin{verbatim}
 		INSERT INTO visualizzazioni_episodio(UsernameUtente,
@@ -1945,7 +1945,20 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 				AND NumeroEpisodio = ? 
 				AND NumeroStagione = ?
 	\end{verbatim}
-	\item Op. 6: \todo{TBD}
+	\item Op. 6:\\
+	Per recensire un film è necessario inserire tutte le sezioni della recensione e la recensione stessa, quindi:\\
+	Query per l'inserimento della recensione complessiva.
+	\begin{verbatim}
+		INSERT INTO recfilm(CodiceFilm, UsernameUtente,
+		 Titolo, Descrizione)
+			VALUES (?,?,?,?)
+	\end{verbatim}
+	Query per le sezioni (avviene per ogni sezione recensita) dopo l'inserimento della recensione stessa:
+	\begin{verbatim}
+		INSERT INTO sezionamento_film (NomeSezione, UsernameUtente,
+		 CodiceRecFilm, Voto)
+			VALUES (?,?,?,?)
+	\end{verbatim}
 	\item Op. 7.1:
 	\begin{verbatim}
 		SELECT
@@ -1986,8 +1999,13 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 		LEFT JOIN serie ON recensioni_totali.CodiceSerie = serie.Codice
 		WHERE UsernameUtente = ?
 	\end{verbatim}
-	\item Op. 7.2: \todo{TBD}
-	\item Op. 7.3: \todo{TBD}
+	\item Op. 7.2-3:\\
+	Operazione analoga per le serie ma con CodiceRecSerie invece che CodiceRecFilm.
+	\begin{verbatim}
+		INSERT INTO valutazione_film (UsernameUtenteValutato, CodiceRecFilm,
+									  UsernameUtente, positiva)
+			VALUES (?,?,?,?)
+	\end{verbatim}
 	\item Op. 7.4: \todo{TBD}
 	\item Op. 7.5: \todo{TBD}
 	\item Op. 8.1: \todo{TBD}
@@ -2003,7 +2021,7 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 \chapter{Progettazione dell'applicazione}
 \section{Architettura generale}
 \subsection{Infrastruttura}
-L'applicazione e la relativa interfaccia è stata realizzata con il linguaggio \textbf{Java 17} con l'intenzione di renderla multi-piattaforma. Come DBMS invece, abbiamo scelto l'alternativa open-source a MySQL ma completamente compatibile, ovvero \textbf{MariaDB}, la cui installazione può essere effettuata sia in locale che su un server remoto per potervi accedere. Per il collegamento a questo DBMS è stato usata la libreria \textbf{JDBC} con il \href{https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client}{driver apposito per MariaDB}.\\
+L'applicazione e la relativa interfaccia è stata realizzata con il linguaggio \textbf{Java 17} con l'intenzione di renderla multi-piattaforma. Come DBMS invece, abbiamo scelto l'alternativa open-source a MySQL ma completamente compatibile, ovvero \textbf{MariaDB}, la cui installazione può essere effettuata sia in locale che su un server remoto per potervi accedere. Per il collegamento a questo DBMS è stato usata la libreria \textbf{JDBC} con il \href{https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client}{driver apposito per MariaDB} di tipo 4.\\
 La compilazione e la gestione delle dipendenze è stata gestita con \textbf{Gradle} e il versioning con \textbf{Git}, le repository remote sono salvaguardate su \textbf{Github}.
 \subsection{Pattern architetturale}
 Tutta l'infrastruttura del software si basa sul modello \textbf{MVC} (Model-View-Controller) che rende indipendente la controparte grafica del software (realizzata con la libreria del jdk \textbf{Swing}) a quella di modellazione (che consiste nella definizione delle classi che rispecchiano la struttura del database progettato nelle sezioni precedenti).
