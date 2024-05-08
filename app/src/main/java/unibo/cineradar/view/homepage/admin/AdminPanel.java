@@ -1,6 +1,9 @@
 package unibo.cineradar.view.homepage.admin;
 
 import unibo.cineradar.controller.administrator.AdminSessionController;
+import unibo.cineradar.model.cast.Actor;
+import unibo.cineradar.model.cast.CastMember;
+import unibo.cineradar.model.cast.Casting;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.serie.Serie;
@@ -90,6 +93,68 @@ public abstract class AdminPanel extends JPanel {
 
         this.customizeTableHeader(table);
 
+        return table;
+    }
+
+    /**
+     * Creates the table of the Cast.
+     *
+     * @return A JTable of a cast list.
+     */
+    protected JTable createCastTable() {
+        final DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Codice");
+        model.addColumn("NomeCast");
+        for (final Casting cast
+                : ((AdminSessionController) this.getCurrentSessionContext().getController()).getCasting()) {
+            model.addRow(new Object[]{
+                    cast.id(),
+                    cast.name()
+            });
+        }
+        final JTable table = this.createCustomTable(model);
+        final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setRowHeight(30);
+        this.customizeTableHeader(table);
+        return table;
+    }
+
+    /**
+     * Creates a JTable for the CastMembers.
+     *
+     * @return The populated JTable.
+     */
+    protected JTable createCastMemberTable() {
+        final DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Codice");
+        model.addColumn("Nome");
+        model.addColumn("Cognome");
+        model.addColumn("Data di Nascita");
+        model.addColumn("Ruolo");
+        model.addColumn("Data Debutto Carriera");
+        model.addColumn("Nome Arte");
+
+        for (final CastMember castMember
+                : ((AdminSessionController) this.getCurrentSessionContext().getController()).getCastMembers()) {
+            model.addRow(new Object[]{
+                    castMember.getId(),
+                    castMember.getName(),
+                    castMember.getLastName(),
+                    castMember.getBirthDate(),
+                    castMember instanceof Actor ? "Attore" : "Regista",
+                    castMember.getCareerDebutDate(),
+                    castMember.getStageName()
+            });
+        }
+
+        final JTable table = this.createCustomTable(model);
+        final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setRowHeight(30);
+        this.customizeTableHeader(table);
         return table;
     }
 
