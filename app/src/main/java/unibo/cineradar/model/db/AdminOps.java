@@ -4,6 +4,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import unibo.cineradar.model.cast.Actor;
 import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.cast.CastMember;
+import unibo.cineradar.model.cast.Casting;
 import unibo.cineradar.model.cast.Director;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.ranking.CastRanking;
@@ -40,6 +41,8 @@ public final class AdminOps extends DBManager {
     private static final int PARAMETER_INDEX1 = 5;
     private static final int PARAMETER_INDEX2 = 6;
     private static final int PARAMETER_INDEX3 = 7;
+    private static final int INDEX = 5;
+    private static final int INDEX1 = 6;
     private static final String CODICE_SERIE = "CodiceSerie";
     private static final String QUERY_SERIES = "SELECT serie.Codice AS CodiceSerie, "
             + "stagione.NumeroStagione, "
@@ -570,8 +573,8 @@ public final class AdminOps extends DBManager {
     public void addEpisode(final Episode episode) {
         Objects.requireNonNull(getConnection());
         try {
-            final String query = "INSERT "
-                    + "INTO episodio (NumeroEpisodio, CodiceSerie, NumeroStagione, DurataMin) "
+            final String query = "INSERT"
+                    + " INTO episodio (NumeroEpisodio, CodiceSerie, NumeroStagione, DurataMin) "
                     + "VALUES (?, ?, ?, ?)";
             setPreparedStatement(getConnection().prepareStatement(query));
             getPreparedStatement().setInt(1, episode.id());
@@ -724,9 +727,110 @@ public final class AdminOps extends DBManager {
             }
             return rankings;
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error retrieving rankings", ex);
+            throw new IllegalArgumentException("Error retrieving cast rankings", ex);
         }
     }
 
+    /**
+     * Retrieves a list of cast members from the database.
+     *
+     * @return A list of CastMember objects representing the cast members.
+     * @throws IllegalArgumentException If an error occurs while retrieving cast members from the database.
+     */
+    public List<CastMember> getCastMembers() {
+        final String query = "SELECT * FROM membrocast";
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            final List<CastMember> castMembers = new ArrayList<>();
+            while (resultSet.next()) {
+                if (resultSet.getBoolean("TipoAttore")) {
+                    castMembers.add(new Actor(
+                            resultSet.getInt(1),
+                            resultSet.getString(2),
+                            resultSet.getString(3),
+                            resultSet.getDate(4).toLocalDate(),
+                            resultSet.getDate(INDEX).toLocalDate(),
+                            resultSet.getString(INDEX1)
+                    ));
+                } else {
+                    castMembers.add(new Director(
+                            resultSet.getInt(1),
+                            resultSet.getString(2),
+                            resultSet.getString(3),
+                            resultSet.getDate(4).toLocalDate(),
+                            resultSet.getDate(INDEX).toLocalDate(),
+                            resultSet.getString(INDEX1)
+                    ));
+                }
+            }
+            return castMembers;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error retrieving cast member", ex);
+        }
+    }
 
+    /**
+     * Retrieves a list of casting details from the database.
+     *
+     * @return A list of Casting objects representing the casting details.
+     * @throws IllegalArgumentException If an error occurs while retrieving casting details from the database.
+     */
+    public List<Casting> getCasting() {
+        final String query = "SELECT * FROM casting";
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            final List<Casting> casting = new ArrayList<>();
+            while (resultSet.next()) {
+                casting.add(new Casting(
+                        resultSet.getInt(1),
+                        resultSet.getString(2)
+                ));
+            }
+            return casting;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error retrieving casting", ex);
+        }
+    }
+
+    /**
+     * Adds a new casting detail with the given name to the database.
+     *
+     * @param name The name of the casting detail to be added.
+     * @throws IllegalArgumentException If an error occurs while adding the casting detail to the database.
+     */
+    public void addCast(final String name) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "INSERT"
+                    + " INTO casting (Nome)"
+                    + " VALUES (?)";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setString(1, name);
+            getPreparedStatement().executeUpdate();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error adding casting", ex);
+        }
+    }
+
+    /**
+     * Deletes a casting detail from the database based on the provided ID.
+     *
+     * @param id The ID of the casting detail to be deleted.
+     * @return True if the casting detail was successfully deleted, false otherwise.
+     * @throws IllegalArgumentException If an error occurs while deleting the casting detail from the database.
+     */
+    public boolean deleteCast(final int id) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "DELETE FROM casting WHERE Codice = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, id);
+            final int rowsAffected = getPreparedStatement().executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error deleting casting", ex);
+        }
+    }
 }

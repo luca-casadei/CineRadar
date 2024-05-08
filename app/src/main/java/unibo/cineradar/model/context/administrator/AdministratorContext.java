@@ -2,6 +2,7 @@ package unibo.cineradar.model.context.administrator;
 
 import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.cast.CastMember;
+import unibo.cineradar.model.cast.Casting;
 import unibo.cineradar.model.context.SessionContextImpl;
 import unibo.cineradar.model.db.AdminOps;
 import unibo.cineradar.model.film.Film;
@@ -233,4 +234,66 @@ public final class AdministratorContext extends SessionContextImpl {
         }
     }
 
+    /**
+     * Retrieves a list of cast members.
+     * <p>
+     * This method retrieves a list of cast members using the AdminOps class, which manages administrative operations
+     * related to cast members. It automatically closes the AdminOps resource after execution using try-with-resources.
+     *
+     * @return A list of CastMember objects representing the cast members.
+     * @throws RuntimeException If an error occurs while retrieving the cast members.
+     */
+    public List<CastMember> getCastMembers() {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getCastMembers();
+        }
+    }
+
+    /**
+     * Retrieves a list of casting details.
+     * <p>
+     * This method retrieves a list of casting details using the AdminOps class, which manages administrative operations
+     * related to casting details. It automatically closes the AdminOps resource after execution using try-with-resources.
+     *
+     * @return A list of Casting objects representing the casting details.
+     * @throws RuntimeException If an error occurs while retrieving the casting details.
+     */
+    public List<Casting> getCasting() {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getCasting();
+        }
+    }
+
+    /**
+     * Adds a new casting detail with the given name.
+     * <p>
+     * This method adds a new casting detail with the specified name using the AdminOps class, which manages
+     * administrative operations related to casting details. It automatically closes the AdminOps resource
+     * after execution using try-with-resources.
+     *
+     * @param name The name of the new casting detail to be added.
+     * @throws RuntimeException If an error occurs while adding the casting detail.
+     */
+    public void addCast(final String name) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.addCast(name);
+        }
+    }
+
+    /**
+     * Deletes a casting detail based on the provided ID.
+     * <p>
+     * This method deletes a casting detail with the specified ID using the AdminOps class, which manages
+     * administrative operations related to casting details. It automatically closes the AdminOps resource
+     * after execution using try-with-resources.
+     *
+     * @param id The ID of the casting detail to be deleted.
+     * @return True if the casting detail was successfully deleted, false otherwise.
+     * @throws RuntimeException If an error occurs while deleting the casting detail.
+     */
+    public boolean deleteCast(final int id) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.deleteCast(id);
+        }
+    }
 }

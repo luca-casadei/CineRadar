@@ -4,6 +4,8 @@ import unibo.cineradar.controller.SessionController;
 import unibo.cineradar.controller.SessionControllerImpl;
 import unibo.cineradar.model.cast.Actor;
 import unibo.cineradar.model.cast.Cast;
+import unibo.cineradar.model.cast.CastMember;
+import unibo.cineradar.model.cast.Casting;
 import unibo.cineradar.model.cast.Director;
 import unibo.cineradar.model.context.administrator.AdministratorContext;
 import unibo.cineradar.model.film.Film;
@@ -249,4 +251,40 @@ public final class AdminSessionController extends SessionControllerImpl {
         return this.administratorContext.getCastRankings(evaluationType);
     }
 
+    /**
+     * Retrieves a list of cast members.
+     *
+     * @return A list of CastMember objects representing the cast members.
+     */
+    public List<CastMember> getCastMembers() {
+        return this.administratorContext.getCastMembers();
+    }
+
+    /**
+     * Retrieves a list of castings.
+     *
+     * @return A list of Casting objects representing the casting details.
+     */
+    public List<Casting> getCasting() {
+        return this.administratorContext.getCasting();
+    }
+
+    /**
+     * Adds a new cast member with the given name.
+     *
+     * @param name The name of the new cast member to be added.
+     */
+    public void addCast(final String name) {
+        this.administratorContext.addCast(name);
+    }
+
+    /**
+     * Deletes a cast member based on the provided ID.
+     *
+     * @param id The ID of the cast member to be deleted.
+     * @return True if the cast member was successfully deleted, false otherwise.
+     */
+    public boolean deleteCast(final int id) {
+        return this.administratorContext.deleteCast(id);
+    }
 }
