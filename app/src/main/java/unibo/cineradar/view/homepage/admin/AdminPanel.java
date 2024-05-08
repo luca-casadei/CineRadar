@@ -1,13 +1,18 @@
 package unibo.cineradar.view.homepage.admin;
 
+import unibo.cineradar.controller.administrator.AdminSessionController;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.view.ViewContext;
+import unibo.cineradar.view.homepage.admin.details.AdminFilmDetailsView;
+import unibo.cineradar.view.homepage.admin.details.AdminSeriesDetailsView;
 
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -56,8 +61,7 @@ public abstract class AdminPanel extends JPanel {
      * @param multimediaList The list of multimedia.
      * @return A JTable of a multimedia list.
      */
-    protected JTable createTable(final List<? extends Multimedia> multimediaList) {
-        // Creates the table model
+    protected JTable createMultimediaTable(final List<? extends Multimedia> multimediaList) {
         final DefaultTableModel filmTableModel = new DefaultTableModel();
         filmTableModel.addColumn("ID");
         filmTableModel.addColumn("Titolo");
@@ -65,7 +69,6 @@ public abstract class AdminPanel extends JPanel {
         filmTableModel.addColumn("Trama");
         filmTableModel.addColumn("Durata(min)");
 
-        // Adds film data to the model
         for (final Multimedia multimedia : multimediaList) {
             filmTableModel.addRow(new Object[]{
                     multimedia instanceof Film film
@@ -91,12 +94,70 @@ public abstract class AdminPanel extends JPanel {
     }
 
     /**
+     * Creates a table of films.
+     *
+     * @return A JTable of films.
+     */
+    protected JTable createFilmTable() {
+        final JTable filmTable = createMultimediaTable(
+                ((AdminSessionController) currentSessionContext.getController()).getFilms()
+        );
+
+        final ListSelectionListener filmSelectionListener = e -> {
+            if (!e.getValueIsAdjusting()) {
+                final int selectedRow = ((DefaultListSelectionModel) e.getSource()).getLeadSelectionIndex();
+                if (selectedRow != -1) {
+                    openFilmDetailsView(this.getCurrentSessionContext(), (int) filmTable.getValueAt(selectedRow, 0));
+                }
+            }
+        };
+
+        filmTable.getSelectionModel().addListSelectionListener(filmSelectionListener);
+
+        return filmTable;
+    }
+
+    private void openFilmDetailsView(final ViewContext currentSessionContext, final int filmId) {
+        final AdminFilmDetailsView filmDetailsView = new AdminFilmDetailsView(currentSessionContext, filmId);
+        filmDetailsView.setVisible(true);
+    }
+
+    /**
+     * Creates a table of series.
+     *
+     * @return A JTable of series.
+     */
+    protected JTable createSerieTable() {
+        final JTable serieTable = createMultimediaTable(
+                ((AdminSessionController) currentSessionContext.getController()).getSeries()
+        );
+
+        final ListSelectionListener serieSelectionListener = e -> {
+            if (!e.getValueIsAdjusting()) {
+                final int selectedRow = ((DefaultListSelectionModel) e.getSource()).getLeadSelectionIndex();
+                if (selectedRow != -1) {
+                    openSerieDetailsView(this.getCurrentSessionContext(), (int) serieTable.getValueAt(selectedRow, 0));
+                }
+            }
+        };
+
+        serieTable.getSelectionModel().addListSelectionListener(serieSelectionListener);
+
+        return serieTable;
+    }
+
+    private void openSerieDetailsView(final ViewContext currentSessionContext, final int serieId) {
+        final AdminSeriesDetailsView seriesDetailsView = new AdminSeriesDetailsView(currentSessionContext, serieId);
+        seriesDetailsView.setVisible(true);
+    }
+
+    /**
      * Creates a JTable with a custom renderer to alternate row colors.
      *
      * @param filmTableModel The data model to use for the table.
      * @return The JTable with the custom renderer.
      */
-    private JTable createCustomTable(final TableModel filmTableModel) {
+    JTable createCustomTable(final TableModel filmTableModel) {
         // Crea la tabella con il modello dei dati fornito
         final JTable table = new JTable(filmTableModel);
 
@@ -141,7 +202,7 @@ public abstract class AdminPanel extends JPanel {
      *
      * @param table The JTable whose header is to be customized.
      */
-    private void customizeTableHeader(final JTable table) {
+    void customizeTableHeader(final JTable table) {
         final JTableHeader header = table.getTableHeader();
         header.setFont(new Font("Arial", Font.BOLD, 12));
         header.setForeground(Color.BLACK);

@@ -17,6 +17,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.io.Serial;
+import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -29,6 +30,15 @@ public class AdminControlsView extends AdminPanel {
     private static final long serialVersionUID = -6223416855940387L;
     private static final String ERRORE = "Errore";
     private static final int BOTTOM = 20;
+    private static final String ELIMINAZIONE_COMPLETATA = "Eliminazione completata";
+    private static final String NUMERO_STAGIONE = "Numero Stagione:";
+    private static final String CODICE_SERIE = "Codice Serie:";
+    private static final int GRID_Y = 5;
+    private static final int GRID_Y1 = 6;
+    private static final int GRID_Y2 = 7;
+    private static final int GRID_Y3 = 9;
+    private static final int GRID_Y4 = 8;
+    private static final int GRID_Y5 = 10;
 
     /**
      * Constructs a new AdminControlsView object with the specified current session context.
@@ -64,6 +74,24 @@ public class AdminControlsView extends AdminPanel {
         addButton("Elimina SerieTV", e -> {
             deleteSeriesDialog();
         }, 4, gbc);
+        addButton("Aggiungi Membro Cast", e -> {
+            addCastMemberDialog();
+        }, GRID_Y, gbc);
+        addButton("Elimina Membro Cast", e -> {
+            deleteCastMemberDialog();
+        }, GRID_Y1, gbc);
+        addButton("Aggiungi Stagione", e -> {
+            addSeasonDialog();
+        }, GRID_Y2, gbc);
+        addButton("Elimina Stagione", e -> {
+            deleteSeasonDialog();
+        }, GRID_Y4, gbc);
+        addButton("Aggiungi Episodio", e -> {
+            addEpisodeDialog();
+        }, GRID_Y3, gbc);
+        addButton("Elimina Episodio", e -> {
+            deleteEpisodeDialog();
+        }, GRID_Y5, gbc);
     }
 
     /**
@@ -188,7 +216,7 @@ public class AdminControlsView extends AdminPanel {
                 JOptionPane.showMessageDialog(
                         null,
                         "Il film è stato eliminato con successo.",
-                        "Eliminazione completata", JOptionPane.INFORMATION_MESSAGE);
+                        ELIMINAZIONE_COMPLETATA, JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(
                         null,
@@ -220,7 +248,7 @@ public class AdminControlsView extends AdminPanel {
                 JOptionPane.showMessageDialog(
                         null,
                         "La SerieTV è stata eliminata con successo.",
-                        "Eliminazione completata", JOptionPane.INFORMATION_MESSAGE);
+                        ELIMINAZIONE_COMPLETATA, JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(
                         null,
@@ -255,6 +283,305 @@ public class AdminControlsView extends AdminPanel {
     private boolean deleteSeries(final int code) {
         return ((AdminSessionController) getCurrentSessionContext().getController())
                 .deleteSeries(code);
+    }
+
+    /**
+     * Displays a dialog for adding a cast member.
+     * The dialog prompts the administrator to enter the details of the cast member.
+     */
+    private void addCastMemberDialog() {
+        final JTextField nameField = new JTextField(20);
+        final JTextField surnameField = new JTextField(20);
+        final JTextField birthdayField = new JTextField(10);
+        final JTextField actorField = new JTextField(5);
+        final JTextField directorField = new JTextField(5);
+        final JTextField dateDebutCareerField = new JTextField(10);
+        final JTextField artNameField = new JTextField(30);
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel("Nome:"));
+        panel.add(nameField);
+        panel.add(new JLabel("Cognome:"));
+        panel.add(surnameField);
+        panel.add(new JLabel("Data di Nascita (YYYY-MM-DD):"));
+        panel.add(birthdayField);
+        panel.add(new JLabel("É un Attore? (1 se Attore, altrimenti 0):"));
+        panel.add(actorField);
+        panel.add(new JLabel("É un Regista? (1 se Regista, altrimenti 0):"));
+        panel.add(directorField);
+        panel.add(new JLabel("Data Debutto Carriera (YYYY-MM-DD):"));
+        panel.add(dateDebutCareerField);
+        panel.add(new JLabel("Nome d'Arte:"));
+        panel.add(artNameField);
+
+        final int result = JOptionPane.showConfirmDialog(null, panel, "Aggiungi Membro Cast",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            addCastMember(
+                    nameField.getText(),
+                    surnameField.getText(),
+                    LocalDate.parse(birthdayField.getText()),
+                    Integer.parseInt(actorField.getText()),
+                    Integer.parseInt(directorField.getText()),
+                    LocalDate.parse(dateDebutCareerField.getText()),
+                    artNameField.getText());
+        }
+    }
+
+    /**
+     * Adds a cast member with the specified details.
+     *
+     * @param name               The first name of the cast member.
+     * @param surname            The last name of the cast member.
+     * @param birthday           The date of birth of the cast member (in format YYYY-MM-DD).
+     * @param isActor            The type of actor (1 for true, 0 for false).
+     * @param isDirector         The type of director (1 for true, 0 for false).
+     * @param dateDebutCareer    The career debut date of the cast member (in format YYYY-MM-DD).
+     * @param artName           The stage name or artistic name of the cast member.
+     */
+    private void addCastMember(
+            final String name, final String surname, final LocalDate birthday,
+            final int isActor, final int isDirector,
+            final LocalDate dateDebutCareer, final String artName) {
+        ((AdminSessionController) getCurrentSessionContext().getController())
+                .addCastMember(name, surname, birthday, isActor, isDirector, dateDebutCareer, artName);
+    }
+
+    /**
+     * Displays a dialog for deleting a cast member.
+     * The dialog prompts the administrator to enter the code of the cast member to be deleted.
+     */
+    private void deleteCastMemberDialog() {
+        final String input = Objects.requireNonNull(
+                JOptionPane.showInputDialog(
+                        null,
+                        "Inserisci il Codice del Membro del Cast da eliminare:",
+                        "Elimina Membro Cast", JOptionPane.PLAIN_MESSAGE));
+        try {
+            final int code = Integer.parseInt(input);
+            final boolean deleted = deleteCastMember(code);
+            if (deleted) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Il Membro del Cast è stato eliminato con successo.",
+                        ELIMINAZIONE_COMPLETATA, JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Errore durante l'eliminazione del Membro del Cast.",
+                        ERRORE, JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Inserisci un numero valido per il Codice.",
+                    ERRORE, JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Deletes the cast member with the specified code.
+     *
+     * @param code The code of the cast member to be deleted.
+     * @return True if the cast member was successfully deleted, false otherwise.
+     */
+    private boolean deleteCastMember(final int code) {
+        return ((AdminSessionController) getCurrentSessionContext().getController())
+                .deleteCastMember(code);
+    }
+
+    /**
+     * Displays a dialog for adding a season to a TV series.
+     * The dialog prompts the administrator to enter the series code, season number, summary, and cast ID.
+     */
+    private void addSeasonDialog() {
+        final JTextField seriesCodeField = new JTextField(5);
+        final JTextField seasonNumberField = new JTextField(5);
+        final JTextArea summaryArea = new JTextArea(5, 20);
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel(CODICE_SERIE));
+        panel.add(seriesCodeField);
+        panel.add(new JLabel(NUMERO_STAGIONE));
+        panel.add(seasonNumberField);
+        panel.add(new JLabel("Sunto:"));
+        panel.add(new JScrollPane(summaryArea));
+
+        final int result = JOptionPane.showConfirmDialog(null, panel, "Aggiungi Stagione",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            addSeason(
+                    Integer.parseInt(seriesCodeField.getText()),
+                    Integer.parseInt(seasonNumberField.getText()),
+                    summaryArea.getText());
+        }
+    }
+
+    /**
+     * Adds a season to a TV series with the specified details.
+     *
+     * @param seriesCode    The code of the TV series to which the season belongs.
+     * @param seasonNumber  The number of the season.
+     * @param summary       The summary of the season.
+     */
+    private void addSeason(
+            final int seriesCode, final int seasonNumber, final String summary) {
+        ((AdminSessionController) getCurrentSessionContext().getController())
+                .addSeason(seriesCode, seasonNumber, summary);
+    }
+
+    /**
+     * Displays a dialog for deleting a season from a TV series.
+     * The dialog prompts the administrator to enter the series code and season number.
+     */
+    private void deleteSeasonDialog() {
+        final JTextField seriesCodeField = new JTextField(5);
+        final JTextField seasonNumberField = new JTextField(5);
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel(CODICE_SERIE));
+        panel.add(seriesCodeField);
+        panel.add(new JLabel(NUMERO_STAGIONE));
+        panel.add(seasonNumberField);
+
+        final int result = JOptionPane.showConfirmDialog(null, panel, "Elimina Stagione",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            final boolean deleted = deleteSeason(
+                    Integer.parseInt(seriesCodeField.getText()),
+                    Integer.parseInt(seasonNumberField.getText()));
+
+            if (deleted) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "La stagione è stata eliminata con successo.",
+                        ELIMINAZIONE_COMPLETATA, JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Errore durante l'eliminazione della stagione o la stagione non esiste.",
+                        ERRORE, JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    /**
+     * Deletes a season from a TV series with the specified series code and season number.
+     *
+     * @param seriesCode    The code of the TV series from which the season will be deleted.
+     * @param seasonNumber  The number of the season to be deleted.
+     * @return True if the season was successfully deleted, false otherwise.
+     */
+    private boolean deleteSeason(final int seriesCode, final int seasonNumber) {
+        return ((AdminSessionController) getCurrentSessionContext().getController())
+                .deleteSeason(seriesCode, seasonNumber);
+    }
+
+    /**
+     * Displays a dialog for adding an episode to a TV series season.
+     * The dialog prompts the administrator to enter the series code, season number, episode number, and duration.
+     */
+    private void addEpisodeDialog() {
+        final JTextField seriesCodeField = new JTextField(5);
+        final JTextField seasonNumberField = new JTextField(5);
+        final JTextField episodeNumberField = new JTextField(5);
+        final JTextField durationField = new JTextField(5);
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel(CODICE_SERIE));
+        panel.add(seriesCodeField);
+        panel.add(new JLabel(NUMERO_STAGIONE));
+        panel.add(seasonNumberField);
+        panel.add(new JLabel("Numero Episodio:"));
+        panel.add(episodeNumberField);
+        panel.add(new JLabel("Durata (minuti):"));
+        panel.add(durationField);
+
+        final int result = JOptionPane.showConfirmDialog(null, panel, "Aggiungi Episodio",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            addEpisode(
+                    Integer.parseInt(seriesCodeField.getText()),
+                    Integer.parseInt(seasonNumberField.getText()),
+                    Integer.parseInt(episodeNumberField.getText()),
+                    Integer.parseInt(durationField.getText()));
+        }
+    }
+
+    /**
+     * Adds an episode to a TV series season with the specified details.
+     *
+     * @param seriesCode      The code of the TV series to which the episode belongs.
+     * @param seasonNumber    The number of the season to which the episode belongs.
+     * @param episodeNumber   The number of the episode.
+     * @param duration        The duration of the episode in minutes.
+     */
+    private void addEpisode(
+            final int seriesCode, final int seasonNumber, final int episodeNumber, final int duration) {
+        ((AdminSessionController) getCurrentSessionContext().getController())
+                .addEpisode(seriesCode, seasonNumber, episodeNumber, duration);
+    }
+
+    /**
+     * Displays a dialog for deleting an episode from a TV series season.
+     * The dialog prompts the administrator to enter the series code, season number, and episode number.
+     */
+    private void deleteEpisodeDialog() {
+        final JTextField seriesCodeField = new JTextField(5);
+        final JTextField seasonNumberField = new JTextField(5);
+        final JTextField episodeNumberField = new JTextField(5);
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel(CODICE_SERIE));
+        panel.add(seriesCodeField);
+        panel.add(new JLabel(NUMERO_STAGIONE));
+        panel.add(seasonNumberField);
+        panel.add(new JLabel("Numero Episodio:"));
+        panel.add(episodeNumberField);
+
+        final int result = JOptionPane.showConfirmDialog(null, panel, "Elimina Episodio",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            final boolean deleted = deleteEpisode(
+                    Integer.parseInt(seriesCodeField.getText()),
+                    Integer.parseInt(seasonNumberField.getText()),
+                    Integer.parseInt(episodeNumberField.getText()));
+
+            if (deleted) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "L'episodio è stato eliminato con successo.",
+                        ELIMINAZIONE_COMPLETATA, JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Errore durante l'eliminazione dell'episodio o l'episodio non esiste.",
+                        ERRORE, JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    /**
+     * Deletes an episode from a TV series season with the specified details.
+     *
+     * @param seriesCode      The code of the TV series from which the episode will be deleted.
+     * @param seasonNumber    The number of the season from which the episode will be deleted.
+     * @param episodeNumber   The number of the episode to be deleted.
+     * @return True if the episode was successfully deleted, false otherwise.
+     */
+    private boolean deleteEpisode(final int seriesCode, final int seasonNumber, final int episodeNumber) {
+        return ((AdminSessionController) getCurrentSessionContext().getController())
+                .deleteEpisode(seriesCode, seasonNumber, episodeNumber);
     }
 
     /**
