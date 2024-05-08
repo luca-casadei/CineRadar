@@ -35,10 +35,12 @@ public class AdminControlsView extends AdminPanel {
     private static final String CODICE_SERIE = "Codice Serie:";
     private static final int GRID_Y = 5;
     private static final int GRID_Y1 = 6;
-    private static final int GRID_Y2 = 7;
-    private static final int GRID_Y3 = 9;
-    private static final int GRID_Y4 = 8;
-    private static final int GRID_Y5 = 10;
+    private static final int GRID_Y2 = 9;
+    private static final int GRID_Y3 = 11;
+    private static final int GRID_Y4 = 10;
+    private static final int GRID_Y5 = 12;
+    private static final int GRID_Y6 = 7;
+    private static final int GRID_Y7 = 8;
 
     /**
      * Constructs a new AdminControlsView object with the specified current session context.
@@ -80,6 +82,12 @@ public class AdminControlsView extends AdminPanel {
         addButton("Elimina Membro Cast", e -> {
             deleteCastMemberDialog();
         }, GRID_Y1, gbc);
+        addButton("Aggiungi Cast", e -> {
+            addCastDialog();
+        }, GRID_Y6, gbc);
+        addButton("Elimina Cast", e -> {
+            deleteCastDialog();
+        }, GRID_Y7, gbc);
         addButton("Aggiungi Stagione", e -> {
             addSeasonDialog();
         }, GRID_Y2, gbc);
@@ -283,6 +291,80 @@ public class AdminControlsView extends AdminPanel {
     private boolean deleteSeries(final int code) {
         return ((AdminSessionController) getCurrentSessionContext().getController())
                 .deleteSeries(code);
+    }
+
+    /**
+     * Displays a dialog for adding a cast.
+     * The dialog prompts the administrator to enter the details of the cast.
+     */
+    private void addCastDialog() {
+        final JTextField nameField = new JTextField(20);
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel("Nome del Cast:"));
+        panel.add(nameField);
+
+        final int result = JOptionPane.showConfirmDialog(null, panel, "Aggiungi Cast",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            addCast(nameField.getText());
+        }
+    }
+
+    /**
+     * Adds a cast with the specified details.
+     *
+     * @param name        The name of the cast.
+     */
+    private void addCast(
+            final String name) {
+        ((AdminSessionController) getCurrentSessionContext().getController())
+                .addCast(name);
+    }
+
+    /**
+     * Displays a dialog for deleting a cast.
+     * The dialog prompts the administrator to enter the ID of the cast to be deleted.
+     */
+    private void deleteCastDialog() {
+        final String input = Objects.requireNonNull(
+                JOptionPane.showInputDialog(
+                        null,
+                        "Inserisci l'ID del Cast da eliminare:",
+                        "Elimina Cast", JOptionPane.PLAIN_MESSAGE));
+        try {
+            final int id = Integer.parseInt(input);
+            final boolean deleted = deleteCast(id);
+            if (deleted) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Il Cast è stato eliminato con successo.",
+                        ELIMINAZIONE_COMPLETATA, JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Errore durante l'eliminazione del Cast.",
+                        ERRORE, JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Inserisci un numero valido per l'ID.",
+                    ERRORE, JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Deletes the cast with the specified ID.
+     *
+     * @param id The ID of the cast to be deleted.
+     * @return True if the cast was successfully deleted, false otherwise.
+     */
+    private boolean deleteCast(final int id) {
+        return ((AdminSessionController) getCurrentSessionContext().getController())
+                .deleteCast(id);
     }
 
     /**
