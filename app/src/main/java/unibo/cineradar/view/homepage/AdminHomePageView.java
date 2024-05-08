@@ -2,6 +2,7 @@ package unibo.cineradar.view.homepage;
 
 import unibo.cineradar.view.CineRadarViewFrameImpl;
 import unibo.cineradar.view.ViewContext;
+import unibo.cineradar.view.homepage.admin.AdminCastView;
 import unibo.cineradar.view.homepage.admin.AdminControlsView;
 import unibo.cineradar.view.homepage.admin.AdminProfileView;
 import unibo.cineradar.view.homepage.admin.AdminRankingsView;
@@ -45,7 +46,8 @@ public final class AdminHomePageView extends CineRadarViewFrameImpl {
                 new AdminRequestsView(currentSessionContext),
                 new AdminRankingsView(currentSessionContext),
                 new AdminSerieView(currentSessionContext),
-                new AdminControlsView(currentSessionContext)
+                new AdminControlsView(currentSessionContext),
+                new AdminCastView(currentSessionContext)
         );
 
         this.setInternalComponents();
@@ -70,6 +72,9 @@ public final class AdminHomePageView extends CineRadarViewFrameImpl {
         final JButton seriesButton = new JButton("SERIETV");
         topNavigationPanel.add(seriesButton);
         seriesButton.addActionListener(e -> displayHide(AdminSerieView.class.getCanonicalName()));
+        final JButton castButton = new JButton("CAST");
+        topNavigationPanel.add(castButton);
+        castButton.addActionListener(e -> displayHide(AdminCastView.class.getCanonicalName()));
         final JButton requestsButton = new JButton("RICHIESTE");
         topNavigationPanel.add(requestsButton);
         requestsButton.addActionListener(e -> displayHide(AdminRequestsView.class.getCanonicalName()));
