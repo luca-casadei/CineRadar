@@ -33,6 +33,15 @@ public final class Season {
     }
 
     /**
+     * Gets the code of the series linked to.
+     *
+     * @return The code of the series linked to.
+     */
+    public int getSeriesId() {
+        return seriesId;
+    }
+
+    /**
      * Gets the code of the season.
      *
      * @return The code of the season.

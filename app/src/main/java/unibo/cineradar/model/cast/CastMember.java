@@ -24,7 +24,7 @@ public class CastMember {
      * @param careerDebutDate the career debut date of the cast member
      * @param stageName       the stage name of the cast member
      */
-    CastMember(final int id,
+    public CastMember(final int id,
                final String name,
                final String lastname,
                final LocalDate birthDate,
