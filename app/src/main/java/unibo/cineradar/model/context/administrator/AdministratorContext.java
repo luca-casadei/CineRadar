@@ -1,13 +1,20 @@
 package unibo.cineradar.model.context.administrator;
 
+import unibo.cineradar.model.cast.Cast;
+import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.context.SessionContextImpl;
 import unibo.cineradar.model.db.AdminOps;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.ranking.CastRanking;
+import unibo.cineradar.model.ranking.UserRanking;
 import unibo.cineradar.model.request.Request;
+import unibo.cineradar.model.serie.Episode;
+import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.Account;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * The context of an administrator session.
@@ -15,6 +22,8 @@ import java.util.List;
  * including operations related to films, TV series, and insertion requests.
  */
 public final class AdministratorContext extends SessionContextImpl {
+    private final Map<Film, Cast> detailedFilms;
+    private final List<Serie> detailedSeries;
 
     /**
      * Constructs the context of an administrator.
@@ -23,6 +32,10 @@ public final class AdministratorContext extends SessionContextImpl {
      */
     public AdministratorContext(final Account loggedAccount) {
         super(loggedAccount);
+        try (AdminOps mgr = new AdminOps()) {
+            this.detailedFilms = mgr.getFilmsDetails();
+            this.detailedSeries = mgr.getDetailedSeries();
+        }
     }
 
     /**
@@ -103,4 +116,121 @@ public final class AdministratorContext extends SessionContextImpl {
             return mgr.deleteSeries(code);
         }
     }
+
+    /**
+     * Retrieves detailed information about films and their casts.
+     *
+     * @return An immutable map containing films and their associated casts.
+     */
+    public Map<Film, Cast> getDetailedFilms() {
+        return Map.copyOf(detailedFilms);
+    }
+
+    /**
+     * Gets detailed series.
+     *
+     * @return The list of all detailed series.
+     */
+    public List<Serie> getDetailedSeries() {
+        return List.copyOf(detailedSeries);
+    }
+
+    /**
+     * Adds a new cast member.
+     *
+     * @param castMember The cast member to add.
+     */
+    public void addCastMember(final CastMember castMember) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.addCastMember(castMember);
+        }
+    }
+
+    /**
+     * Deletes a cast member with the specified code.
+     *
+     * @param code The code of the cast member to be deleted.
+     * @return True if the cast member was successfully deleted, false otherwise.
+     */
+    public boolean deleteCastMember(final int code) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.deleteCastMember(code);
+        }
+    }
+
+    /**
+     * Adds a new season.
+     *
+     * @param season The season to add.
+     */
+    public void addSeason(final Season season) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.addSeason(season);
+        }
+    }
+
+    /**
+     * Deletes a season of a TV series.
+     *
+     * @param seriesCode    The code of the TV series.
+     * @param seasonNumber  The season number to be deleted.
+     * @return True if the season was successfully deleted, false otherwise.
+     */
+    public boolean deleteSeason(final int seriesCode, final int seasonNumber) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.deleteSeason(seriesCode, seasonNumber);
+        }
+    }
+
+    /**
+     * Adds a new episode.
+     *
+     * @param episode The episode to add.
+     */
+    public void addEpisode(final Episode episode) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.addEpisode(episode);
+        }
+    }
+
+    /**
+     * Deletes an episode from a TV series.
+     *
+     * @param seriesCode      The code of the TV series.
+     * @param seasonNumber    The season number of the episode.
+     * @param episodeNumber   The episode number to be deleted.
+     * @return True if the episode was successfully deleted, false otherwise.
+     */
+    public boolean deleteEpisode(final int seriesCode, final int seasonNumber, final int episodeNumber) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.deleteEpisode(seriesCode, seasonNumber, episodeNumber);
+        }
+    }
+
+    /**
+     * Retrieves a list of user rankings based on the provided evaluation type.
+     * The method utilizes an AdminOps instance within a try-with-resources block for resource management.
+     *
+     * @param evaluationType The type of evaluation for which rankings are requested.
+     * @return A list of UserRanking objects representing the rankings for the specified evaluation type.
+     */
+    public List<UserRanking> getRankings(final String evaluationType) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getRankings(evaluationType);
+        }
+    }
+
+    /**
+     * Retrieves a list of cast rankings based on the provided evaluation type.
+     * The method utilizes an AdminOps instance within a try-with-resources block for resource management.
+     *
+     * @param evaluationType The type of evaluation for which rankings are requested.
+     * @return A list of CastRanking objects representing the rankings for the specified evaluation type.
+     */
+    public List<CastRanking> getCastRankings(final String evaluationType) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getCastRankings(evaluationType);
+        }
+    }
+
 }
