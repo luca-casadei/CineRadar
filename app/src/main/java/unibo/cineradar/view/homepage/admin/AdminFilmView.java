@@ -40,7 +40,7 @@ public final class AdminFilmView extends AdminPanel {
 
         // Adds the film table to the view
         this.filmTable = super
-                .createTable(((AdminSessionController) currentSessionContext.getController()).getFilms());
+                .createFilmTable();
         final JScrollPane scrollPane = new JScrollPane(filmTable);
         this.add(scrollPane, BorderLayout.CENTER);
     }

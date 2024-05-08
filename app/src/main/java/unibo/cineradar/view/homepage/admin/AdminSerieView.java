@@ -37,7 +37,7 @@ public final class AdminSerieView extends AdminPanel {
         welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
         this.add(welcomeLabel, BorderLayout.NORTH);
 
-        this.serieTable = super.createTable(((AdminSessionController) currentSessionContext.getController()).getSeries());
+        this.serieTable = super.createSerieTable();
         final JScrollPane scrollPane = new JScrollPane(serieTable);
         this.add(scrollPane, BorderLayout.CENTER);
     }
