@@ -307,6 +307,18 @@ public final class UserContext extends SessionContextImpl {
     }
 
     /**
+     * Gets a list of reviews for a series.
+     *
+     * @param seriesId The ID of the series.
+     * @return A list of reviews.
+     */
+    public List<Review> getSeriesReviews(final int seriesId) {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.getSeriesReviews(seriesId);
+        }
+    }
+
+    /**
      * Adds a series review.
      *
      * @param seriesId       The id of the series to review.

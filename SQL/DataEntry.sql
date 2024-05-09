@@ -510,32 +510,32 @@ VALUES (2, 2, 1, 60),
        (2, 2, 4, 60),
        (2, 2, 5, 60);
 
-INSERT INTO visualizzazioni_episodio(UsernameUtente, CodiceSerie, NumeroEpisodio, NumeroStagione, DATA)
-VALUES ("luca", 1, 1, 1, NOW()),
-       ("luca", 1, 1, 2, NOW()),
-       ("luca", 1, 1, 3, NOW()),
-       ("luca", 1, 1, 4, NOW()),
-       ("luca", 1, 1, 5, NOW()),
-       ("luca", 1, 2, 1, NOW()),
-       ("luca", 1, 2, 2, NOW()),
-       ("luca", 1, 2, 3, NOW()),
-       ("luca", 1, 2, 4, NOW()),
-       ("luca", 1, 2, 5, NOW()),
-       ("luca", 1, 3, 1, NOW()),
-       ("luca", 1, 3, 2, NOW()),
-       ("luca", 1, 3, 3, NOW()),
-       ("luca", 1, 3, 4, NOW()),
-       ("luca", 1, 3, 5, NOW()),
-       ("luca", 1, 4, 1, NOW()),
-       ("luca", 1, 4, 2, NOW()),
-       ("luca", 1, 4, 3, NOW()),
-       ("luca", 1, 4, 4, NOW()),
-       ("luca", 1, 4, 5, NOW());
+INSERT INTO visualizzazioni_episodio(UsernameUtente, CodiceSerie, NumeroEpisodio, NumeroStagione, DataVisualizzazione)
+VALUES ("luca", 1, 1, 1, "2024-05-09"),
+       ("luca", 1, 1, 2, "2024-05-09"),
+       ("luca", 1, 1, 3, "2024-05-09"),
+       ("luca", 1, 1, 4, "2024-05-09"),
+       ("luca", 1, 1, 5, "2024-05-09"),
+       ("luca", 1, 2, 1, "2024-05-09"),
+       ("luca", 1, 2, 2, "2024-05-09"),
+       ("luca", 1, 2, 3, "2024-05-09"),
+       ("luca", 1, 2, 4, "2024-05-09"),
+       ("luca", 1, 2, 5, "2024-05-09"),
+       ("luca", 1, 3, 1, "2024-05-09"),
+       ("luca", 1, 3, 2, "2024-05-09"),
+       ("luca", 1, 3, 3, "2024-05-09"),
+       ("luca", 1, 3, 4, "2024-05-09"),
+       ("luca", 1, 3, 5, "2024-05-09"),
+       ("luca", 1, 4, 1, "2024-05-09"),
+       ("luca", 1, 4, 2, "2024-05-09"),
+       ("luca", 1, 4, 3, "2024-05-09"),
+       ("luca", 1, 4, 4, "2024-05-09"),
+       ("luca", 1, 4, 5, "2024-05-09");
 
 -- Tesserine!
 INSERT INTO tessera(CodiceCinema, UsernameUtente, NumeroTessera, DataRinnovo)
-VALUES (1, "luca", 1, NOW()),
-       (1, "mario", 2, NOW());
+VALUES (1, "luca", 1, "2024-05-09"),
+       (1, "mario", 2, "2024-05-09");
 
 -- Recensioni per Breaking Bad
 INSERT INTO recserie(UsernameUtente, CodiceSerie, Titolo, Descrizione, VotoComplessivo)

@@ -159,6 +159,16 @@ public final class UserSessionController extends SessionControllerImpl {
     }
 
     /**
+     * Gets a list of reviews for a series.
+     *
+     * @param seriesId The ID of the series.
+     * @return A list of reviews.
+     */
+    public List<Review> getSeriesReviews(final int seriesId) {
+        return this.userContext.getSeriesReviews(seriesId);
+    }
+
+    /**
      * Checks if the film has been viewed or not.
      *
      * @param filmId The ID of the film.

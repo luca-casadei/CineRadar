@@ -256,11 +256,11 @@ CREATE TABLE VALUTAZIONE_SERIE
 );
 CREATE TABLE VISUALIZZAZIONI_EPISODIO
 (
-    UsernameUtente CHAR(20) NOT NULL,
-    CodiceSerie    INT      NOT NULL,
-    NumeroEpisodio INT      NOT NULL,
-    NumeroStagione INT      NOT NULL,
-    DATA           DATE     NOT NULL,
+    UsernameUtente      CHAR(20) NOT NULL,
+    CodiceSerie         INT      NOT NULL,
+    NumeroEpisodio      INT      NOT NULL,
+    NumeroStagione      INT      NOT NULL,
+    DataVisualizzazione DATE     NOT NULL,
     CONSTRAINT IDVISUALIZZAZIONI_EPISODIO PRIMARY KEY (UsernameUtente, CodiceSerie, NumeroEpisodio, NumeroStagione)
 );
 CREATE TABLE VISUALIZZAZIONI_FILM

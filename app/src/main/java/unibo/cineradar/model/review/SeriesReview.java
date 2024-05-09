@@ -3,7 +3,7 @@ package unibo.cineradar.model.review;
 /**
  * Represents a review for a series.
  */
-public class SerieReview extends Review {
+public class SeriesReview extends Review {
     private final int idSerie;
     private final String serieTitle;
     /**
@@ -16,12 +16,12 @@ public class SerieReview extends Review {
      * @param description   The description of the review.
      * @param overallRating The overall rating of the review.
      */
-    public SerieReview(final int idSerie,
-                       final String serieTitle,
-                       final String username,
-                       final String title,
-                       final String description,
-                       final int overallRating) {
+    public SeriesReview(final int idSerie,
+                        final String serieTitle,
+                        final String username,
+                        final String title,
+                        final String description,
+                        final int overallRating) {
         super(username, title, description, overallRating);
         this.idSerie = idSerie;
         this.serieTitle = serieTitle;
