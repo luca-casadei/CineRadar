@@ -302,7 +302,8 @@ public final class UserContext extends SessionContextImpl {
                         }
                     }
             );
-            return op1 && op2.get();
+            final boolean op3 = mgr.averageSectionFilmVote(filmId, this.user.getUsername());
+            return op1 && op2.get() && op3;
         }
     }
 
@@ -344,7 +345,8 @@ public final class UserContext extends SessionContextImpl {
                         }
                     }
             );
-            return op1 && op2.get();
+            final boolean op3 = mgr.averageSectionSeriesVote(seriesId, this.user.getUsername());
+            return op1 && op2.get() && op3;
         }
     }
 }

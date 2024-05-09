@@ -44,8 +44,8 @@ public final class UserOps extends DBManager {
     private static final String PLOT_NAME = "Trama";
     private static final String ID_FILM_NAME = "CodiceFilm";
     private static final String ID_SERIES_NAME = "CodiceSerie";
+    private static final String USERNAME_NAME = "UsernameUtente";
     private static final String FOUR_VALUES = "VALUES (?,?,?,?)";
-    private static final String USERNAME_USER_NAME = "UsernameUtente";
     private static final int FIRST_PARAMETER = 1;
     private static final int SECOND_PARAMETER = 2;
     private static final int THIRD_PARAMETER = 3;
@@ -271,7 +271,7 @@ public final class UserOps extends DBManager {
                     review = new FilmReview(
                             this.getResultSet().getInt(ID_FILM_NAME),
                             this.getResultSet().getString("TitoloFilm"),
-                            this.getResultSet().getString(USERNAME_USER_NAME),
+                            this.getResultSet().getString(USERNAME_NAME),
                             this.getResultSet().getString("TitoloRecensione"),
                             this.getResultSet().getString("DescrizioneRecensione"),
                             this.getResultSet().getInt("VotoComplessivoRecensione")
@@ -281,7 +281,7 @@ public final class UserOps extends DBManager {
                     review = new SeriesReview(
                             this.getResultSet().getInt(ID_SERIES_NAME),
                             this.getResultSet().getString("TitoloSerie"),
-                            this.getResultSet().getString(USERNAME_USER_NAME),
+                            this.getResultSet().getString(USERNAME_NAME),
                             this.getResultSet().getString("TitoloRecensione"),
                             this.getResultSet().getString("DescrizioneRecensione"),
                             this.getResultSet().getInt("VotoComplessivoRecensione")
@@ -314,7 +314,7 @@ public final class UserOps extends DBManager {
             final List<Review> reviews = new ArrayList<>();
             while (this.getResultSet().next()) {
                 reviews.add(new Review(
-                        this.getResultSet().getString(USERNAME_USER_NAME),
+                        this.getResultSet().getString(USERNAME_NAME),
                         this.getResultSet().getString("Titolo"),
                         this.getResultSet().getString("Descrizione"),
                         this.getResultSet().getInt("VotoComplessivo")
@@ -344,7 +344,7 @@ public final class UserOps extends DBManager {
             while (this.getResultSet().next()) {
                 final Review review;
                 review = new Review(
-                        this.getResultSet().getString(USERNAME_USER_NAME),
+                        this.getResultSet().getString(USERNAME_NAME),
                         this.getResultSet().getString("Titolo"),
                         this.getResultSet().getString("Descrizione"),
                         this.getResultSet().getInt("VotoComplessivo")
@@ -605,6 +605,64 @@ public final class UserOps extends DBManager {
             final String query = "INSERT INTO recfilm(CodiceFilm, UsernameUtente, Titolo, Descrizione) "
                     + FOUR_VALUES;
             return commonReviewOperations(filmId, username, title, desc, query);
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    /**
+     * Calculates the average of the votes from the sections.
+     *
+     * @param filmId   The ID of the movie.
+     * @param username The username of the reviewer.
+     * @return True if the operation succeeds, false otherwise.
+     */
+    public boolean averageSectionFilmVote(final int filmId, final String username) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = """
+                    UPDATE recfilm
+                    SET VotoComplessivo = ( SELECT AVG(Voto) FROM sezionamento_film
+                    WHERE sezionamento_film.UsernameUtente = ?
+                    AND sezionamento_film.CodiceRecFilm = ? )
+                    WHERE recfilm.UsernameUtente = ?
+                    AND recfilm.CodiceFilm = ?""";
+            return averageCommons(filmId, username, query);
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    private boolean averageCommons(final int id,
+                                   final String username,
+                                   final String query) throws SQLException {
+        this.setPreparedStatement(this.getConnection().prepareStatement(query));
+        this.getPreparedStatement().setString(FIRST_PARAMETER, username);
+        this.getPreparedStatement().setInt(SECOND_PARAMETER, id);
+        this.getPreparedStatement().setString(THIRD_PARAMETER, username);
+        this.getPreparedStatement().setInt(FOURTH_PARAMETER, id);
+        this.setResultSet(this.getPreparedStatement().executeQuery());
+        return true;
+    }
+
+    /**
+     * Calculates the average of the votes from the sections.
+     *
+     * @param seriesId The ID of the series.
+     * @param username The username of the reviewer.
+     * @return True if the operation succeeds, false otherwise.
+     */
+    public boolean averageSectionSeriesVote(final int seriesId, final String username) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = """
+                    UPDATE recserie
+                    SET VotoComplessivo = ( SELECT AVG(Voto) FROM sezionamento_serie
+                    WHERE sezionamento_serie.UsernameUtente = ?
+                    AND sezionamento_serie.CodiceRecSerie = ? )
+                    WHERE recserie.UsernameUtente = ?
+                    AND recserie.CodiceSerie = ?""";
+            return averageCommons(seriesId, username, query);
         } catch (SQLException ex) {
             return false;
         }

@@ -1,6 +1,10 @@
 DELETE
 FROM richiesta;
 DELETE
+FROM sezionamento_film;
+DELETE
+FROM sezionamento_serie;
+DELETE
 FROM preferenze;
 DELETE
 FROM sezione;
@@ -567,3 +571,15 @@ VALUES ("Trama", "La storia e il proseguio degli eventi."),
        ("Effetti",
         "Se un elemento è animato, si riferisce alla qualità dell'animazione, senno' agli effetti cinematici."),
        ("Casting", "Come si sono comportati gli attori.");
+
+INSERT INTO sezionamento_film (UsernameUtente, CodiceRecFilm, NomeSezione, Voto)
+VALUES ("luca", 1, "trama", 6),
+       ("luca", 1, "Sonoro", 10),
+       ("luca", 1, "Effetti", 7),
+       ("luca", 1, "Casting", 9);
+
+INSERT INTO sezionamento_serie (UsernameUtente, CodiceRecSerie, NomeSezione, Voto)
+VALUES ("luca", 1, "trama", 8),
+       ("luca", 1, "Sonoro", 1),
+       ("luca", 1, "Effetti", 2),
+       ("luca", 1, "Casting", 10);
