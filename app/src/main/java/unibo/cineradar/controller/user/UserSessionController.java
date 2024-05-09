@@ -181,15 +181,6 @@ public final class UserSessionController extends SessionControllerImpl {
     }
 
     /**
-     * Gets the list of reviews that the user has written.
-     *
-     * @return A list of Reviews.
-     */
-    public List<Review> getReviews() {
-        return userContext.getReviews();
-    }
-
-    /**
      * Cheks if an episode has been viewed.
      *
      * @param seriesCode   The series code.
@@ -207,6 +198,25 @@ public final class UserSessionController extends SessionControllerImpl {
      */
     public List<Genre> getUserPrefs() {
         return userContext.getUserPrefs();
+    }
+
+    /**
+     * Gets the list of reviews that the user has written.
+     *
+     * @return A list of Reviews.
+     */
+    public List<Review> getReviews() {
+        return userContext.getReviews();
+    }
+
+    /**
+     * Retrieves reviews of a particular film.
+     *
+     * @param filmId The id of the specific film.
+     * @return A list of reviews of the given film.
+     */
+    public List<Review> getFilmReviews(final int filmId) {
+        return userContext.getFilmReviews(filmId);
     }
 
     /**

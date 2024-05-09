@@ -298,6 +298,48 @@ public final class UserOps extends DBManager {
     }
 
     /**
+     * Retrieves reviews of a particular film.
+     *
+     * @param filmId The id of the specific film.
+     * @return A list of reviews of the given film.
+     * @throws IllegalArgumentException If an SQL exception occurs.
+     */
+    public List<Review> getFilmReviews(final int filmId) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = """
+                    SELECT film.Codice AS CodiceFilm,
+                    film.Titolo AS TitoloFilm,
+                    recfilm.UsernameUtente,
+                    recfilm.Titolo AS TitoloRecensione,
+                    recfilm.Descrizione AS DescrizioneRecensione,
+                    recfilm.VotoComplessivo AS VotoComplessivoRecensione
+                    FROM recfilm
+                    JOIN film ON recfilm.CodiceFilm = film.Codice
+                    WHERE CodiceFilm = ?""";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setInt(FIRST_PARAMETER, filmId);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            final List<Review> reviews = new ArrayList<>();
+            while (this.getResultSet().next()) {
+                final Review review;
+                review = new FilmReview(
+                        this.getResultSet().getInt(ID_FILM_NAME),
+                        this.getResultSet().getString("TitoloFilm"),
+                        this.getResultSet().getString("UsernameUtente"),
+                        this.getResultSet().getString("TitoloRecensione"),
+                        this.getResultSet().getString("DescrizioneRecensione"),
+                        this.getResultSet().getInt("VotoComplessivoRecensione")
+                );
+                reviews.add(review);
+            }
+            return reviews;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
      * Removes every genre preference of the user.
      *
      * @param username The username of the user.
@@ -593,10 +635,10 @@ public final class UserOps extends DBManager {
     /**
      * Sets the sections of the film review.
      *
-     * @param sectName The name of the section to review.
-     * @param username The username of the reviewer.
-     * @param multimediaId  The code of the film.
-     * @param score    The score of the section.
+     * @param sectName     The name of the section to review.
+     * @param username     The username of the reviewer.
+     * @param multimediaId The code of the film.
+     * @param score        The score of the section.
      * @return True if the operation was successful, false otherwise.
      */
     public boolean addFilmReviewSections(final String sectName,
@@ -630,10 +672,10 @@ public final class UserOps extends DBManager {
     /**
      * Sets the sections of the series review.
      *
-     * @param sectName The name of the section to review.
-     * @param username The username of the reviewer.
-     * @param multimediaId  The code of the review.
-     * @param score    The score of the section.
+     * @param sectName     The name of the section to review.
+     * @param username     The username of the reviewer.
+     * @param multimediaId The code of the review.
+     * @param score        The score of the section.
      * @return True if the operation was successful, false otherwise.
      */
     public boolean addSeriesReviewSection(final String sectName,

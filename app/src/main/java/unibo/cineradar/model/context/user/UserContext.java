@@ -265,11 +265,23 @@ public final class UserContext extends SessionContextImpl {
     }
 
     /**
+     * Retrieves reviews of a particular film.
+     *
+     * @param filmId The id of the specific film.
+     * @return A list of reviews of the given film.
+     */
+    public List<Review> getFilmReviews(final int filmId) {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.getFilmReviews(filmId);
+        }
+    }
+
+    /**
      * Adds a film review.
      *
-     * @param filmId   The id of the film to review.
-     * @param title    The title of the review.
-     * @param desc     The description of the review.
+     * @param filmId         The id of the film to review.
+     * @param title          The title of the review.
+     * @param desc           The description of the review.
      * @param reviewSections The review sections.
      * @return The status of the operation (true, false).
      */
@@ -297,9 +309,9 @@ public final class UserContext extends SessionContextImpl {
     /**
      * Adds a series review.
      *
-     * @param seriesId The id of the series to review.
-     * @param title    The title of the review.
-     * @param desc     The description of the review.
+     * @param seriesId       The id of the series to review.
+     * @param title          The title of the review.
+     * @param desc           The description of the review.
      * @param reviewSections The review sections.
      * @return The status of the operation (true, false).
      */
