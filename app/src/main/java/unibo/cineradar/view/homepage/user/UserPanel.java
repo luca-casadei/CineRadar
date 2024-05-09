@@ -5,7 +5,7 @@ import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.review.FilmReview;
 import unibo.cineradar.model.review.Review;
-import unibo.cineradar.model.review.SerieReview;
+import unibo.cineradar.model.review.SeriesReview;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.homepage.user.details.FilmDetailsView;
@@ -206,10 +206,10 @@ public abstract class UserPanel extends JPanel {
                 multimediaId = filmReview.getIdFilm()
                         + " - [Film]";
                 multimediaTitle = filmReview.getFilmTitle();
-            } else if (review instanceof SerieReview serieReview) {
-                multimediaId = serieReview.getIdSerie()
+            } else if (review instanceof SeriesReview seriesReview) {
+                multimediaId = seriesReview.getIdSerie()
                         + " - [Serie]";
-                multimediaTitle = serieReview.getSerieTitle();
+                multimediaTitle = seriesReview.getSerieTitle();
             } else {
                 throw new IllegalArgumentException();
             }

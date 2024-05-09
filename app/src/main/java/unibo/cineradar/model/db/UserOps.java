@@ -10,7 +10,7 @@ import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.FilmReview;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.review.Section;
-import unibo.cineradar.model.review.SerieReview;
+import unibo.cineradar.model.review.SeriesReview;
 import unibo.cineradar.model.serie.Episode;
 import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
@@ -277,7 +277,7 @@ public final class UserOps extends DBManager {
                     );
                 } else if (this.getResultSet().getInt(ID_FILM_NAME) == NULL
                         && this.getResultSet().getInt(ID_SERIES_NAME) != NULL) {
-                    review = new SerieReview(
+                    review = new SeriesReview(
                             this.getResultSet().getInt(ID_SERIES_NAME),
                             this.getResultSet().getString("TitoloSerie"),
                             this.getResultSet().getString("UsernameUtente"),
@@ -292,6 +292,34 @@ public final class UserOps extends DBManager {
                 reviews.add(review);
             }
             return reviews;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Gets a list of reviews for a single series.
+     *
+     * @param seriesId The unique ID of the series.
+     * @return A list of reviews.
+     */
+    public List<Review> getSeriesReviews(final int seriesId) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "SELECT * from recserie WHERE recserie.UsernameUtente = ?";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setInt(FIRST_PARAMETER, seriesId);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            final List<Review> reviews = new ArrayList<>();
+            while (this.getResultSet().next()) {
+                reviews.add(new Review(
+                        this.getResultSet().getString("UsernameUtente"),
+                        this.getResultSet().getString("Titolo"),
+                        this.getResultSet().getString("Descrizione"),
+                        this.getResultSet().getInt("VotoComplessivo")
+                ));
+            }
+            return List.copyOf(reviews);
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);
         }
@@ -443,7 +471,7 @@ public final class UserOps extends DBManager {
                     + "CodiceSerie, "
                     + "NumeroEpisodio, "
                     + "NumeroStagione, "
-                    + "DATA) "
+                    + "DataVisualizzazione) "
                     + "VALUES(?, ?, ?, ?, ?)";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setString(FIRST_PARAMETER, userName);
