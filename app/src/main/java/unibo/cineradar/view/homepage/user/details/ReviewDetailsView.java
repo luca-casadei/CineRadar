@@ -2,7 +2,6 @@ package unibo.cineradar.view.homepage.user.details;
 
 import unibo.cineradar.view.ViewContext;
 
-import javax.swing.JFrame;
 import java.io.Serial;
 
 // CHECKSTYLE: MagicNumber OFF
@@ -10,7 +9,7 @@ import java.io.Serial;
 /**
  * A view to display detailed information about a multimedia, including reviews.
  */
-public final class ReviewDetailsView extends JFrame {
+public final class ReviewDetailsView extends DetailsView {
     @Serial
     private static final long serialVersionUID = 314494446269420625L;
 

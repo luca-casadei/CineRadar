@@ -19,23 +19,22 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.io.Serial;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-// CHECKSTYLE: MagicNumber OFF
-
 /**
  * A view to display detailed information about a serie.
  */
-public final class SeriesDetailsView extends JFrame {
+public final class SeriesDetailsView extends DetailsView {
     @Serial
     private static final long serialVersionUID = 6530405035909369718L;
 
-    private static final int FRAME_WIDTH = 600;
+    private static final int FRAME_WIDTH = 700;
     private static final int FRAME_HEIGHT = 400;
-    private static final int VERTICAL_MARGIN = 5;
+    private static final int MARGIN = 5;
 
     private final transient UserSessionController uc;
     private JButton reviewButton;
@@ -66,7 +65,8 @@ public final class SeriesDetailsView extends JFrame {
     }
 
     private void initComponents(final ViewContext currentSessionContext, final Serie serie) {
-        final JPanel mainPanel = new JPanel(new BorderLayout());
+        final JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
         // Serie details panel
         final JPanel serieDetailsPanel = new JPanel(new GridLayout(0, 2));
@@ -82,7 +82,7 @@ public final class SeriesDetailsView extends JFrame {
         serieDetailsPanel.add(new JLabel("Numero episodi:"));
         serieDetailsPanel.add(new JLabel(String.valueOf(serie.getNumberOfEpisodes())));
 
-        mainPanel.add(serieDetailsPanel, BorderLayout.NORTH);
+        mainPanel.add(serieDetailsPanel);
 
         // Seasons details panel
         final JPanel seasonsPanel = new JPanel();
@@ -95,7 +95,7 @@ public final class SeriesDetailsView extends JFrame {
 
             // Riassunto della stagione
             final JLabel summaryLabel = new JLabel(actualSeason.getSummary());
-            summaryLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            summaryLabel.setBorder(BorderFactory.createEmptyBorder(MARGIN, MARGIN, MARGIN, MARGIN));
             seasonPanel.add(summaryLabel, BorderLayout.NORTH);
 
             // Panel per membri del cast e episodi
@@ -114,7 +114,7 @@ public final class SeriesDetailsView extends JFrame {
                         + " - "
                         + castMember.getBirthDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
                 castPanel.add(castMemberLabel);
-                castPanel.add(Box.createVerticalStrut(VERTICAL_MARGIN));
+                castPanel.add(Box.createVerticalStrut(MARGIN));
             }
 
             castAndEpisodesPanel.add(new JScrollPane(castPanel), BorderLayout.CENTER);
@@ -138,25 +138,26 @@ public final class SeriesDetailsView extends JFrame {
             seasonsPanel.add(seasonPanel);
         }
 
-        mainPanel.add(new JScrollPane(seasonsPanel), BorderLayout.CENTER);
+        mainPanel.add(seasonsPanel);
+
+        // Review panel
+        final JPanel reviewsPanel = super.getReviewsPanel(this.uc.getSeriesReviews(serie.getSeriesId()));
+        reviewsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mainPanel.add(reviewsPanel);
 
         // Review button
-        reviewButton = new JButton("Recensisci la serie");
-        reviewButton.setEnabled(false); // Inizialmente disabilitato
+        reviewButton = new JButton("Recensisci");
+        reviewButton.setEnabled(false);
         reviewButton.addActionListener(e -> {
             final WriteReviewView writeSerieReviewView = new WriteSerieReviewView(currentSessionContext, serie);
             writeSerieReviewView.setVisible(true);
         });
+        reviewButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mainPanel.add(reviewButton);
 
-        mainPanel.add(reviewButton, BorderLayout.SOUTH);
-
-        add(mainPanel);
+        add(new JScrollPane(mainPanel));
         setVisible(true);
 
-    }
-
-    private void updateReviewButtonState(final int viewedEpisodes, final int totalEpisodes) {
-        reviewButton.setEnabled(viewedEpisodes == totalEpisodes);
     }
 
     private JCheckBox createEpisodeCheckBox(final Episode ep, final List<Episode> viewed) {
@@ -177,6 +178,9 @@ public final class SeriesDetailsView extends JFrame {
         });
         return checkBox;
     }
-}
 
-// CHECKSTYLE: MagicNumber ON
+    private void updateReviewButtonState(final int viewedEpisodes, final int totalEpisodes) {
+        reviewButton.setEnabled(viewedEpisodes == totalEpisodes);
+    }
+
+}
