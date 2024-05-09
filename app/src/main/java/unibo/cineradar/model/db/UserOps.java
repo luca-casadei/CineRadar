@@ -307,7 +307,7 @@ public final class UserOps extends DBManager {
     public List<Review> getSeriesReviews(final int seriesId) {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = "SELECT * from recserie WHERE recserie.UsernameUtente = ?";
+            final String query = "SELECT * from recserie WHERE recserie.CodiceSerie = ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setInt(FIRST_PARAMETER, seriesId);
             this.setResultSet(this.getPreparedStatement().executeQuery());
@@ -336,29 +336,18 @@ public final class UserOps extends DBManager {
     public List<Review> getFilmReviews(final int filmId) {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = """
-                    SELECT film.Codice AS CodiceFilm,
-                    film.Titolo AS TitoloFilm,
-                    recfilm.UsernameUtente,
-                    recfilm.Titolo AS TitoloRecensione,
-                    recfilm.Descrizione AS DescrizioneRecensione,
-                    recfilm.VotoComplessivo AS VotoComplessivoRecensione
-                    FROM recfilm
-                    JOIN film ON recfilm.CodiceFilm = film.Codice
-                    WHERE CodiceFilm = ?""";
+            final String query = "SELECT * from recfilm WHERE recfilm.CodiceFilm = ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setInt(FIRST_PARAMETER, filmId);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             final List<Review> reviews = new ArrayList<>();
             while (this.getResultSet().next()) {
                 final Review review;
-                review = new FilmReview(
-                        this.getResultSet().getInt(ID_FILM_NAME),
-                        this.getResultSet().getString("TitoloFilm"),
+                review = new Review(
                         this.getResultSet().getString(USERNAME_NAME),
-                        this.getResultSet().getString("TitoloRecensione"),
-                        this.getResultSet().getString("DescrizioneRecensione"),
-                        this.getResultSet().getInt("VotoComplessivoRecensione")
+                        this.getResultSet().getString("Titolo"),
+                        this.getResultSet().getString("Descrizione"),
+                        this.getResultSet().getInt("VotoComplessivo")
                 );
                 reviews.add(review);
             }

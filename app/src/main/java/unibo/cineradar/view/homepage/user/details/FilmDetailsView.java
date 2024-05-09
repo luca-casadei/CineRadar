@@ -4,6 +4,7 @@ import unibo.cineradar.controller.user.UserSessionController;
 import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.review.Review;
 import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.homepage.user.review.WriteFilmReviewView;
 import unibo.cineradar.view.homepage.user.review.WriteReviewView;
@@ -11,13 +12,20 @@ import unibo.cineradar.view.homepage.user.review.WriteReviewView;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,7 +40,7 @@ import java.util.Map;
 public final class FilmDetailsView extends JFrame {
     @Serial
     private static final long serialVersionUID = -5729493403413904557L;
-    private static final int FRAME_WIDTH = 600;
+    private static final int FRAME_WIDTH = 700;
     private static final int FRAME_HEIGHT = 400;
     private static final int VERTICAL_MARGIN = 5;
 
@@ -106,8 +114,10 @@ public final class FilmDetailsView extends JFrame {
         mainPanel.add(castPanel, BorderLayout.CENTER);
 
         final JPanel bottomPanel = getBottomPanel(currentSessionContext);
+        final JPanel reviewsPanel = getReviewsPanel();
 
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+        mainPanel.add(reviewsPanel, BorderLayout.CENTER);
 
         add(mainPanel);
         setVisible(true);
@@ -151,4 +161,68 @@ public final class FilmDetailsView extends JFrame {
         });
         return cb;
     }
+
+    private JPanel getReviewsPanel() {
+        final JPanel reviewsPanel = new JPanel(new BorderLayout());
+        reviewsPanel.setBorder(BorderFactory.createTitledBorder("Recensioni"));
+
+        final List<Review> filmReviews = this.uc.getFilmReviews(detailedFilm.getFilmId());
+
+        final String[] columnNames = {"Username", "Titolo Recensione", "Voto complessivo", ""};
+        final Object[][] data = new Object[filmReviews.size()][4];
+
+        for (int i = 0; i < filmReviews.size(); i++) {
+            final Review review = filmReviews.get(i);
+            data[i][0] = review.getUsername();
+            data[i][1] = review.getTitle();
+            data[i][2] = review.getOverallRating();
+            data[i][3] = review;
+        }
+
+        final DefaultTableModel model = new DefaultTableModel(data, columnNames);
+        final JTable table = new JTable(model);
+        table.getColumnModel().getColumn(1).setPreferredWidth(FRAME_WIDTH / 3);
+        table.setDefaultEditor(Object.class, null);
+
+        final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+
+        table.getColumnModel().getColumn(3).setCellRenderer((table1, value, isSelected, hasFocus, row, column) -> {
+            final JButton button = new JButton("Vedi dettagli");
+            button.addActionListener(e -> {
+                final Review review = (Review) value;
+                // TODO: Visualizza i dettagli della recensione
+                JOptionPane.showMessageDialog(null,
+                        review.getDescription(),
+                        "Dettagli recensione",
+                        JOptionPane.INFORMATION_MESSAGE);
+            });
+            return button;
+        });
+
+        table.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(new JCheckBox()) {
+            @Override
+            public Component getTableCellEditorComponent(
+                    final JTable table, final Object value, final boolean isSelected, final int row, final int column
+            ) {
+                return table.getCellRenderer(row, column).getTableCellRendererComponent(
+                        table, value, isSelected, true, row, column
+                );
+            }
+
+            @Override
+            public Object getCellEditorValue() {
+                return null;
+            }
+        });
+
+        final JScrollPane scrollPane = new JScrollPane(table);
+        reviewsPanel.add(scrollPane, BorderLayout.CENTER);
+
+        return reviewsPanel;
+    }
 }
+
