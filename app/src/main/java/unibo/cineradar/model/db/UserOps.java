@@ -9,6 +9,7 @@ import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.FilmReview;
 import unibo.cineradar.model.review.FullFilmReview;
+import unibo.cineradar.model.review.FullSeriesReview;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.review.ReviewSection;
 import unibo.cineradar.model.review.Section;
@@ -49,6 +50,7 @@ public final class UserOps extends DBManager {
     private static final String USERNAME_NAME = "UsernameUtente";
     private static final String NAME_NAME = "Nome";
     private static final String DESC_NAME = "Descrizione";
+    private static final String VOTOC_NAME = "VotoComplessivo";
     private static final String FOUR_VALUES = "VALUES (?,?,?,?)";
     private static final int FIRST_PARAMETER = 1;
     private static final int SECOND_PARAMETER = 2;
@@ -321,10 +323,66 @@ public final class UserOps extends DBManager {
                         this.getResultSet().getString(USERNAME_NAME),
                         this.getResultSet().getString(TITLE_NAME),
                         this.getResultSet().getString(DESC_NAME),
-                        this.getResultSet().getInt("VotoComplessivo")
+                        this.getResultSet().getInt(VOTOC_NAME)
                 ));
             }
             return List.copyOf(reviews);
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * The full series reviews.
+     *
+     * @param seriesId The ID of the series.
+     * @param username The username of the author.
+     * @return An optional of the full series review.
+     */
+    public Optional<FullSeriesReview> getFullSeriesReview(final int seriesId, final String username) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = """
+                    SELECT recserie.*, serie.Titolo AS TitoloSerie
+                    FROM recserie JOIN serie ON recserie.CodiceSerie = serie.Codice
+                    WHERE recserie.UsernameUtente = ?
+                    AND recserie.CodiceSerie = ?""";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setString(FIRST_PARAMETER, username);
+            this.getPreparedStatement().setInt(SECOND_PARAMETER, seriesId);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            if (this.getResultSet().next()) {
+                final FullSeriesReview rev = new FullSeriesReview(
+                        this.getResultSet().getInt("CodiceSerie"),
+                        this.getResultSet().getString("TitoloSerie"),
+                        this.getResultSet().getString("UsernameUtente"),
+                        this.getResultSet().getString(TITLE_NAME),
+                        this.getResultSet().getString(DESC_NAME),
+                        this.getResultSet().getInt(VOTOC_NAME)
+                );
+                final String secondQuery = """
+                        SELECT * FROM sezionamento_serie
+                        WHERE sezionamento_serie.UsernameUtente = ?
+                        AND sezionamento_serie.CodiceRecSerie = ?
+                        """;
+                this.setPreparedStatement(this.getConnection().prepareStatement(secondQuery));
+                this.getPreparedStatement().setString(FIRST_PARAMETER, username);
+                this.getPreparedStatement().setInt(SECOND_PARAMETER, seriesId);
+                this.setResultSet(this.getPreparedStatement().executeQuery());
+                while (this.getResultSet().next()) {
+                    rev.addSection(new ReviewSection(
+                            this.getResultSet().getInt("CodiceRecSerie"),
+                            new Section(
+                                    this.getResultSet().getString(NAME_NAME),
+                                    this.getResultSet().getString("Sezione")
+                            ),
+                            this.getResultSet().getInt("Voto")
+                    ));
+                }
+                return Optional.of(rev);
+            } else {
+                return Optional.empty();
+            }
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);
         }
@@ -356,7 +414,7 @@ public final class UserOps extends DBManager {
                         this.getResultSet().getString("UsernameUtente"),
                         this.getResultSet().getString(TITLE_NAME),
                         this.getResultSet().getString(DESC_NAME),
-                        this.getResultSet().getInt("VotoComplessivo")
+                        this.getResultSet().getInt(VOTOC_NAME)
                 );
                 final String secondQuery = """
                         SELECT * FROM sezionamento_film
@@ -407,7 +465,7 @@ public final class UserOps extends DBManager {
                         this.getResultSet().getString(USERNAME_NAME),
                         this.getResultSet().getString(TITLE_NAME),
                         this.getResultSet().getString(DESC_NAME),
-                        this.getResultSet().getInt("VotoComplessivo")
+                        this.getResultSet().getInt(VOTOC_NAME)
                 );
                 reviews.add(review);
             }

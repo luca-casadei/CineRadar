@@ -7,6 +7,7 @@ import unibo.cineradar.model.context.user.UserContext;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.FullFilmReview;
+import unibo.cineradar.model.review.FullSeriesReview;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.review.ReviewSection;
 import unibo.cineradar.model.review.Section;
@@ -178,6 +179,17 @@ public final class UserSessionController extends SessionControllerImpl {
      */
     public List<Review> getSeriesReviews(final int seriesId) {
         return this.userContext.getSeriesReviews(seriesId);
+    }
+
+    /**
+     * Gets the full review of a film.
+     *
+     * @param seriesId       The ID of the film.
+     * @param usernameUtente The username of the author (not own)
+     * @return A full review.
+     */
+    public FullSeriesReview getFullSeriesReview(final int seriesId, final String usernameUtente) {
+        return this.userContext.getFullSeriesReview(seriesId, usernameUtente);
     }
 
     /**
