@@ -47,6 +47,7 @@ public final class FilmDetailsView extends DetailsView {
      * @param filmId                The id of the detailed film.
      */
     public FilmDetailsView(final ViewContext currentSessionContext, final int filmId) {
+        super(currentSessionContext);
         this.uc = (UserSessionController) currentSessionContext.getController();
         final Map<Film, Cast> detailedFilms =
                 this.uc.getDetailedFilms();
@@ -63,9 +64,7 @@ public final class FilmDetailsView extends DetailsView {
     }
 
     private void initComponents(final ViewContext currentSessionContext) {
-        setTitle(detailedFilm.getTitle()
-                + " - "
-                + this.uc.getAccount().getName());
+        setTitle(detailedFilm.getTitle());
         setSize(FRAME_WIDTH, FRAME_HEIGHT);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 

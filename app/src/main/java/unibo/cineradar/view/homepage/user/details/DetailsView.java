@@ -1,6 +1,9 @@
 package unibo.cineradar.view.homepage.user.details;
 
+import unibo.cineradar.model.review.FilmReview;
 import unibo.cineradar.model.review.Review;
+import unibo.cineradar.model.review.SeriesReview;
+import unibo.cineradar.view.ViewContext;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
@@ -8,7 +11,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -25,6 +27,16 @@ import java.util.List;
 public abstract class DetailsView extends JFrame {
     @Serial
     private static final long serialVersionUID = 6530405035927369718L;
+    private final transient ViewContext viewContext;
+
+    /**
+     * Constructs a details view instance.
+     *
+     * @param currentSessionContext The current session context.
+     */
+    public DetailsView(final ViewContext currentSessionContext) {
+        this.viewContext = currentSessionContext;
+    }
 
     final JPanel getReviewsPanel(final List<Review> reviews) {
         final JPanel reviewsPanel = new JPanel(new BorderLayout());
@@ -55,12 +67,23 @@ public abstract class DetailsView extends JFrame {
         table.getColumnModel().getColumn(3).setCellRenderer((table1, value, isSelected, hasFocus, row, column) -> {
             final JButton button = new JButton("Vedi dettagli");
             button.addActionListener(e -> {
-                final Review review = (Review) value;
-                // TODO: Visualizza i dettagli della recensione
-                JOptionPane.showMessageDialog(null,
-                        review.getDescription(),
-                        "Dettagli recensione",
-                        JOptionPane.INFORMATION_MESSAGE);
+                final ReviewDetailsView reviewDetailsView;
+                if (((Review) value) instanceof FilmReview review) {
+                    reviewDetailsView = new ReviewDetailsView(
+                            this.viewContext,
+                            review,
+                            review.getUsername()
+                    );
+                } else if (((Review) value) instanceof SeriesReview review) {
+                    reviewDetailsView = new ReviewDetailsView(
+                            this.viewContext,
+                            review,
+                            review.getUsername()
+                    );
+                } else {
+                    throw new IllegalStateException();
+                }
+                reviewDetailsView.setVisible(true);
             });
             return button;
         });

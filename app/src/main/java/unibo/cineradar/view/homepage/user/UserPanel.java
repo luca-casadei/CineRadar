@@ -27,6 +27,7 @@ import java.awt.Component;
 import java.awt.Font;
 import java.io.Serial;
 import java.util.List;
+import java.util.Objects;
 
 // CHECKSTYLE: MagicNumber OFF
 
@@ -193,31 +194,32 @@ public abstract class UserPanel extends JPanel {
         // Creates the table model
         final DefaultTableModel model = new DefaultTableModel();
         model.addColumn("Codice multimedia");
+        model.addColumn("Tipologia");
         model.addColumn("Titolo multimedia");
         model.addColumn("Titolo recensione");
-        model.addColumn("Descrizione");
         model.addColumn("Voto complessivo");
 
         // Adds review data to the model
         for (final Review review : reviewList) {
             final String multimediaId;
             final String multimediaTitle;
+            final String multimediaType;
             if (review instanceof FilmReview filmReview) {
-                multimediaId = filmReview.getIdFilm()
-                        + " - [Film]";
+                multimediaId = String.valueOf(filmReview.getIdFilm());
                 multimediaTitle = filmReview.getFilmTitle();
+                multimediaType = "Film";
             } else if (review instanceof SeriesReview seriesReview) {
-                multimediaId = seriesReview.getIdSerie()
-                        + " - [Serie]";
+                multimediaId = String.valueOf(seriesReview.getIdSerie());
                 multimediaTitle = seriesReview.getSerieTitle();
+                multimediaType = "Serie";
             } else {
                 throw new IllegalArgumentException();
             }
             model.addRow(new Object[]{
                     multimediaId,
+                    multimediaType,
                     multimediaTitle,
                     review.getTitle(),
-                    review.getDescription(),
                     review.getOverallRating()
             });
         }
@@ -226,7 +228,23 @@ public abstract class UserPanel extends JPanel {
             if (!e.getValueIsAdjusting()) {
                 final int selectedRow = ((DefaultListSelectionModel) e.getSource()).getLeadSelectionIndex();
                 if (selectedRow != -1) {
-                    openReviewDetailsView(this.getCurrentSessionContext());
+                    if (Objects.equals((String) model.getValueAt(selectedRow, 1), "Film")) {
+                        openReviewDetailsView(
+                                this.getCurrentSessionContext(),
+                                ((UserSessionController) currentSessionContext.getController()).getFullFilmReview(
+                                        Integer.parseInt((String) model.getValueAt(selectedRow, 0)),
+                                        ((UserSessionController) currentSessionContext.getController()).getAccount().getUsername()
+                                )
+                        );
+                    } else if (Objects.equals((String) model.getValueAt(selectedRow, 1), "Serie")) {
+                        openReviewDetailsView(
+                                this.getCurrentSessionContext(),
+                                ((UserSessionController) currentSessionContext.getController()).getFullSeriesReview(
+                                        Integer.parseInt((String) model.getValueAt(selectedRow, 0)),
+                                        ((UserSessionController) currentSessionContext.getController()).getAccount().getUsername()
+                                )
+                        );
+                    }
                 }
             }
         };
@@ -247,8 +265,13 @@ public abstract class UserPanel extends JPanel {
         seriesDetailsView.setVisible(true);
     }
 
-    private void openReviewDetailsView(final ViewContext currentSessionContext) {
-        final ReviewDetailsView reviewDetailsView = new ReviewDetailsView(currentSessionContext);
+    private void openReviewDetailsView(final ViewContext currentSessionContext,
+                                       final Review review) {
+        final ReviewDetailsView reviewDetailsView = new ReviewDetailsView(
+                currentSessionContext,
+                review,
+                review.getUsername()
+        );
         reviewDetailsView.setVisible(true);
     }
 }

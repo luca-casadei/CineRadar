@@ -46,6 +46,7 @@ public final class SeriesDetailsView extends DetailsView {
      * @param serieId               The ID of the series to get the details of.
      */
     public SeriesDetailsView(final ViewContext currentSessionContext, final int serieId) {
+        super(currentSessionContext);
         setSize(FRAME_WIDTH, FRAME_HEIGHT);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.uc = (UserSessionController) currentSessionContext.getController();
@@ -54,8 +55,7 @@ public final class SeriesDetailsView extends DetailsView {
 
         for (final Serie actualSerie : detailedSeries) {
             if (actualSerie.getSeriesId() == serieId) {
-                setTitle(actualSerie.getTitle() + " - "
-                        + currentSessionContext.getController().getAccount().getName());
+                setTitle(actualSerie.getTitle());
                 initComponents(currentSessionContext, actualSerie);
                 return;
             }

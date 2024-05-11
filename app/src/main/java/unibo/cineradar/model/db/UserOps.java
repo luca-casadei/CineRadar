@@ -313,13 +313,18 @@ public final class UserOps extends DBManager {
     public List<Review> getSeriesReviews(final int seriesId) {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = "SELECT * from recserie WHERE recserie.CodiceSerie = ?";
+            final String query = """
+                    SELECT recserie.*, serie.Titolo AS TitoloSerie
+                    FROM recserie JOIN serie ON recserie.CodiceSerie = serie.Codice
+                    WHERE recserie.CodiceSerie = ?""";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setInt(FIRST_PARAMETER, seriesId);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             final List<Review> reviews = new ArrayList<>();
             while (this.getResultSet().next()) {
-                reviews.add(new Review(
+                reviews.add(new SeriesReview(
+                        this.getResultSet().getInt(ID_SERIES_NAME),
+                        this.getResultSet().getString(TITLE_NAME + "Serie"),
                         this.getResultSet().getString(USERNAME_NAME),
                         this.getResultSet().getString(TITLE_NAME),
                         this.getResultSet().getString(DESC_NAME),
@@ -362,6 +367,7 @@ public final class UserOps extends DBManager {
                 );
                 final String secondQuery = """
                         SELECT * FROM sezionamento_serie
+                        JOIN sezione ON sezionamento_serie.NomeSezione = sezione.Nome
                         WHERE sezionamento_serie.UsernameUtente = ?
                         AND sezionamento_serie.CodiceRecSerie = ?
                         """;
@@ -374,7 +380,7 @@ public final class UserOps extends DBManager {
                             this.getResultSet().getInt("CodiceRecSerie"),
                             new Section(
                                     this.getResultSet().getString(NAME_NAME),
-                                    this.getResultSet().getString("Sezione")
+                                    this.getResultSet().getString("Dettaglio")
                             ),
                             this.getResultSet().getInt("Voto")
                     ));
@@ -418,6 +424,7 @@ public final class UserOps extends DBManager {
                 );
                 final String secondQuery = """
                         SELECT * FROM sezionamento_film
+                        JOIN sezione ON sezionamento_film.NomeSezione = sezione.Nome
                         WHERE sezionamento_film.UsernameUtente = ?
                         AND sezionamento_film.CodiceRecFilm = ?
                         """;
@@ -430,7 +437,7 @@ public final class UserOps extends DBManager {
                             this.getResultSet().getInt("CodiceRecFilm"),
                             new Section(
                                     this.getResultSet().getString(NAME_NAME),
-                                    this.getResultSet().getString("Sezione")
+                                    this.getResultSet().getString("Dettaglio")
                             ),
                             this.getResultSet().getInt("Voto")
                     ));
@@ -453,15 +460,20 @@ public final class UserOps extends DBManager {
      */
     public List<Review> getFilmReviews(final int filmId) {
         Objects.requireNonNull(this.getConnection());
+        final String query = """
+                SELECT recfilm.*, film.Titolo AS TitoloFilm\s
+                FROM recfilm JOIN film ON recfilm.CodiceFilm = film.Codice\s
+                WHERE recfilm.CodiceFilm = ?""";
         try {
-            final String query = "SELECT * from recfilm WHERE recfilm.CodiceFilm = ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setInt(FIRST_PARAMETER, filmId);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             final List<Review> reviews = new ArrayList<>();
             while (this.getResultSet().next()) {
                 final Review review;
-                review = new Review(
+                review = new FilmReview(
+                        this.getResultSet().getInt(ID_FILM_NAME),
+                        this.getResultSet().getString(TITLE_NAME + "Film"),
                         this.getResultSet().getString(USERNAME_NAME),
                         this.getResultSet().getString(TITLE_NAME),
                         this.getResultSet().getString(DESC_NAME),
