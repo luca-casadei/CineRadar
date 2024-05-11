@@ -8,7 +8,9 @@ import unibo.cineradar.model.cast.Director;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.FilmReview;
+import unibo.cineradar.model.review.FullFilmReview;
 import unibo.cineradar.model.review.Review;
+import unibo.cineradar.model.review.ReviewSection;
 import unibo.cineradar.model.review.Section;
 import unibo.cineradar.model.review.SeriesReview;
 import unibo.cineradar.model.serie.Episode;
@@ -45,6 +47,8 @@ public final class UserOps extends DBManager {
     private static final String ID_FILM_NAME = "CodiceFilm";
     private static final String ID_SERIES_NAME = "CodiceSerie";
     private static final String USERNAME_NAME = "UsernameUtente";
+    private static final String NAME_NAME = "Nome";
+    private static final String DESC_NAME = "Descrizione";
     private static final String FOUR_VALUES = "VALUES (?,?,?,?)";
     private static final int FIRST_PARAMETER = 1;
     private static final int SECOND_PARAMETER = 2;
@@ -103,7 +107,7 @@ public final class UserOps extends DBManager {
             if (this.getResultSet().next()) {
                 return Optional.of(new User(
                         this.getResultSet().getString("Username"),
-                        this.getResultSet().getString("Nome"),
+                        this.getResultSet().getString(NAME_NAME),
                         this.getResultSet().getString("Cognome"),
                         this.getResultSet().getDate("DataNascita").toLocalDate(),
                         this.getResultSet().getBoolean("TargaPremio")
@@ -315,12 +319,68 @@ public final class UserOps extends DBManager {
             while (this.getResultSet().next()) {
                 reviews.add(new Review(
                         this.getResultSet().getString(USERNAME_NAME),
-                        this.getResultSet().getString("Titolo"),
-                        this.getResultSet().getString("Descrizione"),
+                        this.getResultSet().getString(TITLE_NAME),
+                        this.getResultSet().getString(DESC_NAME),
                         this.getResultSet().getInt("VotoComplessivo")
                 ));
             }
             return List.copyOf(reviews);
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Gets a full review given its username and ID.
+     *
+     * @param filmId   The ID of the reviewed film.
+     * @param username The username of the reviewed film.
+     * @return A full review.
+     */
+    public Optional<FullFilmReview> getFullFilmReview(final int filmId, final String username) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = """
+                    SELECT recfilm.*, film.Titolo AS TitoloFilm
+                    FROM recfilm JOIN film ON recfilm.CodiceFilm = film.Codice
+                    WHERE recfilm.UsernameUtente = ?
+                    AND recfilm.CodiceFilm = ?""";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setString(FIRST_PARAMETER, username);
+            this.getPreparedStatement().setInt(SECOND_PARAMETER, filmId);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            if (this.getResultSet().next()) {
+                final FullFilmReview rev = new FullFilmReview(
+                        this.getResultSet().getInt("CodiceFilm"),
+                        this.getResultSet().getString("TitoloFilm"),
+                        this.getResultSet().getString("UsernameUtente"),
+                        this.getResultSet().getString(TITLE_NAME),
+                        this.getResultSet().getString(DESC_NAME),
+                        this.getResultSet().getInt("VotoComplessivo")
+                );
+                final String secondQuery = """
+                        SELECT * FROM sezionamento_film
+                        WHERE sezionamento_film.UsernameUtente = ?
+                        AND sezionamento_film.CodiceRecFilm = ?
+                        """;
+                this.setPreparedStatement(this.getConnection().prepareStatement(secondQuery));
+                this.getPreparedStatement().setString(FIRST_PARAMETER, username);
+                this.getPreparedStatement().setInt(SECOND_PARAMETER, filmId);
+                this.setResultSet(this.getPreparedStatement().executeQuery());
+                while (this.getResultSet().next()) {
+                    rev.addSection(new ReviewSection(
+                            this.getResultSet().getInt("CodiceRecFilm"),
+                            new Section(
+                                    this.getResultSet().getString(NAME_NAME),
+                                    this.getResultSet().getString("Sezione")
+                            ),
+                            this.getResultSet().getInt("Voto")
+                    ));
+                }
+                return Optional.of(rev);
+            } else {
+                return Optional.empty();
+            }
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);
         }
@@ -345,8 +405,8 @@ public final class UserOps extends DBManager {
                 final Review review;
                 review = new Review(
                         this.getResultSet().getString(USERNAME_NAME),
-                        this.getResultSet().getString("Titolo"),
-                        this.getResultSet().getString("Descrizione"),
+                        this.getResultSet().getString(TITLE_NAME),
+                        this.getResultSet().getString(DESC_NAME),
                         this.getResultSet().getInt("VotoComplessivo")
                 );
                 reviews.add(review);
@@ -392,8 +452,8 @@ public final class UserOps extends DBManager {
             this.setResultSet(this.getPreparedStatement().executeQuery());
             while (this.getResultSet().next()) {
                 g.add(
-                        new Genre(this.getResultSet().getString("Nome"),
-                                this.getResultSet().getString("Descrizione"),
+                        new Genre(this.getResultSet().getString(NAME_NAME),
+                                this.getResultSet().getString(DESC_NAME),
                                 this.getResultSet().getInt("NumeroVisualizzati"))
                 );
             }
@@ -696,7 +756,7 @@ public final class UserOps extends DBManager {
             final List<Section> sections = new ArrayList<>();
             while (this.getResultSet().next()) {
                 final Section section = new Section(
-                        this.getResultSet().getString("Nome"),
+                        this.getResultSet().getString(NAME_NAME),
                         this.getResultSet().getString("Dettaglio")
                 );
                 sections.add(section);

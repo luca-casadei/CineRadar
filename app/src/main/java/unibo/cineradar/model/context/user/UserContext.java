@@ -6,6 +6,7 @@ import unibo.cineradar.model.context.SessionContextImpl;
 import unibo.cineradar.model.db.UserOps;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
+import unibo.cineradar.model.review.FullFilmReview;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.review.ReviewSection;
 import unibo.cineradar.model.review.Section;
@@ -304,6 +305,19 @@ public final class UserContext extends SessionContextImpl {
             );
             final boolean op3 = mgr.averageSectionFilmVote(filmId, this.user.getUsername());
             return op1 && op2.get() && op3;
+        }
+    }
+
+    /**
+     * Gets the full review of a film.
+     *
+     * @param filmId         The ID of the film.
+     * @param authorUsername The username of the author (not own)
+     * @return A full review.
+     */
+    public FullFilmReview getFullFilmReview(final int filmId, final String authorUsername) {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.getFullFilmReview(filmId, authorUsername).orElse(null);
         }
     }
 
