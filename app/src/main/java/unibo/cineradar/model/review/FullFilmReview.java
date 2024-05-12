@@ -11,7 +11,7 @@ public final class FullFilmReview extends FilmReview {
     private final List<ReviewSection> sections;
 
     /**
-     * Constructs a Serie review.
+     * Constructs a full film review.
      *
      * @param idFilm        The id of the film that has been reviewed.
      * @param filmTitle     The title of the film that has been reviewed.

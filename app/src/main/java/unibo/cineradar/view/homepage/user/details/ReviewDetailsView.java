@@ -2,6 +2,8 @@ package unibo.cineradar.view.homepage.user.details;
 
 import unibo.cineradar.controller.user.UserSessionController;
 import unibo.cineradar.model.review.FilmReview;
+import unibo.cineradar.model.review.FullFilmReview;
+import unibo.cineradar.model.review.FullSeriesReview;
 import unibo.cineradar.model.review.Review;
 import unibo.cineradar.model.review.SeriesReview;
 import unibo.cineradar.view.ViewContext;
@@ -14,6 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.io.Serial;
 
 // CHECKSTYLE: MagicNumber OFF
 
@@ -21,6 +24,7 @@ import java.awt.GridLayout;
  * A view to display detailed information about a review.
  */
 public class ReviewDetailsView extends DetailsView {
+    @Serial
     private static final long serialVersionUID = 314494446269420625L;
 
     private final transient Review review;
@@ -76,13 +80,21 @@ public class ReviewDetailsView extends DetailsView {
         final JPanel ratingsPanel = new JPanel(new GridLayout(0, 2));
         ratingsPanel.setBorder(BorderFactory.createTitledBorder("Voti sezione"));
 
-        /*
+
         // Add each section and its rating
-        for (final String section : review.getSections()) {
-            ratingsPanel.add(new JLabel(section));
-            ratingsPanel.add(new JLabel(String.valueOf(review.getRating(section))));
+        if (this.review instanceof FilmReview) {
+            ((FullFilmReview) review).getSections().forEach(e -> {
+                ratingsPanel.add(new JLabel(e.section().getName()));
+                ratingsPanel.add(new JLabel(String.valueOf(e.score())));
+            });
+        } else if (review instanceof SeriesReview) {
+            ((FullSeriesReview) review).getSections().forEach(e -> {
+                ratingsPanel.add(new JLabel(e.section().getName()));
+                ratingsPanel.add(new JLabel(String.valueOf(e.score())));
+            });
+        } else {
+            throw new IllegalStateException();
         }
-        */
 
         mainPanel.add(ratingsPanel, BorderLayout.SOUTH);
 
