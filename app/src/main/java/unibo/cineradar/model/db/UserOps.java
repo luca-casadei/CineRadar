@@ -692,6 +692,36 @@ public final class UserOps extends DBManager {
      *
      * @param recUsername The username of the reviewed user.
      * @param username    The username of the reviewer.
+     * @param serieRecId   The ID of the review.
+     * @param positive    If the review is positive or negative.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean evaluateSerieRec(final String recUsername,
+                                   final String username,
+                                   final int serieRecId,
+                                   final boolean positive) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "INSERT INTO valutazione_serie "
+                    + "(UsernameUtenteValutato, CodiceRecSerie, UsernameUtente, Positiva)"
+                    + FOUR_VALUES;
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setString(FIRST_PARAMETER, recUsername);
+            this.getPreparedStatement().setInt(SECOND_PARAMETER, serieRecId);
+            this.getPreparedStatement().setString(THIRD_PARAMETER, username);
+            this.getPreparedStatement().setBoolean(FOURTH_PARAMETER, positive);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            return true;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    /**
+     * Adds a review evaluation.
+     *
+     * @param recUsername The username of the reviewed user.
+     * @param username    The username of the reviewer.
      * @param filmRecId   The ID of the review.
      * @param positive    If the review is positive or negative.
      * @return True if the operation was successful, false otherwise.
@@ -703,12 +733,12 @@ public final class UserOps extends DBManager {
         Objects.requireNonNull(this.getConnection());
         try {
             final String query = "INSERT INTO valutazione_film "
-                    + "(UsernameUtenteValutato, CodiceRecFilm, UsernameUtente, positiva)"
+                    + "(UsernameUtenteValutato, CodiceRecFilm, UsernameUtente, Positiva)"
                     + FOUR_VALUES;
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setString(FIRST_PARAMETER, recUsername);
-            this.getPreparedStatement().setString(SECOND_PARAMETER, username);
-            this.getPreparedStatement().setInt(THIRD_PARAMETER, filmRecId);
+            this.getPreparedStatement().setInt(SECOND_PARAMETER, filmRecId);
+            this.getPreparedStatement().setString(THIRD_PARAMETER, username);
             this.getPreparedStatement().setBoolean(FOURTH_PARAMETER, positive);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             return true;

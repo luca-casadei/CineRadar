@@ -9,6 +9,7 @@ import unibo.cineradar.model.review.SeriesReview;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -16,6 +17,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.Serial;
 
 // CHECKSTYLE: MagicNumber OFF
@@ -28,6 +31,7 @@ public class ReviewDetailsView extends DetailsView {
     private static final long serialVersionUID = 314494446269420625L;
 
     private final transient Review review;
+    private final String usernameOwnerReview;
 
     /**
      * Constructs a new ReviewDetailsView.
@@ -41,6 +45,7 @@ public class ReviewDetailsView extends DetailsView {
                              final String username) {
         super(currentSessionContext);
         final UserSessionController uc = (UserSessionController) currentSessionContext.getController();
+        this.usernameOwnerReview = username;
         if (review instanceof FilmReview) {
             this.review = uc.getFullFilmReview(((FilmReview) review).getIdFilm(), username);
         } else if (review instanceof SeriesReview) {
@@ -48,10 +53,10 @@ public class ReviewDetailsView extends DetailsView {
         } else {
             throw new IllegalStateException();
         }
-        initComponents();
+        initComponents(uc);
     }
 
-    private void initComponents() {
+    private void initComponents(final UserSessionController uc) {
         setTitle("Dettagli Recensione");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -80,7 +85,6 @@ public class ReviewDetailsView extends DetailsView {
         final JPanel ratingsPanel = new JPanel(new GridLayout(0, 2));
         ratingsPanel.setBorder(BorderFactory.createTitledBorder("Voti sezione"));
 
-
         // Add each section and its rating
         if (this.review instanceof FilmReview) {
             ((FullFilmReview) review).getSections().forEach(e -> {
@@ -96,9 +100,36 @@ public class ReviewDetailsView extends DetailsView {
             throw new IllegalStateException();
         }
 
-        mainPanel.add(ratingsPanel, BorderLayout.SOUTH);
+        final JPanel checkboxPanel = new JPanel();
+        final JCheckBox usefulCheckbox = new JCheckBox("Recensione utile");
+        checkboxPanel.add(usefulCheckbox);
+
+        final JPanel combinedPanel = new JPanel(new BorderLayout());
+        combinedPanel.add(ratingsPanel, BorderLayout.CENTER);
+        combinedPanel.add(checkboxPanel, BorderLayout.SOUTH);
+
+        mainPanel.add(combinedPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(final WindowEvent e) {
+                if (review instanceof FilmReview) {
+                    uc.evaluateFilmRec(usernameOwnerReview,
+                            uc.getAccount().getUsername(),
+                            ((FilmReview) review).getIdFilm(),
+                            usefulCheckbox.isSelected());
+                } else if (review instanceof SeriesReview) {
+                    uc.evaluateSerieRec(usernameOwnerReview,
+                            uc.getAccount().getUsername(),
+                            ((SeriesReview) review).getIdSerie(),
+                            usefulCheckbox.isSelected());
+                }
+
+            }
+        });
+
         setVisible(true);
     }
 }

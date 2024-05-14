@@ -13,6 +13,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -95,6 +96,19 @@ public abstract class WriteReviewView extends JFrame {
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
+                final String title = titleField.getText().trim();
+                final String description = descriptionArea.getText().trim();
+
+                if (title.isEmpty() || description.isEmpty()) {
+                    JOptionPane.showMessageDialog(
+                            WriteReviewView.this,
+                            "Il titolo e la descrizione non possono essere vuoti.",
+                            "Errore di validazione",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                    return;
+                }
+
                 final int multimediaId;
                 if (multimedia instanceof Film) {
                     multimediaId = ((Film) multimedia).getFilmId();
@@ -114,7 +128,10 @@ public abstract class WriteReviewView extends JFrame {
                     }
                 }
 
-                insertReview(multimediaId, titleField.getText(), descriptionArea.getText(), selectedSections);
+                final boolean reviewInserted = insertReview(multimediaId, title, description, selectedSections);
+                if (reviewInserted) {
+                    dispose();
+                }
             }
         });
 
@@ -137,11 +154,13 @@ public abstract class WriteReviewView extends JFrame {
      * @param title        the title of the review
      * @param desc         the description of the review
      * @param sections     the list of review sections
+     *
+     * @return The status of the operation (true, false).
      */
-    public abstract void insertReview(int multimediaId,
-                                      String title,
-                                      String desc,
-                                      List<ReviewSection> sections);
+    public abstract boolean insertReview(int multimediaId,
+                                         String title,
+                                         String desc,
+                                         List<ReviewSection> sections);
 
     /**
      * Loads sections and respective rating scales.

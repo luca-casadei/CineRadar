@@ -284,4 +284,36 @@ public final class UserSessionController extends SessionControllerImpl {
                                 final List<ReviewSection> sections) {
         return this.userContext.reviewSeries(seriesId, title, desc, sections);
     }
+
+    /**
+     * Adds a review evaluation.
+     *
+     * @param recUsername The username of the reviewed user.
+     * @param username    The username of the reviewer.
+     * @param filmRecId   The ID of the review.
+     * @param positive    If the review is positive or negative.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean evaluateFilmRec(final String recUsername,
+                                   final String username,
+                                   final int filmRecId,
+                                   final boolean positive) {
+        return this.userContext.evaluateFilmRec(recUsername, username, filmRecId, positive);
+    }
+
+    /**
+     * Adds a review evaluation.
+     *
+     * @param recUsername The username of the reviewed user.
+     * @param username    The username of the reviewer.
+     * @param serieRecId   The ID of the review.
+     * @param positive    If the review is positive or negative.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean evaluateSerieRec(final String recUsername,
+                                   final String username,
+                                   final int serieRecId,
+                                   final boolean positive) {
+        return this.userContext.evaluateSerieRec(recUsername, username, serieRecId, positive);
+    }
 }

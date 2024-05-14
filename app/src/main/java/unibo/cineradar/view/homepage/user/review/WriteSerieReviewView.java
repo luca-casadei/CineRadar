@@ -33,10 +33,10 @@ public class WriteSerieReviewView extends WriteReviewView {
      * @param sections     the list of review sections
      */
     @Override
-    public void insertReview(final int multimediaId,
+    public boolean insertReview(final int multimediaId,
                              final String title,
                              final String desc,
                              final List<ReviewSection> sections) {
-        super.getUserSessionContext().reviewSeries(multimediaId, title, desc, sections);
+        return super.getUserSessionContext().reviewSeries(multimediaId, title, desc, sections);
     }
 }
