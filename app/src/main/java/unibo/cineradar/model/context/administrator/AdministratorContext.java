@@ -54,6 +54,19 @@ public final class AdministratorContext extends SessionContextImpl {
     }
 
     /**
+     * Deletes a series review.
+     *
+     * @param seriesId       The ID of the reviewed series.
+     * @param authorUsername The username of the author.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean delSeriesReview(final int seriesId, final String authorUsername) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.delSeriesReview(seriesId, authorUsername);
+        }
+    }
+
+    /**
      * Gets the list of insertion requests.
      *
      * @return A list containing insertion requests.

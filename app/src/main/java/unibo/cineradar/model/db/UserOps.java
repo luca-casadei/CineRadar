@@ -207,7 +207,7 @@ public final class UserOps extends DBManager {
                         this.getResultSet().getString(TITLE_NAME),
                         this.getResultSet().getInt(LIMIT_AGE_NAME),
                         this.getResultSet().getString(PLOT_NAME),
-                        this.getResultSet().getInt("Durata"),
+                        this.getResultSet().getInt("DurataComplessiva"),
                         this.getResultSet().getInt("NumeroEpisodi")
                 ));
             } else {
@@ -599,8 +599,8 @@ public final class UserOps extends DBManager {
             this.getPreparedStatement().setInt(THIRD_PARAMETER, episodeId);
             this.getPreparedStatement().setInt(FOURTH_PARAMETER, seasonId);
             this.getPreparedStatement().setDate(FIFTH_PARAMETER, new Date(System.currentTimeMillis()));
-            this.setResultSet(this.getPreparedStatement().executeQuery());
-            return true;
+            final int affected = this.getPreparedStatement().executeUpdate();
+            return affected >= 0;
         } catch (SQLException ex) {
             return false;
         }

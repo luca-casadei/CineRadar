@@ -514,7 +514,7 @@ VALUES (2, 2, 1, 60),
        (2, 2, 4, 60),
        (2, 2, 5, 60);
 
-INSERT INTO visualizzazioni_episodio(UsernameUtente, CodiceSerie, NumeroEpisodio, NumeroStagione, DataVisualizzazione)
+INSERT INTO visualizzazioni_episodio(UsernameUtente, CodiceSerie, NumeroStagione, NumeroEpisodio, DataVisualizzazione)
 VALUES ("luca", 1, 1, 1, "2024-05-09"),
        ("luca", 1, 1, 2, "2024-05-09"),
        ("luca", 1, 1, 3, "2024-05-09"),

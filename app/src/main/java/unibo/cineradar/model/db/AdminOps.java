@@ -638,6 +638,32 @@ public final class AdminOps extends DBManager {
     }
 
     /**
+     * Deletes a series review.
+     *
+     * @param seriesId       The ID of the reviewed series.
+     * @param authorUsername The username of the author.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean delSeriesReview(final int seriesId, final String authorUsername) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String secQuery = "DELETE FROM sezionamento_serie WHERE CodiceRecSerie = ? AND UsernameUtente = ?";
+            setPreparedStatement(getConnection().prepareStatement(secQuery));
+            getPreparedStatement().setInt(1, seriesId);
+            getPreparedStatement().setString(2, authorUsername);
+            getPreparedStatement().executeUpdate();
+            final String query = "DELETE FROM recserie WHERE recserie.CodiceSerie = ? AND recserie.UsernameUtente = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, seriesId);
+            getPreparedStatement().setString(2, authorUsername);
+            final int rowsAffected = getPreparedStatement().executeUpdate();
+            return rowsAffected >= 0;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    /**
      * Retrieves a list of user rankings based on the provided evaluation type.
      *
      * @param evaluationType The type of evaluation for which rankings are requested.
