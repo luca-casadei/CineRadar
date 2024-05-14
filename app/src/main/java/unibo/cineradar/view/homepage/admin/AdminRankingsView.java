@@ -2,6 +2,7 @@ package unibo.cineradar.view.homepage.admin;
 
 import unibo.cineradar.controller.administrator.AdminSessionController;
 import unibo.cineradar.model.ranking.CastRanking;
+import unibo.cineradar.model.ranking.EvalType;
 import unibo.cineradar.model.ranking.UserRanking;
 import unibo.cineradar.view.ViewContext;
 
@@ -119,7 +120,7 @@ public class AdminRankingsView extends AdminPanel {
     private void addRankingTableDataThreeAttributes(final JTable table) {
         final DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
         final List<CastRanking> castRankings = ((AdminSessionController) this.getCurrentSessionContext().getController())
-                .getCastRankings("BestDirectors");
+                .getCastRankings(EvalType.BEST_DIRECTORS);
         for (final CastRanking castRanking : castRankings) {
             tableModel.addRow(new Object[]{
                     castRanking.name(),

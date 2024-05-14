@@ -7,6 +7,7 @@ import unibo.cineradar.model.context.SessionContextImpl;
 import unibo.cineradar.model.db.AdminOps;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.ranking.CastRanking;
+import unibo.cineradar.model.ranking.EvalType;
 import unibo.cineradar.model.ranking.UserRanking;
 import unibo.cineradar.model.request.Request;
 import unibo.cineradar.model.serie.Episode;
@@ -36,6 +37,19 @@ public final class AdministratorContext extends SessionContextImpl {
         try (AdminOps mgr = new AdminOps()) {
             this.detailedFilms = mgr.getFilmsDetails();
             this.detailedSeries = mgr.getDetailedSeries();
+        }
+    }
+
+    /**
+     * Deletes a film review.
+     *
+     * @param filmId         The ID of the reviewed film.
+     * @param authorUsername The username of the author.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean delFilmReview(final int filmId, final String authorUsername) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.delFilmReview(filmId, authorUsername);
         }
     }
 
@@ -173,8 +187,8 @@ public final class AdministratorContext extends SessionContextImpl {
     /**
      * Deletes a season of a TV series.
      *
-     * @param seriesCode    The code of the TV series.
-     * @param seasonNumber  The season number to be deleted.
+     * @param seriesCode   The code of the TV series.
+     * @param seasonNumber The season number to be deleted.
      * @return True if the season was successfully deleted, false otherwise.
      */
     public boolean deleteSeason(final int seriesCode, final int seasonNumber) {
@@ -197,9 +211,9 @@ public final class AdministratorContext extends SessionContextImpl {
     /**
      * Deletes an episode from a TV series.
      *
-     * @param seriesCode      The code of the TV series.
-     * @param seasonNumber    The season number of the episode.
-     * @param episodeNumber   The episode number to be deleted.
+     * @param seriesCode    The code of the TV series.
+     * @param seasonNumber  The season number of the episode.
+     * @param episodeNumber The episode number to be deleted.
      * @return True if the episode was successfully deleted, false otherwise.
      */
     public boolean deleteEpisode(final int seriesCode, final int seasonNumber, final int episodeNumber) {
@@ -228,7 +242,7 @@ public final class AdministratorContext extends SessionContextImpl {
      * @param evaluationType The type of evaluation for which rankings are requested.
      * @return A list of CastRanking objects representing the rankings for the specified evaluation type.
      */
-    public List<CastRanking> getCastRankings(final String evaluationType) {
+    public List<CastRanking> getCastRankings(final EvalType evaluationType) {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.getCastRankings(evaluationType);
         }

@@ -8,6 +8,7 @@ import unibo.cineradar.model.cast.Casting;
 import unibo.cineradar.model.cast.Director;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.ranking.CastRanking;
+import unibo.cineradar.model.ranking.EvalType;
 import unibo.cineradar.model.ranking.UserRanking;
 import unibo.cineradar.model.request.Request;
 import unibo.cineradar.model.serie.Episode;
@@ -284,46 +285,47 @@ public final class AdminOps extends DBManager {
      * @throws IllegalArgumentException If an SQL exception occurs.
      */
     public Map<Film, Cast> getFilmsDetails() {
-        final String query = "SELECT film.Codice AS CodiceFilm, "
-                + "film.Titolo AS TitoloFilm, "
-                + "film.EtaLimite AS EtaLimiteFilm, "
-                + "film.Trama AS TramaFilm, "
-                + "film.Durata AS DurataFilm, "
-                + "film.CodiceCast AS CodiceCastFilm, "
-                + "membrocast.Codice AS CodiceMembroCast, "
-                + "membrocast.Nome AS NomeMembroCast, "
-                + "membrocast.Cognome AS CognomeMembroCast, "
-                + "membrocast.DataNascita AS DataNascitaMembroCast, "
-                + "membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast, "
-                + "membrocast.NomeArte AS NomeArteMembroCast, "
-                + "membrocast.TipoAttore AS TipoAttoreMembroCast, "
-                + "membrocast.TipoRegista AS TipoRegistaMembroCast "
-                + "FROM film "
-                + "JOIN casting ON film.CodiceCast = casting.Codice "
-                + "JOIN partecipazione_cast ON casting.codice = partecipazione_cast.CodiceCast "
-                + "JOIN membrocast ON partecipazione_cast.CodiceMembro = membrocast.Codice";
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            final ResultSet resultSet = preparedStatement.executeQuery();
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT film.Codice AS CodiceFilm, "
+                    + "film.Titolo AS TitoloFilm, "
+                    + "film.EtaLimite AS EtaLimiteFilm, "
+                    + "film.Trama AS TramaFilm, "
+                    + "film.Durata AS DurataFilm, "
+                    + "film.CodiceCast AS CodiceCastFilm, "
+                    + "membrocast.Codice AS CodiceMembroCast, "
+                    + "membrocast.Nome AS NomeMembroCast, "
+                    + "membrocast.Cognome AS CognomeMembroCast, "
+                    + "membrocast.DataNascita AS DataNascitaMembroCast, "
+                    + "membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast, "
+                    + "membrocast.NomeArte AS NomeArteMembroCast, "
+                    + "membrocast.TipoAttore AS TipoAttoreMembroCast, "
+                    + "membrocast.TipoRegista AS TipoRegistaMembroCast "
+                    + "FROM film "
+                    + "JOIN casting ON film.CodiceCast = casting.Codice "
+                    + "JOIN partecipazione_cast ON casting.codice = partecipazione_cast.CodiceCast "
+                    + "JOIN membrocast ON partecipazione_cast.CodiceMembro = membrocast.Codice";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
             final Map<Film, Cast> detailedFilms = new HashMap<>();
-            while (resultSet.next()) {
-                final int filmCode = resultSet.getInt("CodiceFilm");
+            while (getResultSet().next()) {
+                final int filmCode = getResultSet().getInt("CodiceFilm");
                 final Film film = new Film(
                         filmCode,
-                        resultSet.getString("TitoloFilm"),
-                        resultSet.getInt("EtaLimiteFilm"),
-                        resultSet.getString("TramaFilm"),
-                        resultSet.getInt("DurataFilm"),
-                        resultSet.getInt("CodiceCastFilm")
+                        getResultSet().getString("TitoloFilm"),
+                        getResultSet().getInt("EtaLimiteFilm"),
+                        getResultSet().getString("TramaFilm"),
+                        getResultSet().getInt("DurataFilm"),
+                        getResultSet().getInt("CodiceCastFilm")
                 );
                 final Cast cast = detailedFilms.getOrDefault(film, new Cast());
                 cast.addCastMember(new CastMember(
-                        resultSet.getInt("CodiceMembroCast"),
-                        resultSet.getString("NomeMembroCast"),
-                        resultSet.getString("CognomeMembroCast"),
-                        resultSet.getDate("DataNascitaMembroCast").toLocalDate(),
-                        resultSet.getDate("DataDebuttoCarrieraMembroCast").toLocalDate(),
-                        resultSet.getString("NomeArteMembroCast")
+                        getResultSet().getInt("CodiceMembroCast"),
+                        getResultSet().getString("NomeMembroCast"),
+                        getResultSet().getString("CognomeMembroCast"),
+                        getResultSet().getDate("DataNascitaMembroCast").toLocalDate(),
+                        getResultSet().getDate("DataDebuttoCarrieraMembroCast").toLocalDate(),
+                        getResultSet().getString("NomeArteMembroCast")
                 ));
                 detailedFilms.put(film, cast);
             }
@@ -342,8 +344,7 @@ public final class AdminOps extends DBManager {
     public List<Serie> getDetailedSeries() {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = QUERY_SERIES;
-            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.setPreparedStatement(this.getConnection().prepareStatement(QUERY_SERIES));
             this.setResultSet(this.getPreparedStatement().executeQuery());
             return processResultSet();
         } catch (SQLException ex) {
@@ -452,7 +453,7 @@ public final class AdminOps extends DBManager {
      * Retrieves a new CastMember object from the current row of the ResultSet.
      *
      * @return A CastMember object representing a member of the cast.
-     * @throws SQLException If there's an issue with retrieving data from the ResultSet.
+     * @throws SQLException             If there's an issue with retrieving data from the ResultSet.
      * @throws IllegalArgumentException If the member's type cannot be determined.
      */
     private CastMember getNewCastMember() throws SQLException {
@@ -611,6 +612,32 @@ public final class AdminOps extends DBManager {
     }
 
     /**
+     * Deletes a film review.
+     *
+     * @param filmId         The ID of the reviewed film.
+     * @param authorUsername The username of the author.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean delFilmReview(final int filmId, final String authorUsername) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String secQuery = "DELETE FROM sezionamento_film WHERE CodiceRecFilm = ? AND UsernameUtente = ?";
+            setPreparedStatement(getConnection().prepareStatement(secQuery));
+            getPreparedStatement().setInt(1, filmId);
+            getPreparedStatement().setString(2, authorUsername);
+            getPreparedStatement().executeUpdate();
+            final String query = "DELETE FROM recfilm WHERE recfilm.CodiceFilm = ? AND recfilm.UsernameUtente = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, filmId);
+            getPreparedStatement().setString(2, authorUsername);
+            final int rowsAffected = getPreparedStatement().executeUpdate();
+            return rowsAffected >= 0;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    /**
      * Retrieves a list of user rankings based on the provided evaluation type.
      *
      * @param evaluationType The type of evaluation for which rankings are requested.
@@ -701,24 +728,22 @@ public final class AdminOps extends DBManager {
      * @throws IllegalArgumentException if an invalid evaluation type is provided.
      * @throws IllegalArgumentException if there is an error retrieving rankings from the database.
      */
-    public List<CastRanking> getCastRankings(final String evaluationType) {
+    public List<CastRanking> getCastRankings(final EvalType evaluationType) {
         Objects.requireNonNull(getConnection());
         try {
             final String query = switch (evaluationType) {
-                case "BestDirectors" ->
-                        "SELECT Nome, Cognome, COUNT(*) AS NumeroPresenze "
-                                + "FROM partecipazione_cast "
-                                + "JOIN membrocast ON membrocast.Codice = partecipazione_cast.CodiceMembro "
-                                + "GROUP BY Nome, Cognome "
-                                + "ORDER BY NumeroPresenze"
-                                + " LIMIT 5";
+                case BEST_DIRECTORS -> "SELECT Nome, Cognome, COUNT(*) AS NumeroPresenze "
+                        + "FROM partecipazione_cast "
+                        + "JOIN membrocast ON membrocast.Codice = partecipazione_cast.CodiceMembro "
+                        + "GROUP BY Nome, Cognome "
+                        + "ORDER BY NumeroPresenze"
+                        + " LIMIT 5";
                 default -> throw new IllegalArgumentException("Invalid evaluation type: " + evaluationType);
             };
-
             setPreparedStatement(getConnection().prepareStatement(query));
-
-            final ResultSet resultSet = getPreparedStatement().executeQuery();
+            setResultSet(getPreparedStatement().executeQuery());
             final List<CastRanking> rankings = new ArrayList<>();
+            final ResultSet resultSet = getResultSet();
             while (resultSet.next()) {
                 rankings.add(new CastRanking(
                         resultSet.getString(1),
@@ -738,35 +763,36 @@ public final class AdminOps extends DBManager {
      * @throws IllegalArgumentException If an error occurs while retrieving cast members from the database.
      */
     public List<CastMember> getCastMembers() {
-        final String query = "SELECT * FROM membrocast";
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            final ResultSet resultSet = preparedStatement.executeQuery();
-            final List<CastMember> castMembers = new ArrayList<>();
-            while (resultSet.next()) {
-                if (resultSet.getBoolean("TipoAttore")) {
-                    castMembers.add(new Actor(
-                            resultSet.getInt(1),
-                            resultSet.getString(2),
-                            resultSet.getString(3),
-                            resultSet.getDate(4).toLocalDate(),
-                            resultSet.getDate(INDEX).toLocalDate(),
-                            resultSet.getString(INDEX1)
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT * FROM membrocast";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
+            final List<CastMember> members = new ArrayList<>();
+            while (getResultSet().next()) {
+                if (getResultSet().getBoolean("TipoAttore")) {
+                    members.add(new Actor(
+                            getResultSet().getInt(1),
+                            getResultSet().getString(2),
+                            getResultSet().getString(3),
+                            getResultSet().getDate(4).toLocalDate(),
+                            getResultSet().getDate(INDEX).toLocalDate(),
+                            getResultSet().getString(INDEX1)
                     ));
                 } else {
-                    castMembers.add(new Director(
-                            resultSet.getInt(1),
-                            resultSet.getString(2),
-                            resultSet.getString(3),
-                            resultSet.getDate(4).toLocalDate(),
-                            resultSet.getDate(INDEX).toLocalDate(),
-                            resultSet.getString(INDEX1)
+                    members.add(new Director(
+                            getResultSet().getInt(1),
+                            getResultSet().getString(2),
+                            getResultSet().getString(3),
+                            getResultSet().getDate(4).toLocalDate(),
+                            getResultSet().getDate(INDEX).toLocalDate(),
+                            getResultSet().getString(INDEX1)
                     ));
                 }
             }
-            return castMembers;
+            return List.copyOf(members);
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error retrieving cast member", ex);
+            throw new IllegalArgumentException("Error retrieving cast members", ex);
         }
     }
 

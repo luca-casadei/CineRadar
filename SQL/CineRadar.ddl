@@ -139,7 +139,7 @@ CREATE TABLE RECFILM
     CodiceFilm      INT          NOT NULL,
     Titolo          VARCHAR(50)  NOT NULL,
     Descrizione     VARCHAR(500) NOT NULL,
-    VotoComplessivo INT          NOT NULL CHECK (VotoComplessivo >= 0),
+    VotoComplessivo INT          NOT NULL DEFAULT 0 CHECK (VotoComplessivo >= 0),
     CONSTRAINT IDRECFILM_ID PRIMARY KEY (UsernameUtente, CodiceFilm)
 );
 CREATE TABLE RECSERIE

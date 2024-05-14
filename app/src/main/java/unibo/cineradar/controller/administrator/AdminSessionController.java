@@ -10,6 +10,7 @@ import unibo.cineradar.model.cast.Director;
 import unibo.cineradar.model.context.administrator.AdministratorContext;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.ranking.CastRanking;
+import unibo.cineradar.model.ranking.EvalType;
 import unibo.cineradar.model.ranking.UserRanking;
 import unibo.cineradar.model.request.Request;
 import unibo.cineradar.model.serie.Episode;
@@ -247,7 +248,7 @@ public final class AdminSessionController extends SessionControllerImpl {
      * @param evaluationType The type of evaluation for which rankings are requested.
      * @return A list of CastRanking objects representing the rankings for the specified evaluation type.
      */
-    public List<CastRanking> getCastRankings(final String evaluationType) {
+    public List<CastRanking> getCastRankings(final EvalType evaluationType) {
         return this.administratorContext.getCastRankings(evaluationType);
     }
 
