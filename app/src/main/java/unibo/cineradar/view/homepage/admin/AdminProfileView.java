@@ -45,6 +45,9 @@ public final class AdminProfileView extends AdminPanel {
         final JLabel nameLabel = new JLabel("Nome: " + admin.getName());
         final JLabel surnameLabel = new JLabel("Cognome: " + admin.getLastName());
         final JLabel usernameLabel = new JLabel("Username: " + admin.getUsername());
+        nameLabel.setHorizontalAlignment(JLabel.CENTER);
+        surnameLabel.setHorizontalAlignment(JLabel.CENTER);
+        usernameLabel.setHorizontalAlignment(JLabel.CENTER);
         userInfoPanel.add(nameLabel);
         userInfoPanel.add(surnameLabel);
         userInfoPanel.add(usernameLabel);

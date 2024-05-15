@@ -54,7 +54,7 @@ public abstract class AdminPanel extends JPanel {
      *
      * @return The current session context.
      */
-    protected ViewContext getCurrentSessionContext() {
+    protected final ViewContext getCurrentSessionContext() {
         return this.currentSessionContext;
     }
 
@@ -101,7 +101,7 @@ public abstract class AdminPanel extends JPanel {
      *
      * @return A JTable of a cast list.
      */
-    protected JTable createCastTable() {
+    protected final JTable createCastTable() {
         final DefaultTableModel model = new DefaultTableModel();
         model.addColumn("Codice");
         model.addColumn("NomeCast");
@@ -126,7 +126,7 @@ public abstract class AdminPanel extends JPanel {
      *
      * @return The populated JTable.
      */
-    protected JTable createCastMemberTable() {
+    protected final JTable createCastMemberTable() {
         final DefaultTableModel model = new DefaultTableModel();
         model.addColumn("Codice");
         model.addColumn("Nome");

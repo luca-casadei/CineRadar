@@ -802,8 +802,8 @@ public final class AdminOps extends DBManager {
                             getResultSet().getString(2),
                             getResultSet().getString(3),
                             getResultSet().getDate(4).toLocalDate(),
-                            getResultSet().getDate(INDEX).toLocalDate(),
-                            getResultSet().getString(INDEX1)
+                            getResultSet().getDate(PARAMETER_INDEX3).toLocalDate(),
+                            getResultSet().getString(8)
                     ));
                 } else {
                     members.add(new Director(
@@ -811,8 +811,8 @@ public final class AdminOps extends DBManager {
                             getResultSet().getString(2),
                             getResultSet().getString(3),
                             getResultSet().getDate(4).toLocalDate(),
-                            getResultSet().getDate(INDEX).toLocalDate(),
-                            getResultSet().getString(INDEX1)
+                            getResultSet().getDate(PARAMETER_INDEX3).toLocalDate(),
+                            getResultSet().getString(8)
                     ));
                 }
             }
