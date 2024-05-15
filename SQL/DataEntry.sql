@@ -52,6 +52,8 @@ ALTER TABLE film
     AUTO_INCREMENT 1;
 ALTER TABLE serie
     AUTO_INCREMENT 1;
+ALTER TABLE membrocast
+    AUTO_INCREMENT 1;
 INSERT INTO account(Username, PASSWORD, Nome, Cognome)
 VALUES ("admin",
         "ea6dc907a62197d8b424b12d78b44dbd374fab1cef45b46897d9b88ebb6a8fa95453b15df2b79a26b8c25ff79995e0d2e2c952dbcb70335daec71383a435b78f",
@@ -190,8 +192,8 @@ INSERT INTO film (Titolo, EtaLimite, Trama, Durata, CodiceCast)
 VALUES ('Unbroken', 16, 'Film sulla seconda guerra mondiale', 120, 1);
 
 -- Inserisci membri del cast
-INSERT INTO membrocast (Codice, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
-VALUES (1, 'Jack', 'Connell', '1990-09-01', true, false, '2005-05-13', 'Jack Connell');
+INSERT INTO membrocast (Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
+VALUES ('Jack', 'Connell', '1990-09-01', true, false, '2005-05-13', 'Jack Connell');
 
 -- Associa il membro del cast al cast del film
 INSERT INTO partecipazione_cast (CodiceMembro, CodiceCast)
@@ -206,9 +208,9 @@ INSERT INTO film (Titolo, EtaLimite, Trama, Durata, CodiceCast)
 VALUES ('Inception', 14, 'Film di fantascienza e azione', 148, 2);
 
 -- Inserisci membri del cast per il secondo film
-INSERT INTO membrocast (Codice, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
-VALUES (2, 'Leonardo', 'DiCaprio', '1974-11-11', true, false, '1989-02-08', 'Leonardo DiCaprio'),
-       (3, 'Joseph', 'Gordon-Levitt', '1981-02-17', true, false, '1988-06-19', 'Joseph Gordon-Levitt');
+INSERT INTO membrocast (Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
+VALUES ('Leonardo', 'DiCaprio', '1974-11-11', true, false, '1989-02-08', 'Leonardo DiCaprio'),
+       ('Joseph', 'Gordon-Levitt', '1981-02-17', true, false, '1988-06-19', 'Joseph Gordon-Levitt');
 
 -- Associa i membri del cast al cast del secondo film
 INSERT INTO partecipazione_cast (CodiceMembro, CodiceCast)
@@ -224,11 +226,11 @@ INSERT INTO film (Titolo, EtaLimite, Trama, Durata, CodiceCast)
 VALUES ('The Matrix', 14, 'Film di fantascienza e azione', 136, 3);
 
 -- Inserisci membri del cast per il terzo film
-INSERT INTO membrocast (Codice, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
-VALUES (4, 'Keanu', 'Reeves', '1964-09-02', true, false, '1984-01-01', 'Keanu Reeves'),
-       (5, 'Carrie-Anne', 'Moss', '1967-08-21', true, false, '1988-01-01', 'Carrie-Anne Moss'),
-       (6, 'Lana', 'Wachowski', '1965-06-21', false, true, '1995-01-01', 'Lana Wachowski'),
-       (7, 'Lilly', 'Wachowski', '1967-12-29', false, true, '1995-01-01', 'Lilly Wachowski');
+INSERT INTO membrocast (Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
+VALUES ('Keanu', 'Reeves', '1964-09-02', true, false, '1984-01-01', 'Keanu Reeves'),
+       ('Carrie-Anne', 'Moss', '1967-08-21', true, false, '1988-01-01', 'Carrie-Anne Moss'),
+       ('Lana', 'Wachowski', '1965-06-21', false, true, '1995-01-01', 'Lana Wachowski'),
+       ('Lilly', 'Wachowski', '1967-12-29', false, true, '1995-01-01', 'Lilly Wachowski');
 
 -- Associa i membri del cast al cast del terzo film
 INSERT INTO partecipazione_cast (CodiceMembro, CodiceCast)
@@ -246,10 +248,10 @@ INSERT INTO film (Titolo, EtaLimite, Trama, Durata, CodiceCast)
 VALUES ('Interstellar', 12, 'Film di fantascienza e avventura', 169, 4);
 
 -- Inserisci membri del cast per il quarto film
-INSERT INTO membrocast (Codice, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
-VALUES (8, 'Matthew', 'McConaughey', '1969-11-04', true, false, '1991-06-01', 'Matthew McConaughey'),
-       (9, 'Anne', 'Hathaway', '1982-11-12', true, false, '1999-09-01', 'Anne Hathaway'),
-       (10, 'Christopher', 'Nolan', '1970-07-30', false, true, '1998-01-01', 'Christopher Nolan');
+INSERT INTO membrocast (Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
+VALUES ('Matthew', 'McConaughey', '1969-11-04', true, false, '1991-06-01', 'Matthew McConaughey'),
+       ('Anne', 'Hathaway', '1982-11-12', true, false, '1999-09-01', 'Anne Hathaway'),
+       ('Christopher', 'Nolan', '1970-07-30', false, true, '1998-01-01', 'Christopher Nolan');
 
 -- Associa i membri del cast al cast del quarto film
 INSERT INTO partecipazione_cast (CodiceMembro, CodiceCast)
@@ -266,9 +268,9 @@ INSERT INTO film (Titolo, EtaLimite, Trama, Durata, CodiceCast)
 VALUES ('The Dark Knight', 14, 'Film di azione e thriller', 152, 5);
 
 -- Inserisci membri del cast per il quinto film
-INSERT INTO membrocast (Codice, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
-VALUES (11, 'Christian', 'Bale', '1974-01-30', true, false, '1986-01-01', 'Christian Bale'),
-       (12, 'Heath', 'Ledger', '1979-04-04', true, false, '1999-01-01', 'Heath Ledger');
+INSERT INTO membrocast (Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
+VALUES ('Christian', 'Bale', '1974-01-30', true, false, '1986-01-01', 'Christian Bale'),
+       ('Heath', 'Ledger', '1979-04-04', true, false, '1999-01-01', 'Heath Ledger');
 
 -- Associa i membri del cast al cast del quinto film
 INSERT INTO partecipazione_cast (CodiceMembro, CodiceCast)
@@ -363,9 +365,9 @@ INSERT INTO casting(Nome)
 VALUES ('Breaking Bad Cast');
 
 -- Inserisci membri del cast della prima stagione di Breaking Bad
-INSERT INTO membrocast (Codice, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
-VALUES (13, 'Bryan', 'Cranston', '1956-03-07', true, false, '1980-05-06', 'Bryan Cranston'),
-       (14, 'Aaron', 'Paul', '1979-08-27', true, false, '1998-02-19', 'Aaron Paul');
+INSERT INTO membrocast (Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
+VALUES ('Bryan', 'Cranston', '1956-03-07', true, false, '1980-05-06', 'Bryan Cranston'),
+       ('Aaron', 'Paul', '1979-08-27', true, false, '1998-02-19', 'Aaron Paul');
 
 -- Associa i membri del cast al cast della prima stagione di Breaking Bad
 INSERT INTO partecipazione_cast (CodiceMembro, CodiceCast)
@@ -388,9 +390,9 @@ VALUES (1, 1, 1, 20),
 INSERT INTO casting(Nome)
 VALUES ('Breaking Bad Cast - Stagione 2');
 -- Inserisci membri del cast della seconda stagione di Breaking Bad
-INSERT INTO membrocast (Codice, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
-VALUES (15, 'Anna', 'Gunn', '1968-08-11', true, false, '1992-06-19', 'Anna Gunn'),
-       (16, 'Dean', 'Norris', '1963-04-08', true, false, '1986-01-19', 'Dean Norris');
+INSERT INTO membrocast (Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
+VALUES ('Anna', 'Gunn', '1968-08-11', true, false, '1992-06-19', 'Anna Gunn'),
+       ('Dean', 'Norris', '1963-04-08', true, false, '1986-01-19', 'Dean Norris');
 
 -- Associa i membri del cast al cast della seconda stagione di Breaking Bad
 INSERT INTO partecipazione_cast (CodiceMembro, CodiceCast)
@@ -413,9 +415,9 @@ VALUES (1, 2, 1, 45),
 INSERT INTO casting(Nome)
 VALUES ('Breaking Bad Cast - Stagione 3');
 -- Inserisci membri del cast della terza stagione di Breaking Bad
-INSERT INTO membrocast (Codice, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
-VALUES (17, 'Giancarlo', 'Esposito', '1958-04-26', true, false, '1980-03-19', 'Giancarlo Esposito'),
-       (18, 'Jonathan', 'Banks', '1947-01-31', true, false, '1972-11-15', 'Jonathan Banks');
+INSERT INTO membrocast (Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
+VALUES ('Giancarlo', 'Esposito', '1958-04-26', true, false, '1980-03-19', 'Giancarlo Esposito'),
+       ('Jonathan', 'Banks', '1947-01-31', true, false, '1972-11-15', 'Jonathan Banks');
 
 -- Associa i membri del cast al cast della terza stagione di Breaking Bad
 INSERT INTO partecipazione_cast (CodiceMembro, CodiceCast)
@@ -438,9 +440,9 @@ VALUES (1, 3, 1, 50),
 INSERT INTO casting(Nome)
 VALUES ('Breaking Bad Cast - Stagione 4');
 -- Inserisci membri del cast della quarta stagione di Breaking Bad
-INSERT INTO membrocast (Codice, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
-VALUES (19, 'Bob', 'Odenkirk', '1962-10-22', true, false, '1987-09-12', 'Bob Odenkirk'),
-       (20, 'Betsy', 'Brandt', '1973-03-14', true, false, '1998-06-28', 'Betsy Brandt');
+INSERT INTO membrocast (Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
+VALUES ('Bob', 'Odenkirk', '1962-10-22', true, false, '1987-09-12', 'Bob Odenkirk'),
+       ('Betsy', 'Brandt', '1973-03-14', true, false, '1998-06-28', 'Betsy Brandt');
 
 -- Associa i membri del cast al cast della quarta stagione di Breaking Bad
 INSERT INTO partecipazione_cast (CodiceMembro, CodiceCast)
@@ -468,9 +470,9 @@ INSERT INTO casting(Nome)
 VALUES ('Game of Thrones Cast');
 
 -- Inserisci membri del cast della prima stagione di Game of Thrones
-INSERT INTO membrocast (Codice, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
-VALUES (21, 'Emilia', 'Clarke', '1986-10-23', true, false, '2009-04-08', 'Emilia Clarke'),
-       (22, 'Kit', 'Harington', '1986-12-26', true, false, '2008-09-11', 'Kit Harington');
+INSERT INTO membrocast (Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
+VALUES ('Emilia', 'Clarke', '1986-10-23', true, false, '2009-04-08', 'Emilia Clarke'),
+       ('Kit', 'Harington', '1986-12-26', true, false, '2008-09-11', 'Kit Harington');
 
 -- Associa i membri del cast al cast della prima stagione di Game of Thrones
 INSERT INTO partecipazione_cast (CodiceMembro, CodiceCast)
@@ -493,9 +495,9 @@ VALUES (2, 1, 1, 60),
 INSERT INTO casting(Nome)
 VALUES ('Game of Thrones Cast - Stagione 2');
 -- Inserisci membri del cast della seconda stagione di Game of Thrones
-INSERT INTO membrocast (Codice, Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
-VALUES (23, 'Peter', 'Dinklage', '1969-06-11', true, false, '1991-12-15', 'Peter Dinklage'),
-       (24, 'Lena', 'Headey', '1973-10-03', true, false, '1992-06-28', 'Lena Headey');
+INSERT INTO membrocast (Nome, Cognome, DataNascita, TipoAttore, TipoRegista, DataDebuttoCarriera, NomeArte)
+VALUES ('Peter', 'Dinklage', '1969-06-11', true, false, '1991-12-15', 'Peter Dinklage'),
+       ('Lena', 'Headey', '1973-10-03', true, false, '1992-06-28', 'Lena Headey');
 
 -- Associa i membri del cast al cast della seconda stagione di Game of Thrones
 INSERT INTO partecipazione_cast (CodiceMembro, CodiceCast)
@@ -514,7 +516,7 @@ VALUES (2, 2, 1, 60),
        (2, 2, 4, 60),
        (2, 2, 5, 60);
 
-INSERT INTO visualizzazioni_episodio(UsernameUtente, CodiceSerie, NumeroStagione, NumeroEpisodio, DataVisualizzazione)
+INSERT INTO visualizzazioni_episodio(UsernameUtente, CodiceSerie, NumeroEpisodio, NumeroStagione, DataVisualizzazione)
 VALUES ("luca", 1, 1, 1, "2024-05-09"),
        ("luca", 1, 1, 2, "2024-05-09"),
        ("luca", 1, 1, 3, "2024-05-09"),
