@@ -3,31 +3,33 @@ package unibo.cineradar.view.homepage;
 import unibo.cineradar.view.CineRadarViewFrameImpl;
 import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.homepage.admin.AdminCastView;
-import unibo.cineradar.view.homepage.admin.AdminControlsView;
 import unibo.cineradar.view.homepage.admin.AdminProfileView;
 import unibo.cineradar.view.homepage.admin.AdminRankingsView;
 import unibo.cineradar.view.homepage.admin.AdminRequestsView;
 import unibo.cineradar.view.homepage.admin.AdminSerieView;
 import unibo.cineradar.view.homepage.admin.AdminFilmView;
-import unibo.cineradar.view.utilities.ViewUtilities;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JLabel;
 import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.CardLayout;
 import java.awt.FlowLayout;
-import java.awt.Image;
-import java.util.List;
-import javax.swing.ImageIcon;
 
 /**
  * HomePage view of the Admin.
  */
 public final class AdminHomePageView extends CineRadarViewFrameImpl {
 
-    private final List<JPanel> jPanelList;
-    private final JPanel contentPane = new JPanel(new BorderLayout());
+    private static final String FILM_NAME = "film";
+    private static final String SERIES_NAME = "serie";
+    private static final String REQUEST_NAME = "request";
+    private static final String PROFILE_NAME = "profile";
+    private static final String RANKING_NAME = "ranking";
+    private static final String CAST_NAME = "cast";
+
+    private final ViewContext context;
+    private final CardLayout cards = new CardLayout();
+    private final JPanel cardPane = new JPanel(this.cards);
 
     /**
      * Constructor of the admin homepage view.
@@ -36,73 +38,51 @@ public final class AdminHomePageView extends CineRadarViewFrameImpl {
      */
     public AdminHomePageView(final ViewContext currentSessionContext) {
         super();
-
+        this.context = currentSessionContext;
         this.getMainFrame().setTitle("Benvenuto "
                 + currentSessionContext.getController().getAccountDetails().get(0));
-
-        this.jPanelList = List.of(
-                new AdminFilmView(currentSessionContext),
-                new AdminProfileView(currentSessionContext),
-                new AdminRequestsView(currentSessionContext),
-                new AdminRankingsView(currentSessionContext),
-                new AdminSerieView(currentSessionContext),
-                new AdminControlsView(currentSessionContext),
-                new AdminCastView(currentSessionContext)
-        );
-
         this.setInternalComponents();
     }
 
     private void setInternalComponents() {
+        final JPanel contentPane = new JPanel(new BorderLayout());
+        contentPane.add(getNavBar(), BorderLayout.NORTH);
         this.getMainFrame().setContentPane(contentPane);
-        // Navigation bar on top
-        final FlowLayout navLayout = new FlowLayout();
-        navLayout.setAlignment(FlowLayout.LEFT);
-        final JPanel topNavigationPanel = new JPanel(navLayout);
-        topNavigationPanel.setBackground(Color.GRAY);
-        final Image logoImage = new ImageIcon(ViewUtilities.getResourceURL(
-                ViewUtilities.DEFAULT_IMAGE_PATH + "/logo.png"))
-                .getImage().getScaledInstance(300, 50, Image.SCALE_SMOOTH);
-        final JLabel imageLabel = new JLabel();
-        imageLabel.setIcon(new ImageIcon(logoImage));
-        topNavigationPanel.add(imageLabel);
-        final JButton filmButton = new JButton("FILM");
-        topNavigationPanel.add(filmButton);
-        filmButton.addActionListener(e -> displayHide(AdminFilmView.class.getCanonicalName()));
-        final JButton seriesButton = new JButton("SERIETV");
-        topNavigationPanel.add(seriesButton);
-        seriesButton.addActionListener(e -> displayHide(AdminSerieView.class.getCanonicalName()));
-        final JButton castButton = new JButton("CAST");
-        topNavigationPanel.add(castButton);
-        castButton.addActionListener(e -> displayHide(AdminCastView.class.getCanonicalName()));
-        final JButton requestsButton = new JButton("RICHIESTE");
-        topNavigationPanel.add(requestsButton);
-        requestsButton.addActionListener(e -> displayHide(AdminRequestsView.class.getCanonicalName()));
-        final JButton rankingsButton = new JButton("CLASSIFICHE");
-        topNavigationPanel.add(rankingsButton);
-        rankingsButton.addActionListener(e -> displayHide(AdminRankingsView.class.getCanonicalName()));
-        final JButton controlsButton = new JButton("PANNELLO DI CONTROLLO");
-        topNavigationPanel.add(controlsButton);
-        controlsButton.addActionListener(e -> displayHide(AdminControlsView.class.getCanonicalName()));
-        final JButton profileButton = new JButton("PROFILO");
-        topNavigationPanel.add(profileButton);
-        profileButton.addActionListener(e -> displayHide(AdminProfileView.class.getCanonicalName()));
-
-        this.contentPane.add(topNavigationPanel, BorderLayout.NORTH);
-
-        this.contentPane.add(this.jPanelList.get(0), BorderLayout.CENTER);
+        contentPane.add(this.cardPane, BorderLayout.CENTER);
+        setCards();
     }
 
-    private void displayHide(final String toShow) {
-        for (final JPanel jp : jPanelList) {
-            if (!jp.getClass().getCanonicalName().equals(toShow)) {
-                this.contentPane.remove(jp);
-            } else {
-                this.contentPane.add(jp, BorderLayout.CENTER);
-            }
-        }
-        this.getMainFrame().revalidate();
-        this.contentPane.revalidate();
-        this.contentPane.repaint();
+    private void setCards() {
+        this.cardPane.add(FILM_NAME, new AdminFilmView(this.context));
+        this.cardPane.add(SERIES_NAME, new AdminSerieView(this.context));
+        this.cardPane.add(REQUEST_NAME, new AdminRequestsView(this.context));
+        this.cardPane.add(PROFILE_NAME, new AdminProfileView(this.context));
+        this.cardPane.add(RANKING_NAME, new AdminRankingsView(this.context));
+        this.cardPane.add(CAST_NAME, new AdminCastView(this.context));
+    }
+
+    private JPanel getNavBar() {
+        final FlowLayout navLayout = new FlowLayout();
+        navLayout.setAlignment(FlowLayout.LEFT);
+        final JPanel navBar = new JPanel(navLayout);
+        final JButton filmButton = new JButton("FILM");
+        filmButton.addActionListener(e -> this.cards.show(this.cardPane, FILM_NAME));
+        final JButton seriesButton = new JButton("SERIE");
+        seriesButton.addActionListener(e -> this.cards.show(this.cardPane, SERIES_NAME));
+        final JButton castButton = new JButton("CAST");
+        castButton.addActionListener(e -> this.cards.show(this.cardPane, CAST_NAME));
+        final JButton rankingButton = new JButton("CLASSIFICHE");
+        rankingButton.addActionListener(e -> this.cards.show(this.cardPane, RANKING_NAME));
+        final JButton requestButton = new JButton("RICHIESTE");
+        requestButton.addActionListener(e -> this.cards.show(this.cardPane, REQUEST_NAME));
+        final JButton profileButton = new JButton("PROFILO");
+        profileButton.addActionListener(e -> this.cards.show(this.cardPane, PROFILE_NAME));
+        navBar.add(filmButton);
+        navBar.add(seriesButton);
+        navBar.add(castButton);
+        navBar.add(rankingButton);
+        navBar.add(requestButton);
+        navBar.add(profileButton);
+        return navBar;
     }
 }
