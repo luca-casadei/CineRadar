@@ -16,6 +16,7 @@ import unibo.cineradar.model.serie.Serie;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * The user session controller class.
@@ -306,14 +307,47 @@ public final class UserSessionController extends SessionControllerImpl {
      *
      * @param recUsername The username of the reviewed user.
      * @param username    The username of the reviewer.
-     * @param serieRecId   The ID of the review.
+     * @param serieRecId  The ID of the review.
      * @param positive    If the review is positive or negative.
      * @return True if the operation was successful, false otherwise.
      */
     public boolean evaluateSerieRec(final String recUsername,
-                                   final String username,
-                                   final int serieRecId,
-                                   final boolean positive) {
+                                    final String username,
+                                    final int serieRecId,
+                                    final boolean positive) {
         return this.userContext.evaluateSerieRec(recUsername, username, serieRecId, positive);
+    }
+
+    /**
+     * Checks if the review has been evaluated or not.
+     *
+     * @param recUsername The username of the reviewed user.
+     * @param username    The username of the reviewer.
+     * @param serieRecId  The ID of the review.
+     *
+     * @return An Optional containing true if the review has been evaluated positively,
+     *         false if it has been evaluated negatively,
+     *         and an empty Optional if the evaluation does not exist.
+     */
+    public Optional<Boolean> findSerieRecEvaluated(final String recUsername,
+                                                 final String username,
+                                                 final int serieRecId) {
+        return this.userContext.findSerieRecEvaluated(recUsername, username, serieRecId);
+    }
+
+    /**
+     * Checks if the review has been evaluated or not.
+     *
+     * @param recUsername The username of the reviewed user.
+     * @param username    The username of the reviewer.
+     * @param filmRecId   The ID of the review.
+     * @return An Optional containing true if the review has been evaluated positively,
+     *         false if it has been evaluated negatively,
+     *         and an empty Optional if the evaluation does not exist.
+     */
+    public Optional<Boolean> findFilmRecEvaluated(final String recUsername,
+                                                final String username,
+                                                final int filmRecId) {
+        return this.userContext.findFilmRecEvaluated(recUsername, username, filmRecId);
     }
 }

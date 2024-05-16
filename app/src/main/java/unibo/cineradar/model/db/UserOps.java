@@ -692,28 +692,65 @@ public final class UserOps extends DBManager {
      *
      * @param recUsername The username of the reviewed user.
      * @param username    The username of the reviewer.
-     * @param serieRecId   The ID of the review.
+     * @param serieRecId  The ID of the review.
      * @param positive    If the review is positive or negative.
      * @return True if the operation was successful, false otherwise.
      */
     public boolean evaluateSerieRec(final String recUsername,
-                                   final String username,
-                                   final int serieRecId,
-                                   final boolean positive) {
+                                    final String username,
+                                    final int serieRecId,
+                                    final boolean positive) {
         Objects.requireNonNull(this.getConnection());
         try {
             final String query = "INSERT INTO valutazione_serie "
-                    + "(UsernameUtenteValutato, CodiceRecSerie, UsernameUtente, Positiva)"
-                    + FOUR_VALUES;
+                    + "(UsernameUtenteValutato, CodiceRecSerie, UsernameUtente, Positiva) "
+                    + FOUR_VALUES
+                    + " ON DUPLICATE KEY UPDATE Positiva = VALUES(Positiva)";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setString(1, recUsername);
+            this.getPreparedStatement().setInt(2, serieRecId);
+            this.getPreparedStatement().setString(3, username);
+            this.getPreparedStatement().setBoolean(4, positive);
+            this.getPreparedStatement().executeUpdate();
+            return true;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    /**
+     * Checks if the review has been evaluated or not.
+     *
+     * @param recUsername The username of the reviewed user.
+     * @param username    The username of the reviewer.
+     * @param serieRecId  The ID of the review.
+     * @return An Optional containing true if the review has been evaluated positively,
+     *         false if it has been evaluated negatively,
+     *         and an empty Optional if the evaluation does not exist.
+     */
+    public Optional<Boolean> findSerieRecEvaluated(final String recUsername,
+                                                   final String username,
+                                                   final int serieRecId) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = """
+                    SELECT * FROM valutazione_serie
+                    WHERE UsernameUtenteValutato = ?
+                    AND CodiceRecSerie = ?
+                    AND UsernameUtente = ?
+                    """;
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setString(FIRST_PARAMETER, recUsername);
             this.getPreparedStatement().setInt(SECOND_PARAMETER, serieRecId);
             this.getPreparedStatement().setString(THIRD_PARAMETER, username);
-            this.getPreparedStatement().setBoolean(FOURTH_PARAMETER, positive);
             this.setResultSet(this.getPreparedStatement().executeQuery());
-            return true;
+            if (this.getResultSet().next()) {
+                return Optional.of(this.getResultSet().getBoolean("Positiva"));
+            } else {
+                return Optional.empty();
+            }
         } catch (SQLException ex) {
-            return false;
+            throw new IllegalStateException(ex);
         }
     }
 
@@ -733,17 +770,54 @@ public final class UserOps extends DBManager {
         Objects.requireNonNull(this.getConnection());
         try {
             final String query = "INSERT INTO valutazione_film "
-                    + "(UsernameUtenteValutato, CodiceRecFilm, UsernameUtente, Positiva)"
-                    + FOUR_VALUES;
+                    + "(UsernameUtenteValutato, CodiceRecFilm, UsernameUtente, Positiva) "
+                    + FOUR_VALUES
+                    + " ON DUPLICATE KEY UPDATE Positiva = VALUES(Positiva)";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setString(1, recUsername);
+            this.getPreparedStatement().setInt(2, filmRecId);
+            this.getPreparedStatement().setString(3, username);
+            this.getPreparedStatement().setBoolean(4, positive);
+            this.getPreparedStatement().executeUpdate();
+            return true;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    /**
+     * Checks if the review has been evaluated or not.
+     *
+     * @param recUsername The username of the reviewed user.
+     * @param username    The username of the reviewer.
+     * @param filmRecId   The ID of the review.
+     * @return An Optional containing true if the review has been evaluated positively,
+     *         false if it has been evaluated negatively,
+     *         and an empty Optional if the evaluation does not exist.
+     */
+    public Optional<Boolean> findFilmRecEvaluated(final String recUsername,
+                                                  final String username,
+                                                  final int filmRecId) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = """
+                       SELECT * FROM valutazione_film
+                       WHERE UsernameUtenteValutato = ?
+                       AND CodiceRecFilm = ?
+                       AND UsernameUtente = ?
+                    """;
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setString(FIRST_PARAMETER, recUsername);
             this.getPreparedStatement().setInt(SECOND_PARAMETER, filmRecId);
             this.getPreparedStatement().setString(THIRD_PARAMETER, username);
-            this.getPreparedStatement().setBoolean(FOURTH_PARAMETER, positive);
             this.setResultSet(this.getPreparedStatement().executeQuery());
-            return true;
+            if (this.getResultSet().next()) {
+                return Optional.of(this.getResultSet().getBoolean("Positiva"));
+            } else {
+                return Optional.empty();
+            }
         } catch (SQLException ex) {
-            return false;
+            throw new IllegalStateException(ex);
         }
     }
 

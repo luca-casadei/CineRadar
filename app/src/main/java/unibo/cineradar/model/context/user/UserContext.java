@@ -20,6 +20,7 @@ import java.time.Year;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -401,7 +402,7 @@ public final class UserContext extends SessionContextImpl {
      *
      * @param recUsername The username of the reviewed user.
      * @param username    The username of the reviewer.
-     * @param serieRecId   The ID of the review.
+     * @param serieRecId  The ID of the review.
      * @param positive    If the review is positive or negative.
      * @return True if the operation was successful, false otherwise.
      */
@@ -411,6 +412,42 @@ public final class UserContext extends SessionContextImpl {
                                     final boolean positive) {
         try (UserOps mgr = new UserOps()) {
             return mgr.evaluateSerieRec(recUsername, username, serieRecId, positive);
+        }
+    }
+
+    /**
+     * Checks if the review has been evaluated or not.
+     *
+     * @param recUsername The username of the reviewed user.
+     * @param username    The username of the reviewer.
+     * @param serieRecId  The ID of the review.
+     * @return An Optional containing true if the review has been evaluated positively,
+     *         false if it has been evaluated negatively,
+     *         and an empty Optional if the evaluation does not exist.
+     */
+    public Optional<Boolean> findSerieRecEvaluated(final String recUsername,
+                                                 final String username,
+                                                 final int serieRecId) {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.findSerieRecEvaluated(recUsername, username, serieRecId);
+        }
+    }
+
+    /**
+     * Checks if the review has been evaluated or not.
+     *
+     * @param recUsername The username of the reviewed user.
+     * @param username    The username of the reviewer.
+     * @param filmRecId   The ID of the review.
+     * @return An Optional containing true if the review has been evaluated positively,
+     *         false if it has been evaluated negatively,
+     *         and an empty Optional if the evaluation does not exist.
+     */
+    public Optional<Boolean> findFilmRecEvaluated(final String recUsername,
+                                                final String username,
+                                                final int filmRecId) {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.findFilmRecEvaluated(recUsername, username, filmRecId);
         }
     }
 }

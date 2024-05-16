@@ -9,7 +9,7 @@ import unibo.cineradar.model.review.SeriesReview;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,9 +17,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.Serial;
+import java.util.Optional;
 
 // CHECKSTYLE: MagicNumber OFF
 
@@ -32,6 +33,8 @@ public class ReviewDetailsView extends DetailsView {
 
     private final transient Review review;
     private final String usernameOwnerReview;
+    private JButton likeButton;
+    private JButton dislikeButton;
 
     /**
      * Constructs a new ReviewDetailsView.
@@ -86,13 +89,13 @@ public class ReviewDetailsView extends DetailsView {
         ratingsPanel.setBorder(BorderFactory.createTitledBorder("Voti sezione"));
 
         // Add each section and its rating
-        if (this.review instanceof FilmReview) {
-            ((FullFilmReview) review).getSections().forEach(e -> {
+        if (this.review instanceof FullFilmReview fr) {
+            fr.getSections().forEach(e -> {
                 ratingsPanel.add(new JLabel(e.section().getName()));
                 ratingsPanel.add(new JLabel(String.valueOf(e.score())));
             });
-        } else if (review instanceof SeriesReview) {
-            ((FullSeriesReview) review).getSections().forEach(e -> {
+        } else if (this.review instanceof FullSeriesReview sr) {
+            sr.getSections().forEach(e -> {
                 ratingsPanel.add(new JLabel(e.section().getName()));
                 ratingsPanel.add(new JLabel(String.valueOf(e.score())));
             });
@@ -100,35 +103,77 @@ public class ReviewDetailsView extends DetailsView {
             throw new IllegalStateException();
         }
 
-        final JPanel checkboxPanel = new JPanel();
-        final JCheckBox usefulCheckbox = new JCheckBox("Recensione utile");
-        checkboxPanel.add(usefulCheckbox);
+        final JPanel buttonPanel = new JPanel();
+        likeButton = new JButton("Like");
+        dislikeButton = new JButton("Dislike");
 
-        final JPanel combinedPanel = new JPanel(new BorderLayout());
-        combinedPanel.add(ratingsPanel, BorderLayout.CENTER);
-        combinedPanel.add(checkboxPanel, BorderLayout.SOUTH);
-
-        mainPanel.add(combinedPanel, BorderLayout.SOUTH);
-
-        add(mainPanel);
-
-        addWindowListener(new WindowAdapter() {
+        likeButton.addActionListener(new ActionListener() {
             @Override
-            public void windowClosing(final WindowEvent e) {
+            public void actionPerformed(final ActionEvent e) {
+                likeButton.setEnabled(false);
+                dislikeButton.setEnabled(true);
+                if (review instanceof FilmReview fr) {
+                    uc.evaluateFilmRec(usernameOwnerReview,
+                            uc.getAccount().getUsername(),
+                            fr.getIdFilm(),
+                            true);
+                } else if (review instanceof SeriesReview sr) {
+                    uc.evaluateSerieRec(usernameOwnerReview,
+                            uc.getAccount().getUsername(),
+                            sr.getIdSerie(),
+                            true);
+                }
+            }
+        });
+
+        dislikeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                likeButton.setEnabled(true);
+                dislikeButton.setEnabled(false);
                 if (review instanceof FilmReview) {
                     uc.evaluateFilmRec(usernameOwnerReview,
                             uc.getAccount().getUsername(),
                             ((FilmReview) review).getIdFilm(),
-                            usefulCheckbox.isSelected());
+                            false);
                 } else if (review instanceof SeriesReview) {
                     uc.evaluateSerieRec(usernameOwnerReview,
                             uc.getAccount().getUsername(),
                             ((SeriesReview) review).getIdSerie(),
-                            usefulCheckbox.isSelected());
+                            false);
                 }
-
             }
         });
+
+        Optional<Boolean> resEvaluatedUseful = Optional.empty();
+        if (review instanceof FilmReview fr) {
+            resEvaluatedUseful = uc.findFilmRecEvaluated(usernameOwnerReview,
+                    uc.getAccount().getUsername(),
+                    fr.getIdFilm());
+        } else if (review instanceof SeriesReview sr) {
+            resEvaluatedUseful = uc.findSerieRecEvaluated(usernameOwnerReview,
+                    uc.getAccount().getUsername(),
+                    sr.getIdSerie());
+        }
+
+        resEvaluatedUseful.ifPresentOrElse(b -> {
+            likeButton.setEnabled(!b);
+            dislikeButton.setEnabled(b);
+        }, () -> {
+            likeButton.setEnabled(true);
+            dislikeButton.setEnabled(true);
+        });
+
+        buttonPanel.add(likeButton);
+        buttonPanel.add(dislikeButton);
+
+        final JPanel combinedPanel = new JPanel(new BorderLayout());
+        combinedPanel.add(ratingsPanel, BorderLayout.CENTER);
+        combinedPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        mainPanel.add(combinedPanel, BorderLayout.SOUTH);
+
+        add(mainPanel);
 
         setVisible(true);
     }

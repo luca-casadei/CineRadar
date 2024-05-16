@@ -16,6 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.io.Serial;
@@ -42,7 +43,6 @@ public abstract class DetailsView extends JFrame {
         final JPanel reviewsPanel = new JPanel(new BorderLayout());
         reviewsPanel.setBorder(BorderFactory.createTitledBorder("Recensioni"));
 
-
         final String[] columnNames = {"Username", "Titolo Recensione", "Voto complessivo", ""};
         final Object[][] data = new Object[reviews.size()][4];
 
@@ -64,45 +64,54 @@ public abstract class DetailsView extends JFrame {
         table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
         table.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
 
-        table.getColumnModel().getColumn(3).setCellRenderer((table1, value, isSelected, hasFocus, row, column) -> {
-            final JButton button = new JButton("Vedi dettagli");
-            button.addActionListener(e -> {
-                final ReviewDetailsView reviewDetailsView;
-                if (((Review) value) instanceof FilmReview review) {
-                    reviewDetailsView = new ReviewDetailsView(
-                            this.viewContext,
-                            review,
-                            review.getUsername()
-                    );
-                } else if (((Review) value) instanceof SeriesReview review) {
-                    reviewDetailsView = new ReviewDetailsView(
-                            this.viewContext,
-                            review,
-                            review.getUsername()
-                    );
-                } else {
-                    throw new IllegalStateException();
-                }
-                reviewDetailsView.setVisible(true);
-            });
-            return button;
-        });
+        final TableCellRenderer buttonRenderer = (table1, value, isSelected, hasFocus, row, column)
+                -> new JButton("Vedi dettagli");
 
-        table.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(new JCheckBox()) {
+        class ButtonEditor extends DefaultCellEditor {
+            @Serial
+            private static final long serialVersionUID = 6530498035927369718L;
+            private final JButton button;
+            private Review review;
+
+            ButtonEditor() {
+                super(new JCheckBox());
+                button = new JButton("Vedi dettagli");
+                button.addActionListener(e -> {
+                    if (review != null) {
+                        final ReviewDetailsView reviewDetailsView;
+                        if (review instanceof FilmReview) {
+                            reviewDetailsView = new ReviewDetailsView(
+                                    viewContext, (FilmReview) review, ((FilmReview) review).getUsername()
+                            );
+                        } else if (review instanceof SeriesReview) {
+                            reviewDetailsView = new ReviewDetailsView(
+                                    viewContext, (SeriesReview) review, ((SeriesReview) review).getUsername()
+                            );
+                        } else {
+                            throw new IllegalStateException();
+                        }
+                        reviewDetailsView.setVisible(true);
+                    }
+                });
+            }
+
             @Override
-            public Component getTableCellEditorComponent(
-                    final JTable table, final Object value, final boolean isSelected, final int row, final int column
-            ) {
-                return table.getCellRenderer(row, column).getTableCellRendererComponent(
-                        table, value, isSelected, true, row, column
-                );
+            public Component getTableCellEditorComponent(final JTable table, final  Object value,
+                                                         final boolean isSelected, final int row, final int column) {
+                if (value instanceof Review) {
+                    review = (Review) value;
+                }
+                return button;
             }
 
             @Override
             public Object getCellEditorValue() {
                 return null;
             }
-        });
+        }
+
+        table.getColumnModel().getColumn(3).setCellRenderer(buttonRenderer);
+        table.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor());
 
         final JScrollPane scrollPane = new JScrollPane(table);
         reviewsPanel.add(scrollPane, BorderLayout.CENTER);
