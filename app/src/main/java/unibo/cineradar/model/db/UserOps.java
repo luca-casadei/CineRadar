@@ -280,7 +280,7 @@ public final class UserOps extends DBManager {
                             this.getResultSet().getString(USERNAME_NAME),
                             this.getResultSet().getString("TitoloRecensione"),
                             this.getResultSet().getString("DescrizioneRecensione"),
-                            this.getResultSet().getInt("VotoComplessivoRecensione")
+                            this.getResultSet().getDouble("VotoComplessivoRecensione")
                     );
                 } else if (this.getResultSet().getInt(ID_FILM_NAME) == NULL
                         && this.getResultSet().getInt(ID_SERIES_NAME) != NULL) {
@@ -290,7 +290,7 @@ public final class UserOps extends DBManager {
                             this.getResultSet().getString(USERNAME_NAME),
                             this.getResultSet().getString("TitoloRecensione"),
                             this.getResultSet().getString("DescrizioneRecensione"),
-                            this.getResultSet().getInt("VotoComplessivoRecensione")
+                            this.getResultSet().getDouble("VotoComplessivoRecensione")
                     );
                 } else {
                     throw new IllegalArgumentException();

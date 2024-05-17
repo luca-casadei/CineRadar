@@ -91,12 +91,12 @@ public class ReviewDetailsView extends DetailsView {
         // Add each section and its rating
         if (this.review instanceof FullFilmReview fr) {
             fr.getSections().forEach(e -> {
-                ratingsPanel.add(new JLabel(e.section().getName()));
+                ratingsPanel.add(new JLabel(e.section().name()));
                 ratingsPanel.add(new JLabel(String.valueOf(e.score())));
             });
         } else if (this.review instanceof FullSeriesReview sr) {
             sr.getSections().forEach(e -> {
-                ratingsPanel.add(new JLabel(e.section().getName()));
+                ratingsPanel.add(new JLabel(e.section().name()));
                 ratingsPanel.add(new JLabel(String.valueOf(e.score())));
             });
         } else {

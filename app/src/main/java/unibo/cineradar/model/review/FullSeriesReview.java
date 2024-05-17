@@ -25,7 +25,7 @@ public final class FullSeriesReview extends SeriesReview {
                             final String username,
                             final String title,
                             final String description,
-                            final int overallRating) {
+                            final double overallRating) {
         super(idSeries, serieTitle, username, title, description, overallRating);
         sections = new ArrayList<>();
     }

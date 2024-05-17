@@ -171,7 +171,7 @@ public abstract class WriteReviewView extends JFrame {
         final List<Section> sections = this.uc.getSections();
         for (int i = 0; i < sections.size(); i++) {
             final Section section = sections.get(i);
-            final JLabel sectionNameLabel = new JLabel(section.getName() + ":");
+            final JLabel sectionNameLabel = new JLabel(section.name() + ":");
             sectionNameLabel.setFont(new Font(sectionNameLabel.getFont().getName(), Font.BOLD, 14));
 
             final JCheckBox sectionCheckBox = new JCheckBox();
@@ -187,7 +187,7 @@ public abstract class WriteReviewView extends JFrame {
                 }
             });
 
-            final JLabel sectionDetailLabel = new JLabel(section.getDetail());
+            final JLabel sectionDetailLabel = new JLabel(section.detail());
             sectionDetailLabel.setFont(new Font(sectionDetailLabel.getFont().getName(), Font.PLAIN, 12));
             final JSpinner sectionRatingSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 10, 1));
             final JComponent editor = sectionRatingSpinner.getEditor();

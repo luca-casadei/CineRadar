@@ -21,7 +21,7 @@ public class SeriesReview extends Review {
                         final String username,
                         final String title,
                         final String description,
-                        final int overallRating) {
+                        final double overallRating) {
         super(username, title, description, overallRating);
         this.idSerie = idSerie;
         this.serieTitle = serieTitle;

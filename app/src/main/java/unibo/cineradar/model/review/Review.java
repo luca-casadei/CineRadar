@@ -7,7 +7,7 @@ public class Review {
     private final String username;
     private final String title;
     private final String description;
-    private final int overallRating;
+    private final double overallRating;
 
     /**
      * Constructs a review for a multimedia item.
@@ -17,7 +17,7 @@ public class Review {
      * @param description   The description of the review.
      * @param overallRating The overall rating of the review.
      */
-    public Review(final String username, final String title, final String description, final int overallRating) {
+    public Review(final String username, final String title, final String description, final double overallRating) {
         this.username = username;
         this.title = title;
         this.description = description;
@@ -56,7 +56,7 @@ public class Review {
      *
      * @return The overall rating of the review.
      */
-    public int getOverallRating() {
+    public double getOverallRating() {
         return overallRating;
     }
 }

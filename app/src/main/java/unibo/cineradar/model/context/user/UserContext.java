@@ -297,7 +297,7 @@ public final class UserContext extends SessionContextImpl {
             final AtomicBoolean op2 = new AtomicBoolean(true);
             reviewSections.forEach(
                     reviewSection -> {
-                        if (!mgr.addFilmReviewSections(reviewSection.section().getName(),
+                        if (!mgr.addFilmReviewSections(reviewSection.section().name(),
                                 this.user.getUsername(),
                                 reviewSection.multimediaId(),
                                 reviewSection.score())) {
@@ -366,7 +366,7 @@ public final class UserContext extends SessionContextImpl {
             final AtomicBoolean op2 = new AtomicBoolean(true);
             reviewSections.forEach(
                     reviewSection -> {
-                        if (!mgr.addSeriesReviewSection(reviewSection.section().getName(),
+                        if (!mgr.addSeriesReviewSection(reviewSection.section().name(),
                                 this.user.getUsername(),
                                 reviewSection.multimediaId(),
                                 reviewSection.score())) {

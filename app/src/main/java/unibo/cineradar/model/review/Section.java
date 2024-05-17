@@ -2,21 +2,16 @@ package unibo.cineradar.model.review;
 
 /**
  * This class represents a section of a review.
+ *
+ * @param name   The name of the section.
+ * @param detail The full details of the section.
  */
-public class Section {
-
-    private final String name;
-    private final String detail;
+public record Section(String name, String detail) {
 
     /**
      * Constructs a new Section with given name and detail.
-     *
-     * @param name   the name of the section
-     * @param detail the detail of the section
      */
-    public Section(final String name, final String detail) {
-        this.name = name;
-        this.detail = detail;
+    public Section {
     }
 
     /**
@@ -24,7 +19,8 @@ public class Section {
      *
      * @return the name of the section
      */
-    public String getName() {
+    @Override
+    public String name() {
         return name;
     }
 
@@ -33,7 +29,8 @@ public class Section {
      *
      * @return the detail of the section
      */
-    public String getDetail() {
+    @Override
+    public String detail() {
         return detail;
     }
 }

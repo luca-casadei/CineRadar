@@ -60,9 +60,11 @@ class TestReviewMaking {
         final FullFilmReview ffr = ctx.getFullFilmReview(REVIEWED_FILM_ID, USER);
         assertNotNull(ffr);
         ffr.getSections().forEach(s -> {
-            assertEquals(sections.get(0).getName(), s.section().getName());
+            assertEquals(sections.get(0).name(), s.section().name());
             assertEquals(10, s.score());
         });
+        final double expectedAverage = 10.0d;
+        assertEquals(expectedAverage, ffr.getOverallRating());
         EVIL_ADMIN_CTX.delFilmReview(REVIEWED_FILM_ID, USER);
     }
 
@@ -95,6 +97,8 @@ class TestReviewMaking {
             gotScores.add(s.score());
         });
         assertIterableEquals(scores, gotScores);
+        final int expectedAverage = scores.stream().reduce(0, Integer::sum) / scores.size();
+        assertEquals(expectedAverage, fsr.getOverallRating());
         EVIL_ADMIN_CTX.delSeriesReview(REVIEWED_SERIES_ID, USER);
     }
 }

@@ -25,7 +25,7 @@ public final class FullFilmReview extends FilmReview {
                           final String username,
                           final String title,
                           final String description,
-                          final int overallRating) {
+                          final double overallRating) {
         super(idFilm, filmTitle, username, title, description, overallRating);
         this.sections = new ArrayList<>();
     }
