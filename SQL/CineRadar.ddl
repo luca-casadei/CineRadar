@@ -86,7 +86,7 @@ CREATE TABLE GENERE
 );
 CREATE TABLE MEMBROCAST
 (
-    Codice              INT         NOT NULL,
+    Codice              INT         NOT NULL AUTO_INCREMENT,
     Nome                VARCHAR(20) NOT NULL,
     Cognome             VARCHAR(20) NOT NULL,
     DataNascita         DATE        NOT NULL,
