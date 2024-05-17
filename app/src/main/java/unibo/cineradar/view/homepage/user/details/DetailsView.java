@@ -79,13 +79,13 @@ public abstract class DetailsView extends JFrame {
                 button.addActionListener(e -> {
                     if (review != null) {
                         final ReviewDetailsView reviewDetailsView;
-                        if (review instanceof FilmReview) {
+                        if (review instanceof FilmReview fr) {
                             reviewDetailsView = new ReviewDetailsView(
-                                    viewContext, (FilmReview) review, ((FilmReview) review).getUsername()
+                                    viewContext, fr, fr.getUsername()
                             );
-                        } else if (review instanceof SeriesReview) {
+                        } else if (review instanceof SeriesReview sr) {
                             reviewDetailsView = new ReviewDetailsView(
-                                    viewContext, (SeriesReview) review, ((SeriesReview) review).getUsername()
+                                    viewContext, sr, sr.getUsername()
                             );
                         } else {
                             throw new IllegalStateException();
@@ -96,17 +96,17 @@ public abstract class DetailsView extends JFrame {
             }
 
             @Override
-            public Component getTableCellEditorComponent(final JTable table, final  Object value,
+            public Component getTableCellEditorComponent(final JTable table, final Object value,
                                                          final boolean isSelected, final int row, final int column) {
-                if (value instanceof Review) {
-                    review = (Review) value;
+                if (value instanceof Review rv) {
+                    review = rv;
                 }
                 return button;
             }
 
             @Override
             public Object getCellEditorValue() {
-                return null;
+                return review;
             }
         }
 
