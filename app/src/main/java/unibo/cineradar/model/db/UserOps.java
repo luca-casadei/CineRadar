@@ -61,16 +61,16 @@ public final class UserOps extends DBManager {
     /**
      * Retrieves the list of all films.
      *
-     * @param userAge The limited age to be respected.
+     * @param age The limited age to be respected.
      * @return The list of all films.
      */
-    public List<Film> getFilms(final int userAge) {
+    public List<Film> getFilms(final int age) {
         Objects.requireNonNull(this.getConnection());
         try {
             final String query = "SELECT * FROM film "
                     + "WHERE film.EtaLimite <= ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setInt(FIRST_PARAMETER, userAge);
+            this.getPreparedStatement().setInt(FIRST_PARAMETER, age);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             final List<Film> films = new ArrayList<>();
             while (this.getResultSet().next()) {
@@ -125,16 +125,16 @@ public final class UserOps extends DBManager {
     /**
      * Retrieves the list of all the series.
      *
-     * @param userAge The limited age to be respected.
+     * @param age The limited age to be respected.
      * @return The list of all the series.
      */
-    public List<Serie> getSeries(final int userAge) {
+    public List<Serie> getSeries(final int age) {
         Objects.requireNonNull(this.getConnection());
         try {
             final String query = "SELECT * FROM serie "
                     + "WHERE serie.EtaLimite <= ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setInt(FIRST_PARAMETER, userAge);
+            this.getPreparedStatement().setInt(FIRST_PARAMETER, age);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             final List<Serie> series = new ArrayList<>();
             while (this.getResultSet().next()) {

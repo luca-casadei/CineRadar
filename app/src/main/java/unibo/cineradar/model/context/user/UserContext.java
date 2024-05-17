@@ -16,7 +16,6 @@ import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.Account;
 import unibo.cineradar.model.utente.User;
 
-import java.time.Year;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -45,31 +44,27 @@ public final class UserContext extends SessionContextImpl {
         }
     }
 
-    private int getUserAge() {
-        return Year.now().getValue() - (user.getBirthDate().getYear());
-    }
-
     /**
      * Gets the films.
      *
+     * @param age The limited age to be respected.
      * @return The list of all films.
      */
-    public List<Film> getFilms() {
+    public List<Film> getFilms(final int age) {
         try (UserOps mgr = new UserOps()) {
-            return mgr.getFilms(
-                    getUserAge()
-            );
+            return mgr.getFilms(age);
         }
     }
 
     /**
      * Gets the series that this user can watch.
      *
+     * @param age The limited age to be respected.
      * @return A list of series that the logged user can watch.
      */
-    public List<Serie> getSeries() {
+    public List<Serie> getSeries(final int age) {
         try (UserOps mgr = new UserOps()) {
-            return mgr.getSeries(getUserAge());
+            return mgr.getSeries(age);
         }
     }
 

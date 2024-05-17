@@ -38,19 +38,21 @@ public final class UserSessionController extends SessionControllerImpl {
     /**
      * Gets the list of films that the user can view.
      *
+     * @param age The limited age to be respected.
      * @return A list of Films.
      */
-    public List<Film> getFilms() {
-        return userContext.getFilms();
+    public List<Film> getFilms(final int age) {
+        return userContext.getFilms(age);
     }
 
     /**
      * Gets the list of series that the user can view.
      *
+     * @param age The limited age to be respected.
      * @return A list of series.
      */
-    public List<Serie> getSeries() {
-        return userContext.getSeries();
+    public List<Serie> getSeries(final int age) {
+        return userContext.getSeries(age);
     }
 
     /**

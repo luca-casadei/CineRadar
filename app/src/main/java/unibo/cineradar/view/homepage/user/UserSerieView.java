@@ -1,5 +1,7 @@
+// CPD-OFF
 package unibo.cineradar.view.homepage.user;
 
+import unibo.cineradar.model.utente.User;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.JButton;
@@ -19,6 +21,9 @@ import java.awt.Font;
 public final class UserSerieView extends UserPanel {
     private static final long serialVersionUID = -2884190954467853020L;
 
+    private JTable serieTable;
+    private JScrollPane scrollPane;
+
     /**
      * Constructor of the user serie view.
      *
@@ -31,12 +36,13 @@ public final class UserSerieView extends UserPanel {
                 + " nella pagina delle serie.");
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
         welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
+        this.add(welcomeLabel, BorderLayout.NORTH);
 
-        final JPanel mainPanel = new JPanel(new BorderLayout());
-        final JTable serieTable = super.createSerieTable();
-        final JScrollPane scrollPane = new JScrollPane(serieTable);
-        mainPanel.add(welcomeLabel, BorderLayout.NORTH);
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        if (currentSessionContext.getController().getAccount() instanceof User user) {
+            serieTable = super.createSerieTable(user.getAge());
+        }
+        scrollPane = new JScrollPane(serieTable);
+        this.add(scrollPane, BorderLayout.CENTER);
 
         final JPanel filterPanel = new JPanel();
         filterPanel.setLayout(new FlowLayout());
@@ -53,22 +59,48 @@ public final class UserSerieView extends UserPanel {
         filterButton.setEnabled(false);
         filterPanel.add(filterButton);
 
-        mainPanel.add(filterPanel, BorderLayout.SOUTH);
+        this.add(filterPanel, BorderLayout.SOUTH);
 
         filterCheckbox.addActionListener(e -> {
             final boolean selected = filterCheckbox.isSelected();
             ageTextArea.setEnabled(selected);
             filterButton.setEnabled(selected);
+
+            if (!selected) {
+                resetTable(currentSessionContext);
+            }
         });
 
-        /*filterButton.addActionListener(e -> {
+        filterButton.addActionListener(e -> {
             final String text = ageTextArea.getText();
-            if (!text.isEmpty()) {
-                // TODO: chiamata a DB
+            if (!text.isEmpty() && filterCheckbox.isSelected()) {
+                try {
+                    final int ageLimit = Integer.parseInt(text);
+                    applyAgeFilter(ageLimit);
+                } catch (NumberFormatException ignored) {
+                }
             }
-        });*/
+        });
+    }
 
-        add(mainPanel);
-        setVisible(true);
+    private void applyAgeFilter(final int ageLimit) {
+        this.remove(scrollPane);
+        serieTable = super.createSerieTable(ageLimit);
+        scrollPane = new JScrollPane(serieTable);
+        this.add(scrollPane, BorderLayout.CENTER);
+        this.revalidate();
+        this.repaint();
+    }
+
+    private void resetTable(final ViewContext currentSessionContext) {
+        this.remove(scrollPane);
+        if (currentSessionContext.getController().getAccount() instanceof User user) {
+            serieTable = super.createSerieTable(user.getAge());
+        }
+        scrollPane = new JScrollPane(serieTable);
+        this.add(scrollPane, BorderLayout.CENTER);
+        this.revalidate();
+        this.repaint();
     }
 }
+// CPD-ON

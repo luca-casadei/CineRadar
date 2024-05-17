@@ -138,11 +138,12 @@ public abstract class UserPanel extends JPanel {
     /**
      * Creates a table of films.
      *
+     * @param age The limited age to be respected.
      * @return A JTable of films.
      */
-    protected JTable createFilmTable() {
+    protected JTable createFilmTable(final int age) {
         final JTable filmTable = createMultimediaTable(
-                ((UserSessionController) currentSessionContext.getController()).getFilms()
+                ((UserSessionController) currentSessionContext.getController()).getFilms(age)
         );
 
         final ListSelectionListener filmSelectionListener = e -> {
@@ -162,11 +163,12 @@ public abstract class UserPanel extends JPanel {
     /**
      * Creates a table of series.
      *
+     * @param age The limited age to be respected.
      * @return A JTable of series.
      */
-    protected JTable createSerieTable() {
+    protected JTable createSerieTable(final int age) {
         final JTable serieTable = createMultimediaTable(
-                ((UserSessionController) currentSessionContext.getController()).getSeries()
+                ((UserSessionController) currentSessionContext.getController()).getSeries(age)
         );
 
         final ListSelectionListener serieSelectionListener = e -> {

@@ -1,6 +1,7 @@
 package unibo.cineradar.model.utente;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 /**
  * The user type of account.
@@ -35,6 +36,15 @@ public final class User extends Account {
      */
     public LocalDate getBirthDate() {
         return this.birthDate;
+    }
+
+    /**
+     * Calculates the user's current age in years.
+     *
+     * @return the user's current age in years.
+     */
+    public int getAge() {
+        return Period.between(birthDate, LocalDate.now()).getYears();
     }
 
     /**
