@@ -178,16 +178,18 @@ public final class AdminSessionController extends SessionControllerImpl {
     /**
      * Adds a new season for a TV series.
      *
-     * @param seriesCode    The code of the TV series.
-     * @param seasonNumber  The season number.
-     * @param summary       The summary of the season.
+     * @param seriesCode   The code of the TV series.
+     * @param seasonNumber The season number.
+     * @param summary      The summary of the season.
+     * @param idCast       The id of Cast.
      */
     public void addSeason(
-            final int seriesCode, final int seasonNumber, final String summary) {
+            final int seriesCode, final int seasonNumber, final String summary, final int idCast) {
         this.administratorContext.addSeason(new Season(
                 seriesCode,
                 seasonNumber,
-                summary
+                summary,
+                idCast
         ));
     }
 

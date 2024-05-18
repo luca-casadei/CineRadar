@@ -1168,6 +1168,7 @@ public final class UserOps extends DBManager {
                     + "stagione.Sunto AS SuntoStagione, "
                     + "episodio.DurataMin AS DurataEpisodio, "
                     + "casting.Nome AS NomeCasting, "
+                    + "casting.Codice AS CodiceCast, "
                     + "membrocast.Codice AS CodiceMembroCast, "
                     + "membrocast.Nome AS NomeMembroCast, "
                     + "membrocast.Cognome AS CognomeMembroCast, "
@@ -1201,7 +1202,8 @@ public final class UserOps extends DBManager {
                 final Season season = new Season(
                         this.getResultSet().getInt(ID_SERIES_NAME),
                         this.getResultSet().getInt("NumeroStagione"),
-                        this.getResultSet().getString("SuntoStagione")
+                        this.getResultSet().getString("SuntoStagione"),
+                        this.getResultSet().getInt("CodiceCast")
                 );
                 final Episode episode = new Episode(
                         this.getResultSet().getInt(ID_SERIES_NAME),

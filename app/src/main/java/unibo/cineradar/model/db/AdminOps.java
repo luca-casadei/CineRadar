@@ -42,8 +42,6 @@ public final class AdminOps extends DBManager {
     private static final int PARAMETER_INDEX1 = 5;
     private static final int PARAMETER_INDEX2 = 6;
     private static final int PARAMETER_INDEX3 = 7;
-    private static final int INDEX = 5;
-    private static final int INDEX1 = 6;
     private static final String CODICE_SERIE = "CodiceSerie";
     private static final String QUERY_SERIES = "SELECT serie.Codice AS CodiceSerie, "
             + "stagione.NumeroStagione, "
@@ -56,6 +54,7 @@ public final class AdminOps extends DBManager {
             + "stagione.Sunto AS SuntoStagione, "
             + "episodio.DurataMin AS DurataEpisodio, "
             + "casting.Nome AS NomeCasting, "
+            + "casting.Codice AS CodiceCast, "
             + "membrocast.Codice AS CodiceMembroCast, "
             + "membrocast.Nome AS NomeMembroCast, "
             + "membrocast.Cognome AS CognomeMembroCast, "
@@ -398,7 +397,8 @@ public final class AdminOps extends DBManager {
         return new Season(
                 this.getResultSet().getInt(CODICE_SERIE),
                 this.getResultSet().getInt("NumeroStagione"),
-                this.getResultSet().getString("SuntoStagione")
+                this.getResultSet().getString("SuntoStagione"),
+                this.getResultSet().getInt("CodiceCast")
         );
     }
 
@@ -534,11 +534,13 @@ public final class AdminOps extends DBManager {
     public void addSeason(final Season season) {
         Objects.requireNonNull(getConnection());
         try {
-            final String query = "INSERT INTO stagione (CodiceSerie, NumeroStagione, Sunto) VALUES (?, ?, ?)";
+            final String query = "INSERT INTO "
+                    + "stagione (CodiceSerie, NumeroStagione, Sunto, CodiceCast) VALUES (?, ?, ?, ?)";
             setPreparedStatement(getConnection().prepareStatement(query));
             getPreparedStatement().setInt(1, season.getSeriesId());
             getPreparedStatement().setInt(2, season.getId());
             getPreparedStatement().setString(3, season.getSummary());
+            getPreparedStatement().setInt(4, season.getIdCast());
             getPreparedStatement().executeUpdate();
         } catch (SQLException ex) {
             throw new IllegalArgumentException("Error adding season", ex);

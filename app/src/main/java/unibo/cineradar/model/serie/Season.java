@@ -16,6 +16,7 @@ public final class Season {
     private final String summary;
     private final List<Episode> episodes;
     private final Cast castSeries;
+    private final int idCast;
 
     /**
      * Constructs a Season object.
@@ -23,13 +24,15 @@ public final class Season {
      * @param id       The code of the season.
      * @param summary  Summary of the season.
      * @param seriesId The code of the series.
+     * @param idCast   The code of the cast.
      */
-    public Season(final int seriesId, final int id, final String summary) {
+    public Season(final int seriesId, final int id, final String summary, final int idCast) {
         this.id = id;
         this.summary = summary;
         this.seriesId = seriesId;
         this.episodes = new ArrayList<>();
         this.castSeries = new Cast();
+        this.idCast = idCast;
     }
 
     /**
@@ -75,6 +78,15 @@ public final class Season {
      */
     public Cast getCast() {
         return new Cast(this.castSeries.getCastMemberList());
+    }
+
+    /**
+     * Gets the id of Cast.
+     *
+     * @return The id of Cast.
+     */
+    public int getIdCast() {
+        return this.idCast;
     }
 
     /**
