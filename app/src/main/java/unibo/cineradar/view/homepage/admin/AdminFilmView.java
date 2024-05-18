@@ -13,12 +13,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.io.Serial;
-import java.util.Objects;
 
 /**
  * The AdminFilmView class represents the user interface for managing films by an administrator.
@@ -82,17 +83,39 @@ public final class AdminFilmView extends AdminPanel {
         panel.add(new JLabel("ID Cast:"));
         panel.add(idCastField);
 
-        final int result = JOptionPane.showConfirmDialog(null, panel, "Aggiungi Film",
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        final JButton okButton = new JButton("OK");
+        okButton.setEnabled(false);
+        final Runnable checkFields = () -> {
+            final boolean allFilled = isFieldFilled(titleField.getText())
+                    && isFieldFilled(ageLimitField.getText())
+                    && isFieldFilled(plotArea.getText())
+                    && isFieldFilled(durationField.getText())
+                    && isFieldFilled(idCastField.getText());
+            okButton.setEnabled(allFilled);
+        };
 
-        if (result == JOptionPane.OK_OPTION) {
+        final DocumentListener listener = new ViewDocumentListener(checkFields);
+        titleField.getDocument().addDocumentListener(listener);
+        ageLimitField.getDocument().addDocumentListener(listener);
+        plotArea.getDocument().addDocumentListener(listener);
+        durationField.getDocument().addDocumentListener(listener);
+        idCastField.getDocument().addDocumentListener(listener);
+
+        okButton.addActionListener(e -> {
             addFilm(
                     titleField.getText(),
                     Integer.parseInt(ageLimitField.getText()),
                     plotArea.getText(),
                     Integer.parseInt(durationField.getText()),
-                    Integer.parseInt(idCastField.getText()));
-        }
+                    Integer.parseInt(idCastField.getText())
+            );
+            JOptionPane.getRootFrame().dispose();
+        });
+
+        final Object[] options = {okButton, "Cancel"};
+        JOptionPane.showOptionDialog(null, panel, "Aggiungi Film",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, options, options[0]);
     }
 
     /**
@@ -116,31 +139,38 @@ public final class AdminFilmView extends AdminPanel {
      * The dialog prompts the administrator to enter the code of the movie to be deleted.
      */
     private void deleteFilmDialog() {
-        final String input = Objects.requireNonNull(
-                JOptionPane.showInputDialog(
-                        null,
-                        "Inserisci il Codice del film da eliminare:",
-                        "Elimina Film", JOptionPane.PLAIN_MESSAGE));
-        try {
-            final int code = Integer.parseInt(input);
-            final boolean deleted = deleteFilm(code);
-            if (deleted) {
-                updateFilmTable();
+        final JTextField codeField = new JTextField(5);
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel("Inserisci il Codice del film da eliminare:"));
+        panel.add(codeField);
+
+        final int result = JOptionPane.showConfirmDialog(null, panel, "Elimina Film",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                final int code = Integer.parseInt(codeField.getText());
+                final boolean deleted = deleteFilm(code);
+                if (deleted) {
+                    updateFilmTable();
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Il film è stato eliminato con successo.",
+                            COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Errore durante l'eliminazione del film.",
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(
                         null,
-                        "Il film e' stato eliminato con successo.",
-                        COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(
-                        null,
-                        "Errore durante l'eliminazione del film.",
+                        "Inserisci un numero valido per il Codice.",
                         ERROR, JOptionPane.ERROR_MESSAGE);
             }
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Inserisci un numero valido per il Codice.",
-                    ERROR, JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -156,15 +186,22 @@ public final class AdminFilmView extends AdminPanel {
     }
 
     private void updateFilmTable() {
-        final DefaultTableModel model = (DefaultTableModel) this.filmTable.getModel();
-        model.setRowCount(0);
-        for (final Film film : ((AdminSessionController) getCurrentSessionContext().getController()).getFilms()) {
-            model.addRow(new Object[]{
-                    film.getFilmId(),
-                    film.getTitle(),
-                    film.getAgeLimit(),
-                    film.getPlot(),
-                    film.getDuration()});
-        }
+        SwingUtilities.invokeLater(() -> {
+            final DefaultTableModel model = (DefaultTableModel) filmTable.getModel();
+            model.setRowCount(0);
+            for (final Film film : ((AdminSessionController) getCurrentSessionContext().getController()).getFilms()) {
+                model.addRow(new Object[]{
+                        film.getFilmId(),
+                        film.getTitle(),
+                        film.getAgeLimit(),
+                        film.getPlot(),
+                        film.getDuration()
+                });
+            }
+        });
+    }
+
+    private boolean isFieldFilled(final String text) {
+        return !text.isBlank();
     }
 }

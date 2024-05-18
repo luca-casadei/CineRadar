@@ -14,6 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -109,15 +111,17 @@ public class AdminCastView extends AdminPanel {
      * Updates the table displaying casts with the latest data.
      */
     private void updateCastTable() {
-        final DefaultTableModel model = (DefaultTableModel) this.castTable.getModel();
-        model.setRowCount(0);
-        for (final Casting casting
-                : ((AdminSessionController) getCurrentSessionContext().getController()).getCasting()) {
-            model.addRow(new Object[]{
-                    casting.id(),
-                    casting.name(),
-            });
-        }
+        SwingUtilities.invokeLater(() -> {
+            final DefaultTableModel model = (DefaultTableModel) this.castTable.getModel();
+            model.setRowCount(0);
+            for (final Casting casting
+                    : ((AdminSessionController) getCurrentSessionContext().getController()).getCasting()) {
+                model.addRow(new Object[]{
+                        casting.id(),
+                        casting.name(),
+                });
+            }
+        });
     }
 
     /**
@@ -141,19 +145,37 @@ public class AdminCastView extends AdminPanel {
         panel.add(surnameField);
         panel.add(new JLabel("Data di Nascita (YYYY-MM-DD):"));
         panel.add(birthdayField);
-        panel.add(new JLabel("É un Attore? (1 se Attore, altrimenti 0):"));
+        panel.add(new JLabel("E' un Attore? (1 se Attore, altrimenti 0):"));
         panel.add(actorField);
-        panel.add(new JLabel("É un Regista? (1 se Regista, altrimenti 0):"));
+        panel.add(new JLabel("E' un Regista? (1 se Regista, altrimenti 0):"));
         panel.add(directorField);
         panel.add(new JLabel("Data Debutto Carriera (YYYY-MM-DD):"));
         panel.add(dateDebutCareerField);
         panel.add(new JLabel("Nome d'Arte:"));
         panel.add(artNameField);
 
-        final int result = JOptionPane.showConfirmDialog(null, panel, "Aggiungi Membro Cast",
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        final JButton okButton = new JButton("OK");
+        okButton.setEnabled(false);
+        final Runnable checkFields = () -> {
+            final boolean allFilled = isFieldFilled(nameField.getText())
+                    && isFieldFilled(surnameField.getText())
+                    && isFieldFilled(birthdayField.getText())
+                    && isFieldFilled(actorField.getText())
+                    && isFieldFilled(directorField.getText())
+                    && isFieldFilled(dateDebutCareerField.getText())
+                    && isFieldFilled(artNameField.getText());
+            okButton.setEnabled(allFilled);
+        };
+        final DocumentListener listener = new ViewDocumentListener(checkFields);
+        nameField.getDocument().addDocumentListener(listener);
+        surnameField.getDocument().addDocumentListener(listener);
+        birthdayField.getDocument().addDocumentListener(listener);
+        actorField.getDocument().addDocumentListener(listener);
+        directorField.getDocument().addDocumentListener(listener);
+        dateDebutCareerField.getDocument().addDocumentListener(listener);
+        artNameField.getDocument().addDocumentListener(listener);
 
-        if (result == JOptionPane.OK_OPTION) {
+        okButton.addActionListener(e -> {
             addCastMember(
                     nameField.getText(),
                     surnameField.getText(),
@@ -162,7 +184,13 @@ public class AdminCastView extends AdminPanel {
                     Integer.parseInt(directorField.getText()),
                     LocalDate.parse(dateDebutCareerField.getText()),
                     artNameField.getText());
-        }
+            JOptionPane.getRootFrame().dispose();
+        });
+
+        final Object[] options = {okButton, "Cancel"};
+        JOptionPane.showOptionDialog(null, panel, "Aggiungi Membro Cast",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, options, options[0]);
     }
 
     /**
@@ -241,12 +269,25 @@ public class AdminCastView extends AdminPanel {
         panel.add(new JLabel("Nome del Cast:"));
         panel.add(nameField);
 
-        final int result = JOptionPane.showConfirmDialog(null, panel, "Aggiungi Cast",
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        final JButton okButton = new JButton("OK");
+        okButton.setEnabled(false);
+        final Runnable checkFields = () -> {
+            final boolean isFilled = isFieldFilled(nameField.getText());
+            okButton.setEnabled(isFilled);
+        };
 
-        if (result == JOptionPane.OK_OPTION) {
+        final DocumentListener listener = new ViewDocumentListener(checkFields);
+        nameField.getDocument().addDocumentListener(listener);
+
+        okButton.addActionListener(e -> {
             addCast(nameField.getText());
-        }
+            JOptionPane.getRootFrame().dispose();
+        });
+
+        final Object[] options = {okButton, "Cancel"};
+        JOptionPane.showOptionDialog(null, panel, "Aggiungi Cast",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, options, options[0]);
     }
 
     /**
@@ -303,5 +344,9 @@ public class AdminCastView extends AdminPanel {
     private boolean deleteCast(final int id) {
         return ((AdminSessionController) getCurrentSessionContext().getController())
                 .deleteCast(id);
+    }
+
+    private boolean isFieldFilled(final String text) {
+        return !text.isBlank();
     }
 }
