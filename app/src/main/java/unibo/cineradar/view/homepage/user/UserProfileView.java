@@ -4,12 +4,16 @@ import unibo.cineradar.model.utente.Account;
 import unibo.cineradar.model.utente.User;
 import unibo.cineradar.view.ViewContext;
 
-import javax.swing.JPanel;
-import javax.swing.JLabel;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.io.Serial;
 
 // CHECKSTYLE: MagicNumber OFF
@@ -32,43 +36,51 @@ public final class UserProfileView extends UserPanel {
         if (account instanceof User user) {
 
             final JPanel mainPanel = new JPanel(new BorderLayout());
-            mainPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
             final JLabel welcomeLabel = new JLabel("Benvenuto "
                     + currentSessionContext.getController().getAccountDetails().get(0)
                     + " nella pagina di profilo.");
-            welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
+            welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
             welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
             mainPanel.add(welcomeLabel, BorderLayout.NORTH);
 
             final JPanel userInfoPanel = createUserInfoPanel(user);
             mainPanel.add(userInfoPanel, BorderLayout.CENTER);
 
-            add(mainPanel);
+            this.setLayout(new BorderLayout());
+            this.add(mainPanel, BorderLayout.CENTER);
         }
     }
 
     private JPanel createUserInfoPanel(final User user) {
-        final JPanel userInfoPanel = new JPanel(new GridLayout(0, 1, 0, 0));
+        final JPanel userInfoPanel = new JPanel();
+        userInfoPanel.setLayout(new BoxLayout(userInfoPanel, BoxLayout.Y_AXIS));
+        userInfoPanel.setBorder(new EmptyBorder(20, 50, 20, 50));
 
-        final JLabel nameLabel = new JLabel("Nome: " + user.getName());
-        final JLabel surnameLabel = new JLabel("Cognome: " + user.getLastName());
-        final JLabel usernameLabel = new JLabel("Username: " + user.getUsername());
-        final JLabel birthDateLabel = new JLabel("Data di nascita: " + user.getBirthDate());
-
-        nameLabel.setHorizontalAlignment(JLabel.CENTER);
-        surnameLabel.setHorizontalAlignment(JLabel.CENTER);
-        usernameLabel.setHorizontalAlignment(JLabel.CENTER);
-        birthDateLabel.setHorizontalAlignment(JLabel.CENTER);
+        final JLabel nameLabel = createLabel("Nome: " + user.getName());
+        final JLabel surnameLabel = createLabel("Cognome: " + user.getLastName());
+        final JLabel usernameLabel = createLabel("Username: " + user.getUsername());
+        final JLabel birthDateLabel = createLabel("Data di nascita: " + user.getBirthDate());
 
         userInfoPanel.add(nameLabel);
+        userInfoPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         userInfoPanel.add(surnameLabel);
+        userInfoPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         userInfoPanel.add(usernameLabel);
+        userInfoPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         userInfoPanel.add(birthDateLabel);
 
         return userInfoPanel;
     }
+
+    private JLabel createLabel(final String text) {
+        final JLabel label = new JLabel(text);
+        label.setFont(new Font("Arial", Font.PLAIN, 18));
+        label.setHorizontalAlignment(JLabel.CENTER);
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        return label;
+    }
 }
 
 // CHECKSTYLE: MagicNumber ON
-

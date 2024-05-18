@@ -15,6 +15,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.io.Serial;
 
+// CHECKSTYLE: MagicNumber OFF
+
 /**
  * Abstract class for user views with filtering capability.
  */
@@ -34,7 +36,7 @@ public abstract class UserFilteredView extends UserPanel {
     protected UserFilteredView(final ViewContext currentSessionContext, final String welcomeMessage) {
         super(currentSessionContext);
         final JLabel welcomeLabel = new JLabel(welcomeMessage);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
         welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
         this.add(welcomeLabel, BorderLayout.NORTH);
 
@@ -111,3 +113,5 @@ public abstract class UserFilteredView extends UserPanel {
      */
     protected abstract JTable createContentTable(int age);
 }
+
+// CHECKSTYLE: MagicNumber ON

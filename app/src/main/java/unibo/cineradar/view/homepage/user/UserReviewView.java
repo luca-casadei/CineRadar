@@ -10,6 +10,7 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.io.Serial;
 
+// CHECKSTYLE: MagicNumber OFF
 
 /**
  * Review view of the user.
@@ -29,7 +30,7 @@ public final class UserReviewView extends UserPanel {
         final JLabel welcomeLabel = new JLabel("Benvenuto "
                 + currentSessionContext.getController().getAccountDetails().get(0)
                 + " nella pagina delle recensioni.");
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
         welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
         this.add(welcomeLabel, BorderLayout.NORTH);
 
@@ -40,3 +41,5 @@ public final class UserReviewView extends UserPanel {
         this.add(scrollPane, BorderLayout.CENTER);
     }
 }
+
+// CHECKSTYLE: MagicNumber ON
