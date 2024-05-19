@@ -5,9 +5,15 @@ import unibo.cineradar.model.request.Request;
 import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.homepage.user.UserPanel;
 
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -15,6 +21,7 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.io.Serial;
 import java.util.List;
@@ -27,7 +34,10 @@ import java.util.List;
 public final class AdminRequestsView extends UserPanel {
 
     @Serial
-    private static final long serialVersionUID = -47044683429723183L;
+    private static final long serialVersionUID = -8901234567890123456L;
+    private static final String ERROR = "Errore";
+    private static final String COMPLETED = "Operazione completata";
+    private final JTable requestsTable;
 
     /**
      * Constructor of the Admin Requests View.
@@ -36,7 +46,6 @@ public final class AdminRequestsView extends UserPanel {
      */
     public AdminRequestsView(final ViewContext currentSessionContext) {
         super(currentSessionContext);
-        // Adds the welcome label to the view
         final JLabel welcomeLabel = new JLabel("Benvenuto "
                 + currentSessionContext.getController().getAccountDetails().get(0)
                 + " nella pagina delle richieste degli utenti.");
@@ -44,17 +53,41 @@ public final class AdminRequestsView extends UserPanel {
         welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
         this.add(welcomeLabel, BorderLayout.NORTH);
 
-        // Adds the Requests table to the view
-        final JTable requestsTable = createRequestsTable(currentSessionContext);
+        this.requestsTable = createRequestsTable(currentSessionContext);
         final JScrollPane scrollPane = new JScrollPane(requestsTable);
         this.add(scrollPane, BorderLayout.CENTER);
+
+        final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        final JButton addSeriesButton = new JButton("Completa Richiesta");
+        addSeriesButton.addActionListener(e -> completeRequestDialog());
+        buttonPanel.add(addSeriesButton);
+        add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    /**
+     * Updates the table displaying requests with the latest data.
+     */
+    private void updateRequestTable() {
+        SwingUtilities.invokeLater(() -> {
+            final DefaultTableModel model = (DefaultTableModel) this.requestsTable.getModel();
+            model.setRowCount(0);
+            for (final Request request
+                    : ((AdminSessionController) getCurrentSessionContext().getController()).getInsertionRequests()) {
+                model.addRow(new Object[]{
+                        request.getNumber(),
+                        request.getType(),
+                        request.getTitle(),
+                        request.getReleaseDate(),
+                        request.getDescription(),
+                        request.isClosed() ? "Si" : "No",
+                        request.getUsername()
+                });
+            }
+        });
     }
 
     private JTable createRequestsTable(final ViewContext currentSessionContext) {
-        // Retrieves the list of films from the controller
         final List<Request> requests = ((AdminSessionController) currentSessionContext.getController()).getInsertionRequests();
-
-        // Creates the table
         final DefaultTableModel requestsModelTable = new DefaultTableModel();
         requestsModelTable.addColumn("Numero");
         requestsModelTable.addColumn("Tipo");
@@ -63,8 +96,6 @@ public final class AdminRequestsView extends UserPanel {
         requestsModelTable.addColumn("Descrizione");
         requestsModelTable.addColumn("Chiusa");
         requestsModelTable.addColumn("UsernameUtente");
-
-        // Adds Request data to the table
         for (final Request request : requests) {
             requestsModelTable.addRow(new Object[]{
                     request.getNumber(),
@@ -72,11 +103,9 @@ public final class AdminRequestsView extends UserPanel {
                     request.getTitle(),
                     request.getReleaseDate(),
                     request.getDescription(),
-                    request.isClosed(),
+                    request.isClosed() ? "Si" : "No",
                     request.getUsername()});
         }
-
-        // Creates the table with custom renderer for alternating row colors
         final JTable requestsTable = new JTable(requestsModelTable) {
             @Override
             public Component prepareRenderer(
@@ -96,16 +125,10 @@ public final class AdminRequestsView extends UserPanel {
                 return component;
             }
         };
-
-        // Sets renderer to center-align cell contents
         final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         requestsTable.setDefaultRenderer(Object.class, centerRenderer);
-
-        // Sets row height
         requestsTable.setRowHeight(30);
-
-        // Customizes the table header
         final JTableHeader requestsHeader = requestsTable.getTableHeader();
         requestsHeader.setFont(new Font("Arial", Font.BOLD, 12));
         requestsHeader.setForeground(Color.BLACK);
@@ -115,6 +138,57 @@ public final class AdminRequestsView extends UserPanel {
         requestsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         return requestsTable;
+    }
+
+    /**
+     * Displays a dialog for deleting a request.
+     * The dialog prompts the administrator to enter the code of the request to be deleted.
+     */
+    private void completeRequestDialog() {
+        final JTextField reqCodeField = new JTextField(5);
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel("Inserisci il Codice della Richiesta da Segnare come Completata:"));
+        panel.add(reqCodeField);
+
+        final int result = JOptionPane.showConfirmDialog(null, panel, "Completa Richiesta",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                final int codeRequest = Integer.parseInt(reqCodeField.getText());
+                final boolean completed = completeRequest(codeRequest);
+                if (completed) {
+                    updateRequestTable();
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "La Richiesta è stata soddisfatta con successo.",
+                            COMPLETED, JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Errore durante il completamento della Richiesta.",
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Inserisci un numero valido per il Codice.",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    /**
+     * Deletes the request with the specified code.
+     *
+     * @param code The code of the request to be deleted.
+     * @return True if the request was successfully deleted, false otherwise.
+     */
+    private boolean completeRequest(final int code) {
+        return ((AdminSessionController) getCurrentSessionContext().getController())
+                .completeRequest(code);
     }
 }
 
