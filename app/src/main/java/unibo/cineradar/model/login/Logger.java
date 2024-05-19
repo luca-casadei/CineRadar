@@ -76,9 +76,7 @@ public final class Logger {
                             return mgr.getUserDetails(username);
                         }
                     }
-                    default -> {
-                        throw new IllegalStateException("Unhandled LoginType: " + type);
-                    }
+                    default -> throw new IllegalStateException("Unhandled LoginType: " + type);
                 }
             }
         }

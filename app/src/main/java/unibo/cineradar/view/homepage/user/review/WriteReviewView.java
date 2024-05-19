@@ -174,18 +174,7 @@ public abstract class WriteReviewView extends JFrame {
             final JLabel sectionNameLabel = new JLabel(section.name() + ":");
             sectionNameLabel.setFont(new Font(sectionNameLabel.getFont().getName(), Font.BOLD, 14));
 
-            final JCheckBox sectionCheckBox = new JCheckBox();
-            sectionCheckBox.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final JCheckBox checkBox = (JCheckBox) e.getSource();
-                    if (checkBox.isSelected()) {
-                        sectionRatingSpinners.get(section).setEnabled(true);
-                    } else {
-                        sectionRatingSpinners.get(section).setEnabled(false);
-                    }
-                }
-            });
+            final JCheckBox sectionCheckBox = getSectionCheckBox(section);
 
             final JLabel sectionDetailLabel = new JLabel(section.detail());
             sectionDetailLabel.setFont(new Font(sectionDetailLabel.getFont().getName(), Font.PLAIN, 12));
@@ -217,6 +206,22 @@ public abstract class WriteReviewView extends JFrame {
             gbc.insets = new Insets(0, 20, 0, 0);
             sectionsPanel.add(sectionRatingSpinner, gbc);
         }
+    }
+
+    private JCheckBox getSectionCheckBox(final Section section) {
+        final JCheckBox sectionCheckBox = new JCheckBox();
+        sectionCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final JCheckBox checkBox = (JCheckBox) e.getSource();
+                if (checkBox.isSelected()) {
+                    sectionRatingSpinners.get(section).setEnabled(true);
+                } else {
+                    sectionRatingSpinners.get(section).setEnabled(false);
+                }
+            }
+        });
+        return sectionCheckBox;
     }
 }
 

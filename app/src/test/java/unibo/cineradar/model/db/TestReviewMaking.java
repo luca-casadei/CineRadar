@@ -41,8 +41,8 @@ class TestReviewMaking {
                 LocalDate.of(2003, 6, 19),
                 false
         ));
-        EVIL_ADMIN_CTX.delSeriesReview(REVIEWED_SERIES_ID, USER);
-        EVIL_ADMIN_CTX.delFilmReview(REVIEWED_FILM_ID, USER);
+        assertTrue(EVIL_ADMIN_CTX.delSeriesReview(REVIEWED_SERIES_ID, USER));
+        assertTrue(EVIL_ADMIN_CTX.delFilmReview(REVIEWED_FILM_ID, USER));
     }
 
     @Test
@@ -99,7 +99,7 @@ class TestReviewMaking {
         assertIterableEquals(scores, gotScores);
         final int expectedAverage = scores.stream().reduce(0, Integer::sum) / scores.size();
         assertEquals(expectedAverage, fsr.getOverallRating());
-        EVIL_ADMIN_CTX.delSeriesReview(REVIEWED_SERIES_ID, USER);
+        assertTrue(EVIL_ADMIN_CTX.delSeriesReview(REVIEWED_SERIES_ID, USER));
     }
 }
 

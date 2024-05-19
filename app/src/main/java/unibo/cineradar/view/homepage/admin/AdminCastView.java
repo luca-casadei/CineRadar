@@ -65,6 +65,17 @@ public class AdminCastView extends AdminPanel {
         castConstraints.fill = GridBagConstraints.BOTH;
         add(castScrollPane, castConstraints);
 
+        final JPanel buttonPanel = getButtonPanel();
+
+        final GridBagConstraints buttonConstraints = new GridBagConstraints();
+        buttonConstraints.gridx = 0;
+        buttonConstraints.gridy = 1;
+        buttonConstraints.gridwidth = 2;
+        buttonConstraints.fill = GridBagConstraints.HORIZONTAL;
+        add(buttonPanel, buttonConstraints);
+    }
+
+    private JPanel getButtonPanel() {
         final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final JButton addMemberButton = new JButton("Aggiungi Membro Cast");
         addMemberButton.addActionListener(e -> addCastMemberDialog());
@@ -78,13 +89,7 @@ public class AdminCastView extends AdminPanel {
         final JButton deleteCastButton = new JButton("Elimina Cast");
         deleteCastButton.addActionListener(e -> deleteCastDialog());
         buttonPanel.add(deleteCastButton);
-
-        final GridBagConstraints buttonConstraints = new GridBagConstraints();
-        buttonConstraints.gridx = 0;
-        buttonConstraints.gridy = 1;
-        buttonConstraints.gridwidth = 2;
-        buttonConstraints.fill = GridBagConstraints.HORIZONTAL;
-        add(buttonPanel, buttonConstraints);
+        return buttonPanel;
     }
 
     /**
