@@ -445,4 +445,32 @@ public final class UserContext extends SessionContextImpl {
             return mgr.findFilmRecEvaluated(recUsername, username, filmRecId);
         }
     }
+
+    /**
+     * Removes a review evaluation.
+     *
+     * @param usernameOwnerReview The username of the reviewed user.
+     * @param username            The username of the reviewer.
+     * @param idFilm              The ID of the review.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean removeFilmRecEvaluation(final String usernameOwnerReview, final String username, final int idFilm) {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.removeFilmRecEvaluation(usernameOwnerReview, username, idFilm);
+        }
+    }
+
+    /**
+     * Removes a review evaluation.
+     *
+     * @param usernameOwnerReview The username of the reviewed user.
+     * @param username            The username of the reviewer.
+     * @param idSerie              The ID of the review.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean removeSerieRecEvaluation(final String usernameOwnerReview, final String username, final int idSerie) {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.removeSerieRecEvaluation(usernameOwnerReview, username, idSerie);
+        }
+    }
 }

@@ -35,6 +35,7 @@ public class ReviewDetailsView extends DetailsView {
     private final String usernameOwnerReview;
     private JButton likeButton;
     private JButton dislikeButton;
+    private JButton removeEvaluationButton;
 
     /**
      * Constructs a new ReviewDetailsView.
@@ -103,15 +104,18 @@ public class ReviewDetailsView extends DetailsView {
             throw new IllegalStateException();
         }
 
+        // Button panel
         final JPanel buttonPanel = new JPanel();
         likeButton = new JButton("Like");
         dislikeButton = new JButton("Dislike");
+        removeEvaluationButton = new JButton("Rimuovi Valutazione");
 
         likeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 likeButton.setEnabled(false);
                 dislikeButton.setEnabled(true);
+                removeEvaluationButton.setEnabled(true);
                 if (review instanceof FilmReview fr) {
                     uc.evaluateFilmRec(usernameOwnerReview,
                             uc.getAccount().getUsername(),
@@ -131,6 +135,7 @@ public class ReviewDetailsView extends DetailsView {
             public void actionPerformed(final ActionEvent e) {
                 likeButton.setEnabled(true);
                 dislikeButton.setEnabled(false);
+                removeEvaluationButton.setEnabled(true);
                 if (review instanceof FilmReview) {
                     uc.evaluateFilmRec(usernameOwnerReview,
                             uc.getAccount().getUsername(),
@@ -141,6 +146,24 @@ public class ReviewDetailsView extends DetailsView {
                             uc.getAccount().getUsername(),
                             ((SeriesReview) review).getIdSerie(),
                             false);
+                }
+            }
+        });
+
+        removeEvaluationButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                likeButton.setEnabled(true);
+                dislikeButton.setEnabled(true);
+                removeEvaluationButton.setEnabled(false);
+                if (review instanceof FilmReview fr) {
+                    uc.removeFilmRecEvaluation(usernameOwnerReview,
+                            uc.getAccount().getUsername(),
+                            fr.getIdFilm());
+                } else if (review instanceof SeriesReview sr) {
+                    uc.removeSerieRecEvaluation(usernameOwnerReview,
+                            uc.getAccount().getUsername(),
+                            sr.getIdSerie());
                 }
             }
         });
@@ -159,13 +182,16 @@ public class ReviewDetailsView extends DetailsView {
         resEvaluatedUseful.ifPresentOrElse(b -> {
             likeButton.setEnabled(!b);
             dislikeButton.setEnabled(b);
+            removeEvaluationButton.setEnabled(true);
         }, () -> {
             likeButton.setEnabled(true);
             dislikeButton.setEnabled(true);
+            removeEvaluationButton.setEnabled(false);
         });
 
         buttonPanel.add(likeButton);
         buttonPanel.add(dislikeButton);
+        buttonPanel.add(removeEvaluationButton);
 
         final JPanel combinedPanel = new JPanel(new BorderLayout());
         combinedPanel.add(ratingsPanel, BorderLayout.CENTER);

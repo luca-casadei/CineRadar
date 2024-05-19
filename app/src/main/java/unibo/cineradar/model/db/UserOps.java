@@ -755,6 +755,33 @@ public final class UserOps extends DBManager {
     }
 
     /**
+     * Removes a review evaluation.
+     *
+     * @param usernameOwnerReview The username of the reviewed user.
+     * @param username            The username of the reviewer.
+     * @param idSerie              The ID of the review.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean removeSerieRecEvaluation(final String usernameOwnerReview, final String username, final int idSerie) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = """
+                DELETE FROM valutazione_serie WHERE\s
+                UsernameUtenteValutato = ?\s
+                AND CodiceRecFilm = ?
+                AND UsernameUtente = ?""";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setString(1, usernameOwnerReview);
+            this.getPreparedStatement().setInt(2, idSerie);
+            this.getPreparedStatement().setString(3, username);
+            this.getPreparedStatement().executeUpdate();
+            return true;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    /**
      * Adds a review evaluation.
      *
      * @param recUsername The username of the reviewed user.
@@ -818,6 +845,33 @@ public final class UserOps extends DBManager {
             }
         } catch (SQLException ex) {
             throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
+     * Removes a review evaluation.
+     *
+     * @param usernameOwnerReview The username of the reviewed user.
+     * @param username            The username of the reviewer.
+     * @param idFilm              The ID of the review.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean removeFilmRecEvaluation(final String usernameOwnerReview, final String username, final int idFilm) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = """
+                DELETE FROM valutazione_film WHERE 
+                UsernameUtenteValutato = ? 
+                AND CodiceRecFilm = ? 
+                AND UsernameUtente = ?""";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setString(1, usernameOwnerReview);
+            this.getPreparedStatement().setInt(2, idFilm);
+            this.getPreparedStatement().setString(3, username);
+            this.getPreparedStatement().executeUpdate();
+            return true;
+        } catch (SQLException ex) {
+            return false;
         }
     }
 

@@ -326,14 +326,13 @@ public final class UserSessionController extends SessionControllerImpl {
      * @param recUsername The username of the reviewed user.
      * @param username    The username of the reviewer.
      * @param serieRecId  The ID of the review.
-     *
      * @return An Optional containing true if the review has been evaluated positively,
-     *         false if it has been evaluated negatively,
-     *         and an empty Optional if the evaluation does not exist.
+     * false if it has been evaluated negatively,
+     * and an empty Optional if the evaluation does not exist.
      */
     public Optional<Boolean> findSerieRecEvaluated(final String recUsername,
-                                                 final String username,
-                                                 final int serieRecId) {
+                                                   final String username,
+                                                   final int serieRecId) {
         return this.userContext.findSerieRecEvaluated(recUsername, username, serieRecId);
     }
 
@@ -344,12 +343,36 @@ public final class UserSessionController extends SessionControllerImpl {
      * @param username    The username of the reviewer.
      * @param filmRecId   The ID of the review.
      * @return An Optional containing true if the review has been evaluated positively,
-     *         false if it has been evaluated negatively,
-     *         and an empty Optional if the evaluation does not exist.
+     * false if it has been evaluated negatively,
+     * and an empty Optional if the evaluation does not exist.
      */
     public Optional<Boolean> findFilmRecEvaluated(final String recUsername,
-                                                final String username,
-                                                final int filmRecId) {
+                                                  final String username,
+                                                  final int filmRecId) {
         return this.userContext.findFilmRecEvaluated(recUsername, username, filmRecId);
+    }
+
+    /**
+     * Removes a review evaluation.
+     *
+     * @param usernameOwnerReview The username of the reviewed user.
+     * @param username            The username of the reviewer.
+     * @param idFilm              The ID of the review.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean removeFilmRecEvaluation(final String usernameOwnerReview, final String username, final int idFilm) {
+        return this.userContext.removeFilmRecEvaluation(usernameOwnerReview, username, idFilm);
+    }
+
+    /**
+     * Removes a review evaluation.
+     *
+     * @param usernameOwnerReview The username of the reviewed user.
+     * @param username            The username of the reviewer.
+     * @param idSerie             The ID of the review.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean removeSerieRecEvaluation(final String usernameOwnerReview, final String username, final int idSerie) {
+        return this.userContext.removeSerieRecEvaluation(usernameOwnerReview, username, idSerie);
     }
 }
