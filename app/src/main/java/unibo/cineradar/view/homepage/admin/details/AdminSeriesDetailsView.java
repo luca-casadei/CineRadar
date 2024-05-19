@@ -143,7 +143,7 @@ public final class AdminSeriesDetailsView extends JFrame {
     }
 
     private JScrollPane createEpisodesPanel(final Season actualSeason) {
-        final JPanel episodesPanel = new JPanel(new GridLayout(0, 3));
+        final JPanel episodesPanel = new JPanel(new GridLayout(0, 2));
         episodesPanel.setBorder(BorderFactory.createTitledBorder("Episodi"));
 
         for (final Episode episode : actualSeason.getEpisodes()) {

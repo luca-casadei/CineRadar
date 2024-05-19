@@ -24,8 +24,8 @@ import java.util.Map;
  * including operations related to films, TV series, and insertion requests.
  */
 public final class AdministratorContext extends SessionContextImpl {
-    private final Map<Film, Cast> detailedFilms;
-    private final List<Serie> detailedSeries;
+    private Map<Film, Cast> detailedFilms;
+    private List<Serie> detailedSeries;
 
     /**
      * Constructs the context of an administrator.
@@ -321,6 +321,59 @@ public final class AdministratorContext extends SessionContextImpl {
     public boolean deleteCast(final int id) {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.deleteCast(id);
+        }
+    }
+
+    /**
+     * Updates detailed information about films in the system.
+     */
+    public void updateDetailedFilms() {
+        try (AdminOps mgr = new AdminOps()) {
+            this.detailedFilms = mgr.getFilmsDetails();
+        }
+    }
+
+    /**
+     * Updates detailed information about series in the system.
+     */
+    public void updateDetailedSeries() {
+        try (AdminOps mgr = new AdminOps()) {
+            this.detailedSeries = mgr.getDetailedSeries();
+        }
+    }
+
+    /**
+     * Retrieves the ID of the last added series.
+     *
+     * @return The ID of the last series added to the system.
+     */
+    public Integer getLastSeriesId() {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getLastSeriesId();
+        }
+    }
+
+    /**
+     * Retrieves the ID of the last added season for a given series.
+     *
+     * @param seriesCode The code identifying the series.
+     * @return The ID of the last season added to the specified series.
+     */
+    public Integer getLastSeasonId(final int seriesCode) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getLastSeasonId(seriesCode);
+        }
+    }
+
+    /**
+     * Marks a request as complete in the system.
+     *
+     * @param code The code of the request to be marked as complete.
+     * @return True if the request was successfully marked as complete, false otherwise.
+     */
+    public boolean completeRequest(final int code) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.completeRequest(code);
         }
     }
 }

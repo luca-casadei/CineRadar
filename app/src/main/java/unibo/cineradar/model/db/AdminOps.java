@@ -43,35 +43,6 @@ public final class AdminOps extends DBManager {
     private static final int PARAMETER_INDEX2 = 6;
     private static final int PARAMETER_INDEX3 = 7;
     private static final String CODICE_SERIE = "CodiceSerie";
-    private static final String QUERY_SERIES = "SELECT serie.Codice AS CodiceSerie, "
-            + "stagione.NumeroStagione, "
-            + "episodio.NumeroEpisodio, "
-            + "serie.Titolo AS TitoloSerie, "
-            + "serie.EtaLimite AS EtaLimiteSerie, "
-            + "serie.Trama AS TramaSerie, "
-            + "serie.DurataComplessiva AS DurataComplessivaSerie, "
-            + "serie.NumeroEpisodi AS NumeroEpisodiSerie, "
-            + "stagione.Sunto AS SuntoStagione, "
-            + "episodio.DurataMin AS DurataEpisodio, "
-            + "casting.Nome AS NomeCasting, "
-            + "casting.Codice AS CodiceCast, "
-            + "membrocast.Codice AS CodiceMembroCast, "
-            + "membrocast.Nome AS NomeMembroCast, "
-            + "membrocast.Cognome AS CognomeMembroCast, "
-            + "membrocast.DataNascita AS DataNascitaMembroCast, "
-            + "membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast, "
-            + "membrocast.NomeArte AS NomeArteMembroCast, "
-            + "membrocast.TipoAttore AS TipoAttoreMembroCast, "
-            + "membrocast.TipoRegista AS TipoRegistaMembroCast "
-            + "FROM serie "
-            + "JOIN stagione ON serie.Codice = stagione.CodiceSerie "
-            + "JOIN episodio ON episodio.NumeroStagione = stagione.NumeroStagione "
-            + "AND episodio.CodiceSerie = stagione.CodiceSerie "
-            + "JOIN casting ON casting.Codice = stagione.CodiceCast "
-            + "AND episodio.CodiceSerie = stagione.CodiceSerie "
-            + "JOIN partecipazione_cast ON partecipazione_cast.CodiceCast = casting.Codice "
-            + "JOIN membrocast ON membrocast.Codice = partecipazione_cast.CodiceMembro "
-            + "ORDER BY CodiceSerie";
 
     /**
      * Gets the details of an administrator given its username.
@@ -343,7 +314,36 @@ public final class AdminOps extends DBManager {
     public List<Serie> getDetailedSeries() {
         Objects.requireNonNull(this.getConnection());
         try {
-            this.setPreparedStatement(this.getConnection().prepareStatement(QUERY_SERIES));
+            final String query = "SELECT serie.Codice AS CodiceSerie,"
+                    + " stagione.NumeroStagione,"
+                    + " episodio.NumeroEpisodio,"
+                    + " serie.Titolo AS TitoloSerie,"
+                    + " serie.EtaLimite AS EtaLimiteSerie,"
+                    + " serie.Trama AS TramaSerie,"
+                    + " serie.DurataComplessiva AS DurataComplessivaSerie,"
+                    + " serie.NumeroEpisodi AS NumeroEpisodiSerie,"
+                    + " stagione.Sunto AS SuntoStagione,"
+                    + " episodio.DurataMin AS DurataEpisodio,"
+                    + " casting.Nome AS NomeCasting,"
+                    + " casting.Codice AS CodiceCast,"
+                    + " membrocast.Codice AS CodiceMembroCast,"
+                    + " membrocast.Nome AS NomeMembroCast,"
+                    + " membrocast.Cognome AS CognomeMembroCast,"
+                    + " membrocast.DataNascita AS DataNascitaMembroCast,"
+                    + " membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast,"
+                    + " membrocast.NomeArte AS NomeArteMembroCast,"
+                    + " membrocast.TipoAttore AS TipoAttoreMembroCast,"
+                    + " membrocast.TipoRegista AS TipoRegistaMembroCast"
+                    + " FROM serie"
+                    + " JOIN stagione ON serie.Codice = stagione.CodiceSerie"
+                    + " JOIN episodio ON episodio.NumeroStagione = stagione.NumeroStagione"
+                    + " AND episodio.CodiceSerie = stagione.CodiceSerie"
+                    + " JOIN casting ON casting.Codice = stagione.CodiceCast"
+                    + " AND episodio.CodiceSerie = stagione.CodiceSerie"
+                    + " JOIN partecipazione_cast ON partecipazione_cast.CodiceCast = casting.Codice"
+                    + " JOIN membrocast ON membrocast.Codice = partecipazione_cast.CodiceMembro"
+                    + " ORDER BY CodiceSerie";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.setResultSet(this.getPreparedStatement().executeQuery());
             return processResultSet();
         } catch (SQLException ex) {
@@ -885,6 +885,86 @@ public final class AdminOps extends DBManager {
             return rowsAffected > 0;
         } catch (SQLException ex) {
             throw new IllegalArgumentException("Error deleting casting", ex);
+        }
+    }
+
+    /**
+     * Retrieves the ID of the last added series from the database.
+     *
+     * @return The ID of the last series added to the system.
+     * @throws IllegalArgumentException If there is an error retrieving the series ID from the database.
+     */
+    public Integer getLastSeriesId() {
+        Objects.requireNonNull(getConnection());
+
+        try {
+            final String query = "SELECT Codice"
+                    + " FROM serie"
+                    + " ORDER BY Codice DESC"
+                    + " LIMIT 1";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
+
+            if (getResultSet().next()) {
+                return getResultSet().getInt(1);
+            } else {
+                throw new IllegalArgumentException("Error retrieving series id");
+            }
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error retrieving series id", ex);
+        }
+    }
+
+    /**
+     * Retrieves the ID of the last added season for a given series from the database.
+     *
+     * @param seriesCode The code identifying the series.
+     * @return The ID of the last season added to the specified series.
+     * @throws IllegalArgumentException If there is an error retrieving the season ID from the database.
+     */
+    public Integer getLastSeasonId(final int seriesCode) {
+        Objects.requireNonNull(getConnection());
+
+        try {
+            final String query = "SELECT NumeroStagione"
+                    + " FROM stagione"
+                    + " WHERE stagione.CodiceSerie = ?"
+                    + " ORDER BY NumeroStagione DESC"
+                    + " LIMIT 1";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, seriesCode);
+            setResultSet(getPreparedStatement().executeQuery());
+
+            if (getResultSet().next()) {
+                return getResultSet().getInt(1);
+            } else {
+                throw new IllegalArgumentException("Error retrieving season id");
+            }
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error retrieving season id", ex);
+        }
+    }
+
+    /**
+     * Marks a request as complete in the database.
+     *
+     * @param code The code of the request to be marked as complete.
+     * @return True if the request was successfully marked as complete, false otherwise.
+     * @throws IllegalArgumentException If there is an error updating the request status in the database.
+     */
+    public boolean completeRequest(final int code) {
+        Objects.requireNonNull(getConnection());
+
+        try {
+            final String query = "UPDATE richiesta"
+                    + " SET richiesta.Chiusa = 1"
+                    + " WHERE richiesta.Numero = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, code);
+            final int rowsAffected = getPreparedStatement().executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error updating request status", ex);
         }
     }
 }

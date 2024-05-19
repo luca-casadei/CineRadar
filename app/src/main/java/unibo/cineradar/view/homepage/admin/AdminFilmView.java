@@ -27,7 +27,7 @@ import java.io.Serial;
  */
 public final class AdminFilmView extends AdminPanel {
     @Serial
-    private static final long serialVersionUID = -484906048604893L;
+    private static final long serialVersionUID = -302785493612487L;
     private static final String ERROR = "Errore";
     private static final String COMPLETE_DELETE = "Eliminazione completata";
     private final JTable filmTable;
@@ -186,8 +186,9 @@ public final class AdminFilmView extends AdminPanel {
     }
 
     private void updateFilmTable() {
+        ((AdminSessionController) getCurrentSessionContext().getController()).updateDetailedFilms();
         SwingUtilities.invokeLater(() -> {
-            final DefaultTableModel model = (DefaultTableModel) filmTable.getModel();
+            final DefaultTableModel model = (DefaultTableModel) this.filmTable.getModel();
             model.setRowCount(0);
             for (final Film film : ((AdminSessionController) getCurrentSessionContext().getController()).getFilms()) {
                 model.addRow(new Object[]{

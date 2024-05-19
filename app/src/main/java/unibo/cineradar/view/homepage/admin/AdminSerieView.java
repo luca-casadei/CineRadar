@@ -22,6 +22,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.io.Serial;
+import java.util.Optional;
 
 /**
  * The AdminSerieView class represents the user interface for managing TV series by an administrator.
@@ -30,7 +31,7 @@ import java.io.Serial;
  */
 public final class AdminSerieView extends AdminPanel {
     @Serial
-    private static final long serialVersionUID = -659685094860486L;
+    private static final long serialVersionUID = -935418209362487512L;
     private static final String ERROR = "Errore";
     private static final String COMPLETE_DELETE = "Eliminazione completata";
     private static final String SEASON_NUMBER = "Numero Stagione:";
@@ -62,13 +63,16 @@ public final class AdminSerieView extends AdminPanel {
         deleteSeriesButton.addActionListener(e -> deleteSeriesDialog());
         buttonPanel.add(deleteSeriesButton);
         final JButton addSeasonButton = new JButton("Aggiungi Stagione");
-        addSeasonButton.addActionListener(e -> addSeasonDialog());
+        addSeasonButton.addActionListener(e -> addSeasonDialog(
+                Optional.empty()));
         buttonPanel.add(addSeasonButton);
         final JButton deleteSeasonButton = new JButton("Elimina Stagione");
         deleteSeasonButton.addActionListener(e -> deleteSeasonDialog());
         buttonPanel.add(deleteSeasonButton);
         final JButton addEpisodeButton = new JButton("Aggiungi Episodio");
-        addEpisodeButton.addActionListener(e -> addEpisodeDialog());
+        addEpisodeButton.addActionListener(e -> addEpisodeDialog(
+                Optional.empty(),
+                Optional.empty()));
         buttonPanel.add(addEpisodeButton);
         final JButton deleteEpisodeButton = new JButton("Elimina Episodio");
         deleteEpisodeButton.addActionListener(e -> deleteEpisodeDialog());
@@ -80,6 +84,7 @@ public final class AdminSerieView extends AdminPanel {
      * Updates the table displaying TV series with the latest data.
      */
     private void updateSeriesTable() {
+        ((AdminSessionController) getCurrentSessionContext().getController()).updateDetailedSeries();
         SwingUtilities.invokeLater(() -> {
             final DefaultTableModel model = (DefaultTableModel) this.seriesTable.getModel();
             model.setRowCount(0);
@@ -165,7 +170,10 @@ public final class AdminSerieView extends AdminPanel {
             final String title, final int ageLimit, final String plot, final int duration, final int episodesNumber) {
         ((AdminSessionController) this.getCurrentSessionContext().getController())
                 .addSeries(title, ageLimit, plot, duration, episodesNumber);
-        updateSeriesTable();
+        addSeasonDialog(Optional.of(
+                ((AdminSessionController) this.getCurrentSessionContext().getController())
+                        .getLastSeriesId()
+        ));
     }
 
     /**
@@ -222,8 +230,11 @@ public final class AdminSerieView extends AdminPanel {
     /**
      * Displays a dialog for adding a season to a TV series.
      * The dialog prompts the administrator to enter the series code, season number, summary, and cast ID.
+     *
+     * @param idSeries An optional parameter representing the ID of the series to which the season is being added.
+     *                 If present, the series code field will be pre-filled with this ID and made uneditable.
      */
-    private void addSeasonDialog() {
+    private void addSeasonDialog(final Optional<Integer> idSeries) {
         final JTextField seriesCodeField = new JTextField(5);
         final JTextField seasonNumberField = new JTextField(5);
         final JTextArea summaryArea = new JTextArea(5, 20);
@@ -238,6 +249,10 @@ public final class AdminSerieView extends AdminPanel {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(new JLabel(SERIES_CODE));
         panel.add(seriesCodeField);
+        if (idSeries.isPresent()) {
+            seriesCodeField.setText(idSeries.get().toString());
+            seriesCodeField.setEditable(false);
+        }
         panel.add(new JLabel(SEASON_NUMBER));
         panel.add(seasonNumberField);
         panel.add(new JLabel("Sunto:"));
@@ -286,6 +301,12 @@ public final class AdminSerieView extends AdminPanel {
             final int seriesCode, final int seasonNumber, final String summary, final int idCast) {
         ((AdminSessionController) getCurrentSessionContext().getController())
                 .addSeason(seriesCode, seasonNumber, summary, idCast);
+        addEpisodeDialog(
+                Optional.of(seriesCode),
+                Optional.of(
+                        ((AdminSessionController) this.getCurrentSessionContext().getController())
+                                .getLastSeasonId(seriesCode)
+        ));
     }
 
     /**
@@ -346,8 +367,14 @@ public final class AdminSerieView extends AdminPanel {
     /**
      * Displays a dialog for adding an episode to a TV series season.
      * The dialog prompts the administrator to enter the series code, season number, episode number, and duration.
+     *
+     * @param idSeries An optional parameter representing the ID of the series to which the episode belongs.
+     *                 If present, the series code field will be pre-filled with this ID and made uneditable.
+     * @param idSeason An optional parameter representing the ID of the season to which the episode belongs.
+     *                 If present, the season number field will be pre-filled with this ID and made uneditable.
      */
-    private void addEpisodeDialog() {
+    private void addEpisodeDialog(
+            final Optional<Integer> idSeries, final Optional<Integer> idSeason) {
         final JTextField seriesCodeField = new JTextField(5);
         final JTextField seasonNumberField = new JTextField(5);
         final JTextField episodeNumberField = new JTextField(5);
@@ -357,8 +384,16 @@ public final class AdminSerieView extends AdminPanel {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(new JLabel(SERIES_CODE));
         panel.add(seriesCodeField);
+        if (idSeries.isPresent()) {
+            seriesCodeField.setText(idSeries.get().toString());
+            seriesCodeField.setEditable(false);
+        }
         panel.add(new JLabel(SEASON_NUMBER));
         panel.add(seasonNumberField);
+        if (idSeason.isPresent()) {
+            seasonNumberField.setText(idSeason.get().toString());
+            seasonNumberField.setEditable(false);
+        }
         panel.add(new JLabel("Numero Episodio:"));
         panel.add(episodeNumberField);
         panel.add(new JLabel("Durata (minuti):"));
@@ -407,6 +442,7 @@ public final class AdminSerieView extends AdminPanel {
             final int seriesCode, final int seasonNumber, final int episodeNumber, final int duration) {
         ((AdminSessionController) getCurrentSessionContext().getController())
                 .addEpisode(seriesCode, seasonNumber, episodeNumber, duration);
+        updateSeriesTable();
     }
 
     /**

@@ -290,4 +290,47 @@ public final class AdminSessionController extends SessionControllerImpl {
     public boolean deleteCast(final int id) {
         return this.administratorContext.deleteCast(id);
     }
+
+    /**
+     * Updates detailed information about films in the system.
+     */
+    public void updateDetailedFilms() {
+        this.administratorContext.updateDetailedFilms();
+    }
+
+    /**
+     * Updates detailed information about series in the system.
+     */
+    public void updateDetailedSeries() {
+        this.administratorContext.updateDetailedSeries();
+    }
+
+    /**
+     * Retrieves the ID of the last added series.
+     *
+     * @return The ID of the last series added to the system.
+     */
+    public Integer getLastSeriesId() {
+        return this.administratorContext.getLastSeriesId();
+    }
+
+    /**
+     * Retrieves the ID of the last added season for a given series.
+     *
+     * @param seriesCode The code identifying the series.
+     * @return The ID of the last season added to the specified series.
+     */
+    public Integer getLastSeasonId(final int seriesCode) {
+        return this.administratorContext.getLastSeasonId(seriesCode);
+    }
+
+    /**
+     * Marks a request as complete in the system.
+     *
+     * @param code The code of the request to be marked as complete.
+     * @return True if the request was successfully marked as complete, false otherwise.
+     */
+    public boolean completeRequest(final int code) {
+        return this.administratorContext.completeRequest(code);
+    }
 }
