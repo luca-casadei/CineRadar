@@ -436,10 +436,6 @@ Quello che segue rappresenta lo schema derivato dalla composizione di tutte le s
 	5                                                                                                                                                                                                            &
 	\begin{tabular}[c]{@{}c@{}}Si considera nella \\ classifica solo la serie \\ completa come visualizzata, \\ se si visualizza \\ un singolo episodio \\ senza completare la \\ serie di appartenenza,\\ questo non verrà\\ considerato nel conteggio\\ per le visualizzazioni\\ dei generi.\end{tabular}
 	\\ \hline
-	8.2                                                                                                                                                                                                          &
-	\begin{tabular}[c]{@{}c@{}}Visualizzare una \\ classifica dei registi in\\ base alla media \\ delle recensioni.\end{tabular}                                                                                 &
-	6                                                                                                                                                                                                            &
-	\\ \hline
 \end{longtable}
 \subsection{Operazioni di amministrazione}
 \begin{longtable}[H]{|c|c|>{\columncolor[HTML]{FFFFC7}}c |c|}
@@ -936,27 +932,6 @@ Otteniamo:
 		cat.film            & R         & 697.200   & L                            \\ \hline
 		\rowcolor[HTML]{CBCEFB}
 		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 2.548.776 L} \\ \hline
-	\end{tabular}
-\end{table}
-
-\subsection{Visualizzare una classifica dei registi più apprezzati (Op. 8.2)}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=450pt]{ER/navigazione/classificaregisti.png}
-	\caption{Schema di navigazione - visualizzare classifica dei registi più apprezzati}
-\end{figure}
-Questa operazione richiede di tenere conto del fatto che le recensioni fornite per un film o una serie TV sono attribuite a loro volta al regista, poiché è univoco per ciascun multimedia. Pertanto, è essenziale esaminare ogni recensione sia per i film che per le serie TV, così come i relativi prodotti multimediali e i registi che li hanno realizzati.
-\begin{table}[H]
-	\centering
-	\begin{tabular}{|llll|}
-		\hline
-		\rowcolor[HTML]{CBCEFB}
-		Concetto   & Costrutto & Accesso & Tipo                                    \\ \hline
-		MEMBROCAST & E         & 600     & L                                       \\ \hline
-		RECFILM    & E         & 950.000 & L                                       \\ \hline
-		RECSERIE   & E         & 250.000 & L                                       \\ \hline
-		\rowcolor[HTML]{CBCEFB}
-		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1.200.600 L} \\ \hline
 	\end{tabular}
 \end{table}
 
@@ -1999,17 +1974,25 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 		LEFT JOIN serie ON recensioni_totali.CodiceSerie = serie.Codice
 		WHERE UsernameUtente = ?
 	\end{verbatim}
-	\item Op. 7.2-3:\\
+	\item Op. 7.2-3: \label{op:7.2-3}\\
 	Operazione analoga per le serie ma con CodiceRecSerie invece che CodiceRecFilm.
 	\begin{verbatim}
 		INSERT INTO valutazione_film (UsernameUtenteValutato, CodiceRecFilm,
 									  UsernameUtente, positiva)
 			VALUES (?,?,?,?)
 	\end{verbatim}
-	\item Op. 7.4: \todo{TBD}
-	\item Op. 7.5: \todo{TBD}
+	\item Op. 7.4:
+	\begin{verbatim}
+		SELECT recserie.*, serie.Titolo AS TitoloSerie
+		FROM recserie JOIN serie ON recserie.CodiceSerie = serie.Codice
+		WHERE recserie.CodiceSerie = ?
+	\end{verbatim}
+	\item Op. 7.5: Semplice aggiunta di:
+	\begin{verbatim}
+		ON DUPLICATE KEY UPDATE Positiva = VALUES(Positiva)
+	\end{verbatim}
+	Alle query 7.2-3 \ref{op:7.2-3}
 	\item Op. 8.1: \todo{TBD}
-	\item Op. 8.2: \todo{TBD}
 	\item Op. 9.1: \todo{TBD}
 	\item Op. 9.2: \todo{TBD}
 	\item Op. 10: \todo{TBD}
