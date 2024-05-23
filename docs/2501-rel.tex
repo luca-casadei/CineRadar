@@ -1991,13 +1991,56 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\begin{verbatim}
 		ON DUPLICATE KEY UPDATE Positiva = VALUES(Positiva)
 	\end{verbatim}
-	Alle query 7.2-3 \ref{op:7.2-3}
+	Alle query 7.2-3 (\ref{op:7.2-3})
 	\item Op. 8.1: \todo{TBD}
-	\item Op. 9.1: \todo{TBD}
-	\item Op. 9.2: \todo{TBD}
+	\item Op. 9.1:
+	\begin{verbatim}
+		SELECT UsernameUtenteValutato,
+			SUM(
+				CASE WHEN Positiva = TRUE THEN 1 ELSE -1 END) 
+				/ 
+				COUNT(*) AS MediaValutazione
+		FROM (SELECT UsernameUtenteValutato, Positiva FROM valutazione_film
+			UNION ALL
+			SELECT UsernameUtenteValutato, Positiva FROM valutazione_serie) 
+		AS AllReviews
+		GROUP BY UsernameUtenteValutato
+		ORDER BY MediaValutazione ASC
+		LIMIT 5
+	\end{verbatim}
+	\item Op. 9.2:
+	\begin{verbatim}
+		SELECT UsernameUtente, SUM(NumeroValutazioni) AS TotaleValutazioni
+			FROM (
+		 		SELECT UsernameUtente, COUNT(*) AS NumeroValutazioni
+		 		FROM recfilm
+		 		GROUP BY UsernameUtente
+		 		UNION ALL
+		 		SELECT UsernameUtente, COUNT(*) AS NumeroValutazioni
+		 		FROM recserie
+		 		GROUP BY UsernameUtente
+		 	) AS RecensioniTotali
+		 GROUP BY UsernameUtente
+		 ORDER BY TotaleValutazioni DESC
+		 LIMIT 5
+	\end{verbatim}
 	\item Op. 10: \todo{TBD}
-	\item Op. 11.1: \todo{TBD}
-	\item Op. 11.2: \todo{TBD}
+	\item Op. 11.1:
+	\begin{verbatim}
+		INSERT INTO film (Titolo, EtaLimite, Trama, Durata, CodiceCast)
+			VALUES (?, ?, ?, ?, ?)
+	\end{verbatim}
+	\item Op. 11.2:
+	\begin{verbatim}
+		INSERT INTO membrocast (Nome, 
+			Cognome, 
+			DataNascita, 
+			TipoAttore, 
+			TipoRegista,
+			DataDebuttoCarriera, 
+			NomeArte)
+		VALUES (?, ?, ?, ?, ?, ?, ?)
+	\end{verbatim}
 	\item Op. 12:\\
 	Operazione eseguita dal registratore.
 	\begin{verbatim}

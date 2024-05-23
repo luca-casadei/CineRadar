@@ -706,13 +706,7 @@ public final class UserOps extends DBManager {
                     + "(UsernameUtenteValutato, CodiceRecSerie, UsernameUtente, Positiva) "
                     + FOUR_VALUES
                     + " ON DUPLICATE KEY UPDATE Positiva = VALUES(Positiva)";
-            this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setString(1, recUsername);
-            this.getPreparedStatement().setInt(2, serieRecId);
-            this.getPreparedStatement().setString(3, username);
-            this.getPreparedStatement().setBoolean(4, positive);
-            this.getPreparedStatement().executeUpdate();
-            return true;
+            return evaluationCommons(recUsername, username, serieRecId, positive, query);
         } catch (SQLException ex) {
             return false;
         }
@@ -725,8 +719,8 @@ public final class UserOps extends DBManager {
      * @param username    The username of the reviewer.
      * @param serieRecId  The ID of the review.
      * @return An Optional containing true if the review has been evaluated positively,
-     *         false if it has been evaluated negatively,
-     *         and an empty Optional if the evaluation does not exist.
+     * false if it has been evaluated negatively,
+     * and an empty Optional if the evaluation does not exist.
      */
     public Optional<Boolean> findSerieRecEvaluated(final String recUsername,
                                                    final String username,
@@ -739,18 +733,25 @@ public final class UserOps extends DBManager {
                     AND CodiceRecSerie = ?
                     AND UsernameUtente = ?
                     """;
-            this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setString(FIRST_PARAMETER, recUsername);
-            this.getPreparedStatement().setInt(SECOND_PARAMETER, serieRecId);
-            this.getPreparedStatement().setString(THIRD_PARAMETER, username);
-            this.setResultSet(this.getPreparedStatement().executeQuery());
-            if (this.getResultSet().next()) {
-                return Optional.of(this.getResultSet().getBoolean("Positiva"));
-            } else {
-                return Optional.empty();
-            }
+            return findMediaCommons(recUsername, username, serieRecId, query);
         } catch (SQLException ex) {
             throw new IllegalStateException(ex);
+        }
+    }
+
+    private Optional<Boolean> findMediaCommons(final String recUsername,
+                                               final String username,
+                                               final int serieRecId,
+                                               final String query) throws SQLException {
+        this.setPreparedStatement(this.getConnection().prepareStatement(query));
+        this.getPreparedStatement().setString(FIRST_PARAMETER, recUsername);
+        this.getPreparedStatement().setInt(SECOND_PARAMETER, serieRecId);
+        this.getPreparedStatement().setString(THIRD_PARAMETER, username);
+        this.setResultSet(this.getPreparedStatement().executeQuery());
+        if (this.getResultSet().next()) {
+            return Optional.of(this.getResultSet().getBoolean("Positiva"));
+        } else {
+            return Optional.empty();
         }
     }
 
@@ -759,17 +760,17 @@ public final class UserOps extends DBManager {
      *
      * @param usernameOwnerReview The username of the reviewed user.
      * @param username            The username of the reviewer.
-     * @param idSerie              The ID of the review.
+     * @param idSerie             The ID of the review.
      * @return True if the operation was successful, false otherwise.
      */
     public boolean removeSerieRecEvaluation(final String usernameOwnerReview, final String username, final int idSerie) {
         Objects.requireNonNull(this.getConnection());
         try {
             final String query = """
-                DELETE FROM valutazione_serie WHERE\s
-                UsernameUtenteValutato = ?\s
-                AND CodiceRecFilm = ?
-                AND UsernameUtente = ?""";
+                    DELETE FROM valutazione_serie WHERE\s
+                    UsernameUtenteValutato = ?\s
+                    AND CodiceRecFilm = ?
+                    AND UsernameUtente = ?""";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setString(1, usernameOwnerReview);
             this.getPreparedStatement().setInt(2, idSerie);
@@ -800,16 +801,24 @@ public final class UserOps extends DBManager {
                     + "(UsernameUtenteValutato, CodiceRecFilm, UsernameUtente, Positiva) "
                     + FOUR_VALUES
                     + " ON DUPLICATE KEY UPDATE Positiva = VALUES(Positiva)";
-            this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setString(1, recUsername);
-            this.getPreparedStatement().setInt(2, filmRecId);
-            this.getPreparedStatement().setString(3, username);
-            this.getPreparedStatement().setBoolean(4, positive);
-            this.getPreparedStatement().executeUpdate();
-            return true;
+            return evaluationCommons(recUsername, username, filmRecId, positive, query);
         } catch (SQLException ex) {
             return false;
         }
+    }
+
+    private boolean evaluationCommons(final String recUsername,
+                                      final String username,
+                                      final int filmRecId,
+                                      final boolean positive,
+                                      final String query) throws SQLException {
+        this.setPreparedStatement(this.getConnection().prepareStatement(query));
+        this.getPreparedStatement().setString(1, recUsername);
+        this.getPreparedStatement().setInt(2, filmRecId);
+        this.getPreparedStatement().setString(3, username);
+        this.getPreparedStatement().setBoolean(4, positive);
+        this.getPreparedStatement().executeUpdate();
+        return true;
     }
 
     /**
@@ -819,8 +828,8 @@ public final class UserOps extends DBManager {
      * @param username    The username of the reviewer.
      * @param filmRecId   The ID of the review.
      * @return An Optional containing true if the review has been evaluated positively,
-     *         false if it has been evaluated negatively,
-     *         and an empty Optional if the evaluation does not exist.
+     * false if it has been evaluated negatively,
+     * and an empty Optional if the evaluation does not exist.
      */
     public Optional<Boolean> findFilmRecEvaluated(final String recUsername,
                                                   final String username,
@@ -833,16 +842,7 @@ public final class UserOps extends DBManager {
                        AND CodiceRecFilm = ?
                        AND UsernameUtente = ?
                     """;
-            this.setPreparedStatement(this.getConnection().prepareStatement(query));
-            this.getPreparedStatement().setString(FIRST_PARAMETER, recUsername);
-            this.getPreparedStatement().setInt(SECOND_PARAMETER, filmRecId);
-            this.getPreparedStatement().setString(THIRD_PARAMETER, username);
-            this.setResultSet(this.getPreparedStatement().executeQuery());
-            if (this.getResultSet().next()) {
-                return Optional.of(this.getResultSet().getBoolean("Positiva"));
-            } else {
-                return Optional.empty();
-            }
+            return findMediaCommons(recUsername, username, filmRecId, query);
         } catch (SQLException ex) {
             throw new IllegalStateException(ex);
         }
@@ -860,10 +860,10 @@ public final class UserOps extends DBManager {
         Objects.requireNonNull(this.getConnection());
         try {
             final String query = """
-                DELETE FROM valutazione_film WHERE 
-                UsernameUtenteValutato = ? 
-                AND CodiceRecFilm = ? 
-                AND UsernameUtente = ?""";
+                    DELETE FROM valutazione_film WHERE 
+                    UsernameUtenteValutato = ? 
+                    AND CodiceRecFilm = ? 
+                    AND UsernameUtente = ?""";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setString(1, usernameOwnerReview);
             this.getPreparedStatement().setInt(2, idFilm);
