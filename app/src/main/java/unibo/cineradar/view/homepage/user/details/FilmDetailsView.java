@@ -88,6 +88,7 @@ public final class FilmDetailsView extends DetailsView {
         final JPanel castPanel = new JPanel();
         castPanel.setLayout(new BoxLayout(castPanel, BoxLayout.Y_AXIS));
         castPanel.setBorder(BorderFactory.createTitledBorder("Cast"));
+        castPanel.setAlignmentX(LEFT_ALIGNMENT);
 
         if (detailedFilmCast != null) {
             final List<CastMember> castMembers = detailedFilmCast.getCastMemberList();
@@ -102,17 +103,24 @@ public final class FilmDetailsView extends DetailsView {
             }
         }
 
-        mainPanel.add(castPanel, BorderLayout.CENTER);
-
-        final JPanel bottomPanel = getBottomPanel(currentSessionContext);
+        // Reviews panel
         final JPanel reviewsPanel = super.getReviewsPanel(this.uc.getFilmReviews(detailedFilm.getFilmId()));
 
+        // Combine cast and reviews panel
+        final JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(castPanel, BorderLayout.NORTH);
+        centerPanel.add(reviewsPanel, BorderLayout.CENTER);
+
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
+
+        final JPanel bottomPanel = getBottomPanel(currentSessionContext);
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
-        mainPanel.add(reviewsPanel, BorderLayout.CENTER);
 
         add(mainPanel);
         setVisible(true);
     }
+
+
 
     private JPanel getBottomPanel(final ViewContext currentSessionContext) {
         final JCheckBox cb = getViewedSelector();
