@@ -390,16 +390,6 @@ Quello che segue rappresenta lo schema derivato dalla composizione di tutte le s
 	\begin{tabular}[c]{@{}c@{}}Visualizzare le \\ informazioni riguardanti \\ una serie TV, comprese \\ tutte le stagioni \\ e tutti gli episodi.\end{tabular}                                                   &
 	50                                                                                                                                                                                                           &
 	\\ \hline
-	4.5                                                                                                                                                                                                          &
-	\begin{tabular}[c]{@{}c@{}}Aggiunta di una \\ nuova stagione per una \\ specifica serie TV.\end{tabular}                                                 &
-	5																						&
-	
-	\\ \hline
-	4.6                                                                                                                                                                                                          &
-	\begin{tabular}[c]{@{}c@{}}Aggiunta di un \\ nuovo episodio per una \\ specifica stagione di \\ una serie TV.\end{tabular}                                                   &
-	10																						&
-	
-	\\ \hline
 	5.1                                                                                                                                                                                                          &
 	\begin{tabular}[c]{@{}c@{}}Contrassegnare \\ come "visualizzato" \\ un film.\end{tabular}                                                                                                                    &
 	350                                                                                                                                                                                                          &
@@ -468,6 +458,16 @@ Quello che segue rappresenta lo schema derivato dalla composizione di tutte le s
 	\begin{tabular}[c]{@{}c@{}}Aggiunta di persone che\\ hanno realizzato un film\\ alla piattaforma\end{tabular}                                                                    &
 	664 / mese                                                                                                                                                                       &
 	\begin{tabular}[c]{@{}c@{}}Considerando una stima\\ di 4 membri rilevanti del\\ cast di un film che si\\ vogliono tracciare, regista\\ compreso.\end{tabular}                                    \\ \hline
+	4.5                                                                                                                                                                                                          &
+	\begin{tabular}[c]{@{}c@{}}Aggiunta di una \\ nuova stagione per una \\ specifica serie TV.\end{tabular}                                                 &
+	5																						&
+	
+	\\ \hline
+	4.6                                                                                                                                                                                                          &
+	\begin{tabular}[c]{@{}c@{}}Aggiunta di un \\ nuovo episodio per una \\ specifica stagione di \\ una serie TV.\end{tabular}                                                   &
+	10																						&
+	
+	\\ \hline
 \end{longtable}
 \subsection{Operazioni del registratore}
 \begin{longtable}[H]{|c|c|>{\columncolor[HTML]{FFFFC7}}c |c|}
@@ -1889,8 +1889,21 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 				= partecipazione_cast.CodiceMembro
 		ORDER BY CodiceSerie
 	\end{verbatim}
-	\item Op. 4.5: \todo{TBD}
-	\item Op. 4.6: \todo{TBD}
+	\item Op. 4.5:
+	\begin{verbatim}
+		INSERT INTO
+			stagione (CodiceSerie, NumeroStagione, Sunto, CodiceCast)
+		VALUES (?, ?, ?, ?)
+	\end{verbatim}
+	\item Op. 4.6:
+	\begin{verbatim}
+		INSERT
+			INTO episodio (NumeroEpisodio,
+			 			   CodiceSerie,
+			  			   NumeroStagione,
+			   			   DurataMin)
+		VALUES (?, ?, ?, ?)
+	\end{verbatim}
 	\item Op. 5.1:\\
 	Per la visualizzazione:
 	\begin{verbatim}
