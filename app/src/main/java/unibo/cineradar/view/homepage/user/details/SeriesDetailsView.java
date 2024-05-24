@@ -24,6 +24,7 @@ import java.awt.GridLayout;
 import java.io.Serial;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A view to display detailed information about a serie.
@@ -37,6 +38,7 @@ public final class SeriesDetailsView extends DetailsView {
     private static final int MARGIN = 5;
 
     private final transient UserSessionController uc;
+    private final transient Serie detailedSerie;
     private JButton reviewButton;
 
     /**
@@ -55,6 +57,7 @@ public final class SeriesDetailsView extends DetailsView {
 
         for (final Serie actualSerie : detailedSeries) {
             if (actualSerie.getSeriesId() == serieId) {
+                this.detailedSerie = actualSerie;
                 setTitle(actualSerie.getTitle());
                 initComponents(currentSessionContext, actualSerie);
                 return;
@@ -180,7 +183,8 @@ public final class SeriesDetailsView extends DetailsView {
     }
 
     private void updateReviewButtonState(final int viewedEpisodes, final int totalEpisodes) {
-        reviewButton.setEnabled(viewedEpisodes == totalEpisodes);
+        reviewButton.setEnabled(viewedEpisodes == totalEpisodes
+                && Objects.isNull(uc.getFullSeriesReview(detailedSerie.getSeriesId(), uc.getAccount().getUsername())));
     }
 
 }

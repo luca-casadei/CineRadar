@@ -25,6 +25,7 @@ import java.io.Serial;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A view to display detailed information about a film.
@@ -125,8 +126,10 @@ public final class FilmDetailsView extends DetailsView {
     private JPanel getBottomPanel(final ViewContext currentSessionContext) {
         final JCheckBox cb = getViewedSelector();
         final JButton reviewButton = new JButton("Recensisci");
-        cb.addActionListener(e -> reviewButton.setEnabled(cb.isSelected()));
-        reviewButton.setEnabled(cb.isSelected());
+        final boolean notReviewedYet = Objects.isNull(uc.getFullFilmReview(detailedFilm.getFilmId(),
+                uc.getAccount().getUsername()));
+        cb.addActionListener(e -> reviewButton.setEnabled(cb.isSelected() && notReviewedYet));
+        reviewButton.setEnabled(cb.isSelected() && notReviewedYet);
         reviewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
