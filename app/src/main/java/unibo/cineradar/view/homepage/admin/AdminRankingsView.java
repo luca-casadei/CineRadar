@@ -69,6 +69,7 @@ public class AdminRankingsView extends AdminPanel {
         final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setDefaultEditor(Object.class, null);
         table.setRowHeight(ROW_HEIGHT);
         this.customizeTableHeader(table);
 
@@ -83,6 +84,7 @@ public class AdminRankingsView extends AdminPanel {
         final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setDefaultEditor(Object.class, null);
         table.setRowHeight(ROW_HEIGHT);
         this.customizeTableHeader(table);
 
