@@ -160,7 +160,7 @@ CREATE TABLE REGISTRATORE
 );
 CREATE TABLE RICHIESTA
 (
-    Numero         INT          NOT NULL,
+    Numero         INT          NOT NULL AUTO_INCREMENT,
     Tipo           BOOLEAN      NOT NULL,
     Titolo         VARCHAR(100) NOT NULL,
     AnnoUscita     DATE         NOT NULL,
@@ -218,8 +218,8 @@ CREATE TABLE STAGIONE
 );
 CREATE TABLE TEMPLATEPROMO
 (
-    CodicePromo       INT NOT NULL,
-    PercentualeSconto INT NOT NULL,
+    CodicePromo       INT NOT NULL AUTO_INCREMENT,
+    PercentualeSconto INT NOT NULL CHECK (PercentualeSconto > 0 AND PercentualeSconto <= 100),
     CONSTRAINT IDCOUPON PRIMARY KEY (CodicePromo)
 );
 CREATE TABLE TESSERA

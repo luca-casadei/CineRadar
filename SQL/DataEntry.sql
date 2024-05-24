@@ -56,6 +56,8 @@ ALTER TABLE membrocast
     AUTO_INCREMENT 1;
 ALTER TABLE richiesta
     AUTO_INCREMENT 1;
+ALTER TABLE templatepromo
+    AUTO_INCREMENT 1;
 INSERT INTO account(Username, PASSWORD, Nome, Cognome)
 VALUES ("admin",
         "ea6dc907a62197d8b424b12d78b44dbd374fab1cef45b46897d9b88ebb6a8fa95453b15df2b79a26b8c25ff79995e0d2e2c952dbcb70335daec71383a435b78f",
