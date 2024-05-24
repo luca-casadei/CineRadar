@@ -2,8 +2,10 @@ package unibo.cineradar.view.homepage;
 
 import unibo.cineradar.view.CineRadarViewFrameImpl;
 import unibo.cineradar.view.ViewContext;
+import unibo.cineradar.view.homepage.admin.AdminCardView;
 import unibo.cineradar.view.homepage.admin.AdminCastView;
 import unibo.cineradar.view.homepage.admin.AdminProfileView;
+import unibo.cineradar.view.homepage.admin.AdminPromoView;
 import unibo.cineradar.view.homepage.admin.AdminRankingsView;
 import unibo.cineradar.view.homepage.admin.AdminRequestsView;
 import unibo.cineradar.view.homepage.admin.AdminSerieView;
@@ -26,6 +28,8 @@ public final class AdminHomePageView extends CineRadarViewFrameImpl {
     private static final String PROFILE_NAME = "profile";
     private static final String RANKING_NAME = "ranking";
     private static final String CAST_NAME = "cast";
+    private static final String PROMO_NAME = "promo";
+    private static final String CARD_NAME = "card";
 
     private final ViewContext context;
     private final CardLayout cards = new CardLayout();
@@ -59,6 +63,8 @@ public final class AdminHomePageView extends CineRadarViewFrameImpl {
         this.cardPane.add(PROFILE_NAME, new AdminProfileView(this.context));
         this.cardPane.add(RANKING_NAME, new AdminRankingsView(this.context));
         this.cardPane.add(CAST_NAME, new AdminCastView(this.context));
+        this.cardPane.add(PROMO_NAME, new AdminPromoView(this.context));
+        this.cardPane.add(CARD_NAME, new AdminCardView(this.context));
     }
 
     private JPanel getNavBar() {
@@ -77,10 +83,16 @@ public final class AdminHomePageView extends CineRadarViewFrameImpl {
         requestButton.addActionListener(e -> this.cards.show(this.cardPane, REQUEST_NAME));
         final JButton profileButton = new JButton("PROFILO");
         profileButton.addActionListener(e -> this.cards.show(this.cardPane, PROFILE_NAME));
+        final JButton promoButton = new JButton("PROMO");
+        promoButton.addActionListener(e -> this.cards.show(this.cardPane, PROMO_NAME));
+        final JButton cardsButton = new JButton("TESSERE");
+        cardsButton.addActionListener(e -> this.cards.show(this.cardPane, CARD_NAME));
         navBar.add(filmButton);
         navBar.add(seriesButton);
         navBar.add(castButton);
         navBar.add(rankingButton);
+        navBar.add(cardsButton);
+        navBar.add(promoButton);
         navBar.add(requestButton);
         navBar.add(profileButton);
         return navBar;

@@ -1,11 +1,13 @@
 package unibo.cineradar.model.context.administrator;
 
+import unibo.cineradar.model.card.CardReg;
 import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.cast.Casting;
 import unibo.cineradar.model.context.SessionContextImpl;
 import unibo.cineradar.model.db.AdminOps;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.promo.Promo;
 import unibo.cineradar.model.ranking.CastRanking;
 import unibo.cineradar.model.ranking.EvalType;
 import unibo.cineradar.model.ranking.UserRanking;
@@ -15,6 +17,7 @@ import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.Account;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -374,6 +377,73 @@ public final class AdministratorContext extends SessionContextImpl {
     public boolean completeRequest(final int code) {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.completeRequest(code);
+        }
+    }
+
+    /**
+     * Retrieves the list of promotional offers.
+     * This method uses the {@link AdminOps} class to manage promotional operations.
+     *
+     * @return a list of {@link Promo} objects representing the current promotional offers.
+     * @throws RuntimeException if an error occurs while retrieving the promotional offers.
+     */
+    public List<Promo> getPromos() {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getPromos();
+        }
+    }
+
+    /**
+     * Adds a new promotional offer.
+     * This method uses the {@link AdminOps} class to manage promotional operations.
+     *
+     * @param promo the {@link Promo} object representing the promotional offer to be added.
+     * @throws RuntimeException if an error occurs while adding the promotional offer.
+     */
+    public void addPromo(final Promo promo) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.addPromo(promo);
+        }
+    }
+
+    /**
+     * Deletes a promotional offer based on the provided code and expiration date.
+     * This method uses the {@link AdminOps} class to manage promotional operations.
+     *
+     * @param code the unique code of the promotional offer to be deleted.
+     * @param expiration the expiration date of the promotional offer to be deleted.
+     * @return {@code true} if the promotional offer was successfully deleted, {@code false} otherwise.
+     * @throws RuntimeException if an error occurs while deleting the promotional offer.
+     */
+    public boolean deletePromo(final int code, final LocalDate expiration) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.deletePromo(code, expiration);
+        }
+    }
+
+    /**
+     * Retrieves a list of CardReg objects.
+     *
+     * @return A list of CardReg objects representing the cards.
+     */
+    public List<CardReg> getCards() {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getCards();
+        }
+    }
+
+    /**
+     * Assigns a promotional code to a user for a specific cinema.
+     *
+     * @param promoCode The promotional code to assign.
+     * @param expiration The expiration date of the promotional code.
+     * @param cinemaCode The code representing the cinema.
+     * @param username The username of the user to whom the promotional code will be assigned.
+     */
+    public void assignPromo(
+            final int promoCode, final LocalDate expiration, final int cinemaCode, final String username) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.assignPromo(promoCode, expiration, cinemaCode, username);
         }
     }
 }

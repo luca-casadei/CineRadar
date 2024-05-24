@@ -2,6 +2,7 @@ package unibo.cineradar.controller.administrator;
 
 import unibo.cineradar.controller.SessionController;
 import unibo.cineradar.controller.SessionControllerImpl;
+import unibo.cineradar.model.card.CardReg;
 import unibo.cineradar.model.cast.Actor;
 import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.cast.CastMember;
@@ -9,6 +10,7 @@ import unibo.cineradar.model.cast.Casting;
 import unibo.cineradar.model.cast.Director;
 import unibo.cineradar.model.context.administrator.AdministratorContext;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.promo.Promo;
 import unibo.cineradar.model.ranking.CastRanking;
 import unibo.cineradar.model.ranking.EvalType;
 import unibo.cineradar.model.ranking.UserRanking;
@@ -332,5 +334,61 @@ public final class AdminSessionController extends SessionControllerImpl {
      */
     public boolean completeRequest(final int code) {
         return this.administratorContext.completeRequest(code);
+    }
+
+    /**
+     * Retrieves the list of promotional offers.
+     *
+     * @return a list of {@link Promo} objects representing the current promotional offers.
+     */
+    public List<Promo> getPromos() {
+        return this.administratorContext.getPromos();
+    }
+
+    /**
+     * Adds a new promotional offer.
+     *
+     * @param percentage the discount percentage of the promotional offer.
+     * @param expiration the expiration date of the promotional offer.
+     */
+    public void addPromo(final int percentage, final LocalDate expiration) {
+        this.administratorContext.addPromo(new Promo(
+                0,
+                percentage,
+                expiration
+        ));
+    }
+
+    /**
+     * Deletes a promotional offer based on the provided code and expiration date.
+     *
+     * @param code the unique code of the promotional offer to be deleted.
+     * @param expiration the expiration date of the promotional offer to be deleted.
+     * @return {@code true} if the promotional offer was successfully deleted, {@code false} otherwise.
+     */
+    public boolean deletePromo(final int code, final LocalDate expiration) {
+        return this.administratorContext.deletePromo(code, expiration);
+    }
+
+    /**
+     * Retrieves a list of CardReg objects.
+     *
+     * @return A list of CardReg objects representing the cards.
+     */
+    public List<CardReg> getCards() {
+        return this.administratorContext.getCards();
+    }
+
+    /**
+     * Assigns a promotional code to a user for a specific cinema.
+     *
+     * @param promoCode The promotional code to assign.
+     * @param expiration The expiration date of the promotional code.
+     * @param cinemaCode The code representing the cinema.
+     * @param username The username of the user to whom the promotional code will be assigned.
+     */
+    public void assignPromo(
+            final int promoCode, final LocalDate expiration, final int cinemaCode, final String username) {
+        this.administratorContext.assignPromo(promoCode, expiration, cinemaCode, username);
     }
 }

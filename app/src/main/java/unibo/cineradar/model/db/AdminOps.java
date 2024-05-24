@@ -1,12 +1,14 @@
 package unibo.cineradar.model.db;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import unibo.cineradar.model.card.CardReg;
 import unibo.cineradar.model.cast.Actor;
 import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.cast.Casting;
 import unibo.cineradar.model.cast.Director;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.promo.Promo;
 import unibo.cineradar.model.ranking.CastRanking;
 import unibo.cineradar.model.ranking.EvalType;
 import unibo.cineradar.model.ranking.UserRanking;
@@ -17,9 +19,11 @@ import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.Administrator;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -488,11 +492,11 @@ public final class AdminOps extends DBManager {
             setPreparedStatement(getConnection().prepareStatement(query));
             getPreparedStatement().setString(1, castMember.getName());
             getPreparedStatement().setString(2, castMember.getLastName());
-            getPreparedStatement().setDate(3, java.sql.Date.valueOf(castMember.getBirthDate()));
+            getPreparedStatement().setDate(3, Date.valueOf(castMember.getBirthDate()));
             getPreparedStatement().setBoolean(4, castMember instanceof Actor);
             getPreparedStatement().setBoolean(PARAMETER_INDEX1, castMember instanceof Director);
             if (!Objects.isNull(castMember.getCareerDebutDate())) {
-                getPreparedStatement().setDate(PARAMETER_INDEX2, java.sql.Date.valueOf(castMember.getCareerDebutDate()));
+                getPreparedStatement().setDate(PARAMETER_INDEX2, Date.valueOf(castMember.getCareerDebutDate()));
             } else {
                 getPreparedStatement().setNull(PARAMETER_INDEX2, java.sql.Types.DATE);
             }
@@ -896,7 +900,6 @@ public final class AdminOps extends DBManager {
      */
     public Integer getLastSeriesId() {
         Objects.requireNonNull(getConnection());
-
         try {
             final String query = "SELECT Codice"
                     + " FROM serie"
@@ -924,7 +927,6 @@ public final class AdminOps extends DBManager {
      */
     public Integer getLastSeasonId(final int seriesCode) {
         Objects.requireNonNull(getConnection());
-
         try {
             final String query = "SELECT NumeroStagione"
                     + " FROM stagione"
@@ -954,7 +956,6 @@ public final class AdminOps extends DBManager {
      */
     public boolean completeRequest(final int code) {
         Objects.requireNonNull(getConnection());
-
         try {
             final String query = "UPDATE richiesta"
                     + " SET richiesta.Chiusa = 1"
@@ -965,6 +966,172 @@ public final class AdminOps extends DBManager {
             return rowsAffected > 0;
         } catch (SQLException ex) {
             throw new IllegalArgumentException("Error updating request status", ex);
+        }
+    }
+
+    /**
+     * Retrieves the list of promotional offers from the database.
+     * This method executes an SQL query to fetch promo details by joining the 'templatepromo' and 'promo' tables.
+     *
+     * @return a list of {@link Promo} objects representing the current promotional offers.
+     * @throws IllegalArgumentException if there is an error while retrieving the promotional offers.
+     * @throws NullPointerException if the database connection is null.
+     */
+    public List<Promo> getPromos() {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT templatepromo.CodicePromo, templatepromo.PercentualeSconto, promo.Scadenza"
+                    + " FROM templatepromo"
+                    + " JOIN promo ON templatepromo.CodicePromo = promo.CodiceTemplatePromo";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
+            final List<Promo> promos = new ArrayList<>();
+            while (getResultSet().next()) {
+                final Promo promo = new Promo(
+                        getResultSet().getInt("CodicePromo"),
+                        getResultSet().getInt("PercentualeSconto"),
+                        getResultSet().getDate("Scadenza").toLocalDate()
+                );
+                promos.add(promo);
+            }
+            return List.copyOf(promos);
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error updating request status", ex);
+        }
+    }
+
+    /**
+     * Adds a new promotional offer to the database.
+     * This method inserts a new promo into the 'templatepromo' table if necessary and then into the 'promo' table.
+     * If the percentage discount already exists, it uses the existing template promo code.
+     *
+     * @param promo the {@link Promo} object representing the promotional offer to be added.
+     * @throws IllegalArgumentException if there is an error while adding the promotional offer.
+     * @throws IllegalStateException if there is an error rolling back the transaction.
+     * @throws NullPointerException if the database connection is null.
+     */
+    public void addPromo(final Promo promo) {
+        Objects.requireNonNull(getConnection());
+        final String checkPromoQuery = "SELECT CodicePromo FROM TEMPLATEPROMO WHERE PercentualeSconto = ?";
+        final String templatePromoQuery = "INSERT INTO TEMPLATEPROMO (PercentualeSconto) VALUES (?)";
+        final String promoQuery = "INSERT INTO PROMO (CodiceTemplatePromo, Scadenza) VALUES (?, ?)";
+        try {
+            getConnection().setAutoCommit(false);
+            setPreparedStatement(getConnection().prepareStatement(checkPromoQuery));
+            getPreparedStatement().setInt(1, promo.percentageDiscount());
+            ResultSet rs = getPreparedStatement().executeQuery();
+            int generatedCodicePromo = 0;
+            if (rs.next()) {
+                generatedCodicePromo = rs.getInt(1);
+            } else {
+                setPreparedStatement(getConnection().prepareStatement(templatePromoQuery, Statement.RETURN_GENERATED_KEYS));
+                getPreparedStatement().setInt(1, promo.percentageDiscount());
+                getPreparedStatement().executeUpdate();
+                rs = getPreparedStatement().getGeneratedKeys();
+                if (rs.next()) {
+                    generatedCodicePromo = rs.getInt(1);
+                }
+            }
+            setPreparedStatement(getConnection().prepareStatement(promoQuery));
+            getPreparedStatement().setInt(1, generatedCodicePromo);
+            getPreparedStatement().setDate(2, Date.valueOf(promo.expiration()));
+            getPreparedStatement().executeUpdate();
+            getConnection().commit();
+        } catch (SQLException ex) {
+            SQLException rollbackEx = null;
+            try {
+                getConnection().rollback();
+            } catch (SQLException e) {
+                rollbackEx = e;
+            }
+            if (rollbackEx != null) {
+                ex.addSuppressed(rollbackEx);
+            }
+            throw new IllegalArgumentException("Error adding promo", ex);
+        }
+    }
+
+    /**
+     * Deletes a promotional offer from the database based on the provided code and expiration date.
+     * This method executes an SQL query to delete the promo from the 'promo' table.
+     *
+     * @param code the unique code of the promotional offer to be deleted.
+     * @param expiration the expiration date of the promotional offer to be deleted.
+     * @return {@code true} if the promotional offer was successfully deleted, {@code false} otherwise.
+     * @throws IllegalArgumentException if there is an error while deleting the promotional offer.
+     * @throws NullPointerException if the database connection is null.
+     */
+    public boolean deletePromo(final int code, final LocalDate expiration) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String deletePromoQuery = "DELETE FROM PROMO "
+                    + "WHERE CodiceTemplatePromo = ? "
+                    + "AND Scadenza = ?";
+            setPreparedStatement(getConnection().prepareStatement(deletePromoQuery));
+            getPreparedStatement().setInt(1, code);
+            getPreparedStatement().setDate(2, Date.valueOf(expiration));
+            final int rowsAffectedPromo = getPreparedStatement().executeUpdate();
+            return rowsAffectedPromo > 0;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error deleting promo", ex);
+        }
+    }
+
+    /**
+     * Retrieves the list of cards from the database.
+     * This method executes an SQL query to fetch cards details.
+     *
+     * @return a list of {@link CardReg} objects representing the cards.
+     * @throws IllegalArgumentException if there is an error while retrieving the cards.
+     * @throws NullPointerException if the database connection is null.
+     */
+    public List<CardReg> getCards() {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT * FROM tessera";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
+            final List<CardReg> cards = new ArrayList<>();
+            while (getResultSet().next()) {
+                final CardReg card = new CardReg(
+                        getResultSet().getString("UsernameUtente"),
+                        getResultSet().getDate("DataRinnovo").toLocalDate(),
+                        getResultSet().getInt("CodiceCinema"),
+                        getResultSet().getInt("NumeroTessera")
+                );
+                cards.add(card);
+            }
+            return List.copyOf(cards);
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error updating request status", ex);
+        }
+    }
+
+    /**
+     * Assigns a promotional code to a user for a specific cinema.
+     *
+     * @param promoCode The promotional code to assign.
+     * @param expiration The expiration date of the promotional code.
+     * @param cinemaCode The code representing the cinema.
+     * @param username The username of the user to whom the promotional code will be assigned.
+     * @throws NullPointerException If the connection object is null.
+     * @throws IllegalArgumentException If an error occurs while executing the SQL query.
+     */
+    public void assignPromo(
+            final int promoCode, final LocalDate expiration, final int cinemaCode, final String username) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "INSERT INTO"
+                    + " premi_tessera(CodicePromoPromo, Scadenza, CodiceCinema, UsernameUtente)"
+                    + " VALUES (?, ?, ?, ?)";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, promoCode);
+            getPreparedStatement().setDate(2, Date.valueOf(expiration));
+            getPreparedStatement().setInt(3, cinemaCode);
+            getPreparedStatement().setString(4, username);
+            getPreparedStatement().executeUpdate();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error adding casting", ex);
         }
     }
 }

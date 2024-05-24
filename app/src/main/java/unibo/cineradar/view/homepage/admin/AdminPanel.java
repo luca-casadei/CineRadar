@@ -1,11 +1,13 @@
 package unibo.cineradar.view.homepage.admin;
 
 import unibo.cineradar.controller.administrator.AdminSessionController;
+import unibo.cineradar.model.card.CardReg;
 import unibo.cineradar.model.cast.Actor;
 import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.cast.Casting;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Multimedia;
+import unibo.cineradar.model.promo.Promo;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.homepage.admin.details.AdminFilmDetailsView;
@@ -84,11 +86,10 @@ public abstract class AdminPanel extends JPanel {
         }
 
         final JTable table = this.createCustomTable(filmTableModel);
-
-        // Sets renderer to center-align cell contents
         final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setDefaultEditor(Object.class, null);
         table.setRowHeight(30);
 
         this.customizeTableHeader(table);
@@ -116,6 +117,7 @@ public abstract class AdminPanel extends JPanel {
         final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setDefaultEditor(Object.class, null);
         table.setRowHeight(30);
         this.customizeTableHeader(table);
         return table;
@@ -153,6 +155,7 @@ public abstract class AdminPanel extends JPanel {
         final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setDefaultEditor(Object.class, null);
         table.setRowHeight(30);
         this.customizeTableHeader(table);
         return table;
@@ -178,6 +181,7 @@ public abstract class AdminPanel extends JPanel {
         };
 
         filmTable.getSelectionModel().addListSelectionListener(filmSelectionListener);
+        filmTable.setDefaultEditor(Object.class, null);
 
         return filmTable;
     }
@@ -207,6 +211,7 @@ public abstract class AdminPanel extends JPanel {
         };
 
         serieTable.getSelectionModel().addListSelectionListener(serieSelectionListener);
+        serieTable.setDefaultEditor(Object.class, null);
 
         return serieTable;
     }
@@ -214,6 +219,68 @@ public abstract class AdminPanel extends JPanel {
     private void openSerieDetailsView(final ViewContext currentSessionContext, final int serieId) {
         final AdminSeriesDetailsView seriesDetailsView = new AdminSeriesDetailsView(currentSessionContext, serieId);
         seriesDetailsView.setVisible(true);
+    }
+
+    /**
+     * Creates a table of promos.
+     *
+     * @return A JTable of promos.
+     */
+    protected JTable createPromoTable() {
+        final DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Codice");
+        model.addColumn("Percentuale");
+        model.addColumn("Scadenza");
+
+        for (final Promo promo
+                : ((AdminSessionController) this.getCurrentSessionContext().getController()).getPromos()) {
+            model.addRow(new Object[]{
+                    promo.id(),
+                    promo.percentageDiscount(),
+                    promo.expiration()
+            });
+        }
+
+        final JTable table = this.createCustomTable(model);
+        final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setDefaultEditor(Object.class, null);
+        table.setRowHeight(30);
+        this.customizeTableHeader(table);
+        return table;
+    }
+
+    /**
+     * Creates a table of cards.
+     *
+     * @return A JTable of cards.
+     */
+    protected JTable createCardTable() {
+        final DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("CodiceCinema");
+        model.addColumn("Username");
+        model.addColumn("NumeroTessera");
+        model.addColumn("DataRinnovo");
+
+        for (final CardReg card
+                : ((AdminSessionController) this.getCurrentSessionContext().getController()).getCards()) {
+            model.addRow(new Object[]{
+                    card.getCinemaCode(),
+                    card.getUser(),
+                    card.getCardNr(),
+                    card.getDate()
+            });
+        }
+
+        final JTable table = this.createCustomTable(model);
+        final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setDefaultEditor(Object.class, null);
+        table.setRowHeight(30);
+        this.customizeTableHeader(table);
+        return table;
     }
 
     /**
