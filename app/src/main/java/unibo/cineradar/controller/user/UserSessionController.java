@@ -375,4 +375,26 @@ public final class UserSessionController extends SessionControllerImpl {
     public boolean removeSerieRecEvaluation(final String usernameOwnerReview, final String username, final int idSerie) {
         return this.userContext.removeSerieRecEvaluation(usernameOwnerReview, username, idSerie);
     }
+
+    /**
+     * Retrieves a list of film genres sorted by the number of views,
+     * including all available information about the genres.
+     *
+     * @return A list of Genre objects containing film genres sorted by the number of views,
+     * including all available genre details.
+     */
+    public List<Genre> getFilmGenresRanking() {
+        return this.userContext.getFilmGenresRanking();
+    }
+
+    /**
+     * Retrieves a list of series genres sorted by the number of views,
+     * including all available information about the genres.
+     *
+     * @return A list of Genre objects containing series genres sorted by the number of views,
+     * including all available genre details.
+     */
+    public List<Genre> getSeriesGenresRanking() {
+        return this.userContext.getSeriesGenresRanking();
+    }
 }

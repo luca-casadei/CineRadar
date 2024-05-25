@@ -5,6 +5,10 @@ FROM sezionamento_film;
 DELETE
 FROM sezionamento_serie;
 DELETE
+FROM categorizzazione_film;
+DELETE
+FROM categorizzazione_serie;
+DELETE
 FROM preferenze;
 DELETE
 FROM sezione;
@@ -589,3 +593,21 @@ VALUES ("luca", 1, "trama", 8),
        ("luca", 1, "Sonoro", 1),
        ("luca", 1, "Effetti", 2),
        ("luca", 1, "Casting", 10);
+
+INSERT INTO categorizzazione_film (NomeGenere, CodiceFilm)
+VALUES ("Storico", 1),
+       ("Azione", 1),
+       ("Thriller", 2),
+       ("Azione", 2),
+       ("Azione", 3),
+       ("Thriller", 3),
+       ("Storico", 4),
+       ("Thriller", 4),
+       ("Azione", 5),
+       ("Giallo", 5);
+
+INSERT INTO categorizzazione_serie (NomeGenere, CodiceSerie)
+VALUES ("Giallo", 1),
+       ("Thriller", 1),
+       ("Storico", 2),
+       ("Azione", 2);

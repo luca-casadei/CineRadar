@@ -417,12 +417,12 @@ public final class UserContext extends SessionContextImpl {
      * @param username    The username of the reviewer.
      * @param serieRecId  The ID of the review.
      * @return An Optional containing true if the review has been evaluated positively,
-     *         false if it has been evaluated negatively,
-     *         and an empty Optional if the evaluation does not exist.
+     * false if it has been evaluated negatively,
+     * and an empty Optional if the evaluation does not exist.
      */
     public Optional<Boolean> findSerieRecEvaluated(final String recUsername,
-                                                 final String username,
-                                                 final int serieRecId) {
+                                                   final String username,
+                                                   final int serieRecId) {
         try (UserOps mgr = new UserOps()) {
             return mgr.findSerieRecEvaluated(recUsername, username, serieRecId);
         }
@@ -435,12 +435,12 @@ public final class UserContext extends SessionContextImpl {
      * @param username    The username of the reviewer.
      * @param filmRecId   The ID of the review.
      * @return An Optional containing true if the review has been evaluated positively,
-     *         false if it has been evaluated negatively,
-     *         and an empty Optional if the evaluation does not exist.
+     * false if it has been evaluated negatively,
+     * and an empty Optional if the evaluation does not exist.
      */
     public Optional<Boolean> findFilmRecEvaluated(final String recUsername,
-                                                final String username,
-                                                final int filmRecId) {
+                                                  final String username,
+                                                  final int filmRecId) {
         try (UserOps mgr = new UserOps()) {
             return mgr.findFilmRecEvaluated(recUsername, username, filmRecId);
         }
@@ -465,12 +465,38 @@ public final class UserContext extends SessionContextImpl {
      *
      * @param usernameOwnerReview The username of the reviewed user.
      * @param username            The username of the reviewer.
-     * @param idSerie              The ID of the review.
+     * @param idSerie             The ID of the review.
      * @return True if the operation was successful, false otherwise.
      */
     public boolean removeSerieRecEvaluation(final String usernameOwnerReview, final String username, final int idSerie) {
         try (UserOps mgr = new UserOps()) {
             return mgr.removeSerieRecEvaluation(usernameOwnerReview, username, idSerie);
+        }
+    }
+
+    /**
+     * Retrieves a list of film genres sorted by the number of views,
+     * including all available information about the genres.
+     *
+     * @return A list of Genre objects containing film genres sorted by the number of views,
+     * including all available genre details.
+     */
+    public List<Genre> getFilmGenresRanking() {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.getFilmGenresRanking();
+        }
+    }
+
+    /**
+     * Retrieves a list of series genres sorted by the number of views,
+     * including all available information about the genres.
+     *
+     * @return A list of Genre objects containing series genres sorted by the number of views,
+     * including all available genre details.
+     */
+    public List<Genre> getSeriesGenresRanking() {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.getSeriesGenresRanking();
         }
     }
 }

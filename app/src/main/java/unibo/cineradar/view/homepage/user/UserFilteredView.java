@@ -35,6 +35,10 @@ public abstract class UserFilteredView extends UserPanel {
      */
     protected UserFilteredView(final ViewContext currentSessionContext, final String welcomeMessage) {
         super(currentSessionContext);
+        initComponents(currentSessionContext, welcomeMessage);
+    }
+
+    private void initComponents(final ViewContext currentSessionContext, final String welcomeMessage) {
         final JLabel welcomeLabel = new JLabel(welcomeMessage);
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
         welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -61,6 +65,9 @@ public abstract class UserFilteredView extends UserPanel {
         filterButton.setEnabled(false);
         filterPanel.add(filterButton);
 
+        final JButton genreRankingButton = new JButton("Apri classifica generi");
+        filterPanel.add(genreRankingButton);
+
         this.add(filterPanel, BorderLayout.SOUTH);
 
         filterCheckbox.addActionListener(e -> {
@@ -82,6 +89,10 @@ public abstract class UserFilteredView extends UserPanel {
                 } catch (NumberFormatException ignored) {
                 }
             }
+        });
+
+        genreRankingButton.addActionListener(e -> {
+            showGenreRanking();
         });
     }
 
@@ -112,6 +123,11 @@ public abstract class UserFilteredView extends UserPanel {
      * @return The created JTable.
      */
     protected abstract JTable createContentTable(int age);
+
+    /**
+     * Abstract method to show the ranking of genres based on the number of views.
+     */
+    protected abstract void showGenreRanking();
 }
 
 // CHECKSTYLE: MagicNumber ON

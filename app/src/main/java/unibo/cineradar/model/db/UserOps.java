@@ -1320,4 +1320,92 @@ public final class UserOps extends DBManager {
         }
         throw new IllegalArgumentException();
     }
+
+    /**
+     * Retrieves a list of film genres sorted by the number of views,
+     * including all available information about the genres.
+     *
+     * @return A list of Genre objects containing film genres sorted by the number of views,
+     *         including all available genre details.
+     * @throws IllegalArgumentException If an SQL exception occurs during query execution.
+     */
+    public List<Genre> getFilmGenresRanking() {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = """
+                SELECT\s
+                    genere.Nome,
+                    genere.Descrizione,
+                    genere.NumeroVisualizzati,\s
+                    COUNT(visualizzazioni_film.CodiceFilm) AS NumeroVisualizzazioni
+                FROM\s
+                    visualizzazioni_film\s
+                JOIN\s
+                    film ON visualizzazioni_film.CodiceFilm = film.Codice
+                JOIN\s
+                    categorizzazione_film ON film.Codice = categorizzazione_film.CodiceFilm
+                JOIN\s
+                    genere ON categorizzazione_film.NomeGenere = genere.Nome
+                GROUP BY\s
+                    genere.Nome, genere.Descrizione, genere.NumeroVisualizzati
+                ORDER BY\s
+                    NumeroVisualizzazioni DESC""";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            return getGenreList();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Retrieves a list of series genres sorted by the number of views,
+     * including all available information about the genres.
+     *
+     * @return A list of Genre objects containing series genres sorted by the number of views,
+     *         including all available genre details.
+     * @throws IllegalArgumentException If an SQL exception occurs during query execution.
+     */
+    public List<Genre> getSeriesGenresRanking() {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = """
+                    SELECT\s
+                        genere.Nome,
+                        genere.Descrizione,
+                        genere.NumeroVisualizzati,\s
+                        COUNT(visualizzazioni_episodio.CodiceSerie) AS NumeroVisualizzazioni
+                    FROM\s
+                        visualizzazioni_episodio\s
+                    JOIN\s
+                        episodio ON visualizzazioni_episodio.CodiceSerie = episodio.CodiceSerie
+                    JOIN\s
+                        serie ON episodio.CodiceSerie = serie.Codice
+                    JOIN\s
+                        categorizzazione_serie ON serie.Codice = categorizzazione_serie.CodiceSerie
+                    JOIN\s
+                        genere ON categorizzazione_serie.NomeGenere = genere.Nome
+                    GROUP BY\s
+                        genere.Nome, genere.Descrizione, genere.NumeroVisualizzati
+                    ORDER BY\s
+                        NumeroVisualizzazioni DESC""";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            return getGenreList();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    private List<Genre> getGenreList() throws SQLException {
+        final List<Genre> genres = new ArrayList<>();
+        while (this.getResultSet().next()) {
+            genres.add(new Genre(
+                    this.getResultSet().getString("Nome"),
+                    this.getResultSet().getString("Descrizione"),
+                    this.getResultSet().getInt("NumeroVisualizzazioni")
+            ));
+        }
+        return List.copyOf(genres);
+    }
 }
