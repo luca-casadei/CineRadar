@@ -570,7 +570,7 @@ public final class UserOps extends DBManager {
             this.getPreparedStatement().setInt(FIRST_PARAMETER, filmId);
             this.getPreparedStatement().setString(SECOND_PARAMETER, userName);
             this.setResultSet(this.getPreparedStatement().executeQuery());
-            return updateGenreViews(filmId);
+            return updateFilmGenreViews(filmId, true);
         } catch (SQLException ex) {
             return false;
         }
@@ -601,7 +601,7 @@ public final class UserOps extends DBManager {
             this.getPreparedStatement().setInt(FOURTH_PARAMETER, seasonId);
             this.getPreparedStatement().setDate(FIFTH_PARAMETER, new Date(System.currentTimeMillis()));
             final int affected = this.getPreparedStatement().executeUpdate();
-            return affected >= 0;
+            return affected >= 0 && updateSeriesGenreViews(seriesId, true);
         } catch (SQLException ex) {
             return false;
         }
@@ -622,23 +622,38 @@ public final class UserOps extends DBManager {
             this.getPreparedStatement().setInt(FIRST_PARAMETER, filmId);
             this.getPreparedStatement().setString(SECOND_PARAMETER, userName);
             this.setResultSet(this.getPreparedStatement().executeQuery());
-            return true;
+            return updateFilmGenreViews(filmId, false);
         } catch (SQLException ex) {
             return false;
         }
     }
 
-    private boolean updateGenreViews(final int filmId) {
+    private boolean updateSeriesGenreViews(final int seriesId, final boolean inc) {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = """
-                    UPDATE genere
-                    SET NumeroVisualizzati = NumeroVisualizzati + 1
-                    WHERE Nome IN (
-                            SELECT categorizzazione_film.NomeGenere
-                            FROM categorizzazione_film
-                            WHERE categorizzazione_film.CodiceFilm = ?
-                    )""";
+            final String query = "UPDATE genere "
+                    + "SET NumeroVisualizzati = NumeroVisualizzati " + (inc ? "+ 1 " : "- 1 ")
+                    + "WHERE Nome IN ( "
+                    + "SELECT categorizzazione_serie.NomeGenere "
+                    + "FROM categorizzazione_serie "
+                    + "WHERE categorizzazione_serie.CodiceSerie = 1 )";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setInt(FIRST_PARAMETER, seriesId);
+            return this.getPreparedStatement().executeUpdate() >= 0;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    private boolean updateFilmGenreViews(final int filmId, final boolean inc) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "UPDATE genere "
+                    + "SET NumeroVisualizzati = NumeroVisualizzati " + (inc ? "+ 1 " : "- 1 ")
+                    + "WHERE Nome IN ( "
+                    + "SELECT categorizzazione_film.NomeGenere "
+                    + "FROM categorizzazione_film "
+                    + "WHERE categorizzazione_film.CodiceFilm = 1 )";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setInt(FIRST_PARAMETER, filmId);
             return this.getPreparedStatement().executeUpdate() >= 0;
@@ -665,7 +680,7 @@ public final class UserOps extends DBManager {
                     + "NumeroEpisodio = ? AND "
                     + "NumeroStagione = ?";
             forgetCommons(seriesId, seasonId, episodeId, userName, query);
-            return true;
+            return updateSeriesGenreViews(seriesId, false);
         } catch (SQLException ex) {
             return false;
         }
@@ -880,9 +895,9 @@ public final class UserOps extends DBManager {
         Objects.requireNonNull(this.getConnection());
         try {
             final String query = """
-                    DELETE FROM valutazione_film WHERE 
-                    UsernameUtenteValutato = ? 
-                    AND CodiceRecFilm = ? 
+                    DELETE FROM valutazione_film WHERE
+                    UsernameUtenteValutato = ?
+                    AND CodiceRecFilm = ?
                     AND UsernameUtente = ?""";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setString(1, usernameOwnerReview);
@@ -1442,22 +1457,9 @@ public final class UserOps extends DBManager {
                     SELECT\s
                         genere.Nome,
                         genere.Descrizione,
-                        genere.NumeroVisualizzati,\s
-                        COUNT(visualizzazioni_episodio.CodiceSerie) AS NumeroVisualizzazioni
-                    FROM\s
-                        visualizzazioni_episodio\s
-                    JOIN\s
-                        episodio ON visualizzazioni_episodio.CodiceSerie = episodio.CodiceSerie
-                    JOIN\s
-                        serie ON episodio.CodiceSerie = serie.Codice
-                    JOIN\s
-                        categorizzazione_serie ON serie.Codice = categorizzazione_serie.CodiceSerie
-                    JOIN\s
-                        genere ON categorizzazione_serie.NomeGenere = genere.Nome
-                    GROUP BY\s
-                        genere.Nome, genere.Descrizione, genere.NumeroVisualizzati
-                    ORDER BY\s
-                        NumeroVisualizzazioni DESC""";
+                        genere.NumeroVisualizzati
+                    FROM genere
+                    ORDER BY genere.NumeroVisualizzati DESC""";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.setResultSet(this.getPreparedStatement().executeQuery());
             return getGenreList();
