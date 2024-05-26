@@ -462,14 +462,16 @@ Quello che segue rappresenta lo schema derivato dalla composizione di tutte le s
 	\begin{tabular}[c]{@{}c@{}}Aggiunta di persone che\\ hanno realizzato un film\\ alla piattaforma\end{tabular}                                                                    &
 	664 / mese                                                                                                                                                                       &
 	\begin{tabular}[c]{@{}c@{}}Considerando una stima\\ di 4 membri rilevanti del\\ cast di un film che si\\ vogliono tracciare, regista\\ compreso.\end{tabular}                                    \\ \hline
-	4.5                                                                                                                                                                                                          &
+	11.3                                                                                                                                                                                                          &
 	\begin{tabular}[c]{@{}c@{}}Aggiunta di una \\ nuova stagione per una \\ specifica serie TV.\end{tabular}                                                 &
-	5																						&
+	5 /
+	settimana																				&
 	
 	\\ \hline
-	4.6                                                                                                                                                                                                          &
+	11.4                                                                                                                                                                                                          &
 	\begin{tabular}[c]{@{}c@{}}Aggiunta di un \\ nuovo episodio per una \\ specifica stagione di \\ una serie TV.\end{tabular}                                                   &
-	10																						&
+	10 /
+	settimana																						&
 	
 	\\ \hline
 \end{longtable}
@@ -702,49 +704,6 @@ Per ogni serie vi sono in media $\frac{10000}{2500} = 4$ stagioni, che si compon
 		EPISODIO & E         & 40      & L                                 \\ \hline
 		\rowcolor[HTML]{CBCEFB}
 		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 45L} \\ \hline
-	\end{tabular}
-\end{table}
-
-\subsection{Aggiunta di una nuova stagione per una specifica serie TV. (Op. 4.5)} \label{ss:op45}
-Per questa Operazione, é necessaria la lettura della serie per poter aggiungere una nuova stagione e legarla tramite l'associazione compSerie. Inoltre, va aggiunto un nuovo episodio alla stagione aggiunta, essendo la cardinalitá minima obbligatoria che lega episodio a stagione.
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1.2\linewidth]{ER/navigazione/aggiuntastagione.png}
-	\caption{Schema di navigazione - Aggiunta di nuova stagione per serie TV}
-\end{figure}
-\begin{table}[H]
-	\centering
-	\begin{tabular}{|llll|}
-		\hline
-		\rowcolor[HTML]{CBCEFB}
-		Concetto 		& Costrutto & Accesso 	& Tipo                              \\ \hline
-		SERIE   		& E     	& 1       	& L                                 \\ \hline
-		STAGIONE 		& E         & 1       	& S                                 \\ \hline
-		EPISODIO 		& E         & 1       	& S                                 \\ \hline
-		compSerie 		& R         & 1       	& S                                 \\ \hline
-		compStagione	& R         & 1       	& S                                 \\ \hline
-		\rowcolor[HTML]{CBCEFB}
-		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1L+4S} \\ \hline
-	\end{tabular}
-\end{table}
-
-\subsection{Aggiunta di un nuovo episodio per una specifica stagione di una serie TV. (Op. 4.6)} \label{ss:op46}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1.2\linewidth]{ER/navigazione/aggiuntaepisodio.png}
-	\caption{Schema di navigazione - Aggiunta di nuovo episodio per stagione serie TV.}
-\end{figure}
-\begin{table}[H]
-	\centering
-	\begin{tabular}{|llll|}
-		\hline
-		\rowcolor[HTML]{CBCEFB}
-		Concetto 		& Costrutto & Accesso 	& Tipo                              \\ \hline
-		STAGIONE 		& E         & 1       	& L                                 \\ \hline
-		EPISODIO 		& E         & 1       	& S                                 \\ \hline
-		compStagione	& R         & 1       	& S                                 \\ \hline
-		\rowcolor[HTML]{CBCEFB}
-		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1L+2S} \\ \hline
 	\end{tabular}
 \end{table}
 
@@ -1038,6 +997,49 @@ Per questa operazione il ragionamento è analogo a quella precedente(Op. 9.1).
 		membro.cast & R         & 1       & S                             \\ \hline
 		\rowcolor[HTML]{CBCEFB}
 		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 2S} \\ \hline
+	\end{tabular}
+\end{table}
+
+\subsection{Aggiunta di una nuova stagione per una specifica serie TV. (Op. 11.3)} \label{ss:op45}
+Per questa Operazione, é necessaria la lettura della serie per poter aggiungere una nuova stagione e legarla tramite l'associazione compSerie. Inoltre, va aggiunto un nuovo episodio alla stagione aggiunta, essendo la cardinalitá minima obbligatoria che lega episodio a stagione.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.2\linewidth]{ER/navigazione/aggiuntastagione.png}
+	\caption{Schema di navigazione - Aggiunta di nuova stagione per serie TV}
+\end{figure}
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|llll|}
+		\hline
+		\rowcolor[HTML]{CBCEFB}
+		Concetto 		& Costrutto & Accesso 	& Tipo                              \\ \hline
+		SERIE   		& E     	& 1       	& L                                 \\ \hline
+		STAGIONE 		& E         & 1       	& S                                 \\ \hline
+		EPISODIO 		& E         & 1       	& S                                 \\ \hline
+		compSerie 		& R         & 1       	& S                                 \\ \hline
+		compStagione	& R         & 1       	& S                                 \\ \hline
+		\rowcolor[HTML]{CBCEFB}
+		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1L+4S} \\ \hline
+	\end{tabular}
+\end{table}
+
+\subsection{Aggiunta di un nuovo episodio per una specifica stagione di una serie TV. (Op. 11.4)} \label{ss:op46}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.2\linewidth]{ER/navigazione/aggiuntaepisodio.png}
+	\caption{Schema di navigazione - Aggiunta di nuovo episodio per stagione serie TV.}
+\end{figure}
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|llll|}
+		\hline
+		\rowcolor[HTML]{CBCEFB}
+		Concetto 		& Costrutto & Accesso 	& Tipo                              \\ \hline
+		STAGIONE 		& E         & 1       	& L                                 \\ \hline
+		EPISODIO 		& E         & 1       	& S                                 \\ \hline
+		compStagione	& R         & 1       	& S                                 \\ \hline
+		\rowcolor[HTML]{CBCEFB}
+		\multicolumn{4}{|l|}{\cellcolor[HTML]{FFCE93}\textbf{Totale}: 1L+2S} \\ \hline
 	\end{tabular}
 \end{table}
 
@@ -1386,17 +1388,22 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 	\item \textbf{PREFERENZE}(\underline{NomeGenere}:GENERE, \underline{UsernameUtente}:UTENTE)
 	
 	\item \textbf{TESSERE}(\underline{CodiceCinema}:CINEMA, \underline{UsernameUtente}:UTENTE, NumeroTessera, DataRinnovo)
-	\item \textbf{PREMI{\_}TESSERA}(\underline{CodicePromo}:PROMO, \underline{Scadenza}:PROMO, \underline{CodiceCinema}:TESSERA, \underline{UsernameUtente}:TESSERA)
+	\item \textbf{PREMI{\_}TESSERA}(\underline{CodicePromo}:PROMO, \underline{Scadenza}:PROMO,\\  \underline{CodiceCinema}:TESSERA, \underline{UsernameUtente}:TESSERA)
 	
 	\item \textbf{RECSERIE}(\underline{UsernameUtente}:UTENTE, \underline{CodiceSerie}:SERIE, Titolo, Descrizione)
 	\item \textbf{SEZIONAMENTI{\_}SERIE}(\underline{NomeSezione}:SEZIONE, \underline{UsernameUtente}:RECSERIE, \underline{CodiceRecSerie}:RECSERIE, Voto)
-	\item \textbf{VALUTAZIONI{\_}SERIE}(\underline{UsernameUtenteValutato}:RECSERIE, \underline{CodiceRecSerie}:RECSERIE, \underline{UsernameUtente}:UTENTE, Positiva)
+	\item \textbf{VALUTAZIONI{\_}SERIE}(\underline{UsernameUtenteValutato}:RECSERIE,\\  \underline{CodiceRecSerie}:RECSERIE, \underline{UsernameUtente}:UTENTE, Positiva)
 	
 	\item \textbf{RECFILM}(\underline{UsernameUtente}:UTENTE, \underline{CodiceFilm}:FILM, Titolo, Descrizione, VotoComplessivo)
-	\item \textbf{SEZIONAMENTI{\_}FILM}(\underline{UsernameUtente}:RECFILM, \underline{CodiceRecFilm}:RECFILM, \underline{NomeSezione}:SEZIONE, Voto)
-	\item \textbf{VALUTAZIONI{\_}FILM}(\underline{UsernameUtenteValutato}:RECFILM, \underline{CodiceRecFilm}:RECFILM, \underline{UsernameUtente}:UTENTE, Positiva)
+	\item \textbf{SEZIONAMENTI{\_}FILM}(\underline{UsernameUtente}:RECFILM,\\ 
+	\underline{CodiceRecFilm}:RECFILM, \underline{NomeSezione}:SEZIONE, Voto)
+	\item \textbf{VALUTAZIONI{\_}FILM}(\underline{UsernameUtenteValutato}:RECFILM,\\ 
+	\underline{CodiceRecFilm}:RECFILM, \underline{UsernameUtente}:UTENTE, Positiva)
 	
-	\item \textbf{VISUALIZZAZIONI{\_}EPISODIO}(\underline{UsernameUtente}:UTENTE, \underline{CodiceSerie}:EPISODIO, \underline{NumeroEpisodio}:EPISODIO, \underline{NumeroStagione}:EPISODIO, Data)
+	\item \textbf{VISUALIZZAZIONI{\_}EPISODIO}(\underline{UsernameUtente}:UTENTE,\\
+	\underline{CodiceSerie}:EPISODIO,
+	\underline{NumeroEpisodio}:EPISODIO, 
+	\underline{NumeroStagione}:EPISODIO, Data)
 	\item \textbf{VISUALIZZAZIONI{\_}FILM}(\underline{CodiceFilm}:FILM, \underline{UsernameUtente}:UTENTE)
 	
 	\item \textbf{RICHIESTE}(\underline{Numero}, Tipo, Titolo, AnnoUscita, Descrizione, Chiusa, UsernameUtente:UTENTE)
@@ -1893,21 +1900,6 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 				= partecipazione_cast.CodiceMembro
 		ORDER BY CodiceSerie
 	\end{verbatim}
-	\item Op. 4.5:
-	\begin{verbatim}
-		INSERT INTO
-			stagione (CodiceSerie, NumeroStagione, Sunto, CodiceCast)
-		VALUES (?, ?, ?, ?)
-	\end{verbatim}
-	\item Op. 4.6:
-	\begin{verbatim}
-		INSERT
-			INTO episodio (NumeroEpisodio,
-			 			   CodiceSerie,
-			  			   NumeroStagione,
-			   			   DurataMin)
-		VALUES (?, ?, ?, ?)
-	\end{verbatim}
 	\item Op. 5.1:\\
 	Per la visualizzazione:
 	\begin{verbatim}
@@ -2060,7 +2052,13 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 		 ORDER BY TotaleValutazioni DESC
 		 LIMIT 5
 	\end{verbatim}
-	\item Op. 10: \todo{TBD}
+	\item Op. 10:
+	\begin{verbatim}
+		INSERT INTO premi_tessera(CodicePromoPromo,
+			Scadenza, CodiceCinema, UsernameUtente)
+		VALUES (?, ?, ?, ?)
+		ON DUPLICATE KEY UPDATE CodicePromoPromo = CodicePromoPromo
+	\end{verbatim}
 	\item Op. 11.1:
 	\begin{verbatim}
 		INSERT INTO film (Titolo, EtaLimite, Trama, Durata, CodiceCast)
@@ -2076,6 +2074,21 @@ CINEMA.Indirizzo composto da Via, CAP, Civico e Città viene scomposto usando di
 			DataDebuttoCarriera, 
 			NomeArte)
 		VALUES (?, ?, ?, ?, ?, ?, ?)
+	\end{verbatim}
+	\item Op. 11.3:
+	\begin{verbatim}
+		INSERT INTO
+		stagione (CodiceSerie, NumeroStagione, Sunto, CodiceCast)
+		VALUES (?, ?, ?, ?)
+	\end{verbatim}
+	\item Op. 11.4:
+	\begin{verbatim}
+		INSERT
+		INTO episodio (NumeroEpisodio,
+		CodiceSerie,
+		NumeroStagione,
+		DurataMin)
+		VALUES (?, ?, ?, ?)
 	\end{verbatim}
 	\item Op. 12:\\
 	Operazione eseguita dal registratore.
@@ -2156,5 +2169,72 @@ Inoltre, l'utente può accedere a una pagina che mostra le proprie informazioni 
 	\caption{Pagina di dettaglio della recensione.}
 \end{figure}
 \subsection{Amministratore}
-\todo{TBD}
+Una volta effettuato l'accesso con un account amministratore, l'amministratore viene portato nella dashboard principale, che consente di gestire i film e le serie TV disponibili, il cast, le classifiche, le tessere, le promozioni, le richieste degli utenti e le proprie informazioni personali. \\
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=375pt]{appimg/adminImages/homepage.png}
+	\caption{Homepage dell'amministratore}
+\end{figure}
+
+In questa sezione, l'amministratore può visualizzare un elenco di film. Cliccando su un titolo, accede a una pagina dettagliata che mostra le informazioni principali come il cast, la durata ed altri dettagli tecnici. L'amministratore può modificare o aggiornare queste informazioni ed aggiungere nuovi titoli al catalogo. \\
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=300pt]{appimg/adminImages/dettaglifilm.png}
+	\caption{Pagina di dettaglio di un film}
+\end{figure}
+
+Nella sezione delle serie TV, l'amministratore può visualizzare un elenco di serie. Cliccando su un titolo, accede a una pagina dettagliata che mostra le informazioni principali come le stagioni, gli episodi di ogni stagione con la loro durata ed altri dettagli tecnici. L'amministratore può modificare o aggiornare queste informazioni ed aggiungere nuove serie,stagioni ed episodi al catalogo. \\
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=375pt]{appimg/adminImages/sezioneserie.png}
+	\caption{Pagina delle Serie TV}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=300pt]{appimg/adminImages/dettagliserie.png}
+	\caption{Pagina di dettaglio di una Serie TV}
+\end{figure}
+
+L'amministratore ha accesso a una sezione dedicata al cast, dove può visualizzare e gestire gli attori e le attrici associati ai vari film e serie TV. Cliccando su un cast, l'amministratore accede a una pagina dettagliata che mostra le informazioni principali dell'attore o attrice che partecipano. Anche queste informazioni possono essere modificate o aggiornate. \\
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=375pt]{appimg/adminImages/sezionecast.png}
+	\caption{Pagina dei Cast, Attori e Registi}
+\end{figure}
+
+Nella sezione delle classifiche, l'amministratore può visualizzare e gestire le graduatorie degli utenti in base a diversi criteri, come il numero di recensioni o la loro qualità. Inoltre, l'amministratore può assegnare in blocco una promozione per i primi 5 utenti con il maggior numero di recensioni. L'amministratore ha anche la possibilità di eliminare un utente che ha ricevuto un numero elevato di voti utilità negativi alle sue recensioni. \\
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=375pt]{appimg/adminImages/sezioneclassifiche.png}
+	\caption{Pagina delle Classifiche}
+\end{figure}
+
+L'amministratore ha anche la possibilità di gestire le tessere degli utenti, che includono informazioni come il Cinema a cui é legata la tessera e la sua data di rinnovo. In questa sezione, per ogni tessera, l'amministratore vede anche l'utente legato alla tessera e il suo Numero di tessera. L'amministratore ha la possibilità assegnare delle promo già esistenti alle tessere, a seconda delle necessità. \\
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=375pt]{appimg/adminImages/sezionetessere.png}
+	\caption{Pagina delle Tessere}
+\end{figure}
+
+La sezione delle promozioni consente all'amministratore di creare e gestire le promozioni e gli sconti disponibili per gli utenti. \\
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=375pt]{appimg/adminImages/sezionepromo.png}
+	\caption{Pagina delle Promo}
+\end{figure}
+
+Nella sezione delle richieste, l'amministratore può visualizzare e gestire le richieste degli utenti, che possono riguardare nuovi titoli da aggiungere al catalogo. Per ogni richiesta, l'amministratore può visulizzare il tipo di richiesta, il titolo, l'anno di uscita e tutte le informazioni necessarie per aggiungere la multimedia al catalogo dei film o serie TV. \\
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=375pt]{appimg/adminImages/sezionerichieste.png}
+	\caption{Pagina delle Richieste}
+\end{figure}
+
+L'amministratore ha anche accesso a una pagina che mostra le proprie informazioni personali, come il nome, il cognome, il nome utente e il numero di telefono. \\
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=375pt]{appimg/adminImages/profilo.png}
+	\caption{Pagina delle Richieste}
+\end{figure}
+
 \end{document}
