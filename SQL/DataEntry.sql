@@ -546,6 +546,7 @@ VALUES ("luca", 1, 1, 1, "2024-05-09"),
        ("luca", 1, 4, 4, "2024-05-09"),
        ("luca", 1, 4, 5, "2024-05-09");
 
+
 -- Tesserine!
 INSERT INTO tessera(CodiceCinema, UsernameUtente, NumeroTessera, DataRinnovo)
 VALUES (1, "luca", 1, "2024-05-09"),
@@ -611,3 +612,39 @@ VALUES ("Giallo", 1),
        ("Thriller", 1),
        ("Storico", 2),
        ("Azione", 2);
+
+UPDATE genere
+SET genere.NumeroVisualizzati = genere.NumeroVisualizzati + 2
+WHERE genere.Nome IN (SELECT categorizzazione_film.NomeGenere
+                      FROM categorizzazione_film
+                      WHERE CodiceFilm = 5);
+
+UPDATE genere
+SET genere.NumeroVisualizzati = genere.NumeroVisualizzati + 2
+WHERE genere.Nome IN (SELECT categorizzazione_film.NomeGenere
+                      FROM categorizzazione_film
+                      WHERE CodiceFilm = 4);
+
+UPDATE genere
+SET genere.NumeroVisualizzati = genere.NumeroVisualizzati + 2
+WHERE genere.Nome IN (SELECT categorizzazione_film.NomeGenere
+                      FROM categorizzazione_film
+                      WHERE CodiceFilm = 3);
+
+UPDATE genere
+SET genere.NumeroVisualizzati = genere.NumeroVisualizzati + 2
+WHERE genere.Nome IN (SELECT categorizzazione_film.NomeGenere
+                      FROM categorizzazione_film
+                      WHERE CodiceFilm = 2);
+
+UPDATE genere
+SET genere.NumeroVisualizzati = genere.NumeroVisualizzati + 3
+WHERE genere.Nome IN (SELECT categorizzazione_film.NomeGenere
+                      FROM categorizzazione_film
+                      WHERE CodiceFilm = 1);
+
+UPDATE genere
+SET genere.NumeroVisualizzati = genere.NumeroVisualizzati + 20
+WHERE genere.Nome IN (SELECT categorizzazione_serie.NomeGenere
+                      FROM categorizzazione_serie
+                      WHERE CodiceSerie = 1);
