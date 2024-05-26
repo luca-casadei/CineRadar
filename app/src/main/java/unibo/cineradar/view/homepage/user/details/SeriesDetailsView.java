@@ -2,6 +2,7 @@ package unibo.cineradar.view.homepage.user.details;
 
 import unibo.cineradar.controller.user.UserSessionController;
 import unibo.cineradar.model.cast.CastMember;
+import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.serie.Episode;
 import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
@@ -71,7 +72,6 @@ public final class SeriesDetailsView extends DetailsView {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
-        // Serie details panel
         final JPanel serieDetailsPanel = new JPanel(new GridLayout(0, 2));
         serieDetailsPanel.setBorder(BorderFactory.createTitledBorder("Dettagli serie"));
         serieDetailsPanel.add(new JLabel("Titolo:"));
@@ -84,10 +84,15 @@ public final class SeriesDetailsView extends DetailsView {
         serieDetailsPanel.add(new JLabel(String.valueOf(serie.getDuration())));
         serieDetailsPanel.add(new JLabel("Numero episodi:"));
         serieDetailsPanel.add(new JLabel(String.valueOf(serie.getNumberOfEpisodes())));
+        serieDetailsPanel.add(new JLabel("Generi:"));
+        final String genres = serie.getGenres().stream()
+                .map(Genre::name)
+                .reduce((g1, g2) -> g1 + ", " + g2)
+                .orElse("N/A");
+        serieDetailsPanel.add(new JLabel(genres));
 
         mainPanel.add(serieDetailsPanel);
 
-        // Seasons details panel
         final JPanel seasonsPanel = new JPanel();
         seasonsPanel.setLayout(new BoxLayout(seasonsPanel, BoxLayout.Y_AXIS));
         seasonsPanel.setBorder(BorderFactory.createTitledBorder("Stagioni"));
@@ -96,15 +101,12 @@ public final class SeriesDetailsView extends DetailsView {
             final JPanel seasonPanel = new JPanel(new BorderLayout());
             seasonPanel.setBorder(BorderFactory.createTitledBorder("Stagione " + actualSeason.getId()));
 
-            // Riassunto della stagione
             final JLabel summaryLabel = new JLabel(actualSeason.getSummary());
             summaryLabel.setBorder(BorderFactory.createEmptyBorder(MARGIN, MARGIN, MARGIN, MARGIN));
             seasonPanel.add(summaryLabel, BorderLayout.NORTH);
 
-            // Panel per membri del cast e episodi
             final JPanel castAndEpisodesPanel = new JPanel(new BorderLayout());
 
-            // Cast
             final JPanel castPanel = new JPanel();
             castPanel.setLayout(new BoxLayout(castPanel, BoxLayout.Y_AXIS));
 
@@ -122,7 +124,6 @@ public final class SeriesDetailsView extends DetailsView {
 
             castAndEpisodesPanel.add(new JScrollPane(castPanel), BorderLayout.CENTER);
 
-            // Episodi
             final JPanel episodesPanel = new JPanel(new GridLayout(0, 3));
             episodesPanel.setBorder(BorderFactory.createTitledBorder("Episodi"));
 
@@ -143,12 +144,10 @@ public final class SeriesDetailsView extends DetailsView {
 
         mainPanel.add(seasonsPanel);
 
-        // Review panel
         final JPanel reviewsPanel = super.getReviewsPanel(this.uc.getSeriesReviews(serie.getSeriesId()));
         reviewsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         mainPanel.add(reviewsPanel);
 
-        // Review button
         reviewButton = new JButton("Recensisci");
         reviewButton.setEnabled(false);
         reviewButton.addActionListener(e -> {

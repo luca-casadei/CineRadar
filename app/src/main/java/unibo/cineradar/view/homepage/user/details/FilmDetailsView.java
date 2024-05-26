@@ -4,6 +4,7 @@ import unibo.cineradar.controller.user.UserSessionController;
 import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.homepage.user.review.WriteFilmReviewView;
 import unibo.cineradar.view.homepage.user.review.WriteReviewView;
@@ -82,6 +83,12 @@ public final class FilmDetailsView extends DetailsView {
         filmDetailsPanel.add(new JLabel(detailedFilm.getPlot()));
         filmDetailsPanel.add(new JLabel("Durata (min):"));
         filmDetailsPanel.add(new JLabel(String.valueOf(detailedFilm.getDuration())));
+        filmDetailsPanel.add(new JLabel("Generi:"));
+        final String genres = detailedFilm.getGenres().stream()
+                .map(Genre::name)
+                .reduce((g1, g2) -> g1 + ", " + g2)
+                .orElse("N/A");
+        filmDetailsPanel.add(new JLabel(genres));
 
         mainPanel.add(filmDetailsPanel, BorderLayout.NORTH);
 
@@ -120,6 +127,7 @@ public final class FilmDetailsView extends DetailsView {
         add(mainPanel);
         setVisible(true);
     }
+
 
 
 

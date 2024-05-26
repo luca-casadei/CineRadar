@@ -47,4 +47,10 @@ public final class UserFilmView extends UserFilteredView {
                 "Classifica dei generi - Film", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    @Override
+    protected void showPreferredGenres() {
+        ((UserSessionController) currentSessionContext.getController()).getUserPrefs();
+        //super.filterUserPrefferredGenres();
+    }
+
 }

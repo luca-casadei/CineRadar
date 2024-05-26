@@ -45,4 +45,9 @@ public final class UserSerieView extends UserFilteredView {
         JOptionPane.showMessageDialog(this, message.toString(),
                 "Classifica dei generi - Serie", JOptionPane.INFORMATION_MESSAGE);
     }
+
+    @Override
+    protected void showPreferredGenres() {
+
+    }
 }

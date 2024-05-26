@@ -59,12 +59,14 @@ public final class Serie extends Multimedia {
 
     /**
      * Gets the specific season.
+     *
      * @param seasonToGet The specific season of a series.
      * @return The specific season in the series.
      */
     public Season getSeason(final Season seasonToGet) {
         return this.seasons.get(this.seasons.indexOf(seasonToGet));
     }
+
     /**
      * Gets the seasons of the series.
      *

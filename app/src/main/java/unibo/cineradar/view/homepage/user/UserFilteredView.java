@@ -65,6 +65,9 @@ public abstract class UserFilteredView extends UserPanel {
         filterButton.setEnabled(false);
         filterPanel.add(filterButton);
 
+        final JButton preferredGenresButton = new JButton("Visualizza in base ai generi preferiti");
+        filterPanel.add(preferredGenresButton);
+
         final JButton genreRankingButton = new JButton("Apri classifica generi");
         filterPanel.add(genreRankingButton);
 
@@ -93,6 +96,10 @@ public abstract class UserFilteredView extends UserPanel {
 
         genreRankingButton.addActionListener(e -> {
             showGenreRanking();
+        });
+
+        preferredGenresButton.addActionListener(e -> {
+            showPreferredGenres();
         });
     }
 
@@ -128,6 +135,11 @@ public abstract class UserFilteredView extends UserPanel {
      * Abstract method to show the ranking of genres based on the number of views.
      */
     protected abstract void showGenreRanking();
+
+    /**
+     * Abstract method to show content based on preferred genres.
+     */
+    protected abstract void showPreferredGenres();
 }
 
 // CHECKSTYLE: MagicNumber ON

@@ -57,6 +57,7 @@ public final class UserOps extends DBManager {
     private static final int THIRD_PARAMETER = 3;
     private static final int FOURTH_PARAMETER = 4;
     private static final int FIFTH_PARAMETER = 5;
+    private static final String NUM_VIEWS_NAME = "NumeroVisualizzati";
 
     /**
      * Retrieves the list of all films.
@@ -358,7 +359,7 @@ public final class UserOps extends DBManager {
             this.setResultSet(this.getPreparedStatement().executeQuery());
             if (this.getResultSet().next()) {
                 final FullSeriesReview rev = new FullSeriesReview(
-                        this.getResultSet().getInt("CodiceSerie"),
+                        this.getResultSet().getInt(ID_SERIES_NAME),
                         this.getResultSet().getString("TitoloSerie"),
                         this.getResultSet().getString("UsernameUtente"),
                         this.getResultSet().getString(TITLE_NAME),
@@ -524,7 +525,7 @@ public final class UserOps extends DBManager {
                 g.add(
                         new Genre(this.getResultSet().getString(NAME_NAME),
                                 this.getResultSet().getString(DESC_NAME),
-                                this.getResultSet().getInt("NumeroVisualizzati"))
+                                this.getResultSet().getInt(NUM_VIEWS_NAME))
                 );
             }
             return List.copyOf(g);
@@ -1107,7 +1108,7 @@ public final class UserOps extends DBManager {
             while (this.getResultSet().next()) {
                 eps.add(
                         new Episode(this.getResultSet().getInt("NumeroEpisodio"),
-                                this.getResultSet().getInt("CodiceSerie"),
+                                this.getResultSet().getInt(ID_SERIES_NAME),
                                 this.getResultSet().getInt("NumeroStagione"),
                                 this.getResultSet().getInt("DurataMin"))
                 );
@@ -1177,49 +1178,86 @@ public final class UserOps extends DBManager {
         Objects.requireNonNull(this.getConnection());
         try {
             final String query = """
-                    SELECT film.Codice AS CodiceFilm,\s
-                    film.Titolo AS TitoloFilm,\s
-                    film.EtaLimite AS EtaLimiteFilm,\s
-                    film.Trama AS TramaFilm,\s
-                    film.Durata AS DurataFilm,\s
-                    film.CodiceCast AS CodiceCastFilm,
-                    membrocast.Codice AS CodiceMembroCast,\s
-                    membrocast.Nome AS NomeMembroCast,\s
-                    membrocast.Cognome AS CognomeMembroCast,\s
-                    membrocast.DataNascita AS DataNascitaMembroCast,\s
-                    membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast,\s
-                    membrocast.NomeArte AS NomeArteMembroCast,\s
-                    membrocast.TipoAttore AS TipoAttoreMembroCast,\s
-                    membrocast.TipoRegista AS TipoRegistaMembroCast\s
-                    FROM film\s
-                    JOIN casting ON film.CodiceCast = casting.Codice\s
-                    JOIN partecipazione_cast ON casting.codice = partecipazione_cast.CodiceCast
-                    JOIN membrocast ON partecipazione_cast.CodiceMembro = membrocast.Codice""";
+                SELECT film.Codice AS CodiceFilm,
+                film.Titolo AS TitoloFilm,
+                film.EtaLimite AS EtaLimiteFilm,
+                film.Trama AS TramaFilm,
+                film.Durata AS DurataFilm,
+                film.CodiceCast AS CodiceCastFilm,
+                membrocast.Codice AS CodiceMembroCast,
+                membrocast.Nome AS NomeMembroCast,
+                membrocast.Cognome AS CognomeMembroCast,
+                membrocast.DataNascita AS DataNascitaMembroCast,
+                membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast,
+                membrocast.NomeArte AS NomeArteMembroCast,
+                membrocast.TipoAttore AS TipoAttoreMembroCast,
+                membrocast.TipoRegista AS TipoRegistaMembroCast
+                FROM film
+                JOIN casting ON film.CodiceCast = casting.Codice
+                JOIN partecipazione_cast ON casting.codice = partecipazione_cast.CodiceCast
+                JOIN membrocast ON partecipazione_cast.CodiceMembro = membrocast.Codice""";
+
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.setResultSet(this.getPreparedStatement().executeQuery());
-            final Map<Film, Cast> detailedFilms = new HashMap<>();
+
+            final Map<Integer, Film> filmsMap = new HashMap<>();
+            final Map<Integer, Cast> castsMap = new HashMap<>();
+
             while (this.getResultSet().next()) {
-                final Film film = new Film(
-                        this.getResultSet().getInt(ID_FILM_NAME),
-                        this.getResultSet().getString("TitoloFilm"),
-                        this.getResultSet().getInt("EtaLimiteFilm"),
-                        this.getResultSet().getString("TramaFilm"),
-                        this.getResultSet().getInt("DurataFilm"),
-                        this.getResultSet().getInt("CodiceCastFilm")
+                final int filmCode = this.getResultSet().getInt(ID_FILM_NAME);
+
+                if (!filmsMap.containsKey(filmCode)) {
+                    final Film film = new Film(
+                            filmCode,
+                            this.getResultSet().getString("TitoloFilm"),
+                            this.getResultSet().getInt("EtaLimiteFilm"),
+                            this.getResultSet().getString("TramaFilm"),
+                            this.getResultSet().getInt("DurataFilm"),
+                            this.getResultSet().getInt("CodiceCastFilm")
+                    );
+                    filmsMap.put(filmCode, film);
+                }
+
+                final CastMember member = getNewCastMember();
+                castsMap.computeIfAbsent(filmCode, k -> new Cast()).addCastMember(member);
+            }
+
+            final String genreQuery = """
+                SELECT NomeGenere, CodiceFilm, Descrizione, NumeroVisualizzati
+                FROM categorizzazione_film
+                JOIN genere ON categorizzazione_film.NomeGenere = genere.Nome""";
+
+            this.setPreparedStatement(this.getConnection().prepareStatement(genreQuery));
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+
+            while (this.getResultSet().next()) {
+                final int filmCode = this.getResultSet().getInt(ID_FILM_NAME);
+                final Genre genre = new Genre(
+                        this.getResultSet().getString("NomeGenere"),
+                        this.getResultSet().getString(DESC_NAME),
+                        this.getResultSet().getInt(NUM_VIEWS_NAME)
                 );
-                if (!detailedFilms.containsKey(film)) {
-                    final Cast newCast = new Cast();
-                    newCast.addCastMember(getNewCastMember());
-                    detailedFilms.put(film, newCast);
-                } else {
-                    detailedFilms.get(film).addCastMember(getNewCastMember());
+
+                if (filmsMap.containsKey(filmCode)) {
+                    filmsMap.get(filmCode).addGenre(genre);
                 }
             }
+
+            final Map<Film, Cast> detailedFilms = new HashMap<>();
+            for (final Map.Entry<Integer, Film> entry : filmsMap.entrySet()) {
+                final int filmCode = entry.getKey();
+                final Film film = entry.getValue();
+                final Cast cast = castsMap.get(filmCode);
+                detailedFilms.put(film, cast);
+            }
+
             return Map.copyOf(detailedFilms);
+
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);
         }
     }
+
 
     /**
      * Retrieves details of series including their cast from the database.
@@ -1262,53 +1300,76 @@ public final class UserOps extends DBManager {
 
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.setResultSet(this.getPreparedStatement().executeQuery());
-            final List<Serie> detailedSeries = new ArrayList<>();
+            final Map<Integer, Serie> seriesMap = new HashMap<>();
+
             while (this.getResultSet().next()) {
-                final Serie serie = new Serie(
-                        this.getResultSet().getInt(ID_SERIES_NAME),
-                        this.getResultSet().getString("TitoloSerie"),
-                        this.getResultSet().getInt("EtaLimiteSerie"),
-                        this.getResultSet().getString("TramaSerie"),
-                        this.getResultSet().getInt("DurataComplessivaSerie"),
-                        this.getResultSet().getInt("NumeroEpisodiSerie")
-                );
+                final int seriesCode = this.getResultSet().getInt(ID_SERIES_NAME);
+
+                if (!seriesMap.containsKey(seriesCode)) {
+                    final Serie serie = new Serie(
+                            seriesCode,
+                            this.getResultSet().getString("TitoloSerie"),
+                            this.getResultSet().getInt("EtaLimiteSerie"),
+                            this.getResultSet().getString("TramaSerie"),
+                            this.getResultSet().getInt("DurataComplessivaSerie"),
+                            this.getResultSet().getInt("NumeroEpisodiSerie")
+                    );
+                    seriesMap.put(seriesCode, serie);
+                }
+
                 final Season season = new Season(
-                        this.getResultSet().getInt(ID_SERIES_NAME),
+                        seriesCode,
                         this.getResultSet().getInt("NumeroStagione"),
                         this.getResultSet().getString("SuntoStagione"),
                         this.getResultSet().getInt("CodiceCast")
                 );
                 final Episode episode = new Episode(
-                        this.getResultSet().getInt(ID_SERIES_NAME),
+                        seriesCode,
                         this.getResultSet().getInt("NumeroStagione"),
                         this.getResultSet().getInt("NumeroEpisodio"),
                         this.getResultSet().getInt("DurataEpisodio")
                 );
                 final CastMember castMember = getNewCastMember();
 
-                if (!detailedSeries.contains(serie)) {
+                final Serie serie = seriesMap.get(seriesCode);
+
+                if (!serie.getSeasons().contains(season)) {
                     season.addEpisode(episode);
                     season.addCastMember(castMember);
                     serie.addSeason(season);
-                    detailedSeries.add(serie);
                 } else {
-                    if (!detailedSeries.get(detailedSeries.indexOf(serie))
-                            .getSeasons()
-                            .contains(season)) {
-                        season.addCastMember(castMember);
-                        detailedSeries.get(detailedSeries.indexOf(serie)).addSeason(season);
-                    } else {
-                        if (!detailedSeries.get(detailedSeries.indexOf(serie))
-                                .getSeason(season)
-                                .getEpisodes()
-                                .contains(episode)) {
-                            detailedSeries.get(detailedSeries.indexOf(serie)).getSeason(season).addCastMember(castMember);
-                            detailedSeries.get(detailedSeries.indexOf(serie)).getSeason(season).addEpisode(episode);
-                        }
+                    final Season existingSeason = serie.getSeason(season);
+                    if (!existingSeason.getEpisodes().contains(episode)) {
+                        existingSeason.addEpisode(episode);
+                    }
+                    if (!existingSeason.getCast().getCastMemberList().contains(castMember)) {
+                        existingSeason.addCastMember(castMember);
                     }
                 }
             }
-            return List.copyOf(detailedSeries);
+
+            final String genreQuery = """
+            SELECT NomeGenere, CodiceSerie, Descrizione, NumeroVisualizzati
+            FROM categorizzazione_serie
+            JOIN genere ON categorizzazione_serie.NomeGenere = genere.Nome""";
+
+            this.setPreparedStatement(this.getConnection().prepareStatement(genreQuery));
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+
+            while (this.getResultSet().next()) {
+                final int seriesCode = this.getResultSet().getInt(ID_SERIES_NAME);
+                final Genre genre = new Genre(
+                        this.getResultSet().getString("NomeGenere"),
+                        this.getResultSet().getString(DESC_NAME),
+                        this.getResultSet().getInt(NUM_VIEWS_NAME)
+                );
+
+                if (seriesMap.containsKey(seriesCode)) {
+                    seriesMap.get(seriesCode).addGenre(genre);
+                }
+            }
+
+            return List.copyOf(seriesMap.values());
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);
         }
@@ -1410,8 +1471,8 @@ public final class UserOps extends DBManager {
         while (this.getResultSet().next()) {
             genres.add(new Genre(
                     this.getResultSet().getString("Nome"),
-                    this.getResultSet().getString("Descrizione"),
-                    this.getResultSet().getInt("NumeroVisualizzati")
+                    this.getResultSet().getString(DESC_NAME),
+                    this.getResultSet().getInt(NUM_VIEWS_NAME)
             ));
         }
         return List.copyOf(genres);

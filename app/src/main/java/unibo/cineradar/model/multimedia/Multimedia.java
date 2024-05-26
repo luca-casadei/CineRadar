@@ -1,5 +1,8 @@
 package unibo.cineradar.model.multimedia;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The multimedia class.
  */
@@ -8,6 +11,7 @@ public class Multimedia {
     private final int ageLimit;
     private final String plot;
     private final int duration;
+    private final List<Genre> genres;
 
     /**
      * Constructs a multimedia instance.
@@ -22,6 +26,7 @@ public class Multimedia {
         this.ageLimit = ageLimit;
         this.plot = plot;
         this.duration = duration;
+        this.genres = new ArrayList<>();
     }
 
     /**
@@ -58,5 +63,23 @@ public class Multimedia {
      */
     public int getDuration() {
         return this.duration;
+    }
+
+    /**
+     * Adds new genre to genres list.
+     *
+     * @param genre The genre to add to the list.
+     */
+    public void addGenre(final Genre genre) {
+        this.genres.add(genre);
+    }
+
+    /**
+     * Gets the genres of the multimedia.
+     *
+     * @return The list of genres.
+     */
+    public List<Genre> getGenres() {
+        return List.copyOf(this.genres);
     }
 }
