@@ -446,4 +446,71 @@ public final class AdministratorContext extends SessionContextImpl {
             mgr.assignPromo(promoCode, expiration, cinemaCode, username);
         }
     }
+
+    /**
+     * Retrieves detailed information about the cast with the specified ID.
+     *
+     * @param castId The unique identifier of the cast.
+     * @return A list of CastMember objects representing detailed information about the cast.
+     */
+    public List<CastMember> getDetailedCast(final int castId) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getDetailedCast(castId);
+        }
+    }
+
+    /**
+     * Adds a cast member to the specified cast.
+     *
+     * @param castMemberCode The code representing the cast member to be added.
+     * @param castCode       The code representing the cast to which the member will be added.
+     */
+    public void addCastMemberToCast(final int castMemberCode, final int castCode) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.addCastMemberToCast(castMemberCode, castCode);
+        }
+    }
+
+    /**
+     * Deletes a cast member from the specified cast.
+     *
+     * @param castMemberCode The code representing the cast member to be deleted.
+     * @param castCode       The code representing the cast from which the member will be deleted.
+     * @return True if the deletion was successful, false otherwise.
+     */
+    public boolean deleteCastMemberToCast(final int castMemberCode, final int castCode) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.deleteCastMemberToCast(castMemberCode, castCode);
+        }
+    }
+
+    /**
+     * Assigns the best five reviewers to a promotional event.
+     *
+     * @param promoCode         The unique identifier of the promotional event.
+     * @param expiration        The expiration date of the promotional event.
+     * @param bestNumberRatings A list of UserRanking objects representing the best reviewers.
+     */
+    public void assignPromoBestFiveReviewers(
+            final int promoCode, final LocalDate expiration, final List<UserRanking> bestNumberRatings) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.assignPromoBestFiveReviewers(
+                    promoCode,
+                    expiration,
+                    bestNumberRatings
+            );
+        }
+    }
+
+    /**
+     * Deletes a user from the system.
+     *
+     * @param username The username of the user to be deleted.
+     * @return True if the user deletion was successful, false otherwise.
+     */
+    public boolean deleteUser(final String username) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.deleteUser(username);
+        }
+    }
 }

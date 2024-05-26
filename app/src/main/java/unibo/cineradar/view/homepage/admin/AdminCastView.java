@@ -33,6 +33,7 @@ public class AdminCastView extends AdminPanel {
     private static final long serialVersionUID = -294859604893850L;
     private static final String ERROR = "Errore";
     private static final String COMPLETE_DELETE = "Eliminazione completata";
+    private static final String CANCEL = "Cancel";
     private final JTable castMemberTable;
     private final JTable castTable;
 
@@ -89,6 +90,12 @@ public class AdminCastView extends AdminPanel {
         final JButton deleteCastButton = new JButton("Elimina Cast");
         deleteCastButton.addActionListener(e -> deleteCastDialog());
         buttonPanel.add(deleteCastButton);
+        final JButton addCastMemberToCastButton = new JButton("Aggiungi Membro Cast ad un Cast");
+        addCastMemberToCastButton.addActionListener(e -> addCastMemberToCastDialog());
+        buttonPanel.add(addCastMemberToCastButton);
+        final JButton deleteCastMemberToCastButton = new JButton("Elimina Membro Cast da un Cast");
+        deleteCastMemberToCastButton.addActionListener(e -> deleteCastMemberToCastDialog());
+        buttonPanel.add(deleteCastMemberToCastButton);
         return buttonPanel;
     }
 
@@ -192,7 +199,7 @@ public class AdminCastView extends AdminPanel {
             JOptionPane.getRootFrame().dispose();
         });
 
-        final Object[] options = {okButton, "Cancel"};
+        final Object[] options = {okButton, CANCEL};
         JOptionPane.showOptionDialog(null, panel, "Aggiungi Membro Cast",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                 null, options, options[0]);
@@ -289,7 +296,7 @@ public class AdminCastView extends AdminPanel {
             JOptionPane.getRootFrame().dispose();
         });
 
-        final Object[] options = {okButton, "Cancel"};
+        final Object[] options = {okButton, CANCEL};
         JOptionPane.showOptionDialog(null, panel, "Aggiungi Cast",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                 null, options, options[0]);
@@ -349,6 +356,106 @@ public class AdminCastView extends AdminPanel {
     private boolean deleteCast(final int id) {
         return ((AdminSessionController) getCurrentSessionContext().getController())
                 .deleteCast(id);
+    }
+
+    private void addCastMemberToCastDialog() {
+        final JTextField castMemberCodeField = new JTextField(5);
+        final JTextField castCodeField = new JTextField(5);
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel("Codice del Cast:"));
+        panel.add(castCodeField);
+        panel.add(new JLabel("Codice del Membro:"));
+        panel.add(castMemberCodeField);
+
+        final JButton okButton = new JButton("OK");
+        okButton.setEnabled(false);
+        final Runnable checkFields = () -> {
+            final boolean isFilled = isFieldFilled(castCodeField.getText())
+                    && isFieldFilled(castMemberCodeField.getText());
+            okButton.setEnabled(isFilled);
+        };
+
+        final DocumentListener listener = new ViewDocumentListener(checkFields);
+        castCodeField.getDocument().addDocumentListener(listener);
+        castMemberCodeField.getDocument().addDocumentListener(listener);
+
+        okButton.addActionListener(e -> {
+            addCastMemberToCast(
+                    Integer.parseInt(castMemberCodeField.getText()),
+                    Integer.parseInt(castCodeField.getText()));
+            JOptionPane.getRootFrame().dispose();
+        });
+
+        final Object[] options = {okButton, CANCEL};
+        JOptionPane.showOptionDialog(null, panel, "Aggiungi MembroCast ad un Cast",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, options, options[0]);
+    }
+
+    private void addCastMemberToCast(final int castMemberCode, final int castCode) {
+        ((AdminSessionController) getCurrentSessionContext().getController())
+                .addCastMemberToCast(castMemberCode, castCode);
+        updateCasting();
+    }
+
+    private void deleteCastMemberToCastDialog() {
+        final JTextField castCodeField = new JTextField(5);
+        final JTextField castMemberCodeField = new JTextField(5);
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel("Codice del Membro:"));
+        panel.add(castMemberCodeField);
+        panel.add(new JLabel("Codice del Cast:"));
+        panel.add(castCodeField);
+
+        final JButton okButton = new JButton("OK");
+        okButton.setEnabled(false);
+        final Runnable checkFields = () -> {
+            final boolean allFilled = isFieldFilled(castCodeField.getText())
+                    && isFieldFilled(castMemberCodeField.getText());
+            okButton.setEnabled(allFilled);
+        };
+
+        final DocumentListener listener = new ViewDocumentListener(checkFields);
+        castMemberCodeField.getDocument().addDocumentListener(listener);
+        castCodeField.getDocument().addDocumentListener(listener);
+
+        okButton.addActionListener(e -> {
+            final int castMemberCode = Integer.parseInt(castMemberCodeField.getText());
+            final int castCode = Integer.parseInt(castCodeField.getText());
+            final boolean deleted = deleteCastMemberToCast(castMemberCode, castCode);
+            if (deleted) {
+                updateCasting();
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Il Membro del Cast è stata eliminato con successo.",
+                        COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Errore durante l'eliminazione del Membro dal Cast.",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            }
+            JOptionPane.getRootFrame().dispose();
+        });
+
+        final Object[] options = {okButton, CANCEL};
+        JOptionPane.showOptionDialog(null, panel, "Elimina MembroCast da un Cast",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, options, options[0]);
+    }
+
+    private void updateCasting() {
+        ((AdminSessionController) getCurrentSessionContext().getController()).updateDetailedFilms();
+        ((AdminSessionController) getCurrentSessionContext().getController()).updateDetailedSeries();
+    }
+
+    private boolean deleteCastMemberToCast(final int castMemberCode, final int castCode) {
+        return ((AdminSessionController) getCurrentSessionContext().getController())
+                .deleteCastMemberToCast(castMemberCode, castCode);
     }
 
     private boolean isFieldFilled(final String text) {

@@ -356,129 +356,6 @@ public final class AdminOps extends DBManager {
     }
 
     /**
-     * Processes the ResultSet obtained from the executed SQL query and constructs Serie, Season, Episode, and CastMember objects.
-     *
-     * @return A list of Serie objects containing detailed information about series, seasons, episodes, and cast members.
-     * @throws SQLException If there's an issue with processing the ResultSet.
-     */
-    private List<Serie> processResultSet() throws SQLException {
-        final List<Serie> detailedSeries = new ArrayList<>();
-        while (this.getResultSet().next()) {
-            final Serie serie = createSerieFromResultSet();
-            final Season season = createSeasonFromResultSet();
-            final Episode episode = createEpisodeFromResultSet();
-            final CastMember castMember = getNewCastMember();
-
-            addToDetailedSeries(detailedSeries, serie, season, episode, castMember);
-        }
-        return List.copyOf(detailedSeries);
-    }
-
-    /**
-     * Creates a Serie object from the current row of the ResultSet.
-     *
-     * @return A Serie object representing the current series.
-     * @throws SQLException If there's an issue with retrieving data from the ResultSet.
-     */
-    private Serie createSerieFromResultSet() throws SQLException {
-        return new Serie(
-                this.getResultSet().getInt(CODICE_SERIE),
-                this.getResultSet().getString("TitoloSerie"),
-                this.getResultSet().getInt("EtaLimiteSerie"),
-                this.getResultSet().getString("TramaSerie"),
-                this.getResultSet().getInt("DurataComplessivaSerie"),
-                this.getResultSet().getInt("NumeroEpisodiSerie")
-        );
-    }
-
-    /**
-     * Creates a Season object from the current row of the ResultSet.
-     *
-     * @return A Season object representing the current season.
-     * @throws SQLException If there's an issue with retrieving data from the ResultSet.
-     */
-    private Season createSeasonFromResultSet() throws SQLException {
-        return new Season(
-                this.getResultSet().getInt(CODICE_SERIE),
-                this.getResultSet().getInt("NumeroStagione"),
-                this.getResultSet().getString("SuntoStagione"),
-                this.getResultSet().getInt("CodiceCast")
-        );
-    }
-
-    /**
-     * Creates an Episode object from the current row of the ResultSet.
-     *
-     * @return An Episode object representing the current episode.
-     * @throws SQLException If there's an issue with retrieving data from the ResultSet.
-     */
-    private Episode createEpisodeFromResultSet() throws SQLException {
-        return new Episode(
-                this.getResultSet().getInt(CODICE_SERIE),
-                this.getResultSet().getInt("NumeroStagione"),
-                this.getResultSet().getInt("NumeroEpisodio"),
-                this.getResultSet().getInt("DurataEpisodio")
-        );
-    }
-
-    /**
-     * Adds a Serie, Season, Episode, and CastMember to the list of detailed series.
-     *
-     * @param detailedSeries The list of detailed series.
-     * @param serie          The Serie object to add.
-     * @param season         The Season object to add.
-     * @param episode        The Episode object to add.
-     * @param castMember     The CastMember object to add.
-     */
-    private void addToDetailedSeries(
-            final List<Serie> detailedSeries, final Serie serie,
-            final Season season, final Episode episode, final CastMember castMember) {
-        if (!detailedSeries.contains(serie)) {
-            season.addEpisode(episode);
-            season.addCastMember(castMember);
-            serie.addSeason(season);
-            detailedSeries.add(serie);
-        } else {
-            final Serie existingSerie = detailedSeries.get(detailedSeries.indexOf(serie));
-            if (!existingSerie.getSeasons().contains(season)) {
-                season.addCastMember(castMember);
-                existingSerie.addSeason(season);
-            } else {
-                final Season existingSeason = existingSerie.getSeason(season);
-                if (!existingSeason.getEpisodes().contains(episode)) {
-                    existingSeason.addCastMember(castMember);
-                    existingSeason.addEpisode(episode);
-                }
-            }
-        }
-    }
-
-    /**
-     * Retrieves a new CastMember object from the current row of the ResultSet.
-     *
-     * @return A CastMember object representing a member of the cast.
-     * @throws SQLException             If there's an issue with retrieving data from the ResultSet.
-     * @throws IllegalArgumentException If the member's type cannot be determined.
-     */
-    private CastMember getNewCastMember() throws SQLException {
-        final int code = this.getResultSet().getInt("CodiceMembroCast");
-        final String name = this.getResultSet().getString("NomeMembroCast");
-        final String surname = this.getResultSet().getString("CognomeMembroCast");
-        final LocalDate birthDate = this.getResultSet().getDate("DataNascitaMembroCast").toLocalDate();
-        final LocalDate debutDate = this.getResultSet().getDate("DataDebuttoCarrieraMembroCast").toLocalDate();
-        final String artisticName = this.getResultSet().getString("NomeArteMembroCast");
-
-        if (this.getResultSet().getBoolean("TipoAttoreMembroCast")
-                && !this.getResultSet().getBoolean("TipoRegistaMembroCast")) {
-            return new Actor(code, name, surname, birthDate, debutDate, artisticName);
-        } else if (!this.getResultSet().getBoolean("TipoAttoreMembroCast")
-                && this.getResultSet().getBoolean("TipoRegistaMembroCast")) {
-            return new Director(code, name, surname, birthDate, debutDate, artisticName);
-        }
-        throw new IllegalArgumentException();
-    }
-
-    /**
      * Adds a new cast member to the database.
      *
      * @param castMember The cast member object to add to the database.
@@ -688,66 +565,6 @@ public final class AdminOps extends DBManager {
             case "MigliorMediaUtilità" -> getBestUtilityReviewersRanking();
             default -> throw new IllegalArgumentException("Invalid evaluation type: " + evaluationType);
         };
-    }
-
-    private List<UserRanking> getBestReviewersRanking() {
-        final String query =
-                "SELECT UsernameUtente, SUM(NumeroValutazioni) AS TotaleValutazioni "
-                        + "FROM ("
-                        + "SELECT UsernameUtente, COUNT(*) AS NumeroValutazioni "
-                        + "FROM recfilm "
-                        + "GROUP BY UsernameUtente "
-                        + "UNION ALL "
-                        + "SELECT UsernameUtente, COUNT(*) AS NumeroValutazioni "
-                        + "FROM recserie "
-                        + "GROUP BY UsernameUtente) AS RecensioniTotali "
-                        + "GROUP BY UsernameUtente "
-                        + "ORDER BY TotaleValutazioni DESC "
-                        + "LIMIT 5";
-        return getResult(query);
-    }
-
-    private List<UserRanking> getWorstUtilityReviewersRanking() {
-        final String query =
-                "SELECT UsernameUtenteValutato, "
-                        + "SUM(CASE WHEN Positiva = TRUE THEN 1 ELSE -1 END) / COUNT(*) AS MediaValutazione "
-                        + "FROM (SELECT UsernameUtenteValutato, Positiva FROM valutazione_film "
-                        + "UNION ALL "
-                        + "SELECT UsernameUtenteValutato, Positiva FROM valutazione_serie) AS AllReviews "
-                        + "GROUP BY UsernameUtenteValutato "
-                        + "ORDER BY MediaValutazione ASC "
-                        + "LIMIT 5";
-        return getResult(query);
-    }
-
-    private List<UserRanking> getBestUtilityReviewersRanking() {
-        final String query =
-                "SELECT UsernameUtenteValutato, "
-                        + "SUM(CASE WHEN Positiva = TRUE THEN 1 ELSE -1 END) / COUNT(*) AS MediaValutazione "
-                        + "FROM (SELECT UsernameUtenteValutato, Positiva FROM valutazione_film "
-                        + "UNION ALL "
-                        + "SELECT UsernameUtenteValutato, Positiva FROM valutazione_serie) AS AllReviews "
-                        + "GROUP BY UsernameUtenteValutato "
-                        + "ORDER BY MediaValutazione "
-                        + "LIMIT 5";
-        return getResult(query);
-    }
-
-    private List<UserRanking> getResult(final String query) {
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
-            final ResultSet resultSet = preparedStatement.executeQuery();
-            final List<UserRanking> rankings = new ArrayList<>();
-            while (resultSet.next()) {
-                rankings.add(new UserRanking(
-                        resultSet.getString(1),
-                        resultSet.getInt(2)));
-            }
-            return rankings;
-        } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error retrieving rankings", ex);
-        }
     }
 
     /**
@@ -1133,5 +950,368 @@ public final class AdminOps extends DBManager {
         } catch (SQLException ex) {
             throw new IllegalArgumentException("Error adding casting", ex);
         }
+    }
+
+    /**
+     * Retrieves detailed information about the cast with the specified ID.
+     *
+     * @param castId The unique identifier of the cast.
+     * @return A list of CastMember objects representing detailed information about the cast.
+     * @throws IllegalArgumentException If an error occurs while retrieving the cast details.
+     */
+    public List<CastMember> getDetailedCast(final int castId) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT membrocast.Codice, membrocast.Nome, membrocast.Cognome, "
+                    + "membrocast.DataNascita, membrocast.DataDebuttoCarriera, membrocast.NomeArte "
+                    + "FROM membrocast "
+                    + "INNER JOIN partecipazione_cast ON membrocast.Codice = partecipazione_cast.CodiceMembro "
+                    + "WHERE partecipazione_cast.CodiceCast = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, castId);
+            setResultSet(getPreparedStatement().executeQuery());
+            final List<CastMember> castMembers = new ArrayList<>();
+            while (getResultSet().next()) {
+                final CastMember castMember = new CastMember(
+                        getResultSet().getInt("Codice"),
+                        getResultSet().getString("Nome"),
+                        getResultSet().getString("Cognome"),
+                        getResultSet().getDate("DataNascita").toLocalDate(),
+                        getResultSet().getDate("DataDebuttoCarriera").toLocalDate(),
+                        getResultSet().getString("NomeArte")
+                );
+                castMembers.add(castMember);
+            }
+            return List.copyOf(castMembers);
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error retrieving details of cast", ex);
+        }
+    }
+
+    /**
+     * Adds a cast member to the specified cast.
+     *
+     * @param castMemberCode The code representing the cast member to be added.
+     * @param castCode       The code representing the cast to which the member will be added.
+     * @throws IllegalArgumentException If an error occurs while adding the cast member to the cast.
+     */
+    public void addCastMemberToCast(final int castMemberCode, final int castCode) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "INSERT INTO "
+                    + "partecipazione_cast(CodiceMembro, CodiceCast)"
+                    + " VALUES (?, ?)";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, castMemberCode);
+            getPreparedStatement().setInt(2, castCode);
+            getPreparedStatement().executeUpdate();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error adding castmember to cast", ex);
+        }
+    }
+
+    /**
+     * Deletes a cast member from the specified cast.
+     *
+     * @param castMemberCode The code representing the cast member to be deleted.
+     * @param castCode       The code representing the cast from which the member will be deleted.
+     * @return True if the deletion was successful, false otherwise.
+     * @throws IllegalArgumentException If an error occurs while deleting the cast member from the cast.
+     */
+    public boolean deleteCastMemberToCast(final int castMemberCode, final int castCode) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String deletePromoQuery = "DELETE FROM partecipazione_cast "
+                    + "WHERE CodiceMembro = ? "
+                    + "AND CodiceCast = ?";
+            setPreparedStatement(getConnection().prepareStatement(deletePromoQuery));
+            getPreparedStatement().setInt(1, castMemberCode);
+            getPreparedStatement().setInt(2, castCode);
+            final int rowsAffectedPromo = getPreparedStatement().executeUpdate();
+            return rowsAffectedPromo > 0;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error deleting castmember from cast", ex);
+        }
+    }
+
+    /**
+     * Assigns the best five reviewers to a promotional event.
+     *
+     * @param promoCode         The unique identifier of the promotional event.
+     * @param expiration        The expiration date of the promotional event.
+     * @param bestNumberRatings A list of UserRanking objects representing the best reviewers.
+     * @throws IllegalArgumentException If an error occurs while assigning the best reviewers to the promotional event.
+     */
+    public void assignPromoBestFiveReviewers(
+            final int promoCode, final LocalDate expiration, final List<UserRanking> bestNumberRatings) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "INSERT INTO "
+                    + "premi_tessera(CodicePromoPromo, Scadenza, CodiceCinema, UsernameUtente) "
+                    + "VALUES (?, ?, ?, ?)";
+            for (final UserRanking userRanking : bestNumberRatings) {
+                final Optional<Integer> cinemaCode = getCinemaCode(userRanking.username());
+                setPreparedStatement(getConnection().prepareStatement(query));
+                if (cinemaCode.isPresent()) {
+                    getPreparedStatement().setInt(1, promoCode);
+                    getPreparedStatement().setDate(2, Date.valueOf(expiration));
+                    getPreparedStatement().setInt(3, cinemaCode.get());
+                    getPreparedStatement().setString(4, userRanking.username());
+                    getPreparedStatement().executeUpdate();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error adding promo to all users", ex);
+        }
+    }
+
+    /**
+     * Deletes a user from the system.
+     *
+     * @param username The username of the user to be deleted.
+     * @return True if the user deletion was successful, false otherwise.
+     * @throws IllegalArgumentException If an error occurs while deleting the user.
+     */
+    public boolean deleteUser(final String username) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String deletePromoQuery = "DELETE FROM account "
+                    + "WHERE Username = ? ";
+            setPreparedStatement(getConnection().prepareStatement(deletePromoQuery));
+            getPreparedStatement().setString(1, username);
+            final int rowsAffectedPromo = getPreparedStatement().executeUpdate();
+            return rowsAffectedPromo > 0;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error deleting castmember from cast", ex);
+        }
+    }
+
+    /**
+     * Retrieves the cinema code associated with the given username from the database.
+     *
+     * @param username The username for which to retrieve the cinema code.
+     * @return An Optional containing the cinema code if found, otherwise empty.
+     * @throws IllegalArgumentException If an error occurs while retrieving the cinema code.
+     */
+    private Optional<Integer> getCinemaCode(final String username) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT CodiceCinema FROM tessera WHERE UsernameUtente = ? LIMIT 1";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setString(1, username);
+            setResultSet(getPreparedStatement().executeQuery());
+            if (getResultSet().next()) {
+                return Optional.of(getResultSet().getInt("CodiceCinema"));
+            }
+            return Optional.empty();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error retrieving cinemaCode", ex);
+        }
+    }
+
+    /**
+     * Retrieves the ranking of the top five reviewers based on the total number of reviews provided.
+     *
+     * @return A list of UserRanking objects representing the top five reviewers.
+     */
+    private List<UserRanking> getBestReviewersRanking() {
+        final String query =
+                "SELECT UsernameUtente, SUM(NumeroValutazioni) AS TotaleValutazioni "
+                        + "FROM ("
+                        + "SELECT UsernameUtente, COUNT(*) AS NumeroValutazioni "
+                        + "FROM recfilm "
+                        + "GROUP BY UsernameUtente "
+                        + "UNION ALL "
+                        + "SELECT UsernameUtente, COUNT(*) AS NumeroValutazioni "
+                        + "FROM recserie "
+                        + "GROUP BY UsernameUtente) AS RecensioniTotali "
+                        + "GROUP BY UsernameUtente "
+                        + "ORDER BY TotaleValutazioni DESC "
+                        + "LIMIT 5";
+        return getResult(query);
+    }
+
+    /**
+     * Retrieves the ranking of the bottom five utility reviewers based on the average utility score of their reviews.
+     *
+     * @return A list of UserRanking objects representing the bottom five utility reviewers.
+     */
+    private List<UserRanking> getWorstUtilityReviewersRanking() {
+        final String query =
+                "SELECT UsernameUtenteValutato, "
+                        + "SUM(CASE WHEN Positiva = TRUE THEN 1 ELSE -1 END) / COUNT(*) AS MediaValutazione "
+                        + "FROM (SELECT UsernameUtenteValutato, Positiva FROM valutazione_film "
+                        + "UNION ALL "
+                        + "SELECT UsernameUtenteValutato, Positiva FROM valutazione_serie) AS AllReviews "
+                        + "GROUP BY UsernameUtenteValutato "
+                        + "ORDER BY MediaValutazione ASC "
+                        + "LIMIT 5";
+        return getResult(query);
+    }
+
+    /**
+     * Retrieves the ranking of the top five utility reviewers based on the average utility score of their reviews.
+     *
+     * @return A list of UserRanking objects representing the top five utility reviewers.
+     */
+    private List<UserRanking> getBestUtilityReviewersRanking() {
+        final String query =
+                "SELECT UsernameUtenteValutato, "
+                        + "SUM(CASE WHEN Positiva = TRUE THEN 1 ELSE -1 END) / COUNT(*) AS MediaValutazione "
+                        + "FROM (SELECT UsernameUtenteValutato, Positiva FROM valutazione_film "
+                        + "UNION ALL "
+                        + "SELECT UsernameUtenteValutato, Positiva FROM valutazione_serie) AS AllReviews "
+                        + "GROUP BY UsernameUtenteValutato "
+                        + "ORDER BY MediaValutazione "
+                        + "LIMIT 5";
+        return getResult(query);
+    }
+
+    /**
+     * Executes the given SQL query and retrieves the result set,
+     * then processes the result set to construct a list of UserRanking objects.
+     *
+     * @param query The SQL query to execute.
+     * @return A list of UserRanking objects constructed from the result set.
+     * @throws IllegalArgumentException If an error occurs while retrieving the rankings.
+     */
+    private List<UserRanking> getResult(final String query) {
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            final List<UserRanking> rankings = new ArrayList<>();
+            while (resultSet.next()) {
+                rankings.add(new UserRanking(
+                        resultSet.getString(1),
+                        resultSet.getInt(2)));
+            }
+            return rankings;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error retrieving rankings", ex);
+        }
+    }
+
+    /**
+     * Processes the ResultSet obtained from the executed SQL query and constructs Serie, Season, Episode, and CastMember objects.
+     *
+     * @return A list of Serie objects containing detailed information about series, seasons, episodes, and cast members.
+     * @throws SQLException If there's an issue with processing the ResultSet.
+     */
+    private List<Serie> processResultSet() throws SQLException {
+        final List<Serie> detailedSeries = new ArrayList<>();
+        while (this.getResultSet().next()) {
+            final Serie serie = createSerieFromResultSet();
+            final Season season = createSeasonFromResultSet();
+            final Episode episode = createEpisodeFromResultSet();
+            final CastMember castMember = getNewCastMember();
+
+            addToDetailedSeries(detailedSeries, serie, season, episode, castMember);
+        }
+        return List.copyOf(detailedSeries);
+    }
+
+    /**
+     * Creates a Serie object from the current row of the ResultSet.
+     *
+     * @return A Serie object representing the current series.
+     * @throws SQLException If there's an issue with retrieving data from the ResultSet.
+     */
+    private Serie createSerieFromResultSet() throws SQLException {
+        return new Serie(
+                this.getResultSet().getInt(CODICE_SERIE),
+                this.getResultSet().getString("TitoloSerie"),
+                this.getResultSet().getInt("EtaLimiteSerie"),
+                this.getResultSet().getString("TramaSerie"),
+                this.getResultSet().getInt("DurataComplessivaSerie"),
+                this.getResultSet().getInt("NumeroEpisodiSerie")
+        );
+    }
+
+    /**
+     * Creates a Season object from the current row of the ResultSet.
+     *
+     * @return A Season object representing the current season.
+     * @throws SQLException If there's an issue with retrieving data from the ResultSet.
+     */
+    private Season createSeasonFromResultSet() throws SQLException {
+        return new Season(
+                this.getResultSet().getInt(CODICE_SERIE),
+                this.getResultSet().getInt("NumeroStagione"),
+                this.getResultSet().getString("SuntoStagione"),
+                this.getResultSet().getInt("CodiceCast")
+        );
+    }
+
+    /**
+     * Creates an Episode object from the current row of the ResultSet.
+     *
+     * @return An Episode object representing the current episode.
+     * @throws SQLException If there's an issue with retrieving data from the ResultSet.
+     */
+    private Episode createEpisodeFromResultSet() throws SQLException {
+        return new Episode(
+                this.getResultSet().getInt(CODICE_SERIE),
+                this.getResultSet().getInt("NumeroStagione"),
+                this.getResultSet().getInt("NumeroEpisodio"),
+                this.getResultSet().getInt("DurataEpisodio")
+        );
+    }
+
+    /**
+     * Adds a Serie, Season, Episode, and CastMember to the list of detailed series.
+     *
+     * @param detailedSeries The list of detailed series.
+     * @param serie          The Serie object to add.
+     * @param season         The Season object to add.
+     * @param episode        The Episode object to add.
+     * @param castMember     The CastMember object to add.
+     */
+    private void addToDetailedSeries(
+            final List<Serie> detailedSeries, final Serie serie,
+            final Season season, final Episode episode, final CastMember castMember) {
+        if (!detailedSeries.contains(serie)) {
+            season.addEpisode(episode);
+            season.addCastMember(castMember);
+            serie.addSeason(season);
+            detailedSeries.add(serie);
+        } else {
+            final Serie existingSerie = detailedSeries.get(detailedSeries.indexOf(serie));
+            if (!existingSerie.getSeasons().contains(season)) {
+                season.addCastMember(castMember);
+                existingSerie.addSeason(season);
+            } else {
+                final Season existingSeason = existingSerie.getSeason(season);
+                if (!existingSeason.getEpisodes().contains(episode)) {
+                    existingSeason.addCastMember(castMember);
+                    existingSeason.addEpisode(episode);
+                }
+            }
+        }
+    }
+
+    /**
+     * Retrieves a new CastMember object from the current row of the ResultSet.
+     *
+     * @return A CastMember object representing a member of the cast.
+     * @throws SQLException             If there's an issue with retrieving data from the ResultSet.
+     * @throws IllegalArgumentException If the member's type cannot be determined.
+     */
+    private CastMember getNewCastMember() throws SQLException {
+        final int code = this.getResultSet().getInt("CodiceMembroCast");
+        final String name = this.getResultSet().getString("NomeMembroCast");
+        final String surname = this.getResultSet().getString("CognomeMembroCast");
+        final LocalDate birthDate = this.getResultSet().getDate("DataNascitaMembroCast").toLocalDate();
+        final LocalDate debutDate = this.getResultSet().getDate("DataDebuttoCarrieraMembroCast").toLocalDate();
+        final String artisticName = this.getResultSet().getString("NomeArteMembroCast");
+
+        if (this.getResultSet().getBoolean("TipoAttoreMembroCast")
+                && !this.getResultSet().getBoolean("TipoRegistaMembroCast")) {
+            return new Actor(code, name, surname, birthDate, debutDate, artisticName);
+        } else if (!this.getResultSet().getBoolean("TipoAttoreMembroCast")
+                && this.getResultSet().getBoolean("TipoRegistaMembroCast")) {
+            return new Director(code, name, surname, birthDate, debutDate, artisticName);
+        }
+        throw new IllegalArgumentException();
     }
 }

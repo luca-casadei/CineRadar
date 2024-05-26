@@ -10,6 +10,7 @@ import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.promo.Promo;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.view.ViewContext;
+import unibo.cineradar.view.homepage.admin.details.AdminCastDetailsView;
 import unibo.cineradar.view.homepage.admin.details.AdminFilmDetailsView;
 import unibo.cineradar.view.homepage.admin.details.AdminSeriesDetailsView;
 
@@ -120,6 +121,18 @@ public abstract class AdminPanel extends JPanel {
         table.setDefaultEditor(Object.class, null);
         table.setRowHeight(30);
         this.customizeTableHeader(table);
+
+        final ListSelectionListener castSelectionListener = e -> {
+            if (!e.getValueIsAdjusting()) {
+                final int selectedRow = ((DefaultListSelectionModel) e.getSource()).getLeadSelectionIndex();
+                if (selectedRow != -1) {
+                    openCastDetailsView(this.getCurrentSessionContext(), (int) table.getValueAt(selectedRow, 0));
+                }
+            }
+        };
+
+        table.getSelectionModel().addListSelectionListener(castSelectionListener);
+        table.setDefaultEditor(Object.class, null);
         return table;
     }
 
@@ -159,6 +172,11 @@ public abstract class AdminPanel extends JPanel {
         table.setRowHeight(30);
         this.customizeTableHeader(table);
         return table;
+    }
+
+    private void openCastDetailsView(final ViewContext currentSessionContext, final int castId) {
+        final AdminCastDetailsView castDetailsView = new AdminCastDetailsView(currentSessionContext, castId);
+        castDetailsView.setVisible(true);
     }
 
     /**
