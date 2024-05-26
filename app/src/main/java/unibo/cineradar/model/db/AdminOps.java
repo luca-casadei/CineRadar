@@ -1048,7 +1048,7 @@ public final class AdminOps extends DBManager {
         try {
             final String query = "INSERT INTO "
                     + "premi_tessera(CodicePromoPromo, Scadenza, CodiceCinema, UsernameUtente) "
-                    + "VALUES (?, ?, ?, ?)";
+                    + "VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE CodicePromoPromo = CodicePromoPromo";
             for (final UserRanking userRanking : bestNumberRatings) {
                 final Optional<Integer> cinemaCode = getCinemaCode(userRanking.username());
                 setPreparedStatement(getConnection().prepareStatement(query));
