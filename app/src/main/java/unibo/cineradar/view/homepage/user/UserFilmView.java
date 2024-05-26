@@ -49,7 +49,6 @@ public final class UserFilmView extends UserFilteredView {
 
     @Override
     protected JTable showPreferredGenres(final int age) {
-
         return super.createPreferredFilmTable(age,
                 ((UserSessionController) currentSessionContext.getController()).getUserPrefs());
     }

@@ -26,6 +26,7 @@ public abstract class UserFilteredView extends UserPanel {
 
     private JTable contentTable;
     private JScrollPane scrollPane;
+    private boolean isPreferredGenresFiltered;
 
     /**
      * Constructor of the user filtered view.
@@ -43,6 +44,7 @@ public abstract class UserFilteredView extends UserPanel {
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
         welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
         this.add(welcomeLabel, BorderLayout.NORTH);
+        this.isPreferredGenresFiltered = false;
 
         if (currentSessionContext.getController().getAccount() instanceof User user) {
             contentTable = createContentTable(user.getAge());
@@ -65,7 +67,7 @@ public abstract class UserFilteredView extends UserPanel {
         filterButton.setEnabled(false);
         filterPanel.add(filterButton);
 
-        final JButton preferredGenresButton = new JButton("Visualizza in base ai generi preferiti");
+        final JButton preferredGenresButton = new JButton("Filtra in base ai generi preferiti");
         filterPanel.add(preferredGenresButton);
 
         final JButton genreRankingButton = new JButton("Apri classifica generi");
@@ -102,22 +104,27 @@ public abstract class UserFilteredView extends UserPanel {
         });
 
         preferredGenresButton.addActionListener(f -> {
-            if (currentSessionContext.getController().getAccount() instanceof User user) {
-                this.remove(scrollPane);
-                contentTable = showPreferredGenres(user.getAge());
-                scrollPane = new JScrollPane(contentTable);
-                this.add(scrollPane, BorderLayout.CENTER);
-                this.revalidate();
-                this.repaint();
+            isPreferredGenresFiltered = !isPreferredGenresFiltered;
+            if (isPreferredGenresFiltered) {
+                preferredGenresButton.setText("Togli filtro sui generi preferiti");
+                if (currentSessionContext.getController().getAccount() instanceof User user) {
+                    this.remove(scrollPane);
+                    contentTable = showPreferredGenres(user.getAge());
+                    scrollPane = new JScrollPane(contentTable);
+                    this.add(scrollPane, BorderLayout.CENTER);
+                    this.revalidate();
+                    this.repaint();
+                }
+            } else {
+                preferredGenresButton.setText("Filtra in base ai generi preferiti");
+                resetTable(currentSessionContext);
             }
         });
 
         requestContentButton.addActionListener(e -> {
             final UserRequestContentView requestContentView = new UserRequestContentView(currentSessionContext);
-
             requestContentView.setVisible(true);
         });
-
     }
 
     private void applyAgeFilter(final int ageLimit) {
