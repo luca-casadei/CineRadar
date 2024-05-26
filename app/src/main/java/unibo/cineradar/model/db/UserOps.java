@@ -58,6 +58,7 @@ public final class UserOps extends DBManager {
     private static final int FOURTH_PARAMETER = 4;
     private static final int FIFTH_PARAMETER = 5;
     private static final String NUM_VIEWS_NAME = "NumeroVisualizzati";
+    private static final String GENRE_NAME = "NomeGenere";
 
     /**
      * Retrieves the list of all films.
@@ -68,11 +69,11 @@ public final class UserOps extends DBManager {
     public List<Film> getFilms(final int age) {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = "SELECT * FROM film "
-                    + "WHERE film.EtaLimite <= ?";
-            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            final String filmQuery = "SELECT * FROM film WHERE film.EtaLimite <= ?";
+            this.setPreparedStatement(this.getConnection().prepareStatement(filmQuery));
             this.getPreparedStatement().setInt(FIRST_PARAMETER, age);
             this.setResultSet(this.getPreparedStatement().executeQuery());
+
             final List<Film> films = new ArrayList<>();
             while (this.getResultSet().next()) {
                 final Film film = new Film(
@@ -85,11 +86,31 @@ public final class UserOps extends DBManager {
                 );
                 films.add(film);
             }
+
+            for (final Film film : films) {
+                final int filmId = film.getFilmId();
+                final String genreQuery = "SELECT NomeGenere, Descrizione, NumeroVisualizzati FROM categorizzazione_film "
+                        + "JOIN genere ON categorizzazione_film.NomeGenere = genere.Nome WHERE CodiceFilm = ?";
+                this.setPreparedStatement(this.getConnection().prepareStatement(genreQuery));
+                this.getPreparedStatement().setInt(FIRST_PARAMETER, filmId);
+                this.setResultSet(this.getPreparedStatement().executeQuery());
+
+                while (this.getResultSet().next()) {
+                    film.addGenre(new Genre(
+                            this.getResultSet().getString(GENRE_NAME),
+                            this.getResultSet().getString(DESC_NAME),
+                            this.getResultSet().getInt(NUM_VIEWS_NAME)
+                    ));
+                }
+            }
+
             return List.copyOf(films);
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);
         }
     }
+
+
 
     /**
      * Gets the details of a user given its username.
@@ -132,11 +153,11 @@ public final class UserOps extends DBManager {
     public List<Serie> getSeries(final int age) {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = "SELECT * FROM serie "
-                    + "WHERE serie.EtaLimite <= ?";
-            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            final String seriesQuery = "SELECT * FROM serie WHERE serie.EtaLimite <= ?";
+            this.setPreparedStatement(this.getConnection().prepareStatement(seriesQuery));
             this.getPreparedStatement().setInt(FIRST_PARAMETER, age);
             this.setResultSet(this.getPreparedStatement().executeQuery());
+
             final List<Serie> series = new ArrayList<>();
             while (this.getResultSet().next()) {
                 final Serie serie = new Serie(
@@ -149,11 +170,29 @@ public final class UserOps extends DBManager {
                 );
                 series.add(serie);
             }
+
+            final String genreQuery = "SELECT NomeGenere, Descrizione, NumeroVisualizzati, CodiceSerie "
+                    + "FROM categorizzazione_serie "
+                    + "JOIN genere ON categorizzazione_serie.NomeGenere = genere.Nome WHERE CodiceSerie = ?";
+            this.setPreparedStatement(this.getConnection().prepareStatement(genreQuery));
+            for (final Serie serie : series) {
+                this.getPreparedStatement().setInt(FIRST_PARAMETER, serie.getSeriesId());
+                this.setResultSet(this.getPreparedStatement().executeQuery());
+                while (this.getResultSet().next()) {
+                    serie.addGenre(new Genre(
+                            this.getResultSet().getString(GENRE_NAME),
+                            this.getResultSet().getString(DESC_NAME),
+                            this.getResultSet().getInt(NUM_VIEWS_NAME)
+                    ));
+                }
+            }
+
             return series;
         } catch (SQLException ex) {
             throw new IllegalArgumentException(ex);
         }
     }
+
 
     /**
      * Retrieves a film from the database by its ID.
@@ -165,20 +204,32 @@ public final class UserOps extends DBManager {
     public Optional<Film> getFilm(final int id) {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = "SELECT * FROM film "
-                    + "WHERE film.Codice = ?";
+            final String query = "SELECT * FROM film WHERE film.Codice = ?";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setInt(FIRST_PARAMETER, id);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             if (this.getResultSet().next()) {
-                return Optional.of(new Film(
+                final Film film = new Film(
                         this.getResultSet().getInt(ID_NAME),
                         this.getResultSet().getString(TITLE_NAME),
                         this.getResultSet().getInt(LIMIT_AGE_NAME),
                         this.getResultSet().getString(PLOT_NAME),
                         this.getResultSet().getInt("Durata"),
                         this.getResultSet().getInt("CodiceCast")
-                ));
+                );
+                final String genreQuery = "SELECT NomeGenere, Descrizione, NumeroVisualizzati FROM categorizzazione_film "
+                        + "JOIN genere ON categorizzazione_film.NomeGenere = genere.Nome WHERE CodiceFilm = ?";
+                this.setPreparedStatement(this.getConnection().prepareStatement(genreQuery));
+                this.getPreparedStatement().setInt(FIRST_PARAMETER, id);
+                this.setResultSet(this.getPreparedStatement().executeQuery());
+                while (this.getResultSet().next()) {
+                    film.addGenre(new Genre(
+                            this.getResultSet().getString(GENRE_NAME),
+                            this.getResultSet().getString(DESC_NAME),
+                            this.getResultSet().getInt(NUM_VIEWS_NAME)
+                    ));
+                }
+                return Optional.of(film);
             } else {
                 return Optional.empty();
             }
@@ -186,6 +237,7 @@ public final class UserOps extends DBManager {
             throw new IllegalStateException(ex);
         }
     }
+
 
     /**
      * Retrieves a series from the database by its ID.
@@ -197,20 +249,35 @@ public final class UserOps extends DBManager {
     public Optional<Serie> getSerie(final int id) {
         Objects.requireNonNull(this.getConnection());
         try {
-            final String query = "SELECT * FROM serie "
-                    + "WHERE serie.Codice = ?";
-            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            final String serieQuery = "SELECT * FROM serie WHERE serie.Codice = ?";
+            this.setPreparedStatement(this.getConnection().prepareStatement(serieQuery));
             this.getPreparedStatement().setInt(FIRST_PARAMETER, id);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             if (this.getResultSet().next()) {
-                return Optional.of(new Serie(
+                final Serie serie = new Serie(
                         this.getResultSet().getInt(ID_NAME),
                         this.getResultSet().getString(TITLE_NAME),
                         this.getResultSet().getInt(LIMIT_AGE_NAME),
                         this.getResultSet().getString(PLOT_NAME),
                         this.getResultSet().getInt("DurataComplessiva"),
                         this.getResultSet().getInt("NumeroEpisodi")
-                ));
+                );
+
+                final String genreQuery = "SELECT NomeGenere, Descrizione, NumeroVisualizzati FROM categorizzazione_serie "
+                        + "JOIN genere ON categorizzazione_serie.NomeGenere = genere.Nome WHERE CodiceSerie = ?";
+                this.setPreparedStatement(this.getConnection().prepareStatement(genreQuery));
+                this.getPreparedStatement().setInt(FIRST_PARAMETER, id);
+                this.setResultSet(this.getPreparedStatement().executeQuery());
+
+                while (this.getResultSet().next()) {
+                    serie.addGenre(new Genre(
+                            this.getResultSet().getString(GENRE_NAME),
+                            this.getResultSet().getString(DESC_NAME),
+                            this.getResultSet().getInt(NUM_VIEWS_NAME)
+                    ));
+                }
+
+                return Optional.of(serie);
             } else {
                 return Optional.empty();
             }
@@ -218,6 +285,7 @@ public final class UserOps extends DBManager {
             throw new IllegalStateException(ex);
         }
     }
+
 
     /**
      * Retrieves reviews made by a user from the database.
@@ -1193,24 +1261,24 @@ public final class UserOps extends DBManager {
         Objects.requireNonNull(this.getConnection());
         try {
             final String query = """
-                SELECT film.Codice AS CodiceFilm,
-                film.Titolo AS TitoloFilm,
-                film.EtaLimite AS EtaLimiteFilm,
-                film.Trama AS TramaFilm,
-                film.Durata AS DurataFilm,
-                film.CodiceCast AS CodiceCastFilm,
-                membrocast.Codice AS CodiceMembroCast,
-                membrocast.Nome AS NomeMembroCast,
-                membrocast.Cognome AS CognomeMembroCast,
-                membrocast.DataNascita AS DataNascitaMembroCast,
-                membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast,
-                membrocast.NomeArte AS NomeArteMembroCast,
-                membrocast.TipoAttore AS TipoAttoreMembroCast,
-                membrocast.TipoRegista AS TipoRegistaMembroCast
-                FROM film
-                JOIN casting ON film.CodiceCast = casting.Codice
-                JOIN partecipazione_cast ON casting.codice = partecipazione_cast.CodiceCast
-                JOIN membrocast ON partecipazione_cast.CodiceMembro = membrocast.Codice""";
+                    SELECT film.Codice AS CodiceFilm,
+                    film.Titolo AS TitoloFilm,
+                    film.EtaLimite AS EtaLimiteFilm,
+                    film.Trama AS TramaFilm,
+                    film.Durata AS DurataFilm,
+                    film.CodiceCast AS CodiceCastFilm,
+                    membrocast.Codice AS CodiceMembroCast,
+                    membrocast.Nome AS NomeMembroCast,
+                    membrocast.Cognome AS CognomeMembroCast,
+                    membrocast.DataNascita AS DataNascitaMembroCast,
+                    membrocast.DataDebuttoCarriera AS DataDebuttoCarrieraMembroCast,
+                    membrocast.NomeArte AS NomeArteMembroCast,
+                    membrocast.TipoAttore AS TipoAttoreMembroCast,
+                    membrocast.TipoRegista AS TipoRegistaMembroCast
+                    FROM film
+                    JOIN casting ON film.CodiceCast = casting.Codice
+                    JOIN partecipazione_cast ON casting.codice = partecipazione_cast.CodiceCast
+                    JOIN membrocast ON partecipazione_cast.CodiceMembro = membrocast.Codice""";
 
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.setResultSet(this.getPreparedStatement().executeQuery());
@@ -1238,9 +1306,9 @@ public final class UserOps extends DBManager {
             }
 
             final String genreQuery = """
-                SELECT NomeGenere, CodiceFilm, Descrizione, NumeroVisualizzati
-                FROM categorizzazione_film
-                JOIN genere ON categorizzazione_film.NomeGenere = genere.Nome""";
+                    SELECT NomeGenere, CodiceFilm, Descrizione, NumeroVisualizzati
+                    FROM categorizzazione_film
+                    JOIN genere ON categorizzazione_film.NomeGenere = genere.Nome""";
 
             this.setPreparedStatement(this.getConnection().prepareStatement(genreQuery));
             this.setResultSet(this.getPreparedStatement().executeQuery());
@@ -1248,7 +1316,7 @@ public final class UserOps extends DBManager {
             while (this.getResultSet().next()) {
                 final int filmCode = this.getResultSet().getInt(ID_FILM_NAME);
                 final Genre genre = new Genre(
-                        this.getResultSet().getString("NomeGenere"),
+                        this.getResultSet().getString(GENRE_NAME),
                         this.getResultSet().getString(DESC_NAME),
                         this.getResultSet().getInt(NUM_VIEWS_NAME)
                 );
@@ -1364,9 +1432,9 @@ public final class UserOps extends DBManager {
             }
 
             final String genreQuery = """
-            SELECT NomeGenere, CodiceSerie, Descrizione, NumeroVisualizzati
-            FROM categorizzazione_serie
-            JOIN genere ON categorizzazione_serie.NomeGenere = genere.Nome""";
+                    SELECT NomeGenere, CodiceSerie, Descrizione, NumeroVisualizzati
+                    FROM categorizzazione_serie
+                    JOIN genere ON categorizzazione_serie.NomeGenere = genere.Nome""";
 
             this.setPreparedStatement(this.getConnection().prepareStatement(genreQuery));
             this.setResultSet(this.getPreparedStatement().executeQuery());
@@ -1374,7 +1442,7 @@ public final class UserOps extends DBManager {
             while (this.getResultSet().next()) {
                 final int seriesCode = this.getResultSet().getInt(ID_SERIES_NAME);
                 final Genre genre = new Genre(
-                        this.getResultSet().getString("NomeGenere"),
+                        this.getResultSet().getString(GENRE_NAME),
                         this.getResultSet().getString(DESC_NAME),
                         this.getResultSet().getInt(NUM_VIEWS_NAME)
                 );

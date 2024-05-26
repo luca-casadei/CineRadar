@@ -2,6 +2,7 @@ package unibo.cineradar.view.homepage.user;
 
 import unibo.cineradar.controller.user.UserSessionController;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.review.FilmReview;
 import unibo.cineradar.model.review.Review;
@@ -68,7 +69,6 @@ public abstract class UserPanel extends JPanel {
      * @return The created JTable.
      */
     private JTable createStyledTable(final DefaultTableModel model) {
-        // Creates the table with custom renderer for alternating row colors
         final JTable table = new JTable(model) {
             @Override
             public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
@@ -82,15 +82,12 @@ public abstract class UserPanel extends JPanel {
             }
         };
 
-        // Sets renderer to center-align cell contents
         final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
 
-        // Sets row height
         table.setRowHeight(30);
 
-        // Customizes the table header
         final JTableHeader header = table.getTableHeader();
         header.setFont(new Font("Arial", Font.BOLD, 12));
         header.setForeground(Color.BLACK);
@@ -99,11 +96,8 @@ public abstract class UserPanel extends JPanel {
         table.setBackground(Color.WHITE);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
-        // Set table as READ ONLY
         table.setDefaultEditor(Object.class, null);
 
-        // Add action listener for row selection events
-        //table.getSelectionModel().addListSelectionListener(actionListener);
 
         return table;
     }
@@ -115,7 +109,6 @@ public abstract class UserPanel extends JPanel {
      * @return A JTable of multimedia items.
      */
     private JTable createMultimediaTable(final List<? extends Multimedia> multimediaList) {
-        // Creates the table model
         final DefaultTableModel model = new DefaultTableModel();
         model.addColumn("ID");
         model.addColumn("Titolo");
@@ -123,13 +116,45 @@ public abstract class UserPanel extends JPanel {
         model.addColumn("Trama");
         model.addColumn("Durata (min)");
 
-        // Adds multimedia data to the model
         for (final Multimedia multimedia : multimediaList) {
             model.addRow(new Object[]{multimedia instanceof Film film
                     ? film.getFilmId() : multimedia instanceof Serie serie
                     ? serie.getSeriesId() : -1,
                     multimedia.getTitle(),
                     multimedia.getAgeLimit(), multimedia.getPlot(), multimedia.getDuration()});
+        }
+
+        return createStyledTable(model);
+    }
+
+    /**
+     * Creates a table of preferred multimedia items.
+     *
+     * @param multimediaList  The list of preferred multimedia items.
+     * @param preferredGenres The list of preferred genres of the user.
+     * @return A JTable of multimedia items.
+     */
+    private JTable createPreferredMultimediaTable(final List<? extends Multimedia> multimediaList,
+                                                  final List<Genre> preferredGenres) {
+        final DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("ID");
+        model.addColumn("Titolo");
+        model.addColumn("Limite di eta'");
+        model.addColumn("Trama");
+        model.addColumn("Durata (min)");
+
+        for (final Multimedia multimedia : multimediaList) {
+            final boolean isPreferred = multimedia.getGenres().stream().anyMatch(preferredGenres::contains);
+            if (isPreferred) {
+                model.addRow(new Object[]{
+                        multimedia instanceof Film ? ((Film) multimedia).getFilmId()
+                                : multimedia instanceof Serie ? ((Serie) multimedia).getSeriesId() : -1,
+                        multimedia.getTitle(),
+                        multimedia.getAgeLimit(),
+                        multimedia.getPlot(),
+                        multimedia.getDuration()
+                });
+            }
         }
 
         return createStyledTable(model);
@@ -160,6 +185,7 @@ public abstract class UserPanel extends JPanel {
         return filmTable;
     }
 
+
     /**
      * Creates a table of series.
      *
@@ -169,6 +195,60 @@ public abstract class UserPanel extends JPanel {
     protected JTable createSerieTable(final int age) {
         final JTable serieTable = createMultimediaTable(
                 ((UserSessionController) currentSessionContext.getController()).getSeries(age)
+        );
+
+        final ListSelectionListener serieSelectionListener = e -> {
+            if (!e.getValueIsAdjusting()) {
+                final int selectedRow = ((DefaultListSelectionModel) e.getSource()).getLeadSelectionIndex();
+                if (selectedRow != -1) {
+                    openSerieDetailsView(this.getCurrentSessionContext(), (int) serieTable.getValueAt(selectedRow, 0));
+                }
+            }
+        };
+
+        serieTable.getSelectionModel().addListSelectionListener(serieSelectionListener);
+
+        return serieTable;
+    }
+
+    /**
+     * Creates a table of preferred films based on user's preferred genres.
+     *
+     * @param age             The limited age to be respected.
+     * @param preferredGenres The list of preferred genres of the user.
+     * @return A JTable of films filtered by preferred genres.
+     */
+    protected JTable createPreferredFilmTable(final int age, final List<Genre> preferredGenres) {
+        final JTable filmTable = createPreferredMultimediaTable(
+                ((UserSessionController) currentSessionContext.getController()).getFilms(age),
+                preferredGenres
+        );
+
+        final ListSelectionListener filmSelectionListener = e -> {
+            if (!e.getValueIsAdjusting()) {
+                final int selectedRow = ((DefaultListSelectionModel) e.getSource()).getLeadSelectionIndex();
+                if (selectedRow != -1) {
+                    openFilmDetailsView(this.getCurrentSessionContext(), (int) filmTable.getValueAt(selectedRow, 0));
+                }
+            }
+        };
+
+        filmTable.getSelectionModel().addListSelectionListener(filmSelectionListener);
+
+        return filmTable;
+    }
+
+    /**
+     * Creates a table of preferred series based on user's preferred genres.
+     *
+     * @param age             The limited age to be respected.
+     * @param preferredGenres The list of preferred genres of the user.
+     * @return A JTable of series filtered by preferred genres.
+     */
+    protected JTable createPreferredSerieTable(final int age, final List<Genre> preferredGenres) {
+        final JTable serieTable = createPreferredMultimediaTable(
+                ((UserSessionController) currentSessionContext.getController()).getSeries(age),
+                preferredGenres
         );
 
         final ListSelectionListener serieSelectionListener = e -> {

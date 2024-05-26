@@ -31,7 +31,7 @@ public abstract class UserFilteredView extends UserPanel {
      * Constructor of the user filtered view.
      *
      * @param currentSessionContext The context of the current user.
-     * @param welcomeMessage The welcome message to display.
+     * @param welcomeMessage        The welcome message to display.
      */
     protected UserFilteredView(final ViewContext currentSessionContext, final String welcomeMessage) {
         super(currentSessionContext);
@@ -98,8 +98,15 @@ public abstract class UserFilteredView extends UserPanel {
             showGenreRanking();
         });
 
-        preferredGenresButton.addActionListener(e -> {
-            showPreferredGenres();
+        preferredGenresButton.addActionListener(f -> {
+            if (currentSessionContext.getController().getAccount() instanceof User user) {
+                this.remove(scrollPane);
+                contentTable = showPreferredGenres(user.getAge());
+                scrollPane = new JScrollPane(contentTable);
+                this.add(scrollPane, BorderLayout.CENTER);
+                this.revalidate();
+                this.repaint();
+            }
         });
     }
 
@@ -138,8 +145,11 @@ public abstract class UserFilteredView extends UserPanel {
 
     /**
      * Abstract method to show content based on preferred genres.
+     *
+     * @param age The age limit to apply to the content.
+     * @return The created JTable.
      */
-    protected abstract void showPreferredGenres();
+    protected abstract JTable showPreferredGenres(int age);
 }
 
 // CHECKSTYLE: MagicNumber ON

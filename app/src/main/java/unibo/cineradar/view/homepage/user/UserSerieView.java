@@ -47,7 +47,8 @@ public final class UserSerieView extends UserFilteredView {
     }
 
     @Override
-    protected void showPreferredGenres() {
-
+    protected JTable showPreferredGenres(final int age) {
+        return super.createPreferredSerieTable(age,
+                ((UserSessionController) currentSessionContext.getController()).getUserPrefs());
     }
 }
