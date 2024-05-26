@@ -16,6 +16,7 @@ import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.Account;
 import unibo.cineradar.model.utente.User;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -196,6 +197,21 @@ public final class UserContext extends SessionContextImpl {
                         mgr.addPreference(pref.name(), this.user.getUsername());
                     }
             );
+        }
+    }
+
+    /**
+     * Adds a content request to the database.
+     *
+     * @param type        The type of the content request (0 for movie, 1 for TV series).
+     * @param title       The title of the content request.
+     * @param releaseYear The release year of the content request.
+     * @param description The description of the content request.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean addRequest(final boolean type, final String title, final LocalDate releaseYear, final String description) {
+        try (UserOps mgr = new UserOps()) {
+            return mgr.addRequest(type, title, releaseYear, description, user.getUsername());
         }
     }
 

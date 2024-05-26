@@ -21,6 +21,7 @@ import unibo.cineradar.model.utente.User;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -109,7 +110,6 @@ public final class UserOps extends DBManager {
             throw new IllegalArgumentException(ex);
         }
     }
-
 
 
     /**
@@ -621,6 +621,37 @@ public final class UserOps extends DBManager {
             throw new IllegalArgumentException(ex);
         }
     }
+
+    /**
+     * Adds a content request to the database.
+     *
+     * @param type        The type of the content request (0 for movie, 1 for TV series).
+     * @param title       The title of the content request.
+     * @param releaseYear The release year of the content request.
+     * @param description The description of the content request.
+     * @param username    The username of the user making the request.
+     * @return True if the operation was successful, false otherwise.
+     * @throws IllegalArgumentException If an SQL exception occurs.
+     */
+    public boolean addRequest(final boolean type, final String title, final LocalDate releaseYear,
+                              final String description, final String username) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = "INSERT INTO richiesta(Tipo, Titolo, AnnoUscita, Descrizione, UsernameUtente) "
+                    + "VALUES (?, ?, ?, ?, ?)";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setBoolean(FIRST_PARAMETER, type);
+            this.getPreparedStatement().setString(SECOND_PARAMETER, title);
+            this.getPreparedStatement().setDate(THIRD_PARAMETER, Date.valueOf(releaseYear));
+            this.getPreparedStatement().setString(FOURTH_PARAMETER, description);
+            this.getPreparedStatement().setString(FIFTH_PARAMETER, username);
+            this.setResultSet(this.getPreparedStatement().executeQuery());
+            return true;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
 
     /**
      * Adds visualization of a film.

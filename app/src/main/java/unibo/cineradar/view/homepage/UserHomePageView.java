@@ -52,7 +52,6 @@ public final class UserHomePageView extends CineRadarViewFrameImpl {
         this.cardPane = new JPanel(cards);
         contentPane.add(cardPane, BorderLayout.CENTER);
 
-        //Home panel
         cardPane.add(FILM_NAME, new UserFilmView(this.context));
         cardPane.add(SERIE_NAME, new UserSerieView(this.context));
         cardPane.add(REVIEW_NAME, new UserReviewView(this.context));

@@ -14,6 +14,7 @@ import unibo.cineradar.model.review.Section;
 import unibo.cineradar.model.serie.Episode;
 import unibo.cineradar.model.serie.Serie;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -139,6 +140,19 @@ public final class UserSessionController extends SessionControllerImpl {
      */
     public void addPreference(final List<Genre> preferences) {
         this.userContext.addPreferences(preferences);
+    }
+
+    /**
+     * Adds a content request to the database.
+     *
+     * @param type        The type of the content request (0 for movie, 1 for TV series).
+     * @param title       The title of the content request.
+     * @param releaseYear The release year of the content request.
+     * @param description The description of the content request.
+     * @return True if the operation was successful, false otherwise.
+     */
+    public boolean addRequest(final boolean type, final String title, final LocalDate releaseYear, final String description) {
+        return this.userContext.addRequest(type, title, releaseYear, description);
     }
 
     /**

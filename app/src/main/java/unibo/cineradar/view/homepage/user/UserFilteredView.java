@@ -71,6 +71,9 @@ public abstract class UserFilteredView extends UserPanel {
         final JButton genreRankingButton = new JButton("Apri classifica generi");
         filterPanel.add(genreRankingButton);
 
+        final JButton requestContentButton = new JButton("Richiesta di aggiunta contenuto");
+        filterPanel.add(requestContentButton);
+
         this.add(filterPanel, BorderLayout.SOUTH);
 
         filterCheckbox.addActionListener(e -> {
@@ -108,6 +111,13 @@ public abstract class UserFilteredView extends UserPanel {
                 this.repaint();
             }
         });
+
+        requestContentButton.addActionListener(e -> {
+            final UserRequestContentView requestContentView = new UserRequestContentView(currentSessionContext);
+
+            requestContentView.setVisible(true);
+        });
+
     }
 
     private void applyAgeFilter(final int ageLimit) {
@@ -151,5 +161,3 @@ public abstract class UserFilteredView extends UserPanel {
      */
     protected abstract JTable showPreferredGenres(int age);
 }
-
-// CHECKSTYLE: MagicNumber ON
