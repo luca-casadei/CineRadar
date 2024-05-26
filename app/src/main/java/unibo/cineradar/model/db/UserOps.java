@@ -569,7 +569,7 @@ public final class UserOps extends DBManager {
             this.getPreparedStatement().setInt(FIRST_PARAMETER, filmId);
             this.getPreparedStatement().setString(SECOND_PARAMETER, userName);
             this.setResultSet(this.getPreparedStatement().executeQuery());
-            return true;
+            return updateGenreViews(filmId);
         } catch (SQLException ex) {
             return false;
         }
@@ -622,6 +622,25 @@ public final class UserOps extends DBManager {
             this.getPreparedStatement().setString(SECOND_PARAMETER, userName);
             this.setResultSet(this.getPreparedStatement().executeQuery());
             return true;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    private boolean updateGenreViews(final int filmId) {
+        Objects.requireNonNull(this.getConnection());
+        try {
+            final String query = """
+                    UPDATE genere
+                    SET NumeroVisualizzati = NumeroVisualizzati + 1
+                    WHERE Nome IN (
+                            SELECT categorizzazione_film.NomeGenere
+                            FROM categorizzazione_film
+                            WHERE categorizzazione_film.CodiceFilm = ?
+                    )""";
+            this.setPreparedStatement(this.getConnection().prepareStatement(query));
+            this.getPreparedStatement().setInt(FIRST_PARAMETER, filmId);
+            return this.getPreparedStatement().executeUpdate() >= 0;
         } catch (SQLException ex) {
             return false;
         }
@@ -1326,30 +1345,19 @@ public final class UserOps extends DBManager {
      * including all available information about the genres.
      *
      * @return A list of Genre objects containing film genres sorted by the number of views,
-     *         including all available genre details.
+     * including all available genre details.
      * @throws IllegalArgumentException If an SQL exception occurs during query execution.
      */
     public List<Genre> getFilmGenresRanking() {
         Objects.requireNonNull(this.getConnection());
         try {
             final String query = """
-                SELECT\s
-                    genere.Nome,
-                    genere.Descrizione,
-                    genere.NumeroVisualizzati,\s
-                    COUNT(visualizzazioni_film.CodiceFilm) AS NumeroVisualizzazioni
-                FROM\s
-                    visualizzazioni_film\s
-                JOIN\s
-                    film ON visualizzazioni_film.CodiceFilm = film.Codice
-                JOIN\s
-                    categorizzazione_film ON film.Codice = categorizzazione_film.CodiceFilm
-                JOIN\s
-                    genere ON categorizzazione_film.NomeGenere = genere.Nome
-                GROUP BY\s
-                    genere.Nome, genere.Descrizione, genere.NumeroVisualizzati
-                ORDER BY\s
-                    NumeroVisualizzazioni DESC""";
+                    SELECT
+                        genere.Nome,
+                        genere.Descrizione,
+                        genere.NumeroVisualizzati
+                    FROM genere
+                    ORDER BY genere.NumeroVisualizzati DESC""";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.setResultSet(this.getPreparedStatement().executeQuery());
             return getGenreList();
@@ -1363,7 +1371,7 @@ public final class UserOps extends DBManager {
      * including all available information about the genres.
      *
      * @return A list of Genre objects containing series genres sorted by the number of views,
-     *         including all available genre details.
+     * including all available genre details.
      * @throws IllegalArgumentException If an SQL exception occurs during query execution.
      */
     public List<Genre> getSeriesGenresRanking() {
@@ -1403,7 +1411,7 @@ public final class UserOps extends DBManager {
             genres.add(new Genre(
                     this.getResultSet().getString("Nome"),
                     this.getResultSet().getString("Descrizione"),
-                    this.getResultSet().getInt("NumeroVisualizzazioni")
+                    this.getResultSet().getInt("NumeroVisualizzati")
             ));
         }
         return List.copyOf(genres);
