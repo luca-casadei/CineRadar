@@ -114,7 +114,7 @@ public final class AdminSerieView extends AdminPanel {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(new JLabel("Titolo:"));
         panel.add(titleField);
-        panel.add(new JLabel("Età Limite:"));
+        panel.add(new JLabel("Eta' Limite:"));
         panel.add(ageLimitField);
         panel.add(new JLabel("Trama:"));
         panel.add(new JScrollPane(plotArea));
@@ -152,7 +152,7 @@ public final class AdminSerieView extends AdminPanel {
         });
 
         final Object[] options = {okButton, "Cancel"};
-        JOptionPane.showOptionDialog(null, panel, "Aggiungi Serie",
+        JOptionPane.showOptionDialog(this, panel, "Aggiungi Serie",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                 null, options, options[0]);
     }
@@ -188,7 +188,7 @@ public final class AdminSerieView extends AdminPanel {
         panel.add(new JLabel("Inserisci il Codice della SerieTV da eliminare:"));
         panel.add(codeField);
 
-        final int result = JOptionPane.showConfirmDialog(null, panel, "Elimina SerieTV",
+        final int result = JOptionPane.showConfirmDialog(this, panel, "Elimina SerieTV",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         if (result == JOptionPane.OK_OPTION) {
@@ -198,18 +198,18 @@ public final class AdminSerieView extends AdminPanel {
                 if (deleted) {
                     updateSeriesTable();
                     JOptionPane.showMessageDialog(
-                            null,
+                            this,
                             "La SerieTV è stata eliminata con successo.",
                             COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(
-                            null,
+                            this,
                             "Errore durante l'eliminazione della SerieTV.",
                             ERROR, JOptionPane.ERROR_MESSAGE);
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(
-                        null,
+                        this,
                         "Inserisci un numero valido per il Codice.",
                         ERROR, JOptionPane.ERROR_MESSAGE);
             }
@@ -284,7 +284,7 @@ public final class AdminSerieView extends AdminPanel {
         });
 
         final Object[] options = {okButton, "Cancel"};
-        JOptionPane.showOptionDialog(null, panel, "Aggiungi Stagione",
+        JOptionPane.showOptionDialog(this, panel, "Aggiungi Stagione",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                 null, options, options[0]);
     }
@@ -324,7 +324,7 @@ public final class AdminSerieView extends AdminPanel {
         panel.add(new JLabel(SEASON_NUMBER));
         panel.add(seasonNumberField);
 
-        final int result = JOptionPane.showConfirmDialog(null, panel, "Elimina Stagione",
+        final int result = JOptionPane.showConfirmDialog(this, panel, "Elimina Stagione",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         if (result == JOptionPane.OK_OPTION) {
@@ -334,18 +334,18 @@ public final class AdminSerieView extends AdminPanel {
                 final boolean deleted = deleteSeason(seriesCode, seasonNumber);
                 if (deleted) {
                     JOptionPane.showMessageDialog(
-                            null,
+                            this,
                             "La stagione è stata eliminata con successo.",
                             COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(
-                            null,
+                            this,
                             "Errore durante l'eliminazione della stagione o la stagione non esiste.",
                             ERROR, JOptionPane.ERROR_MESSAGE);
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(
-                        null,
+                        this,
                         "Inserisci numeri validi per il Codice e il Numero Stagione.",
                         ERROR, JOptionPane.ERROR_MESSAGE);
             }
@@ -425,7 +425,7 @@ public final class AdminSerieView extends AdminPanel {
         });
 
         final Object[] options = {okButton, "Cancel"};
-        JOptionPane.showOptionDialog(null, panel, "Aggiungi Episodio",
+        JOptionPane.showOptionDialog(this, panel, "Aggiungi Episodio",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                 null, options, options[0]);
     }
@@ -463,7 +463,7 @@ public final class AdminSerieView extends AdminPanel {
         panel.add(new JLabel("Numero Episodio:"));
         panel.add(episodeNumberField);
 
-        final int result = JOptionPane.showConfirmDialog(null, panel, "Elimina Episodio",
+        final int result = JOptionPane.showConfirmDialog(this, panel, "Elimina Episodio",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         if (result == JOptionPane.OK_OPTION) {
@@ -475,18 +475,18 @@ public final class AdminSerieView extends AdminPanel {
 
                 if (deleted) {
                     JOptionPane.showMessageDialog(
-                            null,
+                            this,
                             "L'episodio è stato eliminato con successo.",
                             COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(
-                            null,
+                            this,
                             "Errore durante l'eliminazione dell'episodio o l'episodio non esiste.",
                             ERROR, JOptionPane.ERROR_MESSAGE);
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(
-                        null,
+                        this,
                         "Inserisci numeri validi per il Codice, il Numero Stagione e il Numero Episodio.",
                         ERROR, JOptionPane.ERROR_MESSAGE);
             }

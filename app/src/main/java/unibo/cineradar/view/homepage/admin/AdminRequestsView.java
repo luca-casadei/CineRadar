@@ -152,7 +152,7 @@ public final class AdminRequestsView extends UserPanel {
         panel.add(new JLabel("Inserisci il Codice della Richiesta da Segnare come Completata:"));
         panel.add(reqCodeField);
 
-        final int result = JOptionPane.showConfirmDialog(null, panel, "Completa Richiesta",
+        final int result = JOptionPane.showConfirmDialog(this, panel, "Completa Richiesta",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         if (result == JOptionPane.OK_OPTION) {
@@ -162,18 +162,18 @@ public final class AdminRequestsView extends UserPanel {
                 if (completed) {
                     updateRequestTable();
                     JOptionPane.showMessageDialog(
-                            null,
-                            "La Richiesta è stata soddisfatta con successo.",
+                            this,
+                            "La richiesta e' stata soddisfatta con successo.",
                             COMPLETED, JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(
-                            null,
+                            this,
                             "Errore durante il completamento della Richiesta.",
                             ERROR, JOptionPane.ERROR_MESSAGE);
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(
-                        null,
+                        this,
                         "Inserisci un numero valido per il Codice.",
                         ERROR, JOptionPane.ERROR_MESSAGE);
             }

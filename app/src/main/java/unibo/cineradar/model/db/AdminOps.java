@@ -1,6 +1,7 @@
 package unibo.cineradar.model.db;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.mariadb.jdbc.Statement;
 import unibo.cineradar.model.card.CardReg;
 import unibo.cineradar.model.cast.Actor;
 import unibo.cineradar.model.cast.Cast;
@@ -18,12 +19,9 @@ import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.Administrator;
 
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -653,14 +651,14 @@ public final class AdminOps extends DBManager {
      */
     public List<Casting> getCasting() {
         final String query = "SELECT * FROM casting";
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            final ResultSet resultSet = preparedStatement.executeQuery();
+        try {
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
             final List<Casting> casting = new ArrayList<>();
-            while (resultSet.next()) {
+            while (getResultSet().next()) {
                 casting.add(new Casting(
-                        resultSet.getInt(1),
-                        resultSet.getString(2)
+                        getResultSet().getInt(1),
+                        getResultSet().getString(2)
                 ));
             }
             return casting;
@@ -792,7 +790,7 @@ public final class AdminOps extends DBManager {
      *
      * @return a list of {@link Promo} objects representing the current promotional offers.
      * @throws IllegalArgumentException if there is an error while retrieving the promotional offers.
-     * @throws NullPointerException if the database connection is null.
+     * @throws NullPointerException     if the database connection is null.
      */
     public List<Promo> getPromos() {
         Objects.requireNonNull(getConnection());
@@ -886,7 +884,7 @@ public final class AdminOps extends DBManager {
      * Depending on the type of multimedia (either a series or a film), inserts the appropriate details
      * into the SINGOLO table and then into the PROMO table.
      *
-     * @param promo the Promo object containing the details of the promotion.
+     * @param promo          the Promo object containing the details of the promotion.
      * @param multimediaType the type of multimedia item (either "Serie" or another type indicating a film).
      * @param multimediaCode the code identifying the specific series or film to which the promotion applies.
      * @throws NullPointerException if the database connection is null.
@@ -922,11 +920,11 @@ public final class AdminOps extends DBManager {
      * Deletes a promotional offer from the database based on the provided code and expiration date.
      * This method executes an SQL query to delete the promo from the 'promo' table.
      *
-     * @param code the unique code of the promotional offer to be deleted.
+     * @param code       the unique code of the promotional offer to be deleted.
      * @param expiration the expiration date of the promotional offer to be deleted.
      * @return {@code true} if the promotional offer was successfully deleted, {@code false} otherwise.
      * @throws IllegalArgumentException if there is an error while deleting the promotional offer.
-     * @throws NullPointerException if the database connection is null.
+     * @throws NullPointerException     if the database connection is null.
      */
     public boolean deletePromo(final int code, final LocalDate expiration) {
         Objects.requireNonNull(getConnection());
@@ -950,7 +948,7 @@ public final class AdminOps extends DBManager {
      *
      * @return a list of {@link CardReg} objects representing the cards.
      * @throws IllegalArgumentException if there is an error while retrieving the cards.
-     * @throws NullPointerException if the database connection is null.
+     * @throws NullPointerException     if the database connection is null.
      */
     public List<CardReg> getCards() {
         Objects.requireNonNull(getConnection());
@@ -977,11 +975,11 @@ public final class AdminOps extends DBManager {
     /**
      * Assigns a promotional code to a user for a specific cinema.
      *
-     * @param promoCode The promotional code to assign.
+     * @param promoCode  The promotional code to assign.
      * @param expiration The expiration date of the promotional code.
      * @param cinemaCode The code representing the cinema.
-     * @param username The username of the user to whom the promotional code will be assigned.
-     * @throws NullPointerException If the connection object is null.
+     * @param username   The username of the user to whom the promotional code will be assigned.
+     * @throws NullPointerException     If the connection object is null.
      * @throws IllegalArgumentException If an error occurs while executing the SQL query.
      */
     public void assignPromo(
@@ -1127,7 +1125,7 @@ public final class AdminOps extends DBManager {
      *
      * @param percentageDiscount the discount percentage of the template promo.
      * @return the code of the existing or newly inserted template promo.
-     * @throws SQLException if there is an error while interacting with the database.
+     * @throws SQLException          if there is an error while interacting with the database.
      * @throws IllegalStateException if unable to insert or update the template promo.
      */
     private int insertOrUpdateTemplatePromo(final int percentageDiscount) throws SQLException {
@@ -1261,15 +1259,14 @@ public final class AdminOps extends DBManager {
      * @throws IllegalArgumentException If an error occurs while retrieving the rankings.
      */
     private List<UserRanking> getResult(final String query) {
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
-            final ResultSet resultSet = preparedStatement.executeQuery();
+        try {
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
             final List<UserRanking> rankings = new ArrayList<>();
-            while (resultSet.next()) {
+            while (getResultSet().next()) {
                 rankings.add(new UserRanking(
-                        resultSet.getString(1),
-                        resultSet.getInt(2)));
+                        getResultSet().getString(1),
+                        getResultSet().getInt(2)));
             }
             return rankings;
         } catch (SQLException ex) {
