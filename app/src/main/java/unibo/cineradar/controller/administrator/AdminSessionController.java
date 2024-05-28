@@ -10,6 +10,7 @@ import unibo.cineradar.model.cast.Casting;
 import unibo.cineradar.model.cast.Director;
 import unibo.cineradar.model.context.administrator.AdministratorContext;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.promo.Promo;
 import unibo.cineradar.model.ranking.CastRanking;
 import unibo.cineradar.model.ranking.EvalType;
@@ -351,8 +352,8 @@ public final class AdminSessionController extends SessionControllerImpl {
      * @param percentage the discount percentage of the promotional offer.
      * @param expiration the expiration date of the promotional offer.
      */
-    public void addPromo(final int percentage, final LocalDate expiration) {
-        this.administratorContext.addPromo(new Promo(
+    public void addMultiplePromo(final int percentage, final LocalDate expiration) {
+        this.administratorContext.addMultiplePromo(new Promo(
                 0,
                 percentage,
                 expiration
@@ -447,5 +448,48 @@ public final class AdminSessionController extends SessionControllerImpl {
      */
     public boolean deleteUser(final String username) {
         return this.administratorContext.deleteUser(username);
+    }
+
+    /**
+     * Adds a promotional offer for a specific genre.
+     * This method creates a new {@link Promo} object with the specified percentage discount and expiration date,
+     * and adds it to the specified genre.
+     *
+     * @param percentage the discount percentage of the promo.
+     * @param expiration the expiration date of the promo.
+     * @param genre the genre to which the promo is to be added.
+     */
+    public void addGenrePromo(final int percentage, final LocalDate expiration, final String genre) {
+        this.administratorContext.addGenrePromo(
+                new Promo(0, percentage, expiration),
+                genre
+        );
+    }
+
+    /**
+     * Retrieves a list of all genres.
+     *
+     * @return a list of {@link Genre} objects representing all available genres.
+     */
+    public List<Genre> getGenres() {
+        return this.administratorContext.getGenres();
+    }
+
+    /**
+     * Adds a promotional offer for a specific multimedia type.
+     * This method creates a new {@link Promo} object with the specified percentage discount and expiration date,
+     * and adds it to the specified multimedia type (either "Serie" or "Film") and multimedia code.
+     *
+     * @param percentage the discount percentage of the promo.
+     * @param expiration the expiration date of the promo.
+     * @param multimediaType the type of multimedia (either "Serie" or "Film").
+     * @param multimediaCode the code of the multimedia item to which the promo is to be added.
+     */
+    public void addSinglePromo(
+            final int percentage, final LocalDate expiration, final String multimediaType, final int multimediaCode) {
+        this.administratorContext.addSinglePromo(
+                new Promo(0, percentage, expiration),
+                multimediaType,
+                multimediaCode);
     }
 }

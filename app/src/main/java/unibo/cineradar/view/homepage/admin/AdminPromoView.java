@@ -1,11 +1,13 @@
 package unibo.cineradar.view.homepage.admin;
 
 import unibo.cineradar.controller.administrator.AdminSessionController;
+import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.promo.Promo;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -20,6 +22,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.io.Serial;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * The {@code AdminPromoView} class represents the administrator's view for managing promotional offers.
@@ -52,63 +56,181 @@ public final class AdminPromoView extends AdminPanel {
         this.promoTable = createPromoTable();
         final JScrollPane scrollPane = new JScrollPane(promoTable);
         add(scrollPane, BorderLayout.CENTER);
+        initButtons();
+    }
+
+    private void initButtons() {
         final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        final JButton addButton = new JButton("Aggiungi Promo");
-        addButton.addActionListener(e -> addPromoDialog());
-        buttonPanel.add(addButton);
+        final JButton addMultipleButton = new JButton("Aggiungi Promo Multipla");
+        addMultipleButton.addActionListener(e -> addMultiplePromoDialog());
+        buttonPanel.add(addMultipleButton);
+        final JButton addGenreButton = new JButton("Aggiungi Promo su Genere");
+        addGenreButton.addActionListener(e -> addGenrePromoDialog());
+        buttonPanel.add(addGenreButton);
+        final JButton addSinglePromoButton = new JButton("Aggiungi Promo su Multimedia specifico");
+        addSinglePromoButton.addActionListener(e -> addSinglePromoDialog());
+        buttonPanel.add(addSinglePromoButton);
         final JButton deleteButton = new JButton("Elimina Promo");
         deleteButton.addActionListener(e -> deletePromoDialog());
         buttonPanel.add(deleteButton);
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    private void addPromoDialog() {
+    private void addSinglePromoDialog() {
+        final JComboBox<String> multimediaBox = new JComboBox<>(List.of("Serie", "Film")
+                .toArray(String[]::new));
+        final JTextField multimediaCode = new JTextField(5);
         final JTextField percentageField = new JTextField(5);
         final JTextField expirationField = new JTextField(5);
 
-        final JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.add(new JLabel("Percentuale:"));
-        panel.add(percentageField);
-        panel.add(new JLabel("Scadenza (yyyy-MM-dd):"));
-        panel.add(expirationField);
+        final JPanel panel = createPanel(multimediaBox, multimediaCode, percentageField, expirationField);
 
         final JButton okButton = new JButton("OK");
-        okButton.setEnabled(false);
-        final Runnable checkFields = () -> {
-            final boolean allFilled = isFieldFilled(percentageField.getText())
-                    && isFieldFilled(expirationField.getText());
-            okButton.setEnabled(allFilled);
-        };
-
-        final DocumentListener listener = new ViewDocumentListener(checkFields);
-        percentageField.getDocument().addDocumentListener(listener);
-        expirationField.getDocument().addDocumentListener(listener);
+        configureOkButton(okButton, percentageField, expirationField, multimediaCode);
 
         okButton.addActionListener(e -> {
             if (LocalDate.parse(expirationField.getText()).isAfter(LocalDate.now())) {
-                addPromo(
+                addSinglePromo(
+                        Integer.parseInt(percentageField.getText()),
+                        LocalDate.parse(expirationField.getText()),
+                        String.valueOf(multimediaBox.getSelectedItem()),
+                        Integer.parseInt(multimediaCode.getText())
+                );
+            } else {
+                showErrorDialog();
+            }
+            disposeOptionPane();
+        });
+
+        showOptionDialog(panel, okButton);
+    }
+
+    private void addSinglePromo(
+            final int percentage, final LocalDate expiration, final String multimediaType, final int multimediaCode) {
+        ((AdminSessionController) this.getCurrentSessionContext().getController())
+                .addSinglePromo(percentage, expiration, multimediaType, multimediaCode);
+        updatePromoTable();
+    }
+
+    private void addGenrePromoDialog() {
+        final JComboBox<String> genreBox = new JComboBox<>(
+                ((AdminSessionController) getCurrentSessionContext().getController()).getGenres()
+                        .stream()
+                        .map(Genre::name)
+                        .toArray(String[]::new)
+        );
+        final JTextField percentageField = new JTextField(5);
+        final JTextField expirationField = new JTextField(5);
+
+        final JPanel panel = createPanel(genreBox, null, percentageField, expirationField);
+
+        final JButton okButton = new JButton("OK");
+        configureOkButton(okButton, percentageField, expirationField);
+
+        okButton.addActionListener(e -> {
+            if (LocalDate.parse(expirationField.getText()).isAfter(LocalDate.now())) {
+                addGenrePromo(
+                        Integer.parseInt(percentageField.getText()),
+                        LocalDate.parse(expirationField.getText()),
+                        String.valueOf(genreBox.getSelectedItem())
+                );
+            } else {
+                showErrorDialog();
+            }
+            disposeOptionPane();
+        });
+
+        showOptionDialog(panel, okButton);
+    }
+
+    private void addGenrePromo(final int percentage, final LocalDate expiration, final String genre) {
+        ((AdminSessionController) this.getCurrentSessionContext().getController())
+                .addGenrePromo(percentage, expiration, genre);
+        updatePromoTable();
+    }
+
+    private void addMultiplePromoDialog() {
+        final JTextField percentageField = new JTextField(5);
+        final JTextField expirationField = new JTextField(5);
+
+        final JPanel panel = createPanel(null, null, percentageField, expirationField);
+
+        final JButton okButton = new JButton("OK");
+        configureOkButton(okButton, percentageField, expirationField);
+
+        okButton.addActionListener(e -> {
+            if (LocalDate.parse(expirationField.getText()).isAfter(LocalDate.now())) {
+                addMultiplePromo(
                         Integer.parseInt(percentageField.getText()),
                         LocalDate.parse(expirationField.getText())
                 );
             } else {
-                JOptionPane.showMessageDialog(null,
-                        "Inserisci una scadenza valida per la Promo.",
-                        ERROR, JOptionPane.ERROR_MESSAGE);
+                showErrorDialog();
             }
-            JOptionPane.getRootFrame().dispose();
+            disposeOptionPane();
         });
 
+        showOptionDialog(panel, okButton);
+    }
+
+    private void addMultiplePromo(final int percentage, final LocalDate expiration) {
+        ((AdminSessionController) this.getCurrentSessionContext().getController())
+                .addMultiplePromo(percentage, expiration);
+        updatePromoTable();
+    }
+
+    private JPanel createPanel(
+            final JComboBox<String> box, final JTextField multimediaCode,
+            final JTextField percentageField, final JTextField expirationField) {
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        if (!Objects.isNull(box)) {
+            panel.add(new JLabel("Promo su Serie o Film?:"));
+            panel.add(new JScrollPane(box));
+        }
+        if (!Objects.isNull(multimediaCode)) {
+            panel.add(new JLabel("Codice Film/Serie:"));
+            panel.add(multimediaCode);
+        }
+        panel.add(new JLabel("Percentuale:"));
+        panel.add(percentageField);
+        panel.add(new JLabel("Scadenza (yyyy-MM-dd):"));
+        panel.add(expirationField);
+        return panel;
+    }
+
+    private void configureOkButton(final JButton okButton, final JTextField... fields) {
+        okButton.setEnabled(false);
+        final Runnable checkFields = () -> {
+            boolean allFilled = true;
+            for (final JTextField field : fields) {
+                allFilled &= isFieldFilled(field.getText());
+            }
+            okButton.setEnabled(allFilled);
+        };
+
+        final DocumentListener listener = new ViewDocumentListener(checkFields);
+        for (final JTextField field : fields) {
+            field.getDocument().addDocumentListener(listener);
+        }
+    }
+
+    private void showErrorDialog() {
+        JOptionPane.showMessageDialog(
+                null,
+                "Inserisci una scadenza valida per la Promo.",
+                ERROR, JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void disposeOptionPane() {
+        JOptionPane.getRootFrame().dispose();
+    }
+
+    private void showOptionDialog(final JPanel panel, final JButton okButton) {
         final Object[] options = {okButton, "Cancel"};
         JOptionPane.showOptionDialog(null, panel, "Aggiungi Promo",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                 null, options, options[0]);
-    }
-
-    private void addPromo(final int percentage, final LocalDate expiration) {
-        ((AdminSessionController) this.getCurrentSessionContext().getController())
-                .addPromo(percentage, expiration);
-        updatePromoTable();
     }
 
     private void deletePromoDialog() {

@@ -818,53 +818,103 @@ public final class AdminOps extends DBManager {
     }
 
     /**
-     * Adds a new promotional offer to the database.
-     * This method inserts a new promo into the 'templatepromo' table if necessary and then into the 'promo' table.
-     * If the percentage discount already exists, it uses the existing template promo code.
+     * Adds a new promotional entry for a multiple item promotion.
+     * If the promotional template does not already exist in the MULTIPLO table, it is inserted.
+     * The promo details are then added to the PROMO table.
      *
-     * @param promo the {@link Promo} object representing the promotional offer to be added.
-     * @throws IllegalArgumentException if there is an error while adding the promotional offer.
-     * @throws IllegalStateException if there is an error rolling back the transaction.
+     * @param promo the Promo object containing the details of the promotion.
      * @throws NullPointerException if the database connection is null.
      */
-    public void addPromo(final Promo promo) {
+    public void addMultiplePromo(final Promo promo) {
         Objects.requireNonNull(getConnection());
-        final String checkPromoQuery = "SELECT CodicePromo FROM TEMPLATEPROMO WHERE PercentualeSconto = ?";
-        final String templatePromoQuery = "INSERT INTO TEMPLATEPROMO (PercentualeSconto) VALUES (?)";
-        final String promoQuery = "INSERT INTO PROMO (CodiceTemplatePromo, Scadenza) VALUES (?, ?)";
+        final String alrExistMultipleQuery = "SELECT CodiceTemplatePromo FROM MULTIPLO WHERE CodiceTemplatePromo = ?";
+        final String multipleQuery = "INSERT INTO MULTIPLO (CodiceTemplatePromo) VALUES (?)";
+        final String promoQuery = "INSERT INTO PROMO (CodiceTemplatePromo, Scadenza) VALUES (?,?)";
         try {
             getConnection().setAutoCommit(false);
-            setPreparedStatement(getConnection().prepareStatement(checkPromoQuery));
-            getPreparedStatement().setInt(1, promo.percentageDiscount());
-            ResultSet rs = getPreparedStatement().executeQuery();
-            int generatedCodicePromo = 0;
-            if (rs.next()) {
-                generatedCodicePromo = rs.getInt(1);
-            } else {
-                setPreparedStatement(getConnection().prepareStatement(templatePromoQuery, Statement.RETURN_GENERATED_KEYS));
-                getPreparedStatement().setInt(1, promo.percentageDiscount());
+            final int generatedPromoCode = insertOrUpdateTemplatePromo(promo.percentageDiscount());
+            setPreparedStatement(getConnection().prepareStatement(alrExistMultipleQuery));
+            getPreparedStatement().setInt(1, generatedPromoCode);
+            setResultSet(getPreparedStatement().executeQuery());
+            if (!getResultSet().next()) {
+                setPreparedStatement(getConnection().prepareStatement(multipleQuery));
+                getPreparedStatement().setInt(1, generatedPromoCode);
                 getPreparedStatement().executeUpdate();
-                rs = getPreparedStatement().getGeneratedKeys();
-                if (rs.next()) {
-                    generatedCodicePromo = rs.getInt(1);
-                }
             }
             setPreparedStatement(getConnection().prepareStatement(promoQuery));
-            getPreparedStatement().setInt(1, generatedCodicePromo);
+            getPreparedStatement().setInt(1, generatedPromoCode);
             getPreparedStatement().setDate(2, Date.valueOf(promo.expiration()));
             getPreparedStatement().executeUpdate();
             getConnection().commit();
         } catch (SQLException ex) {
-            SQLException rollbackEx = null;
-            try {
-                getConnection().rollback();
-            } catch (SQLException e) {
-                rollbackEx = e;
+            handleSQLException(ex);
+        }
+    }
+
+    /**
+     * Adds a new promotional entry for a genre-specific promotion.
+     * Inserts the promotional details into the PROMO_GENERE table and then into the PROMO table.
+     *
+     * @param promo the Promo object containing the details of the promotion.
+     * @param genre the genre to which the promotion applies.
+     * @throws NullPointerException if the database connection is null.
+     */
+    public void addGenrePromo(final Promo promo, final String genre) {
+        Objects.requireNonNull(getConnection());
+        final String genreQuery = "INSERT INTO PROMO_GENERE (NomeGenere, CodiceTemplateMultiplo) VALUES (?,?)";
+        final String promoQuery = "INSERT INTO PROMO (CodiceTemplatePromo, Scadenza) VALUES (?,?)";
+        try {
+            getConnection().setAutoCommit(false);
+            final int generatedPromoCode = insertOrUpdateTemplatePromo(promo.percentageDiscount());
+            setPreparedStatement(getConnection().prepareStatement(genreQuery));
+            getPreparedStatement().setString(1, genre);
+            getPreparedStatement().setInt(2, generatedPromoCode);
+            getPreparedStatement().executeUpdate();
+            setPreparedStatement(getConnection().prepareStatement(promoQuery));
+            getPreparedStatement().setInt(1, generatedPromoCode);
+            getPreparedStatement().setDate(2, Date.valueOf(promo.expiration()));
+            getPreparedStatement().executeUpdate();
+            getConnection().commit();
+        } catch (SQLException ex) {
+            handleSQLException(ex);
+        }
+    }
+
+
+    /**
+     * Adds a new promotional entry for a single item promotion.
+     * Depending on the type of multimedia (either a series or a film), inserts the appropriate details
+     * into the SINGOLO table and then into the PROMO table.
+     *
+     * @param promo the Promo object containing the details of the promotion.
+     * @param multimediaType the type of multimedia item (either "Serie" or another type indicating a film).
+     * @param multimediaCode the code identifying the specific series or film to which the promotion applies.
+     * @throws NullPointerException if the database connection is null.
+     */
+    public void addSinglePromo(final Promo promo, final String multimediaType, final int multimediaCode) {
+        Objects.requireNonNull(getConnection());
+        final String singleQuery = "INSERT INTO SINGOLO (CodiceTemplatePromo, CodiceSerie, CodiceFilm) VALUES (?,?,?)";
+        final String promoQuery = "INSERT INTO PROMO (CodiceTemplatePromo, Scadenza) VALUES (?,?)";
+        try {
+            getConnection().setAutoCommit(false);
+            final int generatedPromoCode = insertOrUpdateTemplatePromo(promo.percentageDiscount());
+            setPreparedStatement(getConnection().prepareStatement(singleQuery));
+            getPreparedStatement().setInt(1, generatedPromoCode);
+            if ("Serie".equals(multimediaType)) {
+                getPreparedStatement().setInt(2, multimediaCode);
+                getPreparedStatement().setNull(3, java.sql.Types.INTEGER);
+            } else {
+                getPreparedStatement().setNull(2, java.sql.Types.INTEGER);
+                getPreparedStatement().setInt(3, multimediaCode);
             }
-            if (rollbackEx != null) {
-                ex.addSuppressed(rollbackEx);
-            }
-            throw new IllegalArgumentException("Error adding promo", ex);
+            getPreparedStatement().executeUpdate();
+            setPreparedStatement(getConnection().prepareStatement(promoQuery));
+            getPreparedStatement().setInt(1, generatedPromoCode);
+            getPreparedStatement().setDate(2, Date.valueOf(promo.expiration()));
+            getPreparedStatement().executeUpdate();
+            getConnection().commit();
+        } catch (SQLException ex) {
+            handleSQLException(ex);
         }
     }
 
@@ -940,7 +990,7 @@ public final class AdminOps extends DBManager {
         try {
             final String query = "INSERT INTO"
                     + " premi_tessera(CodicePromoPromo, Scadenza, CodiceCinema, UsernameUtente)"
-                    + " VALUES (?, ?, ?, ?)";
+                    + " VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE CodicePromoPromo = CodicePromoPromo";
             setPreparedStatement(getConnection().prepareStatement(query));
             getPreparedStatement().setInt(1, promoCode);
             getPreparedStatement().setDate(2, Date.valueOf(expiration));
@@ -1040,28 +1090,12 @@ public final class AdminOps extends DBManager {
      * @param promoCode         The unique identifier of the promotional event.
      * @param expiration        The expiration date of the promotional event.
      * @param bestNumberRatings A list of UserRanking objects representing the best reviewers.
-     * @throws IllegalArgumentException If an error occurs while assigning the best reviewers to the promotional event.
      */
     public void assignPromoBestFiveReviewers(
             final int promoCode, final LocalDate expiration, final List<UserRanking> bestNumberRatings) {
-        Objects.requireNonNull(getConnection());
-        try {
-            final String query = "INSERT INTO "
-                    + "premi_tessera(CodicePromoPromo, Scadenza, CodiceCinema, UsernameUtente) "
-                    + "VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE CodicePromoPromo = CodicePromoPromo";
-            for (final UserRanking userRanking : bestNumberRatings) {
-                final Optional<Integer> cinemaCode = getCinemaCode(userRanking.username());
-                setPreparedStatement(getConnection().prepareStatement(query));
-                if (cinemaCode.isPresent()) {
-                    getPreparedStatement().setInt(1, promoCode);
-                    getPreparedStatement().setDate(2, Date.valueOf(expiration));
-                    getPreparedStatement().setInt(3, cinemaCode.get());
-                    getPreparedStatement().setString(4, userRanking.username());
-                    getPreparedStatement().executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error adding promo to all users", ex);
+        for (final UserRanking userRanking : bestNumberRatings) {
+            final Optional<Integer> cinemaCode = getCinemaCode(userRanking.username());
+            cinemaCode.ifPresent(integer -> assignPromo(promoCode, expiration, integer, userRanking.username()));
         }
     }
 
@@ -1084,6 +1118,57 @@ public final class AdminOps extends DBManager {
         } catch (SQLException ex) {
             throw new IllegalArgumentException("Error deleting castmember from cast", ex);
         }
+    }
+
+    /**
+     * Inserts a new template promo or retrieves the code of an existing template promo with the specified discount percentage.
+     * If a template promo with the given discount percentage exists, its code is returned. Otherwise, a new template promo
+     * is inserted and its generated code is returned.
+     *
+     * @param percentageDiscount the discount percentage of the template promo.
+     * @return the code of the existing or newly inserted template promo.
+     * @throws SQLException if there is an error while interacting with the database.
+     * @throws IllegalStateException if unable to insert or update the template promo.
+     */
+    private int insertOrUpdateTemplatePromo(final int percentageDiscount) throws SQLException {
+        final String alrExistTemplatePromoQuery = "SELECT CodicePromo FROM TEMPLATEPROMO "
+                + "WHERE PercentualeSconto = ?";
+        final String templatePromoQuery = "INSERT INTO TEMPLATEPROMO (PercentualeSconto) VALUES (?)";
+        setPreparedStatement(getConnection().prepareStatement(alrExistTemplatePromoQuery));
+        getPreparedStatement().setInt(1, percentageDiscount);
+        ResultSet rs = getPreparedStatement().executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1);
+        } else {
+            setPreparedStatement(getConnection().prepareStatement(templatePromoQuery, Statement.RETURN_GENERATED_KEYS));
+            getPreparedStatement().setInt(1, percentageDiscount);
+            getPreparedStatement().executeUpdate();
+            rs = getPreparedStatement().getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        throw new IllegalStateException("Unable to insert or update template promo");
+    }
+
+    /**
+     * Handles a SQLException by rolling back the transaction and throwing an IllegalArgumentException.
+     * If an error occurs during the rollback, it is added as a suppressed exception to the original SQLException.
+     *
+     * @param ex the SQLException that occurred.
+     * @throws IllegalArgumentException always thrown with the original SQLException as its cause.
+     */
+    private void handleSQLException(final SQLException ex) {
+        SQLException rollbackEx = null;
+        try {
+            getConnection().rollback();
+        } catch (SQLException e) {
+            rollbackEx = e;
+        }
+        if (rollbackEx != null) {
+            ex.addSuppressed(rollbackEx);
+        }
+        throw new IllegalArgumentException("Error adding promo", ex);
     }
 
     /**

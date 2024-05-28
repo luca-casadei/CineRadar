@@ -7,6 +7,7 @@ import unibo.cineradar.model.cast.Casting;
 import unibo.cineradar.model.context.SessionContextImpl;
 import unibo.cineradar.model.db.AdminOps;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.promo.Promo;
 import unibo.cineradar.model.ranking.CastRanking;
 import unibo.cineradar.model.ranking.EvalType;
@@ -400,9 +401,9 @@ public final class AdministratorContext extends SessionContextImpl {
      * @param promo the {@link Promo} object representing the promotional offer to be added.
      * @throws RuntimeException if an error occurs while adding the promotional offer.
      */
-    public void addPromo(final Promo promo) {
+    public void addMultiplePromo(final Promo promo) {
         try (AdminOps mgr = new AdminOps()) {
-            mgr.addPromo(promo);
+            mgr.addMultiplePromo(promo);
         }
     }
 
@@ -511,6 +512,49 @@ public final class AdministratorContext extends SessionContextImpl {
     public boolean deleteUser(final String username) {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.deleteUser(username);
+        }
+    }
+
+    /**
+     * Adds a promotional offer for a specific genre.
+     * This method utilizes an {@link AdminOps} instance to add a genre-specific promo.
+     * The {@link Promo} object represents the promotional offer, and the genre specifies where to apply it.
+     *
+     * @param promo the {@link Promo} object representing the promotional offer.
+     * @param genre the genre to which the promo is to be added.
+     */
+    public void addGenrePromo(final Promo promo, final String genre) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.addGenrePromo(promo, genre);
+        }
+    }
+
+    /**
+     * Retrieves a list of all genres.
+     * This method uses an {@link AdminOps} instance to fetch all available genres.
+     *
+     * @return a list of {@link Genre} objects representing all available genres.
+     */
+    public List<Genre> getGenres() {
+        try (AdminOps mgr = new AdminOps()) {
+            return List.copyOf(mgr.getGenres());
+        }
+    }
+
+    /**
+     * Adds a promotional offer for a specific multimedia type.
+     * This method uses an {@link AdminOps} instance to add a promo
+     * to a specific multimedia type (either "Serie" or "Film") and multimedia code.
+     * The {@link Promo} object represents the promotional offer.
+     *
+     * @param promo the {@link Promo} object representing the promotional offer.
+     * @param multimediaType the type of multimedia (either "Serie" or "Film").
+     * @param multimediaCode the code of the multimedia item to which the promo is to be added.
+     */
+    public void addSinglePromo(
+            final Promo promo, final String multimediaType, final int multimediaCode) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.addSinglePromo(promo, multimediaType, multimediaCode);
         }
     }
 }
