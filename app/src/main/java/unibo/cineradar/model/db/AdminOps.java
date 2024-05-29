@@ -436,8 +436,18 @@ public final class AdminOps extends DBManager {
     public boolean deleteSeason(final int seriesCode, final int seasonNumber) {
         Objects.requireNonNull(getConnection());
         try {
-            final String query = "DELETE FROM stagione WHERE CodiceSerie = ? AND NumeroStagione = ?";
-            setPreparedStatement(getConnection().prepareStatement(query));
+            final String retrieveEpisodesInfoQuery = "SELECT DurataMin FROM episodio "
+                    + "WHERE CodiceSerie = ? AND NumeroStagione = ?";
+            final String seasonQuery = "DELETE FROM stagione WHERE CodiceSerie = ? AND NumeroStagione = ?";
+            setPreparedStatement(getConnection().prepareStatement(retrieveEpisodesInfoQuery));
+            getPreparedStatement().setInt(1, seriesCode);
+            getPreparedStatement().setInt(2, seasonNumber);
+            setResultSet(getPreparedStatement().executeQuery());
+            while (getResultSet().next()) {
+                final int duration = getResultSet().getInt("DurataMin");
+                updateSeries(seriesCode, duration, false);
+            }
+            setPreparedStatement(getConnection().prepareStatement(seasonQuery));
             getPreparedStatement().setInt(1, seriesCode);
             getPreparedStatement().setInt(2, seasonNumber);
             final int rowsAffected = getPreparedStatement().executeUpdate();
@@ -464,6 +474,7 @@ public final class AdminOps extends DBManager {
             getPreparedStatement().setInt(3, episode.seasonId());
             getPreparedStatement().setInt(4, episode.duration());
             getPreparedStatement().executeUpdate();
+            updateSeries(episode.seriesId(), episode.duration(), true);
         } catch (SQLException ex) {
             throw new IllegalArgumentException("Error adding episode", ex);
         }
@@ -480,8 +491,22 @@ public final class AdminOps extends DBManager {
     public boolean deleteEpisode(final int seriesCode, final int seasonNumber, final int episodeNumber) {
         Objects.requireNonNull(getConnection());
         try {
-            final String query = "DELETE FROM episodio WHERE CodiceSerie = ? AND NumeroStagione = ? AND NumeroEpisodio = ?";
-            setPreparedStatement(getConnection().prepareStatement(query));
+            final String retrieveEpisodeInfoQuery = "SELECT DurataMin FROM episodio "
+                    + "WHERE CodiceSerie = ? AND NumeroStagione = ? AND NumeroEpisodio = ?";
+            setPreparedStatement(getConnection().prepareStatement(retrieveEpisodeInfoQuery));
+            getPreparedStatement().setInt(1, seriesCode);
+            getPreparedStatement().setInt(2, seasonNumber);
+            getPreparedStatement().setInt(3, episodeNumber);
+            setResultSet(getPreparedStatement().executeQuery());
+            if (getResultSet().next()) {
+                final int duration = getResultSet().getInt("DurataMin");
+                updateSeries(seriesCode, duration, false);
+            } else {
+                throw new IllegalArgumentException("Episode not found");
+            }
+            final String episodeQuery = "DELETE FROM episodio "
+                    + "WHERE CodiceSerie = ? AND NumeroStagione = ? AND NumeroEpisodio = ?";
+            setPreparedStatement(getConnection().prepareStatement(episodeQuery));
             getPreparedStatement().setInt(1, seriesCode);
             getPreparedStatement().setInt(2, seasonNumber);
             getPreparedStatement().setInt(3, episodeNumber);
@@ -1395,5 +1420,29 @@ public final class AdminOps extends DBManager {
             return new Director(code, name, surname, birthDate, debutDate, artisticName);
         }
         throw new IllegalArgumentException();
+    }
+
+    private void updateSeries(final int seriesCode, final int duration, final boolean add) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String addQuery = "UPDATE SERIE "
+                    + "SET DurataComplessiva = DurataComplessiva + ?, "
+                    + "NumeroEpisodi = NumeroEpisodi + 1 "
+                    + "WHERE Codice = ?";
+            final String subtractQuery = "UPDATE SERIE "
+                    + "SET DurataComplessiva = DurataComplessiva - ?, "
+                    + "NumeroEpisodi = NumeroEpisodi - 1 "
+                    + "WHERE Codice = ?";
+            if (add) {
+                setPreparedStatement(getConnection().prepareStatement(addQuery));
+            } else {
+                setPreparedStatement(getConnection().prepareStatement(subtractQuery));
+            }
+            getPreparedStatement().setInt(1, duration);
+            getPreparedStatement().setInt(2, seriesCode);
+            getPreparedStatement().executeUpdate();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error updating series", ex);
+        }
     }
 }

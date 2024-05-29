@@ -89,12 +89,9 @@ public final class AdminSessionController extends SessionControllerImpl {
      * @param title           The title of the TV series.
      * @param ageLimit        The age limit for the TV series.
      * @param plot            The plot summary of the TV series.
-     * @param duration        The total duration of the TV series in minutes.
-     * @param episodesNumber  The number of episodes in the TV series.
      */
-    public void addSeries(
-            final String title, final int ageLimit, final String plot, final int duration, final int episodesNumber) {
-        this.administratorContext.addSerie(new Serie(0, title, ageLimit, plot, duration, episodesNumber));
+    public void addSeries(final String title, final int ageLimit, final String plot) {
+        this.administratorContext.addSerie(new Serie(0, title, ageLimit, plot, 0, 0));
     }
 
     /**

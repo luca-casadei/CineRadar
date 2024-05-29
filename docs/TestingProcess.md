@@ -17,8 +17,7 @@ Ora rieffettuo l'accesso come amministratore, per soddisfare la richiesta che ho
 - Visualizzazione della richiesta neocreata ✅
 - Completamento della richiesta (numero valido) ✅
 - Completamento della richiesta (numero invalido: mostra errore) ✅
-- Aggiunta di una serie ❌ (Vedi descrizione sottostante per l'errore)\
-  L'aggiunta di una serie non dovrebbe prevedere l'inserimento delle ridondanze nei campi (NumeroEpisodi e DurataComplessiva), essi vanno calcolati tramite query e update.
+- Aggiunta di una serie ✅
 - Visualizzazione della schermata di aggiunta di film ✅
 - ...
 

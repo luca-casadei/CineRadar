@@ -157,7 +157,7 @@ public final class AdminFilmView extends AdminPanel {
                     updateFilmTable();
                     JOptionPane.showMessageDialog(
                             null,
-                            "Il film è stato eliminato con successo.",
+                            "Il film e' stato eliminato con successo.",
                             COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(
