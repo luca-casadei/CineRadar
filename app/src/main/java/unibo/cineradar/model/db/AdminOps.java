@@ -1386,6 +1386,7 @@ public final class AdminOps extends DBManager {
             final Serie existingSerie = detailedSeries.get(detailedSeries.indexOf(serie));
             if (!existingSerie.getSeasons().contains(season)) {
                 season.addCastMember(castMember);
+                season.addEpisode(episode);
                 existingSerie.addSeason(season);
             } else {
                 final Season existingSeason = existingSerie.getSeason(season);

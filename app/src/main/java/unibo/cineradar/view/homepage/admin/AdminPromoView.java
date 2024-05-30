@@ -264,7 +264,7 @@ public final class AdminPromoView extends AdminPanel {
                 updatePromoTable();
                 JOptionPane.showMessageDialog(
                         null,
-                        "La Promo è stata eliminata con successo.",
+                        "La Promo e' stata eliminata con successo.",
                         COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(

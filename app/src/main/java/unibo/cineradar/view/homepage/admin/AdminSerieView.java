@@ -2,7 +2,6 @@ package unibo.cineradar.view.homepage.admin;
 
 import unibo.cineradar.controller.administrator.AdminSessionController;
 import unibo.cineradar.model.cast.Casting;
-import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.BoxLayout;
@@ -15,9 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableModel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -36,7 +33,8 @@ public final class AdminSerieView extends AdminPanel {
     private static final String COMPLETE_DELETE = "Eliminazione completata";
     private static final String SEASON_NUMBER = "Numero Stagione:";
     private static final String SERIES_CODE = "Codice Serie:";
-    private final JTable seriesTable;
+    private JScrollPane seriesScrollPane;
+    private JTable seriesTable;
 
     /**
      * Constructs a new AdminSerieView with the specified ViewContext.
@@ -53,8 +51,13 @@ public final class AdminSerieView extends AdminPanel {
         welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
         add(welcomeLabel, BorderLayout.NORTH);
         this.seriesTable = createSerieTable();
-        final JScrollPane scrollPane = new JScrollPane(seriesTable);
-        add(scrollPane, BorderLayout.CENTER);
+        this.seriesScrollPane = new JScrollPane(seriesTable);
+        add(this.seriesScrollPane, BorderLayout.CENTER);
+        final JPanel buttonPanel = getButtonPanel();
+        add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    private JPanel getButtonPanel() {
         final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final JButton addSeriesButton = new JButton("Aggiungi Serie");
         addSeriesButton.addActionListener(e -> addSeriesDialog());
@@ -77,26 +80,20 @@ public final class AdminSerieView extends AdminPanel {
         final JButton deleteEpisodeButton = new JButton("Elimina Episodio");
         deleteEpisodeButton.addActionListener(e -> deleteEpisodeDialog());
         buttonPanel.add(deleteEpisodeButton);
-        add(buttonPanel, BorderLayout.SOUTH);
+        return buttonPanel;
     }
 
     /**
-     * Updates the table displaying TV series with the latest data.
+     * Refreshes the table of series with updated data.
      */
-    private void updateSeriesTable() {
+    private void refreshSeriesTable() {
+        remove(this.seriesScrollPane);
         ((AdminSessionController) getCurrentSessionContext().getController()).updateDetailedSeries();
-        SwingUtilities.invokeLater(() -> {
-            final DefaultTableModel model = (DefaultTableModel) this.seriesTable.getModel();
-            model.setRowCount(0);
-            for (final Serie serie : ((AdminSessionController) getCurrentSessionContext().getController()).getSeries()) {
-                model.addRow(new Object[]{
-                        serie.getSeriesId(),
-                        serie.getTitle(),
-                        serie.getAgeLimit(),
-                        serie.getPlot(),
-                        serie.getDuration()});
-            }
-        });
+        this.seriesTable = super.createSerieTable();
+        this.seriesScrollPane = new JScrollPane(this.seriesTable);
+        add(seriesScrollPane, BorderLayout.CENTER);
+        revalidate();
+        repaint();
     }
 
     /**
@@ -181,7 +178,7 @@ public final class AdminSerieView extends AdminPanel {
                 final int code = Integer.parseInt(codeField.getText());
                 final boolean deleted = deleteSeries(code);
                 if (deleted) {
-                    updateSeriesTable();
+                    refreshSeriesTable();
                     JOptionPane.showMessageDialog(
                             null,
                             "La SerieTV e' stata eliminata con successo.",
@@ -318,7 +315,7 @@ public final class AdminSerieView extends AdminPanel {
                 final int seasonNumber = Integer.parseInt(seasonNumberField.getText());
                 final boolean deleted = deleteSeason(seriesCode, seasonNumber);
                 if (deleted) {
-                    updateSeriesTable();
+                    refreshSeriesTable();
                     JOptionPane.showMessageDialog(
                             null,
                             "La stagione e' stata eliminata con successo.",
@@ -428,7 +425,7 @@ public final class AdminSerieView extends AdminPanel {
             final int seriesCode, final int seasonNumber, final int episodeNumber, final int duration) {
         ((AdminSessionController) getCurrentSessionContext().getController())
                 .addEpisode(seriesCode, seasonNumber, episodeNumber, duration);
-        updateSeriesTable();
+        refreshSeriesTable();
     }
 
     /**
@@ -459,7 +456,7 @@ public final class AdminSerieView extends AdminPanel {
                 final int episodeNumber = Integer.parseInt(episodeNumberField.getText());
                 final boolean deleted = deleteEpisode(seriesCode, seasonNumber, episodeNumber);
                 if (deleted) {
-                    updateSeriesTable();
+                    refreshSeriesTable();
                     JOptionPane.showMessageDialog(
                             null,
                             "L'episodio e' stato eliminato con successo.",

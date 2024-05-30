@@ -242,7 +242,7 @@ public class AdminCastView extends AdminPanel {
                 updateMemberCastTable();
                 JOptionPane.showMessageDialog(
                         null,
-                        "Il Membro del Cast è stato eliminato con successo.",
+                        "Il Membro del Cast e' stato eliminato con successo.",
                         COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(
@@ -331,7 +331,7 @@ public class AdminCastView extends AdminPanel {
                 updateCastTable();
                 JOptionPane.showMessageDialog(
                         null,
-                        "Il Cast è stato eliminato con successo.",
+                        "Il Cast e' stato eliminato con successo.",
                         COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(
@@ -431,7 +431,7 @@ public class AdminCastView extends AdminPanel {
                 updateCasting();
                 JOptionPane.showMessageDialog(
                         null,
-                        "Il Membro del Cast è stata eliminato con successo.",
+                        "Il Membro del Cast e' stata eliminato con successo.",
                         COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(
