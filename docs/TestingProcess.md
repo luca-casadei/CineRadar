@@ -2,6 +2,8 @@
 Situazione iniziale, database appena creato con la query CineRadar.sql, quindi con solo l'utente di amministrazione inserito, procedo ad effettuare l'accesso all'interfaccia di amministrazione.
 - Accesso negato ✅
 - Accesso autorizzato ✅
+- Dimensionamento della finestra di amministrazione ❌ \
+  Troppo grande, va fuori dallo schermo, ridurre la dimensione di partenza della finestra.
 - Pagina di profilo amministrazione ✅
 - Scorrimento di tutte le sezioni senza errori in console ✅
 - Disconnessione e chiusura App ✅
@@ -18,6 +20,10 @@ Ora rieffettuo l'accesso come amministratore, per soddisfare la richiesta che ho
 - Completamento della richiesta (numero valido) ✅
 - Completamento della richiesta (numero invalido: mostra errore) ✅
 - Aggiunta di una serie ✅
+- Aggiunta di una stagione ❌ (Vedi errore sottostante) \
+  Eccezione in console se non si riempiono tutti i campi, implementare un dialog di errore.
+- Visualizzazione stagione inserita ❌ (Vedi errore sottostante) \
+  Eccezione in console se si visualizza la stagione appena inserita (probabile errore a catena).
 - Visualizzazione della schermata di aggiunta di film ✅
 - ...
 
