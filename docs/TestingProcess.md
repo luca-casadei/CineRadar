@@ -20,8 +20,7 @@ Ora rieffettuo l'accesso come amministratore, per soddisfare la richiesta che ho
 - Completamento della richiesta (numero valido) ✅
 - Completamento della richiesta (numero invalido: mostra errore) ✅
 - Aggiunta di una serie ✅
-- Aggiunta di una stagione ❌ (Vedi errore sottostante) \
-  Eccezione in console se non si riempiono tutti i campi, implementare un dialog di errore.
+- Aggiunta di una stagione ✅
 - Visualizzazione stagione inserita ❌ (Vedi errore sottostante) \
   Eccezione in console se si visualizza la stagione appena inserita (probabile errore a catena).
 - Visualizzazione della schermata di aggiunta di film ✅

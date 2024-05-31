@@ -217,6 +217,12 @@ public final class AdminSerieView extends AdminPanel {
      *                 If present, the series code field will be pre-filled with this ID and made uneditable.
      */
     private void addSeasonDialog(final Optional<Integer> idSeries) {
+        if (((AdminSessionController) getCurrentSessionContext().getController()).getCasting().isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Errore: Nessun casting disponibile",
+                    ERROR, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         final JTextField seriesCodeField = new JTextField(5);
         final JTextField seasonNumberField = new JTextField(5);
         final JTextArea summaryArea = new JTextArea(5, 20);
