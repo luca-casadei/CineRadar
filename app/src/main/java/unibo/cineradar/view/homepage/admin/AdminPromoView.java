@@ -46,7 +46,6 @@ public final class AdminPromoView extends AdminPanel {
      */
     public AdminPromoView(final ViewContext currentSessionContext) {
         super(currentSessionContext);
-        setLayout(new BorderLayout());
         final JLabel welcomeLabel = new JLabel("Benvenuto "
                 + currentSessionContext.getController().getAccountDetails().get(0)
                 + " nella pagina delle Promo.");

@@ -17,9 +17,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.io.Serial;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -44,36 +43,16 @@ public class AdminCastView extends AdminPanel {
      */
     public AdminCastView(final ViewContext currentSessionContext) {
         super(currentSessionContext);
-        setLayout(new GridBagLayout());
         this.castMemberTable = createCastMemberTable();
         final JScrollPane castMemberScrollPane = new JScrollPane(castMemberTable);
         this.castTable = createCastTable();
         final JScrollPane castScrollPane = new JScrollPane(castTable);
-
-        final GridBagConstraints castMemberConstraints = new GridBagConstraints();
-        castMemberConstraints.gridx = 1;
-        castMemberConstraints.gridy = 0;
-        castMemberConstraints.weightx = 0.5;
-        castMemberConstraints.weighty = 1.0;
-        castMemberConstraints.fill = GridBagConstraints.BOTH;
-        add(castMemberScrollPane, castMemberConstraints);
-
-        final GridBagConstraints castConstraints = new GridBagConstraints();
-        castConstraints.gridx = 0;
-        castConstraints.gridy = 0;
-        castConstraints.weightx = 0.5;
-        castConstraints.weighty = 1.0;
-        castConstraints.fill = GridBagConstraints.BOTH;
-        add(castScrollPane, castConstraints);
-
+        final JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(castScrollPane, BorderLayout.CENTER);
+        mainPanel.add(castMemberScrollPane, BorderLayout.EAST);
+        add(mainPanel, BorderLayout.CENTER);
         final JPanel buttonPanel = getButtonPanel();
-
-        final GridBagConstraints buttonConstraints = new GridBagConstraints();
-        buttonConstraints.gridx = 0;
-        buttonConstraints.gridy = 1;
-        buttonConstraints.gridwidth = 2;
-        buttonConstraints.fill = GridBagConstraints.HORIZONTAL;
-        add(buttonPanel, buttonConstraints);
+        add(buttonPanel, BorderLayout.SOUTH);
     }
 
     private JPanel getButtonPanel() {

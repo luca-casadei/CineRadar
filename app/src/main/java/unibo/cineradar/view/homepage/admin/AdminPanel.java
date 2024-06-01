@@ -174,11 +174,6 @@ public abstract class AdminPanel extends JPanel {
         return table;
     }
 
-    private void openCastDetailsView(final ViewContext currentSessionContext, final int castId) {
-        final AdminCastDetailsView castDetailsView = new AdminCastDetailsView(currentSessionContext, castId);
-        castDetailsView.setVisible(true);
-    }
-
     /**
      * Creates a table of films.
      *
@@ -204,11 +199,6 @@ public abstract class AdminPanel extends JPanel {
         return filmTable;
     }
 
-    private void openFilmDetailsView(final ViewContext currentSessionContext, final int filmId) {
-        final AdminFilmDetailsView filmDetailsView = new AdminFilmDetailsView(currentSessionContext, filmId);
-        filmDetailsView.setVisible(true);
-    }
-
     /**
      * Creates a table of series.
      *
@@ -232,11 +222,6 @@ public abstract class AdminPanel extends JPanel {
         serieTable.setDefaultEditor(Object.class, null);
 
         return serieTable;
-    }
-
-    private void openSerieDetailsView(final ViewContext currentSessionContext, final int serieId) {
-        final AdminSeriesDetailsView seriesDetailsView = new AdminSeriesDetailsView(currentSessionContext, serieId);
-        seriesDetailsView.setVisible(true);
     }
 
     /**
@@ -358,6 +343,21 @@ public abstract class AdminPanel extends JPanel {
         header.setForeground(Color.BLACK);
         header.setBackground(Color.WHITE);
         header.setOpaque(true);
+    }
+
+    private void openFilmDetailsView(final ViewContext currentSessionContext, final int filmId) {
+        final AdminFilmDetailsView filmDetailsView = new AdminFilmDetailsView(currentSessionContext, filmId);
+        filmDetailsView.setVisible(true);
+    }
+
+    private void openSerieDetailsView(final ViewContext currentSessionContext, final int serieId) {
+        final AdminSeriesDetailsView seriesDetailsView = new AdminSeriesDetailsView(currentSessionContext, serieId);
+        seriesDetailsView.setVisible(true);
+    }
+
+    private void openCastDetailsView(final ViewContext currentSessionContext, final int castId) {
+        final AdminCastDetailsView castDetailsView = new AdminCastDetailsView(currentSessionContext, castId);
+        castDetailsView.setVisible(true);
     }
 }
 

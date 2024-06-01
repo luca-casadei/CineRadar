@@ -39,16 +39,15 @@ public final class AdminFilmView extends AdminPanel {
      */
     public AdminFilmView(final ViewContext currentSessionContext) {
         super(currentSessionContext);
-        setLayout(new BorderLayout());
         final JLabel welcomeLabel = new JLabel("Benvenuto "
                 + currentSessionContext.getController().getAccountDetails().get(0)
                 + " nella pagina dei film.");
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
         welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
-        add(welcomeLabel, BorderLayout.NORTH);
+        this.add(welcomeLabel, BorderLayout.NORTH);
         this.filmTable = createFilmTable();
         final JScrollPane scrollPane = new JScrollPane(filmTable);
-        add(scrollPane, BorderLayout.CENTER);
+        this.add(scrollPane, BorderLayout.CENTER);
         final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final JButton addButton = new JButton("Aggiungi Film");
         addButton.addActionListener(e -> addFilmDialog());
@@ -56,7 +55,7 @@ public final class AdminFilmView extends AdminPanel {
         final JButton deleteButton = new JButton("Elimina Film");
         deleteButton.addActionListener(e -> deleteFilmDialog());
         buttonPanel.add(deleteButton);
-        add(buttonPanel, BorderLayout.SOUTH);
+        this.add(buttonPanel, BorderLayout.SOUTH);
     }
 
     /**

@@ -30,7 +30,6 @@ public class AdminCardView extends AdminPanel {
      */
     public AdminCardView(final ViewContext currentSessionContext) {
         super(currentSessionContext);
-        this.setLayout(new BorderLayout());
         final JTable cardTable = super.createCardTable();
         final JScrollPane cardScrollPane = new JScrollPane(cardTable);
         this.add(cardScrollPane);

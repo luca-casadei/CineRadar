@@ -49,7 +49,6 @@ public class AdminRankingsView extends AdminPanel {
      */
     public AdminRankingsView(final ViewContext currentSessionContext) {
         super(currentSessionContext);
-        this.setLayout(new BorderLayout());
 
         final JLabel lblBestReviewers = createLabel("I 5 migliori recensori per numero di recensioni");
         final JLabel lblWorstUtilities = createLabel("I 5 peggiori recensori per punteggio di utilita'");
