@@ -2,8 +2,8 @@
 Situazione iniziale, database appena creato con la query CineRadar.sql, quindi con solo l'utente di amministrazione inserito, procedo ad effettuare l'accesso all'interfaccia di amministrazione.
 - Accesso negato ✅
 - Accesso autorizzato ✅
-- Dimensionamento della finestra di amministrazione ❌ \
-  Troppo grande, va fuori dallo schermo, ridurre la dimensione di partenza della finestra.
+- Dimensionamento della finestra di amministrazione ❌ (Trovata origine) \
+  Trovata la card che crea il problema, una possibile correzione è usare una scrollbar per ridurre la dimensione verticale, e complessivamente ridurre l'altezza delle righe, se non funziona, provare layout diverso.
 - Pagina di profilo amministrazione ✅
 - Scorrimento di tutte le sezioni senza errori in console ✅
 - Disconnessione e chiusura App ✅
@@ -24,6 +24,17 @@ Ora rieffettuo l'accesso come amministratore, per soddisfare la richiesta che ho
 - Visualizzazione stagione inserita ❌ (Vedi errore sottostante) \
   Eccezione in console se si visualizza la stagione appena inserita (probabile errore a catena).
 - Visualizzazione della schermata di aggiunta di film ✅
-- ...
+- Eliminazione di entrambe le serie aggiunte. ✅
+- Aggiunta di un episodio ad una serie non esistente ❌ (Vedi sottostante) \
+  Nessun prompt visualizzato (mettere una dialog, stessa cosa per l'aggiunta di stagione)
+- Eliminazione Cast inesistente ✅
+- Eliminazione membro cast inesistente ✅
+- Aggiunta membro inesistente a cast inesistente (nessun prompt come errore sopra) ❌
+- Aggiunta membro cast (errore grafico / ux) ❌ \
+  - Usare dei campi di testo per dire se sono attori o registi con 1 o 0 è la cosa più terrificante che abbia mai visto, usare delle checkbox possibilmente.
+  - Usare il datepicker che abbiamo usato nelle altre classi per inserire la data.
+- Aggiunta di un cast (non capisco l'errore, non viene visualizzato nulla a schermo ) 
+Dati inseriti per provocarlo (fa lo stesso anche con data debutto > data di nascita ):
+  ![image](https://github.com/luca-casadei/CineRadar/assets/31739393/2e1235b0-4031-40a9-99ef-71795707865d)
 
 ## Testing sospeso per errore importante
