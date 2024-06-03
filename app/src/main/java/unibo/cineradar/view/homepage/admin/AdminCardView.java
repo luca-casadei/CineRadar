@@ -14,6 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.io.Serial;
 import java.time.LocalDate;
 
 /**
@@ -21,6 +22,7 @@ import java.time.LocalDate;
  * This view allows an admin user to view existing cards and assign promotional codes to users.
  */
 public class AdminCardView extends AdminPanel {
+    @Serial
     private static final long serialVersionUID = -924897859300851648L;
 
     /**

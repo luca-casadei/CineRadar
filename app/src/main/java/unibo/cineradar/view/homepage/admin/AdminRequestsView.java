@@ -3,7 +3,6 @@ package unibo.cineradar.view.homepage.admin;
 import unibo.cineradar.controller.administrator.AdminSessionController;
 import unibo.cineradar.model.request.Request;
 import unibo.cineradar.view.ViewContext;
-import unibo.cineradar.view.homepage.user.UserPanel;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -31,7 +30,7 @@ import java.util.List;
 /**
  * Requests view of the Admin.
  */
-public final class AdminRequestsView extends UserPanel {
+public final class AdminRequestsView extends AdminPanel {
 
     @Serial
     private static final long serialVersionUID = -8901234567890123456L;

@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 
 /**
@@ -61,7 +62,8 @@ public final class AdminHomePageView extends CineRadarViewFrameImpl {
         this.cardPane.add(SERIES_NAME, new AdminSerieView(this.context));
         this.cardPane.add(REQUEST_NAME, new AdminRequestsView(this.context));
         this.cardPane.add(PROFILE_NAME, new AdminProfileView(this.context));
-        this.cardPane.add(RANKING_NAME, new AdminRankingsView(this.context));
+        // Questa card crea il problema del dimensionamento
+        //this.cardPane.add(RANKING_NAME, new AdminRankingsView(this.context));
         this.cardPane.add(CAST_NAME, new AdminCastView(this.context));
         this.cardPane.add(PROMO_NAME, new AdminPromoView(this.context));
         this.cardPane.add(CARD_NAME, new AdminCardView(this.context));

@@ -91,7 +91,7 @@ public abstract class AdminPanel extends JPanel {
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
         table.setDefaultEditor(Object.class, null);
-        table.setRowHeight(30);
+        table.setRowHeight(20);
 
         this.customizeTableHeader(table);
 
@@ -119,7 +119,7 @@ public abstract class AdminPanel extends JPanel {
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
         table.setDefaultEditor(Object.class, null);
-        table.setRowHeight(30);
+        table.setRowHeight(20);
         this.customizeTableHeader(table);
 
         final ListSelectionListener castSelectionListener = e -> {
@@ -169,7 +169,7 @@ public abstract class AdminPanel extends JPanel {
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
         table.setDefaultEditor(Object.class, null);
-        table.setRowHeight(30);
+        table.setRowHeight(20);
         this.customizeTableHeader(table);
         return table;
     }
@@ -249,7 +249,7 @@ public abstract class AdminPanel extends JPanel {
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
         table.setDefaultEditor(Object.class, null);
-        table.setRowHeight(30);
+        table.setRowHeight(20);
         this.customizeTableHeader(table);
         return table;
     }
@@ -281,7 +281,7 @@ public abstract class AdminPanel extends JPanel {
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
         table.setDefaultEditor(Object.class, null);
-        table.setRowHeight(30);
+        table.setRowHeight(20);
         this.customizeTableHeader(table);
         return table;
     }

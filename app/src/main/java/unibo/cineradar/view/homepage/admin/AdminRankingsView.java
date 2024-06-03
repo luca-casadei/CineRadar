@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -34,7 +35,7 @@ import java.util.Objects;
 public class AdminRankingsView extends AdminPanel {
     @Serial
     private static final long serialVersionUID = -924897837382651458L;
-    private static final int ROW_HEIGHT = 30;
+    private static final int ROW_HEIGHT = 20;
     private static final String ERROR = "Errore";
     private static final String COMPLETE_DELETE = "Eliminazione completata";
     private static final int SIZE = 18;
@@ -75,12 +76,11 @@ public class AdminRankingsView extends AdminPanel {
         gridPanel.add(lblBestDirectors);
         gridPanel.add(scrollPane4);
 
-        this.add(gridPanel, BorderLayout.CENTER);
-
         addBestReviewersRankingData(fiveBestReviewersTable);
         addWorstUtilitiesRankingData(fiveWorstUtilitiesTable);
         addBestUtilitiesRankingData(fiveBestUtilitiesTable);
         addBestDirectorsRankingData(fiveBestDirectorsTable);
+
 
         final JPanel buttonPanel = getButtonPanel();
         this.add(buttonPanel, BorderLayout.SOUTH);

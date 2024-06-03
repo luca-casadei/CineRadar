@@ -310,12 +310,12 @@ public abstract class UserPanel extends JPanel {
             if (!e.getValueIsAdjusting()) {
                 final int selectedRow = ((DefaultListSelectionModel) e.getSource()).getLeadSelectionIndex();
                 if (selectedRow != -1) {
-                    if (Objects.equals((String) model.getValueAt(selectedRow, 1), "Film")) {
+                    if (Objects.equals(model.getValueAt(selectedRow, 1), "Film")) {
                         openReviewDetailsView(
                                 this.getCurrentSessionContext(),
                                 ((UserSessionController) currentSessionContext.getController()).getFullFilmReview(
                                         Integer.parseInt((String) model.getValueAt(selectedRow, 0)),
-                                        ((UserSessionController) currentSessionContext.getController()).getAccount().getUsername()
+                                        currentSessionContext.getController().getAccount().getUsername()
                                 )
                         );
                     } else if (Objects.equals((String) model.getValueAt(selectedRow, 1), "Serie")) {
@@ -323,7 +323,7 @@ public abstract class UserPanel extends JPanel {
                                 this.getCurrentSessionContext(),
                                 ((UserSessionController) currentSessionContext.getController()).getFullSeriesReview(
                                         Integer.parseInt((String) model.getValueAt(selectedRow, 0)),
-                                        ((UserSessionController) currentSessionContext.getController()).getAccount().getUsername()
+                                        currentSessionContext.getController().getAccount().getUsername()
                                 )
                         );
                     }
