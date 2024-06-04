@@ -11,7 +11,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -20,10 +19,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
 import java.io.Serial;
 import java.time.LocalDate;
 import java.util.List;
@@ -38,10 +34,10 @@ public class AdminRankingsView extends AdminPanel {
     private static final int ROW_HEIGHT = 20;
     private static final String ERROR = "Errore";
     private static final String COMPLETE_DELETE = "Eliminazione completata";
-    private static final int SIZE = 18;
     private final JTable fiveBestReviewersTable;
     private final JTable fiveWorstUtilitiesTable;
     private final JTable fiveBestUtilitiesTable;
+    private final JTable fiveBestDirectorsTable;
 
     /**
      * Constructor of the admin rankings view.
@@ -50,40 +46,43 @@ public class AdminRankingsView extends AdminPanel {
      */
     public AdminRankingsView(final ViewContext currentSessionContext) {
         super(currentSessionContext);
-
-        final JLabel lblBestReviewers = createLabel("I 5 migliori recensori per numero di recensioni");
-        final JLabel lblWorstUtilities = createLabel("I 5 peggiori recensori per punteggio di utilita'");
-        final JLabel lblBestUtilities = createLabel("I 5 migliori recensori per punteggio di utilita'");
-        final JLabel lblBestDirectors = createLabel("I 5 migliori registi per numero di presenze nei cast");
-
         this.fiveBestReviewersTable = createRankingTable();
         this.fiveWorstUtilitiesTable = createRankingTable();
         this.fiveBestUtilitiesTable = createRankingTable();
-        final JTable fiveBestDirectorsTable = createCastRankingTable();
-
-        final JScrollPane scrollPane1 = new JScrollPane(fiveBestReviewersTable);
-        final JScrollPane scrollPane2 = new JScrollPane(fiveWorstUtilitiesTable);
-        final JScrollPane scrollPane3 = new JScrollPane(fiveBestUtilitiesTable);
-        final JScrollPane scrollPane4 = new JScrollPane(fiveBestDirectorsTable);
-
-        final JPanel gridPanel = new JPanel(new GridLayout(4, 2));
-        gridPanel.add(lblBestReviewers);
-        gridPanel.add(scrollPane1);
-        gridPanel.add(lblWorstUtilities);
-        gridPanel.add(scrollPane2);
-        gridPanel.add(lblBestUtilities);
-        gridPanel.add(scrollPane3);
-        gridPanel.add(lblBestDirectors);
-        gridPanel.add(scrollPane4);
-
+        this.fiveBestDirectorsTable = createCastRankingTable();
         addBestReviewersRankingData(fiveBestReviewersTable);
         addWorstUtilitiesRankingData(fiveWorstUtilitiesTable);
         addBestUtilitiesRankingData(fiveBestUtilitiesTable);
         addBestDirectorsRankingData(fiveBestDirectorsTable);
-
-
         final JPanel buttonPanel = getButtonPanel();
+        final JPanel showRankingsPanel = getRankingsButtonPanel();
         this.add(buttonPanel, BorderLayout.SOUTH);
+        this.add(showRankingsPanel, BorderLayout.NORTH);
+        this.add(new JScrollPane(this.fiveBestReviewersTable), BorderLayout.CENTER);
+    }
+
+    private JPanel getRankingsButtonPanel() {
+        final JPanel rankingsButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        final JButton fiveBestReviewersButton = new JButton("5 Migliori Recensori per Numero");
+        fiveBestReviewersButton.addActionListener(e -> showRanking(this.fiveBestReviewersTable));
+        rankingsButtonPanel.add(fiveBestReviewersButton);
+        final JButton fiveWorstUtilitiesButton = new JButton("5 Peggiori Recensori per Utilita'");
+        fiveWorstUtilitiesButton.addActionListener(e -> showRanking(this.fiveWorstUtilitiesTable));
+        rankingsButtonPanel.add(fiveWorstUtilitiesButton);
+        final JButton fiveBestUtilitiesButton = new JButton("5 Migliori Recensori per Utilita'");
+        fiveBestUtilitiesButton.addActionListener(e -> showRanking(this.fiveBestUtilitiesTable));
+        rankingsButtonPanel.add(fiveBestUtilitiesButton);
+        final JButton fiveBestDirectorsButton = new JButton("5 Migliori Registi");
+        fiveBestDirectorsButton.addActionListener(e -> showRanking(this.fiveBestDirectorsTable));
+        rankingsButtonPanel.add(fiveBestDirectorsButton);
+        return rankingsButtonPanel;
+    }
+
+    private void showRanking(final JTable table) {
+        this.remove(2);
+        this.add(new JScrollPane(table), BorderLayout.CENTER);
+        this.revalidate();
+        this.repaint();
     }
 
     private JPanel getButtonPanel() {
@@ -95,14 +94,6 @@ public class AdminRankingsView extends AdminPanel {
         deleteMemberButton.addActionListener(e -> deleteUserDialog());
         buttonPanel.add(deleteMemberButton);
         return buttonPanel;
-    }
-
-    private JLabel createLabel(final String text) {
-        final JLabel label = new JLabel(text);
-        label.setFont(new Font("Arial", Font.PLAIN, SIZE));
-        label.setHorizontalAlignment(JLabel.CENTER);
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
-        return label;
     }
 
     private void updateView() {

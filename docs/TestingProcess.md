@@ -2,8 +2,7 @@
 Situazione iniziale, database appena creato con la query CineRadar.sql, quindi con solo l'utente di amministrazione inserito, procedo ad effettuare l'accesso all'interfaccia di amministrazione.
 - Accesso negato ✅
 - Accesso autorizzato ✅
-- Dimensionamento della finestra di amministrazione ❌ (Trovata origine) \
-  Trovata la card che crea il problema, una possibile correzione è usare una scrollbar per ridurre la dimensione verticale, e complessivamente ridurre l'altezza delle righe, se non funziona, provare layout diverso.
+- Dimensionamento della finestra di amministrazione ✅
 - Pagina di profilo amministrazione ✅
 - Scorrimento di tutte le sezioni senza errori in console ✅
 - Disconnessione e chiusura App ✅
