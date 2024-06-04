@@ -361,6 +361,20 @@ public class AdminCastView extends AdminPanel {
         castMemberCodeField.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
+            if (((AdminSessionController) getCurrentSessionContext().getController())
+                    .isCastMemberAvailable(Integer.parseInt(castMemberCodeField.getText()))) {
+                JOptionPane.showMessageDialog(null,
+                        "Errore: Membro Cast non inserito",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (((AdminSessionController) getCurrentSessionContext().getController())
+                    .isCastAvailable(Integer.parseInt(castCodeField.getText()))) {
+                JOptionPane.showMessageDialog(null,
+                        "Errore: Cast non inserito",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             addCastMemberToCast(
                     Integer.parseInt(castMemberCodeField.getText()),
                     Integer.parseInt(castCodeField.getText()));

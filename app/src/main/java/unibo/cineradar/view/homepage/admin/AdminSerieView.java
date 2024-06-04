@@ -262,6 +262,13 @@ public final class AdminSerieView extends AdminPanel {
         summaryArea.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
+            if (((AdminSessionController) getCurrentSessionContext().getController())
+                    .isSeriesAvailable(Integer.parseInt(seriesCodeField.getText()))) {
+                JOptionPane.showMessageDialog(null,
+                        "Errore: Serie non inserita",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             addSeason(
                     Integer.parseInt(seriesCodeField.getText()),
                     Integer.parseInt(seasonNumberField.getText()),
@@ -404,6 +411,22 @@ public final class AdminSerieView extends AdminPanel {
         durationField.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
+            if (((AdminSessionController) getCurrentSessionContext().getController())
+                    .isSeriesAvailable(Integer.parseInt(seriesCodeField.getText()))) {
+                JOptionPane.showMessageDialog(null,
+                        "Errore: Serie non inserita",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (((AdminSessionController) getCurrentSessionContext().getController())
+                    .isSeasonAvailable(
+                            Integer.parseInt(seriesCodeField.getText()),
+                            Integer.parseInt(seasonNumberField.getText()))) {
+                JOptionPane.showMessageDialog(null,
+                        "Errore: Stagione non inserita",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             addEpisode(
                     Integer.parseInt(seriesCodeField.getText()),
                     Integer.parseInt(seasonNumberField.getText()),

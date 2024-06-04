@@ -557,4 +557,53 @@ public final class AdministratorContext extends SessionContextImpl {
             mgr.addSinglePromo(promo, multimediaType, multimediaCode);
         }
     }
+
+    /**
+     * Checks if a specific season of a series is available.
+     *
+     * @param seriesId The id of the series to check.
+     * @param seasonId The id of the season to check.
+     * @return true if the season is not available, false otherwise.
+     */
+    public boolean isSeasonAvailable(final int seriesId, final int seasonId) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.isSeasonAvailable(seriesId, seasonId);
+        }
+    }
+
+    /**
+     * Checks if a series is available.
+     *
+     * @param seriesId The id of the series to check.
+     * @return true if the series is not available, false otherwise.
+     */
+    public boolean isSeriesAvailable(final int seriesId) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.isSeriesAvailable(seriesId);
+        }
+    }
+
+    /**
+     * Checks if a cast member is available.
+     *
+     * @param castMemberId The id of the cast member to check.
+     * @return true if the cast member is not available, false otherwise.
+     */
+    public boolean isCastMemberAvailable(final int castMemberId) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.isCastMemberAvailable(castMemberId);
+        }
+    }
+
+    /**
+     * Checks whether a cast session is unavailable for the provided cast ID.
+     *
+     * @param castId The ID of the cast session to check availability for.
+     * @return true if the cast session is unavailable, false otherwise.
+     */
+    public boolean isCastAvailable(final int castId) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.isCastAvailable(castId);
+        }
+    }
 }

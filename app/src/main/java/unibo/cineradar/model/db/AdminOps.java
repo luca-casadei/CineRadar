@@ -1144,6 +1144,90 @@ public final class AdminOps extends DBManager {
     }
 
     /**
+     * Checks if a specific season of a series is available.
+     *
+     * @param seriesId The id of the series to check.
+     * @param seasonId The id of the season to check.
+     * @return true if the season is not available, false otherwise.
+     */
+    public boolean isSeasonAvailable(final int seriesId, final int seasonId) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT Codice "
+                    + "FROM serie, stagione "
+                    + "WHERE serie.Codice = stagione.CodiceSerie "
+                    + "AND Codice = ? AND NumeroStagione = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, seriesId);
+            getPreparedStatement().setInt(2, seasonId);
+            setResultSet(getPreparedStatement().executeQuery());
+            return getResultSet().next();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Checks if a series is available.
+     *
+     * @param seriesId The id of the series to check.
+     * @return true if the series is not available, false otherwise.
+     */
+    public boolean isSeriesAvailable(final int seriesId) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT Codice FROM serie "
+                    + "WHERE Codice = ? ";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, seriesId);
+            setResultSet(getPreparedStatement().executeQuery());
+            return getResultSet().next();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Checks if a cast member is available.
+     *
+     * @param castMemberId The id of the cast member to check.
+     * @return true if the cast member is not available, false otherwise.
+     */
+    public boolean isCastMemberAvailable(final int castMemberId) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT Codice FROM membrocast "
+                    + "WHERE Codice = ? ";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, castMemberId);
+            setResultSet(getPreparedStatement().executeQuery());
+            return getResultSet().next();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Checks whether a cast session is unavailable for the provided cast ID.
+     *
+     * @param castId The ID of the cast session to check availability for.
+     * @return true if the cast session is unavailable, false otherwise.
+     */
+    public boolean isCastAvailable(final int castId) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT Codice FROM casting "
+                    + "WHERE Codice = ? ";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, castId);
+            setResultSet(getPreparedStatement().executeQuery());
+            return getResultSet().next();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
      * Inserts a new template promo or retrieves the code of an existing template promo with the specified discount percentage.
      * If a template promo with the given discount percentage exists, its code is returned. Otherwise, a new template promo
      * is inserted and its generated code is returned.

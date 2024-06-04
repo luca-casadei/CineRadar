@@ -21,15 +21,13 @@ Ora rieffettuo l'accesso come amministratore, per soddisfare la richiesta che ho
 - Completamento della richiesta (numero invalido: mostra errore) ✅
 - Aggiunta di una serie ✅
 - Aggiunta di una stagione ✅
-- Visualizzazione stagione inserita ❌ (Vedi errore sottostante) \
-  Eccezione in console se si visualizza la stagione appena inserita (probabile errore a catena).
+- Visualizzazione stagione inserita ✅
 - Visualizzazione della schermata di aggiunta di film ✅
 - Eliminazione di entrambe le serie aggiunte. ✅
-- Aggiunta di un episodio ad una serie non esistente ❌ (Vedi sottostante) \
-  Nessun prompt visualizzato (mettere una dialog, stessa cosa per l'aggiunta di stagione)
+- Aggiunta di un episodio ad una serie non esistente ✅
 - Eliminazione Cast inesistente ✅
 - Eliminazione membro cast inesistente ✅
-- Aggiunta membro inesistente a cast inesistente (nessun prompt come errore sopra) ❌
+- Aggiunta membro inesistente a cast inesistente ✅
 - Aggiunta membro cast (errore grafico / ux) ❌ \
   - Usare dei campi di testo per dire se sono attori o registi con 1 o 0 è la cosa più terrificante che abbia mai visto, usare delle checkbox possibilmente.
   - Usare il datepicker che abbiamo usato nelle altre classi per inserire la data.

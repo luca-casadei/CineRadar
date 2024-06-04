@@ -489,4 +489,47 @@ public final class AdminSessionController extends SessionControllerImpl {
                 multimediaType,
                 multimediaCode);
     }
+
+
+    /**
+     * Checks if a specific season of a series is available.
+     *
+     * @param seriesId The id of the series to check.
+     * @param seasonId The id of the season to check.
+     * @return true if the season is not available, false otherwise.
+     */
+    public boolean isSeasonAvailable(final int seriesId, final int seasonId) {
+        return !this.administratorContext.isSeasonAvailable(seriesId, seasonId);
+    }
+
+    /**
+     * Checks if a series is available.
+     *
+     * @param seriesId The id of the series to check.
+     * @return true if the series is not available, false otherwise.
+     */
+    public boolean isSeriesAvailable(final int seriesId) {
+        return !this.administratorContext.isSeriesAvailable(seriesId);
+    }
+
+
+    /**
+     * Checks if a cast member is available.
+     *
+     * @param castMemberId The id of the cast member to check.
+     * @return true if the cast member is not available, false otherwise.
+     */
+    public boolean isCastMemberAvailable(final int castMemberId) {
+        return !this.administratorContext.isCastMemberAvailable(castMemberId);
+    }
+
+    /**
+     * Checks whether a cast session is unavailable for the provided cast ID.
+     *
+     * @param castId The ID of the cast session to check availability for.
+     * @return true if the cast session is unavailable, false otherwise.
+     */
+    public boolean isCastAvailable(final int castId) {
+        return !this.administratorContext.isCastAvailable(castId);
+    }
 }
