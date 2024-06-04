@@ -28,11 +28,7 @@ Ora rieffettuo l'accesso come amministratore, per soddisfare la richiesta che ho
 - Eliminazione Cast inesistente ✅
 - Eliminazione membro cast inesistente ✅
 - Aggiunta membro inesistente a cast inesistente ✅
-- Aggiunta membro cast (errore grafico / ux) ❌ \
-  - Usare dei campi di testo per dire se sono attori o registi con 1 o 0 è la cosa più terrificante che abbia mai visto, usare delle checkbox possibilmente.
-  - Usare il datepicker che abbiamo usato nelle altre classi per inserire la data.
-- Aggiunta di un cast (non capisco l'errore, non viene visualizzato nulla a schermo ) 
-Dati inseriti per provocarlo (fa lo stesso anche con data debutto > data di nascita ):
-  ![image](https://github.com/luca-casadei/CineRadar/assets/31739393/2e1235b0-4031-40a9-99ef-71795707865d)
+- Aggiunta membro cast ✅
+- Aggiunta di un cast ✅
 
 ## Testing sospeso per errore importante

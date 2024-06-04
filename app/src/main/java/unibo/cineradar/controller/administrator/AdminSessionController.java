@@ -145,8 +145,8 @@ public final class AdminSessionController extends SessionControllerImpl {
      */
     public void addCastMember(
             final String name, final String surname, final LocalDate birthday,
-            final int isActor, final int isDirector, final LocalDate dateDebutCareer, final String artName) {
-        if (isActor == 1) {
+            final boolean isActor, final boolean isDirector, final LocalDate dateDebutCareer, final String artName) {
+        if (isActor) {
             this.administratorContext.addCastMember(new Actor(
                     0,
                     name,
@@ -154,7 +154,8 @@ public final class AdminSessionController extends SessionControllerImpl {
                     birthday,
                     dateDebutCareer,
                     artName));
-        } else {
+        }
+        if (isDirector) {
             this.administratorContext.addCastMember(new Director(
                     0,
                     name,

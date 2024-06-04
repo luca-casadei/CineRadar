@@ -1,5 +1,6 @@
 package unibo.cineradar.view.homepage.admin;
 
+import com.github.lgooddatepicker.components.DatePicker;
 import unibo.cineradar.controller.administrator.AdminSessionController;
 import unibo.cineradar.model.cast.Actor;
 import unibo.cineradar.model.cast.CastMember;
@@ -8,6 +9,7 @@ import unibo.cineradar.view.ViewContext;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -122,10 +124,10 @@ public class AdminCastView extends AdminPanel {
     private void addCastMemberDialog() {
         final JTextField nameField = new JTextField(20);
         final JTextField surnameField = new JTextField(20);
-        final JTextField birthdayField = new JTextField(10);
-        final JTextField actorField = new JTextField(5);
-        final JTextField directorField = new JTextField(5);
-        final JTextField dateDebutCareerField = new JTextField(10);
+        final DatePicker birthdayField = new DatePicker();
+        final JCheckBox actorCheck = new JCheckBox("E' un Attore?");
+        final JCheckBox directorCheck = new JCheckBox("E' un Regista?");
+        final DatePicker dateDebutCareerField = new DatePicker();
         final JTextField artNameField = new JTextField(30);
 
         final JPanel panel = new JPanel();
@@ -134,13 +136,11 @@ public class AdminCastView extends AdminPanel {
         panel.add(nameField);
         panel.add(new JLabel("Cognome:"));
         panel.add(surnameField);
-        panel.add(new JLabel("Data di Nascita (YYYY-MM-DD):"));
+        panel.add(new JLabel("Data di Nascita:"));
         panel.add(birthdayField);
-        panel.add(new JLabel("E' un Attore? (1 se Attore, altrimenti 0):"));
-        panel.add(actorField);
-        panel.add(new JLabel("E' un Regista? (1 se Regista, altrimenti 0):"));
-        panel.add(directorField);
-        panel.add(new JLabel("Data Debutto Carriera (YYYY-MM-DD):"));
+        panel.add(actorCheck);
+        panel.add(directorCheck);
+        panel.add(new JLabel("Data Debutto Carriera:"));
         panel.add(dateDebutCareerField);
         panel.add(new JLabel("Nome d'Arte:"));
         panel.add(artNameField);
@@ -151,8 +151,8 @@ public class AdminCastView extends AdminPanel {
             final boolean allFilled = isFieldFilled(nameField.getText())
                     && isFieldFilled(surnameField.getText())
                     && isFieldFilled(birthdayField.getText())
-                    && isFieldFilled(actorField.getText())
-                    && isFieldFilled(directorField.getText())
+                    && isFieldFilled(actorCheck.getText())
+                    && isFieldFilled(directorCheck.getText())
                     && isFieldFilled(dateDebutCareerField.getText())
                     && isFieldFilled(artNameField.getText());
             okButton.setEnabled(allFilled);
@@ -160,20 +160,30 @@ public class AdminCastView extends AdminPanel {
         final DocumentListener listener = new ViewDocumentListener(checkFields);
         nameField.getDocument().addDocumentListener(listener);
         surnameField.getDocument().addDocumentListener(listener);
-        birthdayField.getDocument().addDocumentListener(listener);
-        actorField.getDocument().addDocumentListener(listener);
-        directorField.getDocument().addDocumentListener(listener);
-        dateDebutCareerField.getDocument().addDocumentListener(listener);
         artNameField.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
+            final boolean isActor = actorCheck.isSelected();
+            final boolean isDirector = directorCheck.isSelected();
+            if (!(isActor || isDirector)) {
+                JOptionPane.showMessageDialog(null,
+                        "Errore: Inserire almeno un Ruolo",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (birthdayField.getDate().isAfter(dateDebutCareerField.getDate())) {
+                JOptionPane.showMessageDialog(null,
+                        "Errore: Inserire una Data di Nascita corretta",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             addCastMember(
                     nameField.getText(),
                     surnameField.getText(),
-                    LocalDate.parse(birthdayField.getText()),
-                    Integer.parseInt(actorField.getText()),
-                    Integer.parseInt(directorField.getText()),
-                    LocalDate.parse(dateDebutCareerField.getText()),
+                    birthdayField.getDate(),
+                    isActor,
+                    isDirector,
+                    dateDebutCareerField.getDate(),
                     artNameField.getText());
             JOptionPane.getRootFrame().dispose();
         });
@@ -197,7 +207,7 @@ public class AdminCastView extends AdminPanel {
      */
     private void addCastMember(
             final String name, final String surname, final LocalDate birthday,
-            final int isActor, final int isDirector,
+            final boolean isActor, final boolean isDirector,
             final LocalDate dateDebutCareer, final String artName) {
         ((AdminSessionController) getCurrentSessionContext().getController())
                 .addCastMember(name, surname, birthday, isActor, isDirector, dateDebutCareer, artName);
