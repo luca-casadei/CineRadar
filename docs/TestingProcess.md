@@ -29,5 +29,9 @@ Ora rieffettuo l'accesso come amministratore, per soddisfare la richiesta che ho
 - Aggiunta membro inesistente a cast inesistente ✅
 - Aggiunta membro cast ✅
 - Aggiunta di un cast ✅
+- Eliminazione di un membro del cast ✅
+- View aggiunta di un cast (campo non obbligatorio reso obbligatorio) ❌
+- Creazione di un cast con i relativi membri ✅
+- Aggiunta di una serie (eccezione all'aggiunta) ❌
 
 ## Testing sospeso per errore importante
