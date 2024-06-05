@@ -716,14 +716,18 @@ public final class AdminOps extends DBManager {
      * @param name The name of the casting detail to be added.
      * @throws IllegalArgumentException If an error occurs while adding the casting detail to the database.
      */
-    public void addCast(final String name) {
+    public void addCast(final Optional<String> name) {
         Objects.requireNonNull(getConnection());
         try {
             final String query = "INSERT"
                     + " INTO casting (Nome)"
                     + " VALUES (?)";
             setPreparedStatement(getConnection().prepareStatement(query));
-            getPreparedStatement().setString(1, name);
+            if (name.isPresent()) {
+                getPreparedStatement().setString(1, name.get());
+            } else {
+                getPreparedStatement().setNull(1, java.sql.Types.VARCHAR);
+            }
             getPreparedStatement().executeUpdate();
         } catch (SQLException ex) {
             throw new IllegalArgumentException("Error adding casting", ex);
@@ -1601,6 +1605,9 @@ public final class AdminOps extends DBManager {
         } else if (!this.getResultSet().getBoolean("TipoAttoreMembroCast")
                 && this.getResultSet().getBoolean("TipoRegistaMembroCast")) {
             return new Director(code, name, surname, birthDate, debutDate, artisticName);
+        } else if (this.getResultSet().getBoolean("TipoAttoreMembroCast")
+                && this.getResultSet().getBoolean("TipoRegistaMembroCast")) {
+            return new CastMember(code, name, surname, birthDate, debutDate, artisticName);
         }
         throw new IllegalArgumentException();
     }

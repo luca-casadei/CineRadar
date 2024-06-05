@@ -21,6 +21,7 @@ import unibo.cineradar.model.utente.Account;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * The context of an administrator session.
@@ -307,7 +308,7 @@ public final class AdministratorContext extends SessionContextImpl {
      * @param name The name of the new casting detail to be added.
      * @throws RuntimeException If an error occurs while adding the casting detail.
      */
-    public void addCast(final String name) {
+    public void addCast(final Optional<String> name) {
         try (AdminOps mgr = new AdminOps()) {
             mgr.addCast(name);
         }

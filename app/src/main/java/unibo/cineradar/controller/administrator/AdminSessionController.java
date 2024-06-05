@@ -23,6 +23,7 @@ import unibo.cineradar.model.serie.Serie;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Controller class for managing administrator sessions.
@@ -287,7 +288,7 @@ public final class AdminSessionController extends SessionControllerImpl {
      *
      * @param name The name of the new cast member to be added.
      */
-    public void addCast(final String name) {
+    public void addCast(final Optional<String> name) {
         this.administratorContext.addCast(name);
     }
 

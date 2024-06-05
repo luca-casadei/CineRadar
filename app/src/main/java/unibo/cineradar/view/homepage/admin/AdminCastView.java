@@ -25,6 +25,7 @@ import java.awt.FlowLayout;
 import java.io.Serial;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The AdminCastView class represents the user interface for managing cast members and casts by an administrator.
@@ -272,17 +273,9 @@ public class AdminCastView extends AdminPanel {
         panel.add(nameField);
 
         final JButton okButton = new JButton("OK");
-        okButton.setEnabled(false);
-        final Runnable checkFields = () -> {
-            final boolean isFilled = isFieldFilled(nameField.getText());
-            okButton.setEnabled(isFilled);
-        };
-
-        final DocumentListener listener = new ViewDocumentListener(checkFields);
-        nameField.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
-            addCast(nameField.getText());
+            addCast(Optional.of(nameField.getText()));
             JOptionPane.getRootFrame().dispose();
         });
 
@@ -298,7 +291,7 @@ public class AdminCastView extends AdminPanel {
      * @param name        The name of the cast.
      */
     private void addCast(
-            final String name) {
+            final Optional<String> name) {
         ((AdminSessionController) getCurrentSessionContext().getController())
                 .addCast(name);
         updateCastTable();
