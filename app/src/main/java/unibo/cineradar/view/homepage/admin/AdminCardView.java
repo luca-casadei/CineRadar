@@ -1,5 +1,6 @@
 package unibo.cineradar.view.homepage.admin;
 
+import com.github.lgooddatepicker.components.DatePicker;
 import unibo.cineradar.controller.administrator.AdminSessionController;
 import unibo.cineradar.view.ViewContext;
 
@@ -23,7 +24,8 @@ import java.time.LocalDate;
  */
 public class AdminCardView extends AdminPanel {
     @Serial
-    private static final long serialVersionUID = -924897859300851648L;
+    private static final long serialVersionUID = -924898759230851648L;
+    private static final String ERRORE = "Errore!";
 
     /**
      * Constructor of the admin cards view.
@@ -44,7 +46,7 @@ public class AdminCardView extends AdminPanel {
 
     private void assignPromoDialog() {
         final JTextField codePromoField = new JTextField(5);
-        final JTextField expirationField = new JTextField(5);
+        final DatePicker expirationField = new DatePicker();
         final JTextField cinemaCodeField = new JTextField(5);
         final JTextField usernameField = new JTextField(5);
 
@@ -52,7 +54,7 @@ public class AdminCardView extends AdminPanel {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(new JLabel("CodicePromo:"));
         panel.add(codePromoField);
-        panel.add(new JLabel("Scadenza (yyyy-MM-dd):"));
+        panel.add(new JLabel("Scadenza:"));
         panel.add(expirationField);
         panel.add(new JLabel("Codice Cinema:"));
         panel.add(cinemaCodeField);
@@ -73,20 +75,40 @@ public class AdminCardView extends AdminPanel {
         cinemaCodeField.getDocument().addDocumentListener(listener);
         usernameField.getDocument().addDocumentListener(listener);
         codePromoField.getDocument().addDocumentListener(listener);
-        expirationField.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
-            if (LocalDate.parse(expirationField.getText()).isAfter(LocalDate.now())) {
+            if (expirationField.getDate().isAfter(LocalDate.now())) {
+                if (((AdminSessionController) getCurrentSessionContext().getController())
+                        .isPromoAvailable(Integer.parseInt(codePromoField.getText()))) {
+                    JOptionPane.showMessageDialog(null,
+                            "Errore: Promo non inserita",
+                            ERRORE, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (((AdminSessionController) getCurrentSessionContext().getController())
+                        .isCinemaAvailable(Integer.parseInt(cinemaCodeField.getText()))) {
+                    JOptionPane.showMessageDialog(null,
+                            "Errore: Cinema non inserito",
+                            ERRORE, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (((AdminSessionController) getCurrentSessionContext().getController())
+                        .isUserAvailable(usernameField.getText())) {
+                    JOptionPane.showMessageDialog(null,
+                            "Errore: Utente non inserito",
+                            ERRORE, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 assignPromo(
                         Integer.parseInt(codePromoField.getText()),
-                        LocalDate.parse(expirationField.getText()),
+                        expirationField.getDate(),
                         Integer.parseInt(cinemaCodeField.getText()),
                         usernameField.getText()
                 );
             } else {
                 JOptionPane.showMessageDialog(null,
                         "Inserisci una scadenza valida per la Promo.",
-                        "Errore!", JOptionPane.ERROR_MESSAGE);
+                        ERRORE, JOptionPane.ERROR_MESSAGE);
             }
             JOptionPane.getRootFrame().dispose();
         });

@@ -1194,10 +1194,30 @@ public final class AdminOps extends DBManager {
     public boolean isSeriesAvailable(final int seriesId) {
         Objects.requireNonNull(getConnection());
         try {
-            final String query = "SELECT Codice FROM serie "
-                    + "WHERE Codice = ? ";
+            final String query = "SELECT Codice FROM serie"
+                    + " WHERE Codice = ?";
             setPreparedStatement(getConnection().prepareStatement(query));
             getPreparedStatement().setInt(1, seriesId);
+            setResultSet(getPreparedStatement().executeQuery());
+            return getResultSet().next();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Checks if a film is available.
+     *
+     * @param filmId The id of the film to check.
+     * @return true if the film is not available, false otherwise.
+     */
+    public boolean isFilmAvailable(final int filmId) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT Codice FROM film"
+                    + " WHERE Codice = ? ";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, filmId);
             setResultSet(getPreparedStatement().executeQuery());
             return getResultSet().next();
         } catch (SQLException ex) {
@@ -1238,6 +1258,66 @@ public final class AdminOps extends DBManager {
                     + "WHERE Codice = ? ";
             setPreparedStatement(getConnection().prepareStatement(query));
             getPreparedStatement().setInt(1, castId);
+            setResultSet(getPreparedStatement().executeQuery());
+            return getResultSet().next();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Checks if a promo is available.
+     *
+     * @param promoId The id of the promo to check.
+     * @return true if the promo is not available, false otherwise.
+     */
+    public boolean isPromoAvailable(final int promoId) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT CodiceTemplatePromo FROM promo "
+                    + "WHERE CodiceTemplatePromo = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, promoId);
+            setResultSet(getPreparedStatement().executeQuery());
+            return getResultSet().next();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Checks if a cinema is available.
+     *
+     * @param cinemaId The id of the cinema to check.
+     * @return true if the cinema is not available, false otherwise.
+     */
+    public boolean isCinemaAvailable(final int cinemaId) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT Codice FROM cinema "
+                    + "WHERE Codice = ? ";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, cinemaId);
+            setResultSet(getPreparedStatement().executeQuery());
+            return getResultSet().next();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Checks if a user is available.
+     *
+     * @param username The username of the user to check.
+     * @return true if the user is not available, false otherwise.
+     */
+    public boolean isUserAvailable(final String username) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT Username FROM utente "
+                    + "WHERE Username = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setString(1, username);
             setResultSet(getPreparedStatement().executeQuery());
             return getResultSet().next();
         } catch (SQLException ex) {

@@ -1,5 +1,6 @@
 package unibo.cineradar.view.homepage.admin;
 
+import com.github.lgooddatepicker.components.DatePicker;
 import unibo.cineradar.controller.administrator.AdminSessionController;
 import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.promo.Promo;
@@ -80,18 +81,34 @@ public final class AdminPromoView extends AdminPanel {
                 .toArray(String[]::new));
         final JTextField multimediaCode = new JTextField(5);
         final JTextField percentageField = new JTextField(5);
-        final JTextField expirationField = new JTextField(5);
+        final DatePicker expirationField = new DatePicker();
 
         final JPanel panel = createPanel(multimediaBox, multimediaCode, percentageField, expirationField);
 
         final JButton okButton = new JButton("OK");
-        configureOkButton(okButton, percentageField, expirationField, multimediaCode);
+        configureOkButton(okButton, expirationField, percentageField, multimediaCode);
 
         okButton.addActionListener(e -> {
-            if (LocalDate.parse(expirationField.getText()).isAfter(LocalDate.now())) {
+            if (expirationField.getDate().isAfter(LocalDate.now())) {
+                if ("Serie".equals(String.valueOf(multimediaBox.getSelectedItem()))
+                        && ((AdminSessionController) getCurrentSessionContext().getController())
+                        .isSeriesAvailable(Integer.parseInt(multimediaCode.getText()))) {
+                    JOptionPane.showMessageDialog(null,
+                            "Errore: Serie non inserita",
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if ("Film".equals(String.valueOf(multimediaBox.getSelectedItem()))
+                        && ((AdminSessionController) getCurrentSessionContext().getController())
+                        .isFilmAvailable(Integer.parseInt(multimediaCode.getText()))) {
+                    JOptionPane.showMessageDialog(null,
+                            "Errore: Serie non inserita",
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 addSinglePromo(
                         Integer.parseInt(percentageField.getText()),
-                        LocalDate.parse(expirationField.getText()),
+                        expirationField.getDate(),
                         String.valueOf(multimediaBox.getSelectedItem()),
                         Integer.parseInt(multimediaCode.getText())
                 );
@@ -119,18 +136,18 @@ public final class AdminPromoView extends AdminPanel {
                         .toArray(String[]::new)
         );
         final JTextField percentageField = new JTextField(5);
-        final JTextField expirationField = new JTextField(5);
+        final DatePicker expirationField = new DatePicker();
 
         final JPanel panel = createPanel(genreBox, null, percentageField, expirationField);
 
         final JButton okButton = new JButton("OK");
-        configureOkButton(okButton, percentageField, expirationField);
+        configureOkButton(okButton, expirationField, percentageField);
 
         okButton.addActionListener(e -> {
-            if (LocalDate.parse(expirationField.getText()).isAfter(LocalDate.now())) {
+            if (expirationField.getDate().isAfter(LocalDate.now())) {
                 addGenrePromo(
                         Integer.parseInt(percentageField.getText()),
-                        LocalDate.parse(expirationField.getText()),
+                        expirationField.getDate(),
                         String.valueOf(genreBox.getSelectedItem())
                 );
             } else {
@@ -150,18 +167,18 @@ public final class AdminPromoView extends AdminPanel {
 
     private void addMultiplePromoDialog() {
         final JTextField percentageField = new JTextField(5);
-        final JTextField expirationField = new JTextField(5);
+        final DatePicker expirationField = new DatePicker();
 
         final JPanel panel = createPanel(null, null, percentageField, expirationField);
 
         final JButton okButton = new JButton("OK");
-        configureOkButton(okButton, percentageField, expirationField);
+        configureOkButton(okButton, expirationField, percentageField);
 
         okButton.addActionListener(e -> {
-            if (LocalDate.parse(expirationField.getText()).isAfter(LocalDate.now())) {
+            if (expirationField.getDate().isAfter(LocalDate.now())) {
                 addMultiplePromo(
                         Integer.parseInt(percentageField.getText()),
-                        LocalDate.parse(expirationField.getText())
+                        expirationField.getDate()
                 );
             } else {
                 showErrorDialog();
@@ -180,7 +197,7 @@ public final class AdminPromoView extends AdminPanel {
 
     private JPanel createPanel(
             final JComboBox<String> box, final JTextField multimediaCode,
-            final JTextField percentageField, final JTextField expirationField) {
+            final JTextField percentageField, final DatePicker expirationField) {
         final JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         if (!Objects.isNull(box)) {
@@ -193,15 +210,16 @@ public final class AdminPromoView extends AdminPanel {
         }
         panel.add(new JLabel("Percentuale:"));
         panel.add(percentageField);
-        panel.add(new JLabel("Scadenza (yyyy-MM-dd):"));
+        panel.add(new JLabel("Scadenza:"));
         panel.add(expirationField);
         return panel;
     }
 
-    private void configureOkButton(final JButton okButton, final JTextField... fields) {
+    private void configureOkButton(final JButton okButton, final DatePicker expirationField, final JTextField... fields) {
         okButton.setEnabled(false);
         final Runnable checkFields = () -> {
             boolean allFilled = true;
+            allFilled &= isFieldFilled(expirationField.getText());
             for (final JTextField field : fields) {
                 allFilled &= isFieldFilled(field.getText());
             }
@@ -234,13 +252,13 @@ public final class AdminPromoView extends AdminPanel {
 
     private void deletePromoDialog() {
         final JTextField codePromoField = new JTextField(5);
-        final JTextField expirationField = new JTextField(5);
+        final DatePicker expirationField = new DatePicker();
 
         final JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(new JLabel("CodicePromo:"));
         panel.add(codePromoField);
-        panel.add(new JLabel("Scadenza (yyyy-MM-dd):"));
+        panel.add(new JLabel("Scadenza:"));
         panel.add(expirationField);
 
         final JButton okButton = new JButton("OK");
@@ -253,11 +271,10 @@ public final class AdminPromoView extends AdminPanel {
 
         final DocumentListener listener = new ViewDocumentListener(checkFields);
         codePromoField.getDocument().addDocumentListener(listener);
-        expirationField.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
             final int code = Integer.parseInt(codePromoField.getText());
-            final LocalDate expiration = LocalDate.parse(expirationField.getText());
+            final LocalDate expiration = expirationField.getDate();
             final boolean deleted = deletePromo(code, expiration);
             if (deleted) {
                 updatePromoTable();

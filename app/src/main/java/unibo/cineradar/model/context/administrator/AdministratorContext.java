@@ -608,4 +608,52 @@ public final class AdministratorContext extends SessionContextImpl {
             return mgr.isCastAvailable(castId);
         }
     }
+
+    /**
+     * Checks if a film is available.
+     *
+     * @param filmId The id of the film to check.
+     * @return true if the film is not available, false otherwise.
+     */
+    public boolean isFilmAvailable(final int filmId) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.isFilmAvailable(filmId);
+        }
+    }
+
+    /**
+     * Checks if a promo is available.
+     *
+     * @param promoId The id of the promo to check.
+     * @return true if the promo is not available, false otherwise.
+     */
+    public boolean isPromoAvailable(final int promoId) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.isPromoAvailable(promoId);
+        }
+    }
+
+    /**
+     * Checks if a cinema is available.
+     *
+     * @param cinemaId The id of the cinema to check.
+     * @return true if the cinema is not available, false otherwise.
+     */
+    public boolean isCinemaAvailable(final int cinemaId) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.isCinemaAvailable(cinemaId);
+        }
+    }
+
+    /**
+     * Checks if a user is available.
+     *
+     * @param username The username of the user to check.
+     * @return true if the user is not available, false otherwise.
+     */
+    public boolean isUserAvailable(final String username) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.isUserAvailable(username);
+        }
+    }
 }
