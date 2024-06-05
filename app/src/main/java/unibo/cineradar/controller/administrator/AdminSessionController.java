@@ -146,23 +146,32 @@ public final class AdminSessionController extends SessionControllerImpl {
     public void addCastMember(
             final String name, final String surname, final LocalDate birthday,
             final boolean isActor, final boolean isDirector, final LocalDate dateDebutCareer, final String artName) {
-        if (isActor) {
-            this.administratorContext.addCastMember(new Actor(
+        if (isActor && isDirector) {
+            this.administratorContext.addCastMember(true, new CastMember(
                     0,
                     name,
                     surname,
                     birthday,
                     dateDebutCareer,
                     artName));
-        }
-        if (isDirector) {
-            this.administratorContext.addCastMember(new Director(
-                    0,
-                    name,
-                    surname,
-                    birthday,
-                    dateDebutCareer,
-                    artName));
+        } else {
+            if (isActor) {
+                this.administratorContext.addCastMember(false, new Actor(
+                        0,
+                        name,
+                        surname,
+                        birthday,
+                        dateDebutCareer,
+                        artName));
+            } else {
+                this.administratorContext.addCastMember(false, new Director(
+                        0,
+                        name,
+                        surname,
+                        birthday,
+                        dateDebutCareer,
+                        artName));
+            }
         }
     }
 

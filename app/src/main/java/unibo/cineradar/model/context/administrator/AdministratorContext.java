@@ -170,11 +170,13 @@ public final class AdministratorContext extends SessionContextImpl {
     /**
      * Adds a new cast member.
      *
-     * @param castMember The cast member to add.
+     * @param actorAndDirector A boolean flag indicating
+     *                         if the cast member is a Director and Actor.
+     * @param castMember       The cast member to add.
      */
-    public void addCastMember(final CastMember castMember) {
+    public void addCastMember(final boolean actorAndDirector, final CastMember castMember) {
         try (AdminOps mgr = new AdminOps()) {
-            mgr.addCastMember(castMember);
+            mgr.addCastMember(actorAndDirector, castMember);
         }
     }
 

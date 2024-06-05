@@ -356,9 +356,11 @@ public final class AdminOps extends DBManager {
     /**
      * Adds a new cast member to the database.
      *
+     * @param actorAndDirector A boolean flag indicating
+     *                         if the cast member is a Director and Actor.
      * @param castMember The cast member object to add to the database.
      */
-    public void addCastMember(final CastMember castMember) {
+    public void addCastMember(final boolean actorAndDirector, final CastMember castMember) {
         Objects.requireNonNull(getConnection());
         try {
             final String query = "INSERT"
@@ -368,8 +370,13 @@ public final class AdminOps extends DBManager {
             getPreparedStatement().setString(1, castMember.getName());
             getPreparedStatement().setString(2, castMember.getLastName());
             getPreparedStatement().setDate(3, Date.valueOf(castMember.getBirthDate()));
-            getPreparedStatement().setBoolean(4, castMember instanceof Actor);
-            getPreparedStatement().setBoolean(PARAMETER_INDEX1, castMember instanceof Director);
+            if (actorAndDirector) {
+                getPreparedStatement().setBoolean(4, true);
+                getPreparedStatement().setBoolean(PARAMETER_INDEX1, true);
+            } else {
+                getPreparedStatement().setBoolean(4, castMember instanceof Actor);
+                getPreparedStatement().setBoolean(PARAMETER_INDEX1, castMember instanceof Director);
+            }
             if (!Objects.isNull(castMember.getCareerDebutDate())) {
                 getPreparedStatement().setDate(PARAMETER_INDEX2, Date.valueOf(castMember.getCareerDebutDate()));
             } else {
@@ -642,8 +649,8 @@ public final class AdminOps extends DBManager {
             setResultSet(getPreparedStatement().executeQuery());
             final List<CastMember> members = new ArrayList<>();
             while (getResultSet().next()) {
-                if (getResultSet().getBoolean("TipoAttore")) {
-                    members.add(new Actor(
+                if (getResultSet().getBoolean("TipoAttore") && getResultSet().getBoolean("TipoRegista")) {
+                    members.add(new CastMember(
                             getResultSet().getInt(1),
                             getResultSet().getString(2),
                             getResultSet().getString(3),
@@ -652,14 +659,25 @@ public final class AdminOps extends DBManager {
                             getResultSet().getString(8)
                     ));
                 } else {
-                    members.add(new Director(
-                            getResultSet().getInt(1),
-                            getResultSet().getString(2),
-                            getResultSet().getString(3),
-                            getResultSet().getDate(4).toLocalDate(),
-                            getResultSet().getDate(PARAMETER_INDEX3).toLocalDate(),
-                            getResultSet().getString(8)
-                    ));
+                    if (getResultSet().getBoolean("TipoAttore")) {
+                        members.add(new Actor(
+                                getResultSet().getInt(1),
+                                getResultSet().getString(2),
+                                getResultSet().getString(3),
+                                getResultSet().getDate(4).toLocalDate(),
+                                getResultSet().getDate(PARAMETER_INDEX3).toLocalDate(),
+                                getResultSet().getString(8)
+                        ));
+                    } else {
+                        members.add(new Director(
+                                getResultSet().getInt(1),
+                                getResultSet().getString(2),
+                                getResultSet().getString(3),
+                                getResultSet().getDate(4).toLocalDate(),
+                                getResultSet().getDate(PARAMETER_INDEX3).toLocalDate(),
+                                getResultSet().getString(8)
+                        ));
+                    }
                 }
             }
             return List.copyOf(members);

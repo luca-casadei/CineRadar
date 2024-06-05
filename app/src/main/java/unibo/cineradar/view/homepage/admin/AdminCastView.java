@@ -5,6 +5,7 @@ import unibo.cineradar.controller.administrator.AdminSessionController;
 import unibo.cineradar.model.cast.Actor;
 import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.cast.Casting;
+import unibo.cineradar.model.cast.Director;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.BoxLayout;
@@ -50,8 +51,8 @@ public class AdminCastView extends AdminPanel {
         this.castTable = createCastTable();
         final JScrollPane castScrollPane = new JScrollPane(castTable);
         final JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(castScrollPane, BorderLayout.CENTER);
-        mainPanel.add(castMemberScrollPane, BorderLayout.EAST);
+        mainPanel.add(castScrollPane, BorderLayout.WEST);
+        mainPanel.add(castMemberScrollPane, BorderLayout.CENTER);
         add(mainPanel, BorderLayout.CENTER);
         final JPanel buttonPanel = getButtonPanel();
         add(buttonPanel, BorderLayout.SOUTH);
@@ -93,7 +94,7 @@ public class AdminCastView extends AdminPanel {
                     castMember.getName(),
                     castMember.getLastName(),
                     castMember.getBirthDate(),
-                    castMember instanceof Actor ? "Attore" : "Regista",
+                    castMember instanceof Actor ? "Attore" : castMember instanceof Director ? "Regista" : "Attore/Regista",
                     castMember.getCareerDebutDate(),
                     castMember.getStageName()
             });

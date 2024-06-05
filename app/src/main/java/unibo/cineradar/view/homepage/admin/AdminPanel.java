@@ -5,6 +5,7 @@ import unibo.cineradar.model.card.CardReg;
 import unibo.cineradar.model.cast.Actor;
 import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.cast.Casting;
+import unibo.cineradar.model.cast.Director;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.promo.Promo;
@@ -158,7 +159,7 @@ public abstract class AdminPanel extends JPanel {
                     castMember.getName(),
                     castMember.getLastName(),
                     castMember.getBirthDate(),
-                    castMember instanceof Actor ? "Attore" : "Regista",
+                    castMember instanceof Actor ? "Attore" : castMember instanceof Director ? "Regista" : "Attore e Regista",
                     castMember.getCareerDebutDate(),
                     castMember.getStageName()
             });
