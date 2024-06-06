@@ -128,14 +128,19 @@ public final class FilmDetailsView extends DetailsView {
         setVisible(true);
     }
 
-
-
-
     private JPanel getBottomPanel(final ViewContext currentSessionContext) {
         final JCheckBox cb = getViewedSelector();
-        final JButton reviewButton = new JButton("Recensisci");
+        final JButton reviewButton = new JButton();
         final boolean notReviewedYet = Objects.isNull(uc.getFullFilmReview(detailedFilm.getFilmId(),
                 uc.getAccount().getUsername()));
+
+        if (notReviewedYet) {
+            reviewButton.setText("Recensisci");
+        } else {
+            reviewButton.setText("Film gia' recensito");
+            reviewButton.setEnabled(false);
+        }
+
         cb.addActionListener(e -> reviewButton.setEnabled(cb.isSelected() && notReviewedYet));
         reviewButton.setEnabled(cb.isSelected() && notReviewedYet);
         reviewButton.addActionListener(new ActionListener() {
@@ -162,7 +167,6 @@ public final class FilmDetailsView extends DetailsView {
                 if (!this.uc.visualizeFilm(detailedFilm.getFilmId())) {
                     cbe.setSelected(false);
                 }
-
             } else {
                 if (!this.uc.forgetFilm(detailedFilm.getFilmId())) {
                     cbe.setSelected(true);
@@ -171,7 +175,4 @@ public final class FilmDetailsView extends DetailsView {
         });
         return cb;
     }
-
-
 }
-

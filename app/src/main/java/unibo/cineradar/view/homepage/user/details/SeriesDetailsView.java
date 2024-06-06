@@ -148,8 +148,18 @@ public final class SeriesDetailsView extends DetailsView {
         reviewsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         mainPanel.add(reviewsPanel);
 
-        reviewButton = new JButton("Recensisci");
-        reviewButton.setEnabled(false);
+        reviewButton = new JButton();
+        final boolean notReviewedYet = Objects.isNull(uc.getFullSeriesReview(detailedSerie.getSeriesId(),
+                uc.getAccount().getUsername()));
+
+        if (notReviewedYet) {
+            reviewButton.setText("Recensisci");
+        } else {
+            reviewButton.setText("Serie gia' recensita");
+            reviewButton.setEnabled(false);
+        }
+
+        reviewButton.setEnabled(notReviewedYet && allEpisodesViewed(serie));
         reviewButton.addActionListener(e -> {
             final WriteReviewView writeSerieReviewView = new WriteSerieReviewView(currentSessionContext, serie);
             writeSerieReviewView.setVisible(true);
@@ -159,7 +169,6 @@ public final class SeriesDetailsView extends DetailsView {
 
         add(new JScrollPane(mainPanel));
         setVisible(true);
-
     }
 
     private JCheckBox createEpisodeCheckBox(final Episode ep, final List<Episode> viewed) {
@@ -176,14 +185,24 @@ public final class SeriesDetailsView extends DetailsView {
                     checkBox.setSelected(true);
                 }
             }
-            updateReviewButtonState(viewed.size(), uc.getSerie(ep.seriesId()).getNumberOfEpisodes());
+            updateReviewButtonState(detailedSerie);
         });
         return checkBox;
     }
 
-    private void updateReviewButtonState(final int viewedEpisodes, final int totalEpisodes) {
-        reviewButton.setEnabled(viewedEpisodes == totalEpisodes
+    private void updateReviewButtonState(final Serie serie) {
+        reviewButton.setEnabled(allEpisodesViewed(serie)
                 && Objects.isNull(uc.getFullSeriesReview(detailedSerie.getSeriesId(), uc.getAccount().getUsername())));
     }
 
+    private boolean allEpisodesViewed(final Serie serie) {
+        for (final Season season : serie.getSeasons()) {
+            final int seasonId = season.getId();
+            final List<Episode> viewedEpisodes = uc.getViewedEpisodes(serie.getSeriesId(), seasonId);
+            if (viewedEpisodes.size() != season.getEpisodes().size()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
