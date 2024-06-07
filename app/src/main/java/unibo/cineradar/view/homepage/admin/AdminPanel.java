@@ -6,10 +6,13 @@ import unibo.cineradar.model.cast.Actor;
 import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.cast.Casting;
 import unibo.cineradar.model.cast.Director;
+import unibo.cineradar.model.cinema.Cinema;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Multimedia;
 import unibo.cineradar.model.promo.Promo;
 import unibo.cineradar.model.serie.Serie;
+import unibo.cineradar.model.utente.Registrar;
+import unibo.cineradar.model.utente.User;
 import unibo.cineradar.view.ViewContext;
 import unibo.cineradar.view.homepage.admin.details.AdminCastDetailsView;
 import unibo.cineradar.view.homepage.admin.details.AdminFilmDetailsView;
@@ -39,6 +42,7 @@ import java.util.List;
 public abstract class AdminPanel extends JPanel {
     @Serial
     private static final long serialVersionUID = 5442349602104022450L;
+    private static final String CODE = "Codice";
 
     private final ViewContext currentSessionContext;
 
@@ -106,14 +110,16 @@ public abstract class AdminPanel extends JPanel {
      */
     protected final JTable createCastTable() {
         final DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("Codice");
+        model.addColumn(CODE);
         model.addColumn("NomeCast");
         for (final Casting cast
                 : ((AdminSessionController) this.getCurrentSessionContext().getController()).getCasting()) {
-            model.addRow(new Object[]{
-                    cast.id(),
-                    cast.name()
-            });
+            if (((AdminSessionController) this.getCurrentSessionContext().getController()).isCast(cast.id())) {
+                model.addRow(new Object[]{
+                        cast.id(),
+                        cast.name()
+                });
+            }
         }
         final JTable table = this.createCustomTable(model);
         final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
@@ -144,7 +150,7 @@ public abstract class AdminPanel extends JPanel {
      */
     protected final JTable createCastMemberTable() {
         final DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("Codice");
+        model.addColumn(CODE);
         model.addColumn("Nome");
         model.addColumn("Cognome");
         model.addColumn("Data di Nascita");
@@ -232,7 +238,7 @@ public abstract class AdminPanel extends JPanel {
      */
     protected JTable createPromoTable() {
         final DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("Codice");
+        model.addColumn(CODE);
         model.addColumn("Percentuale");
         model.addColumn("Scadenza");
 
@@ -288,16 +294,118 @@ public abstract class AdminPanel extends JPanel {
     }
 
     /**
+     * Creates a table of users.
+     *
+     * @return A JTable of users.
+     */
+    protected JTable createUserTable() {
+        final DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Username");
+        model.addColumn("Nome");
+        model.addColumn("Cognome");
+        model.addColumn("DataNascita");
+        model.addColumn("Eta'");
+        model.addColumn("TargaPremio");
+
+        for (final User user
+                : ((AdminSessionController) this.getCurrentSessionContext().getController()).getUsers()) {
+            model.addRow(new Object[]{
+                    user.getUsername(),
+                    user.getName(),
+                    user.getLastName(),
+                    user.getBirthDate(),
+                    user.getAge(),
+                    user.isPrizeTag() ? "Si" : "No"
+            });
+        }
+
+        final JTable table = this.createCustomTable(model);
+        final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setDefaultEditor(Object.class, null);
+        table.setRowHeight(20);
+        this.customizeTableHeader(table);
+        return table;
+    }
+
+    /**
+     * Creates a table of registrators.
+     *
+     * @return A JTable of registrators.
+     */
+    protected JTable createRegistratorTable() {
+        final DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Username");
+        model.addColumn("Nome");
+        model.addColumn("Cognome");
+        model.addColumn("Email");
+        model.addColumn("ID Cinema");
+
+        for (final Registrar registrar
+                : ((AdminSessionController) this.getCurrentSessionContext().getController()).getRegistrars()) {
+            model.addRow(new Object[]{
+                    registrar.getUsername(),
+                    registrar.getName(),
+                    registrar.getLastName(),
+                    registrar.getEmailCinema(),
+                    registrar.getCinema()
+            });
+        }
+
+        final JTable table = this.createCustomTable(model);
+        final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setDefaultEditor(Object.class, null);
+        table.setRowHeight(20);
+        this.customizeTableHeader(table);
+        return table;
+    }
+
+    /**
+     * Creates a table of cinemas.
+     *
+     * @return A JTable of cinemas.
+     */
+    protected JTable createCinemaTable() {
+        final DefaultTableModel model = new DefaultTableModel();
+        model.addColumn(CODE);
+        model.addColumn("Via");
+        model.addColumn("CAP");
+        model.addColumn("Civico");
+        model.addColumn("Citta'");
+
+        for (final Cinema cinema
+                : ((AdminSessionController) this.getCurrentSessionContext().getController()).getCinemas()) {
+            model.addRow(new Object[]{
+                    cinema.codice(),
+                    cinema.indVia(),
+                    cinema.indCAP(),
+                    cinema.civico(),
+                    cinema.citta()
+            });
+        }
+
+        final JTable table = this.createCustomTable(model);
+        final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setDefaultEditor(Object.class, null);
+        table.setRowHeight(20);
+        this.customizeTableHeader(table);
+        return table;
+    }
+
+    /**
      * Creates a JTable with a custom renderer to alternate row colors.
      *
      * @param filmTableModel The data model to use for the table.
      * @return The JTable with the custom renderer.
      */
     JTable createCustomTable(final TableModel filmTableModel) {
-        // Crea la tabella con il modello dei dati fornito
         final JTable table = new JTable(filmTableModel);
 
-        // Imposta il renderer personalizzato per alternare i colori delle righe
         table.setDefaultRenderer(
                 Object.class, new DefaultTableCellRenderer() {
                     @Override
@@ -308,23 +416,17 @@ public abstract class AdminPanel extends JPanel {
                             final boolean hasFocus,
                             final int row,
                             final int column) {
-                        // Ottiene il componente renderer di default
                         final Component component = super.getTableCellRendererComponent(table,
                                 value,
                                 isSelected,
                                 hasFocus,
                                 row,
                                 column);
-
-                        // Imposta il colore di sfondo basato sulla selezione della riga
                         if (isSelected) {
-                            // Colore per riga selezionata
                             component.setBackground(new Color(254, 250, 246));
                         } else if (row % 2 == 0) {
-                            // Colore per riga pari
                             component.setBackground(Color.WHITE);
                         } else {
-                            // Colore per riga dispari
                             component.setBackground(new Color(240, 240, 240));
                         }
                         return component;

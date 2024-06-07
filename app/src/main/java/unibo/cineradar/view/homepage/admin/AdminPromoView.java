@@ -38,6 +38,7 @@ public final class AdminPromoView extends AdminPanel {
     private static final long serialVersionUID = -302785493612487L;
     private static final String ERROR = "Errore";
     private static final String COMPLETE_DELETE = "Eliminazione completata";
+    private static final String DATABASE_ERROR = "Errore del database: ";
     private final JTable promoTable;
 
     /**
@@ -106,12 +107,19 @@ public final class AdminPromoView extends AdminPanel {
                             ERROR, JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                addSinglePromo(
-                        Integer.parseInt(percentageField.getText()),
-                        expirationField.getDate(),
-                        String.valueOf(multimediaBox.getSelectedItem()),
-                        Integer.parseInt(multimediaCode.getText())
-                );
+                try {
+                    addSinglePromo(
+                            Integer.parseInt(percentageField.getText()),
+                            expirationField.getDate(),
+                            String.valueOf(multimediaBox.getSelectedItem()),
+                            Integer.parseInt(multimediaCode.getText())
+                    );
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            DATABASE_ERROR + ex.getMessage(),
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                }
             } else {
                 showErrorDialog();
             }
@@ -145,11 +153,18 @@ public final class AdminPromoView extends AdminPanel {
 
         okButton.addActionListener(e -> {
             if (expirationField.getDate().isAfter(LocalDate.now())) {
-                addGenrePromo(
-                        Integer.parseInt(percentageField.getText()),
-                        expirationField.getDate(),
-                        String.valueOf(genreBox.getSelectedItem())
-                );
+                try {
+                    addGenrePromo(
+                            Integer.parseInt(percentageField.getText()),
+                            expirationField.getDate(),
+                            String.valueOf(genreBox.getSelectedItem())
+                    );
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            DATABASE_ERROR + ex.getMessage(),
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                }
             } else {
                 showErrorDialog();
             }
@@ -176,10 +191,17 @@ public final class AdminPromoView extends AdminPanel {
 
         okButton.addActionListener(e -> {
             if (expirationField.getDate().isAfter(LocalDate.now())) {
-                addMultiplePromo(
-                        Integer.parseInt(percentageField.getText()),
-                        expirationField.getDate()
-                );
+                try {
+                    addMultiplePromo(
+                            Integer.parseInt(percentageField.getText()),
+                            expirationField.getDate()
+                    );
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            DATABASE_ERROR + ex.getMessage(),
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                }
             } else {
                 showErrorDialog();
             }
@@ -273,19 +295,26 @@ public final class AdminPromoView extends AdminPanel {
         codePromoField.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
-            final int code = Integer.parseInt(codePromoField.getText());
-            final LocalDate expiration = expirationField.getDate();
-            final boolean deleted = deletePromo(code, expiration);
-            if (deleted) {
-                updatePromoTable();
+            try {
+                final int code = Integer.parseInt(codePromoField.getText());
+                final LocalDate expiration = expirationField.getDate();
+                final boolean deleted = deletePromo(code, expiration);
+                if (deleted) {
+                    updatePromoTable();
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "La Promo e' stata eliminata con successo.",
+                            COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Errore durante l'eliminazione della Promo.",
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (IllegalArgumentException ex) {
                 JOptionPane.showMessageDialog(
                         null,
-                        "La Promo e' stata eliminata con successo.",
-                        COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(
-                        null,
-                        "Errore durante l'eliminazione della Promo.",
+                        DATABASE_ERROR + ex.getMessage(),
                         ERROR, JOptionPane.ERROR_MESSAGE);
             }
             JOptionPane.getRootFrame().dispose();

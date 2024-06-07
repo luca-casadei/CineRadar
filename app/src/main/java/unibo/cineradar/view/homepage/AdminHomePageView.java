@@ -7,9 +7,11 @@ import unibo.cineradar.view.homepage.admin.AdminCastView;
 import unibo.cineradar.view.homepage.admin.AdminProfileView;
 import unibo.cineradar.view.homepage.admin.AdminPromoView;
 import unibo.cineradar.view.homepage.admin.AdminRankingsView;
+import unibo.cineradar.view.homepage.admin.AdminRegistratorView;
 import unibo.cineradar.view.homepage.admin.AdminRequestsView;
 import unibo.cineradar.view.homepage.admin.AdminSerieView;
 import unibo.cineradar.view.homepage.admin.AdminFilmView;
+import unibo.cineradar.view.homepage.admin.AdminUsersView;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -30,6 +32,8 @@ public final class AdminHomePageView extends CineRadarViewFrameImpl {
     private static final String CAST_NAME = "cast";
     private static final String PROMO_NAME = "promo";
     private static final String CARD_NAME = "card";
+    private static final String REGISTRATOR_NAME = "registrator";
+    private static final String USERS_NAME = "user";
 
     private final ViewContext context;
     private final CardLayout cards = new CardLayout();
@@ -65,6 +69,8 @@ public final class AdminHomePageView extends CineRadarViewFrameImpl {
         this.cardPane.add(CAST_NAME, new AdminCastView(this.context));
         this.cardPane.add(PROMO_NAME, new AdminPromoView(this.context));
         this.cardPane.add(CARD_NAME, new AdminCardView(this.context));
+        this.cardPane.add(REGISTRATOR_NAME, new AdminRegistratorView(this.context));
+        this.cardPane.add(USERS_NAME, new AdminUsersView(this.context));
     }
 
     private JPanel getNavBar() {
@@ -87,6 +93,10 @@ public final class AdminHomePageView extends CineRadarViewFrameImpl {
         promoButton.addActionListener(e -> this.cards.show(this.cardPane, PROMO_NAME));
         final JButton cardsButton = new JButton("TESSERE");
         cardsButton.addActionListener(e -> this.cards.show(this.cardPane, CARD_NAME));
+        final JButton registratorButton = new JButton("REGISTRATORI");
+        registratorButton.addActionListener(e -> this.cards.show(this.cardPane, REGISTRATOR_NAME));
+        final JButton usersButton = new JButton("UTENTI");
+        usersButton.addActionListener(e -> this.cards.show(this.cardPane, USERS_NAME));
         navBar.add(filmButton);
         navBar.add(seriesButton);
         navBar.add(castButton);
@@ -94,6 +104,8 @@ public final class AdminHomePageView extends CineRadarViewFrameImpl {
         navBar.add(cardsButton);
         navBar.add(promoButton);
         navBar.add(requestButton);
+        navBar.add(registratorButton);
+        navBar.add(usersButton);
         navBar.add(profileButton);
         return navBar;
     }

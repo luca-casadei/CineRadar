@@ -17,7 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.BorderLayout;
@@ -37,6 +36,7 @@ public class AdminCastView extends AdminPanel {
     private static final String ERROR = "Errore";
     private static final String COMPLETE_DELETE = "Eliminazione completata";
     private static final String CANCEL = "Cancel";
+    private static final String DATABASE_ERROR = "Errore del database: ";
     private final JTable castMemberTable;
     private final JTable castTable;
 
@@ -51,10 +51,8 @@ public class AdminCastView extends AdminPanel {
         final JScrollPane castMemberScrollPane = new JScrollPane(castMemberTable);
         this.castTable = createCastTable();
         final JScrollPane castScrollPane = new JScrollPane(castTable);
-        final JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(castScrollPane, BorderLayout.WEST);
-        mainPanel.add(castMemberScrollPane, BorderLayout.CENTER);
-        add(mainPanel, BorderLayout.CENTER);
+        add(castScrollPane, BorderLayout.WEST);
+        add(castMemberScrollPane, BorderLayout.CENTER);
         final JPanel buttonPanel = getButtonPanel();
         add(buttonPanel, BorderLayout.SOUTH);
     }
@@ -95,7 +93,7 @@ public class AdminCastView extends AdminPanel {
                     castMember.getName(),
                     castMember.getLastName(),
                     castMember.getBirthDate(),
-                    castMember instanceof Actor ? "Attore" : castMember instanceof Director ? "Regista" : "Attore/Regista",
+                    castMember instanceof Actor ? "Attore" : castMember instanceof Director ? "Regista" : "Attore e Regista",
                     castMember.getCareerDebutDate(),
                     castMember.getStageName()
             });
@@ -103,20 +101,18 @@ public class AdminCastView extends AdminPanel {
     }
 
     /**
-     * Updates the table displaying casts with the latest data.
+     * Updates the table displaying casts with the latest data by replacing the scroll pane.
      */
     private void updateCastTable() {
-        SwingUtilities.invokeLater(() -> {
-            final DefaultTableModel model = (DefaultTableModel) this.castTable.getModel();
-            model.setRowCount(0);
-            for (final Casting casting
-                    : ((AdminSessionController) getCurrentSessionContext().getController()).getCasting()) {
-                model.addRow(new Object[]{
-                        casting.id(),
-                        casting.name(),
-                });
-            }
-        });
+        final DefaultTableModel model = (DefaultTableModel) this.castTable.getModel();
+        model.setRowCount(0);
+        for (final Casting cast
+                : ((AdminSessionController) getCurrentSessionContext().getController()).getCasting()) {
+            model.addRow(new Object[]{
+                    cast.id(),
+                    cast.name()
+            });
+        }
     }
 
     /**
@@ -152,17 +148,13 @@ public class AdminCastView extends AdminPanel {
         final Runnable checkFields = () -> {
             final boolean allFilled = isFieldFilled(nameField.getText())
                     && isFieldFilled(surnameField.getText())
-                    && isFieldFilled(birthdayField.getText())
                     && isFieldFilled(actorCheck.getText())
-                    && isFieldFilled(directorCheck.getText())
-                    && isFieldFilled(dateDebutCareerField.getText())
-                    && isFieldFilled(artNameField.getText());
+                    && isFieldFilled(directorCheck.getText());
             okButton.setEnabled(allFilled);
         };
         final DocumentListener listener = new ViewDocumentListener(checkFields);
         nameField.getDocument().addDocumentListener(listener);
         surnameField.getDocument().addDocumentListener(listener);
-        artNameField.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
             final boolean isActor = actorCheck.isSelected();
@@ -173,21 +165,34 @@ public class AdminCastView extends AdminPanel {
                         ERROR, JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            if (birthdayField.getText().isBlank() || dateDebutCareerField.getText().isBlank()) {
+                JOptionPane.showMessageDialog(null,
+                        "Errore: Inserire le date in modo corretto",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             if (birthdayField.getDate().isAfter(dateDebutCareerField.getDate())) {
                 JOptionPane.showMessageDialog(null,
                         "Errore: Inserire una Data di Nascita corretta",
                         ERROR, JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            addCastMember(
-                    nameField.getText(),
-                    surnameField.getText(),
-                    birthdayField.getDate(),
-                    isActor,
-                    isDirector,
-                    dateDebutCareerField.getDate(),
-                    artNameField.getText());
-            JOptionPane.getRootFrame().dispose();
+            try {
+                addCastMember(
+                        nameField.getText(),
+                        surnameField.getText(),
+                        birthdayField.getDate(),
+                        isActor,
+                        isDirector,
+                        dateDebutCareerField.getDate(),
+                        Optional.of(artNameField.getText()));
+                JOptionPane.getRootFrame().dispose();
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        DATABASE_ERROR + ex.getMessage(),
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         final Object[] options = {okButton, CANCEL};
@@ -210,7 +215,7 @@ public class AdminCastView extends AdminPanel {
     private void addCastMember(
             final String name, final String surname, final LocalDate birthday,
             final boolean isActor, final boolean isDirector,
-            final LocalDate dateDebutCareer, final String artName) {
+            final LocalDate dateDebutCareer, final Optional<String> artName) {
         ((AdminSessionController) getCurrentSessionContext().getController())
                 .addCastMember(name, surname, birthday, isActor, isDirector, dateDebutCareer, artName);
         updateMemberCastTable();
@@ -245,6 +250,11 @@ public class AdminCastView extends AdminPanel {
             JOptionPane.showMessageDialog(
                     null,
                     "Inserisci un numero valido per il Codice.",
+                    ERROR, JOptionPane.ERROR_MESSAGE);
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    DATABASE_ERROR + ex.getMessage(),
                     ERROR, JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -327,6 +337,11 @@ public class AdminCastView extends AdminPanel {
                     null,
                     "Inserisci un numero valido per l'ID.",
                     ERROR, JOptionPane.ERROR_MESSAGE);
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    DATABASE_ERROR + ex.getMessage(),
+                    ERROR, JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -365,24 +380,39 @@ public class AdminCastView extends AdminPanel {
         castMemberCodeField.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
-            if (((AdminSessionController) getCurrentSessionContext().getController())
-                    .isCastMemberAvailable(Integer.parseInt(castMemberCodeField.getText()))) {
-                JOptionPane.showMessageDialog(null,
-                        "Errore: Membro Cast non inserito",
-                        ERROR, JOptionPane.ERROR_MESSAGE);
-                return;
+            try {
+                if (isNonNegativeNumber(castCodeField.getText())
+                        || isNonNegativeNumber(castMemberCodeField.getText())) {
+                    throw new NumberFormatException();
+                }
+                if (((AdminSessionController) getCurrentSessionContext().getController())
+                        .isCastAvailable(Integer.parseInt(castCodeField.getText()))) {
+                    JOptionPane.showMessageDialog(null,
+                            "Errore: Cast non inserito",
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (((AdminSessionController) getCurrentSessionContext().getController())
+                        .isCastMemberAvailable(Integer.parseInt(castMemberCodeField.getText()))) {
+                    JOptionPane.showMessageDialog(null,
+                            "Errore: Membro Cast non inserito",
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                addCastMemberToCast(
+                        Integer.parseInt(castMemberCodeField.getText()),
+                        Integer.parseInt(castCodeField.getText()));
+                JOptionPane.getRootFrame().dispose();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Errore: Inserire Codici Validi",
+                        "ERROR", JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        DATABASE_ERROR + ex.getMessage(),
+                        "ERROR", JOptionPane.ERROR_MESSAGE);
             }
-            if (((AdminSessionController) getCurrentSessionContext().getController())
-                    .isCastAvailable(Integer.parseInt(castCodeField.getText()))) {
-                JOptionPane.showMessageDialog(null,
-                        "Errore: Cast non inserito",
-                        ERROR, JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            addCastMemberToCast(
-                    Integer.parseInt(castMemberCodeField.getText()),
-                    Integer.parseInt(castCodeField.getText()));
-            JOptionPane.getRootFrame().dispose();
         });
 
         final Object[] options = {okButton, CANCEL};
@@ -421,22 +451,37 @@ public class AdminCastView extends AdminPanel {
         castCodeField.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
-            final int castMemberCode = Integer.parseInt(castMemberCodeField.getText());
-            final int castCode = Integer.parseInt(castCodeField.getText());
-            final boolean deleted = deleteCastMemberToCast(castMemberCode, castCode);
-            if (deleted) {
-                updateCasting();
+            try {
+                if (isNonNegativeNumber(castMemberCodeField.getText())
+                        || isNonNegativeNumber(castCodeField.getText())) {
+                    throw new NumberFormatException();
+                }
+                final int castMemberCode = Integer.parseInt(castMemberCodeField.getText());
+                final int castCode = Integer.parseInt(castCodeField.getText());
+                final boolean deleted = deleteCastMemberToCast(castMemberCode, castCode);
+                if (deleted) {
+                    updateCasting();
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Il Membro del Cast e' stata eliminato con successo.",
+                            COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Errore durante l'eliminazione del Membro dal Cast.",
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                }
+                JOptionPane.getRootFrame().dispose();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Errore: Inserire Codici Validi",
+                        "ERROR", JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException ex) {
                 JOptionPane.showMessageDialog(
                         null,
-                        "Il Membro del Cast e' stata eliminato con successo.",
-                        COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(
-                        null,
-                        "Errore durante l'eliminazione del Membro dal Cast.",
+                        DATABASE_ERROR + ex.getMessage(),
                         ERROR, JOptionPane.ERROR_MESSAGE);
             }
-            JOptionPane.getRootFrame().dispose();
         });
 
         final Object[] options = {okButton, CANCEL};
@@ -453,6 +498,10 @@ public class AdminCastView extends AdminPanel {
     private boolean deleteCastMemberToCast(final int castMemberCode, final int castCode) {
         return ((AdminSessionController) getCurrentSessionContext().getController())
                 .deleteCastMemberToCast(castMemberCode, castCode);
+    }
+
+    private boolean isNonNegativeNumber(final String str) {
+        return !str.matches("\\d+");
     }
 
     private boolean isFieldFilled(final String text) {

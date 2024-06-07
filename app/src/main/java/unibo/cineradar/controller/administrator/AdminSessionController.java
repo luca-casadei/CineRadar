@@ -8,6 +8,7 @@ import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.cast.Casting;
 import unibo.cineradar.model.cast.Director;
+import unibo.cineradar.model.cinema.Cinema;
 import unibo.cineradar.model.context.administrator.AdministratorContext;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
@@ -19,6 +20,10 @@ import unibo.cineradar.model.request.Request;
 import unibo.cineradar.model.serie.Episode;
 import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
+import unibo.cineradar.model.utente.Registrar;
+import unibo.cineradar.model.utente.User;
+import unibo.cineradar.utilities.security.HashingAlgorithm;
+import unibo.cineradar.utilities.security.HashingUtilities;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -146,7 +151,7 @@ public final class AdminSessionController extends SessionControllerImpl {
      */
     public void addCastMember(
             final String name, final String surname, final LocalDate birthday,
-            final boolean isActor, final boolean isDirector, final LocalDate dateDebutCareer, final String artName) {
+            final boolean isActor, final boolean isDirector, final LocalDate dateDebutCareer, final Optional<String> artName) {
         if (isActor && isDirector) {
             this.administratorContext.addCastMember(true, new CastMember(
                     0,
@@ -154,7 +159,7 @@ public final class AdminSessionController extends SessionControllerImpl {
                     surname,
                     birthday,
                     dateDebutCareer,
-                    artName));
+                    artName.orElse("")));
         } else {
             if (isActor) {
                 this.administratorContext.addCastMember(false, new Actor(
@@ -163,7 +168,7 @@ public final class AdminSessionController extends SessionControllerImpl {
                         surname,
                         birthday,
                         dateDebutCareer,
-                        artName));
+                        artName.orElse("")));
             } else {
                 this.administratorContext.addCastMember(false, new Director(
                         0,
@@ -171,7 +176,7 @@ public final class AdminSessionController extends SessionControllerImpl {
                         surname,
                         birthday,
                         dateDebutCareer,
-                        artName));
+                        artName.orElse("")));
             }
         }
     }
@@ -582,5 +587,98 @@ public final class AdminSessionController extends SessionControllerImpl {
      */
     public boolean isUserAvailable(final String username) {
         return !this.administratorContext.isUserAvailable(username);
+    }
+
+    /**
+     * Retrieves a list of all users.
+     *
+     * @return a list of User objects.
+     */
+    public List<User> getUsers() {
+        return this.administratorContext.getUsers();
+    }
+
+    /**
+     * Retrieves a list of all registrars.
+     *
+     * @return a list of Registrar objects.
+     */
+    public List<Registrar> getRegistrars() {
+        return this.administratorContext.getRegistrars();
+    }
+
+    /**
+     * Deletes a registrar identified by the provided username.
+     *
+     * @param username the username of the registrar to be deleted.
+     * @return true if the registrar was successfully deleted, false otherwise.
+     */
+    public boolean deleteRegistrar(final String username) {
+        return this.administratorContext.deleteRegistrar(username);
+    }
+
+    /**
+     * Adds a new registrar with the provided details.
+     *
+     * @param username the username of the new registrar.
+     * @param name the first name of the new registrar.
+     * @param surname the surname of the new registrar.
+     * @param password the password of the new registrar.
+     * @param email the email address of the new registrar.
+     * @param cineCode the cinema code associated with the new registrar.
+     */
+    public void addRegistrar(
+            final String username, final String name, final String surname,
+            final char[] password, final String email, final int cineCode) {
+        this.administratorContext.addRegistrar(
+                HashingUtilities.getHashedString(password, HashingAlgorithm.SHA_512),
+                new Registrar(username, name, surname, email, cineCode)
+        );
+    }
+
+    /**
+     * Retrieves a list of all cinemas.
+     *
+     * @return a list of Cinema objects.
+     */
+    public List<Cinema> getCinemas() {
+        return this.administratorContext.getCinemas();
+    }
+
+    /**
+     * Adds a new cinema with the provided details.
+     *
+     * @param name the name of the new cinema.
+     * @param street the street address of the new cinema.
+     * @param cap the postal code of the new cinema.
+     * @param civic the civic number of the new cinema.
+     * @param city the city where the new cinema is located.
+     */
+    public void addCinema(
+            final String name, final String street, final String cap,
+            final int civic, final String city) {
+        this.administratorContext.addCinema(
+                new Cinema(0, name, street, cap, city, civic, 0)
+        );
+    }
+
+    /**
+     * Deletes a cinema identified by the provided code.
+     *
+     * @param code the code of the cinema to be deleted.
+     * @return true if the cinema was successfully deleted, false otherwise.
+     */
+    public boolean deleteCinema(final int code) {
+        return this.administratorContext.deleteCinema(code);
+    }
+
+    /**
+     * Checks if a cast with the specified ID exists.
+     *
+     * @param castId The ID of the cast to be checked.
+     * @return {@code true} if a cast with the specified ID exists, {@code false} otherwise.
+     */
+    public boolean isCast(final int castId) {
+        return this.administratorContext.isCast(castId);
     }
 }

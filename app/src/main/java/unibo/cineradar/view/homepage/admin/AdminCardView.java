@@ -78,33 +78,48 @@ public class AdminCardView extends AdminPanel {
 
         okButton.addActionListener(e -> {
             if (expirationField.getDate().isAfter(LocalDate.now())) {
-                if (((AdminSessionController) getCurrentSessionContext().getController())
-                        .isPromoAvailable(Integer.parseInt(codePromoField.getText()))) {
-                    JOptionPane.showMessageDialog(null,
-                            "Errore: Promo non inserita",
+                try {
+                    if (isNonNegativeNumber(codePromoField.getText())
+                            || isNonNegativeNumber(cinemaCodeField.getText())) {
+                        throw new NumberFormatException();
+                    }
+                    if (((AdminSessionController) getCurrentSessionContext().getController())
+                            .isPromoAvailable(Integer.parseInt(codePromoField.getText()))) {
+                        JOptionPane.showMessageDialog(null,
+                                "Errore: Promo non inserita",
+                                ERRORE, JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    if (((AdminSessionController) getCurrentSessionContext().getController())
+                            .isCinemaAvailable(Integer.parseInt(cinemaCodeField.getText()))) {
+                        JOptionPane.showMessageDialog(null,
+                                "Errore: Cinema non inserito",
+                                ERRORE, JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    if (((AdminSessionController) getCurrentSessionContext().getController())
+                            .isUserAvailable(usernameField.getText())) {
+                        JOptionPane.showMessageDialog(null,
+                                "Errore: Utente non inserito",
+                                ERRORE, JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    assignPromo(
+                            Integer.parseInt(codePromoField.getText()),
+                            expirationField.getDate(),
+                            Integer.parseInt(cinemaCodeField.getText()),
+                            usernameField.getText()
+                    );
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(this,
+                            "Errore: Inserire Codici Validi",
+                            "ERROR", JOptionPane.ERROR_MESSAGE);
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Errore del database: " + ex.getMessage(),
                             ERRORE, JOptionPane.ERROR_MESSAGE);
-                    return;
                 }
-                if (((AdminSessionController) getCurrentSessionContext().getController())
-                        .isCinemaAvailable(Integer.parseInt(cinemaCodeField.getText()))) {
-                    JOptionPane.showMessageDialog(null,
-                            "Errore: Cinema non inserito",
-                            ERRORE, JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                if (((AdminSessionController) getCurrentSessionContext().getController())
-                        .isUserAvailable(usernameField.getText())) {
-                    JOptionPane.showMessageDialog(null,
-                            "Errore: Utente non inserito",
-                            ERRORE, JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                assignPromo(
-                        Integer.parseInt(codePromoField.getText()),
-                        expirationField.getDate(),
-                        Integer.parseInt(cinemaCodeField.getText()),
-                        usernameField.getText()
-                );
             } else {
                 JOptionPane.showMessageDialog(null,
                         "Inserisci una scadenza valida per la Promo.",
@@ -123,6 +138,10 @@ public class AdminCardView extends AdminPanel {
             final int promoCode, final LocalDate expiration, final int cinemaCode, final String username) {
         ((AdminSessionController) this.getCurrentSessionContext().getController())
                 .assignPromo(promoCode, expiration, cinemaCode, username);
+    }
+
+    private boolean isNonNegativeNumber(final String str) {
+        return !str.matches("\\d+");
     }
 
     private boolean isFieldFilled(final String text) {

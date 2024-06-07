@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -23,7 +22,6 @@ import java.awt.FlowLayout;
 import java.io.Serial;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Rankings view of the Admin.
@@ -33,11 +31,14 @@ public class AdminRankingsView extends AdminPanel {
     private static final long serialVersionUID = -924897837382651458L;
     private static final int ROW_HEIGHT = 20;
     private static final String ERROR = "Errore";
-    private static final String COMPLETE_DELETE = "Eliminazione completata";
-    private final JTable fiveBestReviewersTable;
-    private final JTable fiveWorstUtilitiesTable;
-    private final JTable fiveBestUtilitiesTable;
-    private final JTable fiveBestDirectorsTable;
+    private static final String BEST_REVIEWERS_FOR_NUMBER =
+            "5 Migliori Recensori per Numero";
+    private static final String WORST_REVIEWERS_FOR_UTILITY =
+            "5 Peggiori Recensori per Utilita'";
+    private static final String BEST_REVIEWERS_FOR_UTILITY =
+            "5 Migliori Recensori per Utilita'";
+    private static final String BEST_DIRECTORS =
+            "5 Migliori Registi";
 
     /**
      * Constructor of the admin rankings view.
@@ -46,40 +47,48 @@ public class AdminRankingsView extends AdminPanel {
      */
     public AdminRankingsView(final ViewContext currentSessionContext) {
         super(currentSessionContext);
-        this.fiveBestReviewersTable = createRankingTable();
-        this.fiveWorstUtilitiesTable = createRankingTable();
-        this.fiveBestUtilitiesTable = createRankingTable();
-        this.fiveBestDirectorsTable = createCastRankingTable();
+        final JTable fiveBestReviewersTable = createRankingTable();
         addBestReviewersRankingData(fiveBestReviewersTable);
-        addWorstUtilitiesRankingData(fiveWorstUtilitiesTable);
-        addBestUtilitiesRankingData(fiveBestUtilitiesTable);
-        addBestDirectorsRankingData(fiveBestDirectorsTable);
         final JPanel buttonPanel = getButtonPanel();
         final JPanel showRankingsPanel = getRankingsButtonPanel();
         this.add(buttonPanel, BorderLayout.SOUTH);
         this.add(showRankingsPanel, BorderLayout.NORTH);
-        this.add(new JScrollPane(this.fiveBestReviewersTable), BorderLayout.CENTER);
+        this.add(new JScrollPane(fiveBestReviewersTable), BorderLayout.CENTER);
     }
 
     private JPanel getRankingsButtonPanel() {
         final JPanel rankingsButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        final JButton fiveBestReviewersButton = new JButton("5 Migliori Recensori per Numero");
-        fiveBestReviewersButton.addActionListener(e -> showRanking(this.fiveBestReviewersTable));
+        final JButton fiveBestReviewersButton = new JButton(BEST_REVIEWERS_FOR_NUMBER);
+        fiveBestReviewersButton.addActionListener(e -> showRanking(BEST_REVIEWERS_FOR_NUMBER));
         rankingsButtonPanel.add(fiveBestReviewersButton);
-        final JButton fiveWorstUtilitiesButton = new JButton("5 Peggiori Recensori per Utilita'");
-        fiveWorstUtilitiesButton.addActionListener(e -> showRanking(this.fiveWorstUtilitiesTable));
+        final JButton fiveWorstUtilitiesButton = new JButton(WORST_REVIEWERS_FOR_UTILITY);
+        fiveWorstUtilitiesButton.addActionListener(e -> showRanking(WORST_REVIEWERS_FOR_UTILITY));
         rankingsButtonPanel.add(fiveWorstUtilitiesButton);
-        final JButton fiveBestUtilitiesButton = new JButton("5 Migliori Recensori per Utilita'");
-        fiveBestUtilitiesButton.addActionListener(e -> showRanking(this.fiveBestUtilitiesTable));
+        final JButton fiveBestUtilitiesButton = new JButton(BEST_REVIEWERS_FOR_UTILITY);
+        fiveBestUtilitiesButton.addActionListener(e -> showRanking(BEST_REVIEWERS_FOR_UTILITY));
         rankingsButtonPanel.add(fiveBestUtilitiesButton);
-        final JButton fiveBestDirectorsButton = new JButton("5 Migliori Registi");
-        fiveBestDirectorsButton.addActionListener(e -> showRanking(this.fiveBestDirectorsTable));
+        final JButton fiveBestDirectorsButton = new JButton(BEST_DIRECTORS);
+        fiveBestDirectorsButton.addActionListener(e -> showRanking(BEST_DIRECTORS));
         rankingsButtonPanel.add(fiveBestDirectorsButton);
         return rankingsButtonPanel;
     }
 
-    private void showRanking(final JTable table) {
+    private void showRanking(final String text) {
         this.remove(2);
+        final JTable table = switch (text) {
+            case BEST_REVIEWERS_FOR_NUMBER,
+                 WORST_REVIEWERS_FOR_UTILITY,
+                 BEST_REVIEWERS_FOR_UTILITY -> createRankingTable();
+            case BEST_DIRECTORS -> createCastRankingTable();
+            default -> throw new IllegalStateException("Unexpected value: " + text);
+        };
+        switch (text) {
+            case BEST_REVIEWERS_FOR_NUMBER -> addBestReviewersRankingData(table);
+            case WORST_REVIEWERS_FOR_UTILITY -> addWorstUtilitiesRankingData(table);
+            case BEST_REVIEWERS_FOR_UTILITY -> addBestUtilitiesRankingData(table);
+            case BEST_DIRECTORS -> addBestDirectorsRankingData(table);
+            default -> throw new IllegalStateException("Unexpected value: " + text);
+        }
         this.add(new JScrollPane(table), BorderLayout.CENTER);
         this.revalidate();
         this.repaint();
@@ -90,57 +99,7 @@ public class AdminRankingsView extends AdminPanel {
         final JButton addMemberButton = new JButton("Assegna Promo ai Migliori 5 Recensori");
         addMemberButton.addActionListener(e -> assignPromoBestFiveReviewersDialog());
         buttonPanel.add(addMemberButton);
-        final JButton deleteMemberButton = new JButton("Elimina Utente");
-        deleteMemberButton.addActionListener(e -> deleteUserDialog());
-        buttonPanel.add(deleteMemberButton);
         return buttonPanel;
-    }
-
-    private void updateView() {
-        SwingUtilities.invokeLater(() -> {
-            final DefaultTableModel fiveBestReviewersTableModel = (DefaultTableModel) this.fiveBestReviewersTable.getModel();
-            fiveBestReviewersTableModel.setRowCount(0);
-            addBestReviewersRankingData(fiveBestReviewersTable);
-            final DefaultTableModel fiveWorstUtilitiesTableModel = (DefaultTableModel) this.fiveWorstUtilitiesTable.getModel();
-            fiveWorstUtilitiesTableModel.setRowCount(0);
-            addWorstUtilitiesRankingData(fiveWorstUtilitiesTable);
-            final DefaultTableModel fiveBestUtilitiesTableModel = (DefaultTableModel) this.fiveBestUtilitiesTable.getModel();
-            fiveBestUtilitiesTableModel.setRowCount(0);
-            addWorstUtilitiesRankingData(fiveBestUtilitiesTable);
-        });
-    }
-
-    private void deleteUserDialog() {
-        final String username = Objects.requireNonNull(
-                JOptionPane.showInputDialog(
-                        null,
-                        "Inserisci Username dell'utente da eliminare:",
-                        "Elimina Membro Cast", JOptionPane.PLAIN_MESSAGE));
-        try {
-            final boolean deleted = deleteUser(username);
-            if (deleted) {
-                updateView();
-                JOptionPane.showMessageDialog(
-                        null,
-                        "L'utente e' stato eliminato con successo.",
-                        COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(
-                        null,
-                        "Errore durante l'eliminazione dell'utente.",
-                        ERROR, JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Inserisci un numero valido per Username.",
-                    ERROR, JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private boolean deleteUser(final String username) {
-        return ((AdminSessionController) this.getCurrentSessionContext().getController())
-                .deleteUser(username);
     }
 
     private void assignPromoBestFiveReviewersDialog() {
@@ -166,11 +125,18 @@ public class AdminRankingsView extends AdminPanel {
         expirationField.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
-            assignPromoBestFiveReviewers(
-                    Integer.parseInt(promoCodeField.getText()),
-                    LocalDate.parse(expirationField.getText())
-            );
-            JOptionPane.getRootFrame().dispose();
+            try {
+                assignPromoBestFiveReviewers(
+                        Integer.parseInt(promoCodeField.getText()),
+                        LocalDate.parse(expirationField.getText())
+                );
+                JOptionPane.getRootFrame().dispose();
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Errore del database: " + ex.getMessage(),
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         final Object[] options = {okButton, "Cancel"};

@@ -33,6 +33,7 @@ public final class AdminSerieView extends AdminPanel {
     private static final String COMPLETE_DELETE = "Eliminazione completata";
     private static final String SEASON_NUMBER = "Numero Stagione:";
     private static final String SERIES_CODE = "Codice Serie:";
+    private static final String DATABASE_ERROR = "Errore del database: ";
     private JScrollPane seriesScrollPane;
     private JTable seriesTable;
 
@@ -90,7 +91,7 @@ public final class AdminSerieView extends AdminPanel {
         ((AdminSessionController) getCurrentSessionContext().getController()).updateDetailedSeries();
         this.seriesTable = super.createSerieTable();
         this.seriesScrollPane = new JScrollPane(this.seriesTable);
-        add(seriesScrollPane, BorderLayout.CENTER);
+        add(this.seriesScrollPane, BorderLayout.CENTER);
         revalidate();
         repaint();
     }
@@ -100,6 +101,12 @@ public final class AdminSerieView extends AdminPanel {
      * The dialog prompts the administrator to enter the title, age limit, plot, duration, and number of episodes.
      */
     private void addSeriesDialog() {
+        if (((AdminSessionController) getCurrentSessionContext().getController()).getCasting().isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Errore: Nessun casting disponibile",
+                    ERROR, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         final JTextField titleField = new JTextField(20);
         final JTextField ageLimitField = new JTextField(5);
         final JTextArea plotArea = new JTextArea(5, 20);
@@ -127,12 +134,27 @@ public final class AdminSerieView extends AdminPanel {
         plotArea.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
-            addSeries(
-                    titleField.getText(),
-                    Integer.parseInt(ageLimitField.getText()),
-                    plotArea.getText()
-            );
-            JOptionPane.getRootFrame().dispose();
+            try {
+                final int ageLimit = Integer.parseInt(ageLimitField.getText());
+                if (ageLimit < 0) {
+                    throw new NumberFormatException();
+                }
+                addSeries(
+                        titleField.getText(),
+                        ageLimit,
+                        plotArea.getText()
+                );
+                JOptionPane.getRootFrame().dispose();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Errore: Inserire un Eta' Valida",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        DATABASE_ERROR + ex.getMessage(),
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         final Object[] options = {okButton, "Cancel"};
@@ -192,6 +214,11 @@ public final class AdminSerieView extends AdminPanel {
                 JOptionPane.showMessageDialog(
                         null,
                         "Inserisci un numero valido per il Codice.",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        DATABASE_ERROR + ex.getMessage(),
                         ERROR, JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -262,19 +289,26 @@ public final class AdminSerieView extends AdminPanel {
         summaryArea.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
-            if (((AdminSessionController) getCurrentSessionContext().getController())
-                    .isSeriesAvailable(Integer.parseInt(seriesCodeField.getText()))) {
-                JOptionPane.showMessageDialog(null,
-                        "Errore: Serie non inserita",
+            try {
+                if (((AdminSessionController) getCurrentSessionContext().getController())
+                        .isSeriesAvailable(Integer.parseInt(seriesCodeField.getText()))) {
+                    JOptionPane.showMessageDialog(null,
+                            "Errore: Serie non inserita",
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                addSeason(
+                        Integer.parseInt(seriesCodeField.getText()),
+                        Integer.parseInt(seasonNumberField.getText()),
+                        summaryArea.getText(),
+                        Integer.parseInt(String.valueOf(castBox.getSelectedItem())));
+                JOptionPane.getRootFrame().dispose();
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        DATABASE_ERROR + ex.getMessage(),
                         ERROR, JOptionPane.ERROR_MESSAGE);
-                return;
             }
-            addSeason(
-                    Integer.parseInt(seriesCodeField.getText()),
-                    Integer.parseInt(seasonNumberField.getText()),
-                    summaryArea.getText(),
-                    Integer.parseInt(String.valueOf(castBox.getSelectedItem())));
-            JOptionPane.getRootFrame().dispose();
         });
 
         final Object[] options = {okButton, "Cancel"};
@@ -343,6 +377,11 @@ public final class AdminSerieView extends AdminPanel {
                         null,
                         "Inserisci numeri validi per il Codice e il Numero Stagione.",
                         ERROR, JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        DATABASE_ERROR + ex.getMessage(),
+                        ERROR, JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -370,6 +409,12 @@ public final class AdminSerieView extends AdminPanel {
      */
     private void addEpisodeDialog(
             final Optional<Integer> idSeries, final Optional<Integer> idSeason) {
+        if (((AdminSessionController) getCurrentSessionContext().getController()).getCasting().isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Errore: Nessun casting disponibile",
+                    ERROR, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         final JTextField seriesCodeField = new JTextField(5);
         final JTextField seasonNumberField = new JTextField(5);
         final JTextField episodeNumberField = new JTextField(5);
@@ -427,12 +472,26 @@ public final class AdminSerieView extends AdminPanel {
                         ERROR, JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            addEpisode(
-                    Integer.parseInt(seriesCodeField.getText()),
-                    Integer.parseInt(seasonNumberField.getText()),
-                    Integer.parseInt(episodeNumberField.getText()),
-                    Integer.parseInt(durationField.getText()));
-            JOptionPane.getRootFrame().dispose();
+            try {
+                if (Integer.parseInt(durationField.getText()) < 0) {
+                    throw new NumberFormatException();
+                }
+                addEpisode(
+                        Integer.parseInt(seriesCodeField.getText()),
+                        Integer.parseInt(seasonNumberField.getText()),
+                        Integer.parseInt(episodeNumberField.getText()),
+                        Integer.parseInt(durationField.getText()));
+                JOptionPane.getRootFrame().dispose();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Errore: Inserire un Numero Valido in Durata",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        DATABASE_ERROR + ex.getMessage(),
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         final Object[] options = {okButton, "Cancel"};
@@ -499,6 +558,11 @@ public final class AdminSerieView extends AdminPanel {
                 JOptionPane.showMessageDialog(
                         null,
                         "Inserisci numeri validi per il Codice, il Numero Stagione e il Numero Episodio.",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        DATABASE_ERROR + ex.getMessage(),
                         ERROR, JOptionPane.ERROR_MESSAGE);
             }
         }

@@ -4,6 +4,7 @@ import unibo.cineradar.model.card.CardReg;
 import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.cast.Casting;
+import unibo.cineradar.model.cinema.Cinema;
 import unibo.cineradar.model.context.SessionContextImpl;
 import unibo.cineradar.model.db.AdminOps;
 import unibo.cineradar.model.film.Film;
@@ -17,6 +18,8 @@ import unibo.cineradar.model.serie.Episode;
 import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.Account;
+import unibo.cineradar.model.utente.Registrar;
+import unibo.cineradar.model.utente.User;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -655,6 +658,98 @@ public final class AdministratorContext extends SessionContextImpl {
     public boolean isUserAvailable(final String username) {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.isUserAvailable(username);
+        }
+    }
+
+    /**
+     * Retrieves a list of all users.
+     *
+     * @return a list of User objects.
+     */
+    public List<User> getUsers() {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getUsers();
+        }
+    }
+
+    /**
+     * Retrieves a list of all registrars.
+     *
+     * @return a list of Registrar objects.
+     */
+    public List<Registrar> getRegistrars() {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getRegistrars();
+        }
+    }
+
+    /**
+     * Deletes a registrar identified by the provided username.
+     *
+     * @param username the username of the registrar to be deleted.
+     * @return true if the registrar was successfully deleted, false otherwise.
+     */
+    public boolean deleteRegistrar(final String username) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.deleteRegistrar(username);
+        }
+    }
+
+    /**
+     * Adds a new registrar with the provided password and details.
+     *
+     * @param password the password for the new registrar.
+     * @param registrar the Registrar object containing the new registrar's details.
+     */
+    public void addRegistrar(final String password, final Registrar registrar) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.addRegistrar(password, registrar);
+        }
+    }
+
+    /**
+     * Adds a new cinema with the provided details.
+     *
+     * @param cinema the Cinema object containing the new cinema's details.
+     */
+    public void addCinema(final Cinema cinema) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.addCinema(cinema);
+        }
+    }
+
+    /**
+     * Deletes a cinema identified by the provided code.
+     *
+     * @param code the code of the cinema to be deleted.
+     * @return true if the cinema was successfully deleted, false otherwise.
+     */
+    public boolean deleteCinema(final int code) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.deleteCinema(code);
+        }
+    }
+
+    /**
+     * Retrieves a list of all cinemas.
+     *
+     * @return a list of Cinema objects.
+     */
+    public List<Cinema> getCinemas() {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getCinemas();
+        }
+    }
+
+    /**
+     * Checks if a cast with the specified ID exists.
+     *
+     * @param castId The ID of the cast to be checked.
+     * @return {@code true} if a cast with the specified ID exists, {@code false} otherwise.
+     */
+    public boolean isCast(final int castId) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.isCast(castId);
         }
     }
 }

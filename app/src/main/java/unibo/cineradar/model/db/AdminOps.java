@@ -8,6 +8,7 @@ import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.cast.Casting;
 import unibo.cineradar.model.cast.Director;
+import unibo.cineradar.model.cinema.Cinema;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.promo.Promo;
 import unibo.cineradar.model.ranking.CastRanking;
@@ -18,6 +19,8 @@ import unibo.cineradar.model.serie.Episode;
 import unibo.cineradar.model.serie.Season;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.Administrator;
+import unibo.cineradar.model.utente.Registrar;
+import unibo.cineradar.model.utente.User;
 
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -45,6 +48,9 @@ public final class AdminOps extends DBManager {
     private static final int PARAMETER_INDEX2 = 6;
     private static final int PARAMETER_INDEX3 = 7;
     private static final String CODICE_SERIE = "CodiceSerie";
+    private static final String NAME = "Nome";
+    private static final String SURNAME = "Cognome";
+    private static final String CODE = "Codice";
 
     /**
      * Gets the details of an administrator given its username.
@@ -65,15 +71,15 @@ public final class AdminOps extends DBManager {
             if (this.getResultSet().next()) {
                 return Optional.of(new Administrator(
                         this.getResultSet().getString("Username"),
-                        this.getResultSet().getString("Nome"),
-                        this.getResultSet().getString("Cognome"),
+                        this.getResultSet().getString(NAME),
+                        this.getResultSet().getString(SURNAME),
                         this.getResultSet().getString("NumeroTelefono")
                 ));
             } else {
                 return Optional.empty();
             }
         } catch (SQLException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
 
@@ -104,7 +110,7 @@ public final class AdminOps extends DBManager {
             }
             return List.copyOf(requests);
         } catch (SQLException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
 
@@ -122,7 +128,7 @@ public final class AdminOps extends DBManager {
             final List<Film> films = new ArrayList<>();
             while (getResultSet().next()) {
                 final Film film = new Film(
-                        getResultSet().getInt("Codice"),
+                        getResultSet().getInt(CODE),
                         getResultSet().getString("Titolo"),
                         getResultSet().getInt("EtaLimite"),
                         getResultSet().getString("Trama"),
@@ -133,7 +139,7 @@ public final class AdminOps extends DBManager {
             }
             return List.copyOf(films);
         } catch (SQLException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
 
@@ -151,7 +157,7 @@ public final class AdminOps extends DBManager {
             final List<Serie> series = new ArrayList<>();
             while (getResultSet().next()) {
                 final Serie serie = new Serie(
-                        getResultSet().getInt("Codice"),
+                        getResultSet().getInt(CODE),
                         getResultSet().getString("Titolo"),
                         getResultSet().getInt("EtaLimite"),
                         getResultSet().getString("Trama"),
@@ -162,7 +168,7 @@ public final class AdminOps extends DBManager {
             }
             return series;
         } catch (SQLException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
 
@@ -181,7 +187,7 @@ public final class AdminOps extends DBManager {
             final int rowsAffected = getPreparedStatement().executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error deleting series", ex);
+            throw new IllegalArgumentException("Error deleting series: " + ex.getMessage(), ex);
         }
     }
 
@@ -200,7 +206,7 @@ public final class AdminOps extends DBManager {
             final int rowsAffected = getPreparedStatement().executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error deleting film", ex);
+            throw new IllegalArgumentException("Error deleting film: " + ex.getMessage(), ex);
         }
     }
 
@@ -223,7 +229,7 @@ public final class AdminOps extends DBManager {
             getPreparedStatement().setInt(PARAMETER_INDEX1, film.getCastId());
             getPreparedStatement().executeUpdate();
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error adding film", ex);
+            throw new IllegalArgumentException("Error adding film: " + ex.getMessage(), ex);
         }
     }
 
@@ -246,7 +252,7 @@ public final class AdminOps extends DBManager {
             getPreparedStatement().setInt(PARAMETER_INDEX1, serie.getNumberOfEpisodes());
             getPreparedStatement().executeUpdate();
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error adding series", ex);
+            throw new IllegalArgumentException("Error adding series: " + ex.getMessage(), ex);
         }
     }
 
@@ -303,7 +309,7 @@ public final class AdminOps extends DBManager {
             }
             return Map.copyOf(detailedFilms);
         } catch (SQLException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
 
@@ -349,7 +355,7 @@ public final class AdminOps extends DBManager {
             this.setResultSet(this.getPreparedStatement().executeQuery());
             return processResultSet();
         } catch (SQLException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
 
@@ -389,7 +395,7 @@ public final class AdminOps extends DBManager {
             }
             getPreparedStatement().executeUpdate();
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error adding cast member", ex);
+            throw new IllegalArgumentException("Error adding cast member: " + ex.getMessage(), ex);
         }
     }
 
@@ -408,7 +414,7 @@ public final class AdminOps extends DBManager {
             final int rowsAffected = getPreparedStatement().executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error deleting cast member", ex);
+            throw new IllegalArgumentException("Error deleting cast member: " + ex.getMessage(), ex);
         }
     }
 
@@ -429,7 +435,7 @@ public final class AdminOps extends DBManager {
             getPreparedStatement().setInt(4, season.getIdCast());
             getPreparedStatement().executeUpdate();
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error adding season", ex);
+            throw new IllegalArgumentException("Error adding season: " + ex.getMessage(), ex);
         }
     }
 
@@ -460,7 +466,7 @@ public final class AdminOps extends DBManager {
             final int rowsAffected = getPreparedStatement().executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error deleting season", ex);
+            throw new IllegalArgumentException("Error deleting season: " + ex.getMessage(), ex);
         }
     }
 
@@ -483,7 +489,7 @@ public final class AdminOps extends DBManager {
             getPreparedStatement().executeUpdate();
             updateSeries(episode.seriesId(), episode.duration(), true);
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error adding episode", ex);
+            throw new IllegalArgumentException("Error adding episode: " + ex.getMessage(), ex);
         }
     }
 
@@ -509,7 +515,7 @@ public final class AdminOps extends DBManager {
                 final int duration = getResultSet().getInt("DurataMin");
                 updateSeries(seriesCode, duration, false);
             } else {
-                throw new IllegalArgumentException("Episode not found");
+                throw new SQLException("Episode not found");
             }
             final String episodeQuery = "DELETE FROM episodio "
                     + "WHERE CodiceSerie = ? AND NumeroStagione = ? AND NumeroEpisodio = ?";
@@ -520,7 +526,7 @@ public final class AdminOps extends DBManager {
             final int rowsAffected = getPreparedStatement().executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error deleting episode", ex);
+            throw new IllegalArgumentException("Error deleting episode: " + ex.getMessage(), ex);
         }
     }
 
@@ -631,7 +637,7 @@ public final class AdminOps extends DBManager {
             }
             return rankings;
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error retrieving cast rankings", ex);
+            throw new IllegalArgumentException("Error retrieving cast rankings: " + ex.getMessage(), ex);
         }
     }
 
@@ -682,7 +688,7 @@ public final class AdminOps extends DBManager {
             }
             return List.copyOf(members);
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error retrieving cast members", ex);
+            throw new IllegalArgumentException("Error retrieving cast members: " + ex.getMessage(), ex);
         }
     }
 
@@ -706,7 +712,7 @@ public final class AdminOps extends DBManager {
             }
             return casting;
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error retrieving casting", ex);
+            throw new IllegalArgumentException("Error retrieving casting: " + ex.getMessage(), ex);
         }
     }
 
@@ -730,7 +736,7 @@ public final class AdminOps extends DBManager {
             }
             getPreparedStatement().executeUpdate();
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error adding casting", ex);
+            throw new IllegalArgumentException("Error adding casting: " + ex.getMessage(), ex);
         }
     }
 
@@ -750,7 +756,7 @@ public final class AdminOps extends DBManager {
             final int rowsAffected = getPreparedStatement().executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error deleting casting", ex);
+            throw new IllegalArgumentException("Error deleting casting: " + ex.getMessage(), ex);
         }
     }
 
@@ -773,10 +779,10 @@ public final class AdminOps extends DBManager {
             if (getResultSet().next()) {
                 return getResultSet().getInt(1);
             } else {
-                throw new IllegalArgumentException("Error retrieving series id");
+                throw new SQLException("Error retrieving series id");
             }
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error retrieving series id", ex);
+            throw new IllegalArgumentException("Error retrieving series id: " + ex.getMessage(), ex);
         }
     }
 
@@ -802,10 +808,10 @@ public final class AdminOps extends DBManager {
             if (getResultSet().next()) {
                 return getResultSet().getInt(1);
             } else {
-                throw new IllegalArgumentException("Error retrieving season id");
+                throw new SQLException("Error retrieving season id");
             }
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error retrieving season id", ex);
+            throw new IllegalArgumentException("Error retrieving season id: " + ex.getMessage(), ex);
         }
     }
 
@@ -827,7 +833,7 @@ public final class AdminOps extends DBManager {
             final int rowsAffected = getPreparedStatement().executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error updating request status", ex);
+            throw new IllegalArgumentException("Error updating request status: " + ex.getMessage(), ex);
         }
     }
 
@@ -858,7 +864,7 @@ public final class AdminOps extends DBManager {
             }
             return List.copyOf(promos);
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error updating request status", ex);
+            throw new IllegalArgumentException("Error updating request status: " + ex.getMessage(), ex);
         }
     }
 
@@ -985,7 +991,7 @@ public final class AdminOps extends DBManager {
             final int rowsAffectedPromo = getPreparedStatement().executeUpdate();
             return rowsAffectedPromo > 0;
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error deleting promo", ex);
+            throw new IllegalArgumentException("Error deleting promo: " + ex.getMessage(), ex);
         }
     }
 
@@ -1015,7 +1021,7 @@ public final class AdminOps extends DBManager {
             }
             return List.copyOf(cards);
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error updating request status", ex);
+            throw new IllegalArgumentException("Error updating request status: " + ex.getMessage(), ex);
         }
     }
 
@@ -1043,7 +1049,7 @@ public final class AdminOps extends DBManager {
             getPreparedStatement().setString(4, username);
             getPreparedStatement().executeUpdate();
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error adding casting", ex);
+            throw new IllegalArgumentException("Error adding casting: " + ex.getMessage(), ex);
         }
     }
 
@@ -1068,9 +1074,9 @@ public final class AdminOps extends DBManager {
             final List<CastMember> castMembers = new ArrayList<>();
             while (getResultSet().next()) {
                 final CastMember castMember = new CastMember(
-                        getResultSet().getInt("Codice"),
-                        getResultSet().getString("Nome"),
-                        getResultSet().getString("Cognome"),
+                        getResultSet().getInt(CODE),
+                        getResultSet().getString(NAME),
+                        getResultSet().getString(SURNAME),
                         getResultSet().getDate("DataNascita").toLocalDate(),
                         getResultSet().getDate("DataDebuttoCarriera").toLocalDate(),
                         getResultSet().getString("NomeArte")
@@ -1079,7 +1085,7 @@ public final class AdminOps extends DBManager {
             }
             return List.copyOf(castMembers);
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error retrieving details of cast", ex);
+            throw new IllegalArgumentException("Error retrieving details of cast: " + ex.getMessage(), ex);
         }
     }
 
@@ -1101,7 +1107,7 @@ public final class AdminOps extends DBManager {
             getPreparedStatement().setInt(2, castCode);
             getPreparedStatement().executeUpdate();
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error adding castmember to cast", ex);
+            throw new IllegalArgumentException("Error adding castmember to cast: " + ex.getMessage(), ex);
         }
     }
 
@@ -1125,7 +1131,7 @@ public final class AdminOps extends DBManager {
             final int rowsAffectedPromo = getPreparedStatement().executeUpdate();
             return rowsAffectedPromo > 0;
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error deleting castmember from cast", ex);
+            throw new IllegalArgumentException("Error deleting castmember from cast: " + ex.getMessage(), ex);
         }
     }
 
@@ -1161,7 +1167,28 @@ public final class AdminOps extends DBManager {
             final int rowsAffectedPromo = getPreparedStatement().executeUpdate();
             return rowsAffectedPromo > 0;
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error deleting castmember from cast", ex);
+            throw new IllegalArgumentException("Error deleting user: " + ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Deletes a registrar from the system.
+     *
+     * @param username The username of the registrar to be deleted.
+     * @return True if the registrar deletion was successful, false otherwise.
+     * @throws IllegalArgumentException If an error occurs while deleting the registrar.
+     */
+    public boolean deleteRegistrar(final String username) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String deletePromoQuery = "DELETE FROM account "
+                    + "WHERE Username = ? ";
+            setPreparedStatement(getConnection().prepareStatement(deletePromoQuery));
+            getPreparedStatement().setString(1, username);
+            final int rowsAffectedPromo = getPreparedStatement().executeUpdate();
+            return rowsAffectedPromo > 0;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error deleting registrar: " + ex.getMessage(), ex);
         }
     }
 
@@ -1185,7 +1212,7 @@ public final class AdminOps extends DBManager {
             setResultSet(getPreparedStatement().executeQuery());
             return getResultSet().next();
         } catch (SQLException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
 
@@ -1205,7 +1232,7 @@ public final class AdminOps extends DBManager {
             setResultSet(getPreparedStatement().executeQuery());
             return getResultSet().next();
         } catch (SQLException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
 
@@ -1225,7 +1252,7 @@ public final class AdminOps extends DBManager {
             setResultSet(getPreparedStatement().executeQuery());
             return getResultSet().next();
         } catch (SQLException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
 
@@ -1239,13 +1266,13 @@ public final class AdminOps extends DBManager {
         Objects.requireNonNull(getConnection());
         try {
             final String query = "SELECT Codice FROM membrocast "
-                    + "WHERE Codice = ? ";
+                    + "WHERE Codice = ?";
             setPreparedStatement(getConnection().prepareStatement(query));
             getPreparedStatement().setInt(1, castMemberId);
             setResultSet(getPreparedStatement().executeQuery());
             return getResultSet().next();
         } catch (SQLException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
 
@@ -1265,7 +1292,7 @@ public final class AdminOps extends DBManager {
             setResultSet(getPreparedStatement().executeQuery());
             return getResultSet().next();
         } catch (SQLException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
 
@@ -1285,7 +1312,7 @@ public final class AdminOps extends DBManager {
             setResultSet(getPreparedStatement().executeQuery());
             return getResultSet().next();
         } catch (SQLException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
 
@@ -1305,7 +1332,7 @@ public final class AdminOps extends DBManager {
             setResultSet(getPreparedStatement().executeQuery());
             return getResultSet().next();
         } catch (SQLException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
 
@@ -1325,7 +1352,196 @@ public final class AdminOps extends DBManager {
             setResultSet(getPreparedStatement().executeQuery());
             return getResultSet().next();
         } catch (SQLException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Retrieves a list of all users from the database.
+     *
+     * @return a list of User objects.
+     * @throws IllegalArgumentException if a SQL error occurs.
+     */
+    public List<User> getUsers() {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT account.Username, account.Nome, account.Cognome, "
+                    + "utente.DataNascita, utente.TargaPremio "
+                    + "FROM account, utente "
+                    + "WHERE account.Username = utente.Username";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
+            final List<User> users = new ArrayList<>();
+            while (getResultSet().next()) {
+                users.add(new User(
+                        getResultSet().getString("Username"),
+                        getResultSet().getString(NAME),
+                        getResultSet().getString(SURNAME),
+                        getResultSet().getDate("DataNascita").toLocalDate(),
+                        getResultSet().getBoolean("TargaPremio")
+                ));
+            }
+            return users;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Retrieves a list of all registrars from the database.
+     *
+     * @return a list of Registrar objects.
+     * @throws IllegalArgumentException if a SQL error occurs.
+     */
+    public List<Registrar> getRegistrars() {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT account.Username, account.Nome, account.Cognome, "
+                    + "registratore.EmailCinema, registratore.CodiceCinema "
+                    + "FROM account, registratore "
+                    + "WHERE account.Username = registratore.Username";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
+            final List<Registrar> registrars = new ArrayList<>();
+            while (getResultSet().next()) {
+                registrars.add(new Registrar(
+                        getResultSet().getString("Username"),
+                        getResultSet().getString(NAME),
+                        getResultSet().getString(SURNAME),
+                        getResultSet().getString("EmailCinema"),
+                        getResultSet().getInt("CodiceCinema")
+                ));
+            }
+            return registrars;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Adds a new registrar to the database with the provided password and details.
+     *
+     * @param password the password for the new registrar.
+     * @param registrar the Registrar object containing the new registrar's details.
+     * @throws IllegalArgumentException if a SQL error occurs while adding the registrar.
+     */
+    public void addRegistrar(final String password, final Registrar registrar) {
+        Objects.requireNonNull(getConnection());
+        final String accountQuery = "INSERT INTO ACCOUNT (Username, PASSWORD, Nome, Cognome) VALUES (?,?,?,?)";
+        final String regQuery = "INSERT INTO REGISTRATORE (Username, EmailCinema, CodiceCinema) VALUES (?,?,?)";
+        try {
+            getConnection().setAutoCommit(false);
+            setPreparedStatement(getConnection().prepareStatement(accountQuery));
+            getPreparedStatement().setString(1, registrar.getUsername());
+            getPreparedStatement().setString(2, password);
+            getPreparedStatement().setString(3, registrar.getName());
+            getPreparedStatement().setString(4, registrar.getLastName());
+            getPreparedStatement().executeUpdate();
+            setPreparedStatement(getConnection().prepareStatement(regQuery));
+            getPreparedStatement().setString(1, registrar.getUsername());
+            getPreparedStatement().setString(2, registrar.getEmailCinema());
+            getPreparedStatement().setInt(3, registrar.getCinema());
+            getPreparedStatement().executeUpdate();
+            getConnection().commit();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error adding registrar: " + ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Retrieves a list of all cinemas from the database.
+     *
+     * @return a list of Cinema objects.
+     * @throws IllegalArgumentException if a SQL error occurs.
+     */
+    public List<Cinema> getCinemas() {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT Codice, Nome, Ind_Via, "
+                    + "Ind_CAP, Ind_Civico, Ind_Citta FROM cinema";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
+            final List<Cinema> cinemas = new ArrayList<>();
+            while (getResultSet().next()) {
+                cinemas.add(new Cinema(
+                        getResultSet().getInt(CODE),
+                        getResultSet().getString(NAME),
+                        getResultSet().getString("Ind_Via"),
+                        getResultSet().getString("Ind_CAP"),
+                        getResultSet().getString("Ind_Citta"),
+                        getResultSet().getInt("Ind_Civico"),
+                        0
+                ));
+            }
+            return cinemas;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Adds a new cinema to the database with the provided details.
+     *
+     * @param cinema the Cinema object containing the new cinema's details.
+     * @throws IllegalArgumentException if a SQL error occurs while adding the cinema.
+     */
+    public void addCinema(final Cinema cinema) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "INSERT INTO CINEMA "
+                    + "(Nome, Ind_Via, Ind_CAP, Ind_Civico, Ind_Citta)"
+                    + " VALUES (?,?,?,?,?)";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setString(1, cinema.nome());
+            getPreparedStatement().setString(2, cinema.indVia());
+            getPreparedStatement().setString(3, cinema.indCAP());
+            getPreparedStatement().setInt(4, cinema.civico());
+            getPreparedStatement().setString(PARAMETER_INDEX1, cinema.citta());
+            getPreparedStatement().executeUpdate();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error adding cinema: " + ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Deletes a cinema from the database identified by the provided code.
+     *
+     * @param code the code of the cinema to be deleted.
+     * @return true if the cinema was successfully deleted, false otherwise.
+     * @throws IllegalArgumentException if a SQL error occurs while deleting the cinema.
+     */
+    public boolean deleteCinema(final int code) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String deletePromoQuery = "DELETE FROM CINEMA "
+                    + "WHERE Codice = ? ";
+            setPreparedStatement(getConnection().prepareStatement(deletePromoQuery));
+            getPreparedStatement().setInt(1, code);
+            final int rowsAffectedPromo = getPreparedStatement().executeUpdate();
+            return rowsAffectedPromo > 0;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error deleting cinema: " + ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Checks if a cast with the specified ID exists.
+     *
+     * @param castId The ID of the cast to be checked.
+     * @return {@code true} if a cast with the specified ID exists, {@code false} otherwise.
+     */
+    public boolean isCast(final int castId) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT * FROM casting, partecipazione_cast "
+                    + "WHERE casting.Codice = partecipazione_cast.CodiceCast "
+                    + "AND casting.Codice = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, castId);
+            setResultSet(getPreparedStatement().executeQuery());
+            return getResultSet().next();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
 
@@ -1377,7 +1593,7 @@ public final class AdminOps extends DBManager {
         if (rollbackEx != null) {
             ex.addSuppressed(rollbackEx);
         }
-        throw new IllegalArgumentException("Error adding promo", ex);
+        throw new IllegalArgumentException("Error adding promo: " + ex.getMessage(), ex);
     }
 
     /**
@@ -1399,7 +1615,7 @@ public final class AdminOps extends DBManager {
             }
             return Optional.empty();
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error retrieving cinemaCode", ex);
+            throw new IllegalArgumentException("Error retrieving cinemaCode: " + ex.getMessage(), ex);
         }
     }
 
@@ -1481,7 +1697,7 @@ public final class AdminOps extends DBManager {
             }
             return rankings;
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error retrieving rankings", ex);
+            throw new IllegalArgumentException("Error retrieving rankings: " + ex.getMessage(), ex);
         }
     }
 
@@ -1592,24 +1808,46 @@ public final class AdminOps extends DBManager {
      * @throws IllegalArgumentException If the member's type cannot be determined.
      */
     private CastMember getNewCastMember() throws SQLException {
-        final int code = this.getResultSet().getInt("CodiceMembroCast");
-        final String name = this.getResultSet().getString("NomeMembroCast");
-        final String surname = this.getResultSet().getString("CognomeMembroCast");
-        final LocalDate birthDate = this.getResultSet().getDate("DataNascitaMembroCast").toLocalDate();
-        final LocalDate debutDate = this.getResultSet().getDate("DataDebuttoCarrieraMembroCast").toLocalDate();
-        final String artisticName = this.getResultSet().getString("NomeArteMembroCast");
-
-        if (this.getResultSet().getBoolean("TipoAttoreMembroCast")
-                && !this.getResultSet().getBoolean("TipoRegistaMembroCast")) {
-            return new Actor(code, name, surname, birthDate, debutDate, artisticName);
-        } else if (!this.getResultSet().getBoolean("TipoAttoreMembroCast")
-                && this.getResultSet().getBoolean("TipoRegistaMembroCast")) {
-            return new Director(code, name, surname, birthDate, debutDate, artisticName);
-        } else if (this.getResultSet().getBoolean("TipoAttoreMembroCast")
-                && this.getResultSet().getBoolean("TipoRegistaMembroCast")) {
-            return new CastMember(code, name, surname, birthDate, debutDate, artisticName);
+        final int memberCastCode =
+                this.getResultSet().getInt("CodiceMembroCast");
+        final String memberCastName =
+                this.getResultSet().getString("NomeMembroCast");
+        final String memberCastSurname =
+                this.getResultSet().getString("CognomeMembroCast");
+        final LocalDate memberCastBirthDate =
+                this.getResultSet().getDate("DataNascitaMembroCast").toLocalDate();
+        final LocalDate memberCastDebutDate =
+                this.getResultSet().getDate("DataDebuttoCarrieraMembroCast").toLocalDate();
+        final String memberCastArtisticName =
+                this.getResultSet().getString("NomeArteMembroCast");
+        final boolean isActor = this.getResultSet().getBoolean("TipoAttoreMembroCast");
+        final boolean isDirector = this.getResultSet().getBoolean("TipoRegistaMembroCast");
+        if (isActor && !isDirector) {
+            return new Actor(
+                    memberCastCode,
+                    memberCastName,
+                    memberCastSurname,
+                    memberCastBirthDate,
+                    memberCastDebutDate,
+                    memberCastArtisticName);
+        } else if (!isActor && isDirector) {
+            return new Director(
+                    memberCastCode,
+                    memberCastName,
+                    memberCastSurname,
+                    memberCastBirthDate,
+                    memberCastDebutDate,
+                    memberCastArtisticName);
+        } else if (isActor && isDirector) {
+            return new CastMember(
+                    memberCastCode,
+                    memberCastName,
+                    memberCastSurname,
+                    memberCastBirthDate,
+                    memberCastDebutDate,
+                    memberCastArtisticName);
         }
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException("Unable to determine member type");
     }
 
     private void updateSeries(final int seriesCode, final int duration, final boolean add) {
@@ -1632,7 +1870,7 @@ public final class AdminOps extends DBManager {
             getPreparedStatement().setInt(2, seriesCode);
             getPreparedStatement().executeUpdate();
         } catch (SQLException ex) {
-            throw new IllegalArgumentException("Error updating series", ex);
+            throw new IllegalArgumentException("Error updating series: " + ex.getMessage(), ex);
         }
     }
 }

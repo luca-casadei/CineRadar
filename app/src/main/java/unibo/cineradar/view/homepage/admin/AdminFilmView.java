@@ -1,11 +1,12 @@
 package unibo.cineradar.view.homepage.admin;
 
 import unibo.cineradar.controller.administrator.AdminSessionController;
-import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.cast.Casting;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -13,9 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableModel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -30,7 +29,8 @@ public final class AdminFilmView extends AdminPanel {
     private static final long serialVersionUID = -302785493612487L;
     private static final String ERROR = "Errore";
     private static final String COMPLETE_DELETE = "Eliminazione completata";
-    private final JTable filmTable;
+    private JTable filmTable;
+    private JScrollPane filmScrollPane;
 
     /**
      * Constructs a new AdminFilmView with the specified ViewContext.
@@ -46,8 +46,8 @@ public final class AdminFilmView extends AdminPanel {
         welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
         this.add(welcomeLabel, BorderLayout.NORTH);
         this.filmTable = createFilmTable();
-        final JScrollPane scrollPane = new JScrollPane(filmTable);
-        this.add(scrollPane, BorderLayout.CENTER);
+        this.filmScrollPane = new JScrollPane(filmTable);
+        this.add(this.filmScrollPane, BorderLayout.CENTER);
         final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final JButton addButton = new JButton("Aggiungi Film");
         addButton.addActionListener(e -> addFilmDialog());
@@ -63,24 +63,35 @@ public final class AdminFilmView extends AdminPanel {
      * The dialog prompts the administrator to enter the title, age limit, plot, duration, and cast ID.
      */
     private void addFilmDialog() {
+        if (((AdminSessionController) getCurrentSessionContext().getController()).getCasting().isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Errore: Nessun casting disponibile",
+                    ERROR, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         final JTextField titleField = new JTextField(20);
         final JTextField ageLimitField = new JTextField(5);
         final JTextArea plotArea = new JTextArea(5, 20);
         final JTextField durationField = new JTextField(5);
-        final JTextField idCastField = new JTextField(5);
+        final JComboBox<Integer> castBox = new JComboBox<>(
+                ((AdminSessionController) getCurrentSessionContext().getController()).getCasting()
+                        .stream()
+                        .map(Casting::id)
+                        .toArray(Integer[]::new)
+        );
 
         final JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(new JLabel("Titolo:"));
         panel.add(titleField);
-        panel.add(new JLabel("Età Limite:"));
+        panel.add(new JLabel("Eta' Limite:"));
         panel.add(ageLimitField);
         panel.add(new JLabel("Trama:"));
         panel.add(new JScrollPane(plotArea));
         panel.add(new JLabel("Durata (minuti):"));
         panel.add(durationField);
         panel.add(new JLabel("ID Cast:"));
-        panel.add(idCastField);
+        panel.add(new JScrollPane(castBox));
 
         final JButton okButton = new JButton("OK");
         okButton.setEnabled(false);
@@ -88,8 +99,7 @@ public final class AdminFilmView extends AdminPanel {
             final boolean allFilled = isFieldFilled(titleField.getText())
                     && isFieldFilled(ageLimitField.getText())
                     && isFieldFilled(plotArea.getText())
-                    && isFieldFilled(durationField.getText())
-                    && isFieldFilled(idCastField.getText());
+                    && isFieldFilled(durationField.getText());
             okButton.setEnabled(allFilled);
         };
 
@@ -98,17 +108,25 @@ public final class AdminFilmView extends AdminPanel {
         ageLimitField.getDocument().addDocumentListener(listener);
         plotArea.getDocument().addDocumentListener(listener);
         durationField.getDocument().addDocumentListener(listener);
-        idCastField.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
-            addFilm(
-                    titleField.getText(),
-                    Integer.parseInt(ageLimitField.getText()),
-                    plotArea.getText(),
-                    Integer.parseInt(durationField.getText()),
-                    Integer.parseInt(idCastField.getText())
-            );
-            JOptionPane.getRootFrame().dispose();
+            try {
+                if (Integer.parseInt(ageLimitField.getText()) < 0
+                        || Integer.parseInt(durationField.getText()) < 0) {
+                    throw new NumberFormatException();
+                }
+                addFilm(
+                        titleField.getText(),
+                        Integer.parseInt(ageLimitField.getText()),
+                        plotArea.getText(),
+                        Integer.parseInt(durationField.getText()),
+                        Integer.parseInt(String.valueOf(castBox.getSelectedItem())));
+                JOptionPane.getRootFrame().dispose();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Errore: Inserire un Numero Valido in Eta' e Durata",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         final Object[] options = {okButton, "Cancel"};
@@ -185,20 +203,13 @@ public final class AdminFilmView extends AdminPanel {
     }
 
     private void updateFilmTable() {
+        remove(this.filmScrollPane);
         ((AdminSessionController) getCurrentSessionContext().getController()).updateDetailedFilms();
-        SwingUtilities.invokeLater(() -> {
-            final DefaultTableModel model = (DefaultTableModel) this.filmTable.getModel();
-            model.setRowCount(0);
-            for (final Film film : ((AdminSessionController) getCurrentSessionContext().getController()).getFilms()) {
-                model.addRow(new Object[]{
-                        film.getFilmId(),
-                        film.getTitle(),
-                        film.getAgeLimit(),
-                        film.getPlot(),
-                        film.getDuration()
-                });
-            }
-        });
+        this.filmTable = super.createFilmTable();
+        this.filmScrollPane = new JScrollPane(this.filmTable);
+        add(this.filmScrollPane, BorderLayout.CENTER);
+        revalidate();
+        repaint();
     }
 
     private boolean isFieldFilled(final String text) {

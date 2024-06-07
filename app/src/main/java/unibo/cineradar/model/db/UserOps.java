@@ -1491,28 +1491,24 @@ public final class UserOps extends DBManager {
 
 
     private CastMember getNewCastMember() throws SQLException {
+        final int code = this.getResultSet().getInt("CodiceMembroCast");
+        final String name = this.getResultSet().getString("NomeMembroCast");
+        final String surname = this.getResultSet().getString("CognomeMembroCast");
+        final LocalDate birthDate = this.getResultSet().getDate("DataNascitaMembroCast").toLocalDate();
+        final LocalDate debutDate = this.getResultSet().getDate("DataDebuttoCarrieraMembroCast").toLocalDate();
+        final String artisticName = this.getResultSet().getString("NomeArteMembroCast");
+
         if (this.getResultSet().getBoolean("TipoAttoreMembroCast")
                 && !this.getResultSet().getBoolean("TipoRegistaMembroCast")) {
-            return new Actor(
-                    this.getResultSet().getInt("CodiceMembroCast"),
-                    this.getResultSet().getString("NomeMembroCast"),
-                    this.getResultSet().getString("CognomeMembroCast"),
-                    this.getResultSet().getDate("DataNascitaMembroCast").toLocalDate(),
-                    this.getResultSet().getDate("DataDebuttoCarrieraMembroCast").toLocalDate(),
-                    this.getResultSet().getString("NomeArteMembroCast")
-            );
+            return new Actor(code, name, surname, birthDate, debutDate, artisticName);
         } else if (!this.getResultSet().getBoolean("TipoAttoreMembroCast")
                 && this.getResultSet().getBoolean("TipoRegistaMembroCast")) {
-            return new Director(
-                    this.getResultSet().getInt("CodiceMembroCast"),
-                    this.getResultSet().getString("NomeMembroCast"),
-                    this.getResultSet().getString("CognomeMembroCast"),
-                    this.getResultSet().getDate("DataNascitaMembroCast").toLocalDate(),
-                    this.getResultSet().getDate("DataDebuttoCarrieraMembroCast").toLocalDate(),
-                    this.getResultSet().getString("NomeArteMembroCast")
-            );
+            return new Director(code, name, surname, birthDate, debutDate, artisticName);
+        } else if (this.getResultSet().getBoolean("TipoAttoreMembroCast")
+                && this.getResultSet().getBoolean("TipoRegistaMembroCast")) {
+            return new CastMember(code, name, surname, birthDate, debutDate, artisticName);
         }
-        throw new IllegalArgumentException();
+        throw new SQLException();
     }
 
     /**
