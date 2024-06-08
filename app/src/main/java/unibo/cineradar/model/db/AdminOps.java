@@ -10,6 +10,7 @@ import unibo.cineradar.model.cast.Casting;
 import unibo.cineradar.model.cast.Director;
 import unibo.cineradar.model.cinema.Cinema;
 import unibo.cineradar.model.film.Film;
+import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.promo.Promo;
 import unibo.cineradar.model.ranking.CastRanking;
 import unibo.cineradar.model.ranking.EvalType;
@@ -1701,102 +1702,95 @@ public final class AdminOps extends DBManager {
         }
     }
 
-    /**
-     * Processes the ResultSet obtained from the executed SQL query and constructs Serie, Season, Episode, and CastMember objects.
-     *
-     * @return A list of Serie objects containing detailed information about series, seasons, episodes, and cast members.
-     * @throws SQLException If there's an issue with processing the ResultSet.
-     */
     private List<Serie> processResultSet() throws SQLException {
-        final List<Serie> detailedSeries = new ArrayList<>();
-        while (this.getResultSet().next()) {
-            final Serie serie = createSerieFromResultSet();
-            final Season season = createSeasonFromResultSet();
-            final Episode episode = createEpisodeFromResultSet();
-            final CastMember castMember = getNewCastMember();
-
-            addToDetailedSeries(detailedSeries, serie, season, episode, castMember);
-        }
-        return List.copyOf(detailedSeries);
+        final Map<Integer, Serie> seriesMap = new HashMap<>();
+        processSeries(seriesMap);
+        processGenres(seriesMap);
+        return List.copyOf(seriesMap.values());
     }
 
-    /**
-     * Creates a Serie object from the current row of the ResultSet.
-     *
-     * @return A Serie object representing the current series.
-     * @throws SQLException If there's an issue with retrieving data from the ResultSet.
-     */
-    private Serie createSerieFromResultSet() throws SQLException {
+    private void processSeries(final Map<Integer, Serie> seriesMap) throws SQLException {
+        while (this.getResultSet().next()) {
+            final int seriesCode = this.getResultSet().getInt("CodiceSerie");
+            final Serie serie = seriesMap.computeIfAbsent(seriesCode, k -> {
+                try {
+                    return createSerie(seriesCode);
+                } catch (SQLException e) {
+                    throw new IllegalArgumentException(e.getMessage(), e);
+                }
+            });
+            final Season season = createSeason(seriesCode);
+            final Episode episode = createEpisode(seriesCode);
+            final CastMember castMember = getNewCastMember();
+
+            if (!serie.getSeasons().contains(season)) {
+                season.addEpisode(episode);
+                season.addCastMember(castMember);
+                serie.addSeason(season);
+            } else {
+                final Season existingSeason = serie.getSeason(season);
+                addEpisodeIfNotExists(existingSeason, episode);
+                addCastMemberIfNotExists(existingSeason, castMember);
+            }
+        }
+    }
+
+    private void processGenres(final Map<Integer, Serie> seriesMap) throws SQLException {
+        final String genreQuery = """
+        SELECT NomeGenere, CodiceSerie, Descrizione, NumeroVisualizzati
+        FROM categorizzazione_serie
+        JOIN genere ON categorizzazione_serie.NomeGenere = genere.Nome""";
+        this.setPreparedStatement(this.getConnection().prepareStatement(genreQuery));
+        this.setResultSet(this.getPreparedStatement().executeQuery());
+
+        while (this.getResultSet().next()) {
+            final int seriesCode = this.getResultSet().getInt("CodiceSerie");
+            final Genre genre = new Genre(
+                    this.getResultSet().getString("NomeGenere"),
+                    this.getResultSet().getString("Descrizione"),
+                    this.getResultSet().getInt("NumeroVisualizzati"));
+
+            if (seriesMap.containsKey(seriesCode)) {
+                seriesMap.get(seriesCode).addGenre(genre);
+            }
+        }
+    }
+
+    private Serie createSerie(final int seriesCode) throws SQLException {
         return new Serie(
-                this.getResultSet().getInt(CODICE_SERIE),
+                seriesCode,
                 this.getResultSet().getString("TitoloSerie"),
                 this.getResultSet().getInt("EtaLimiteSerie"),
                 this.getResultSet().getString("TramaSerie"),
                 this.getResultSet().getInt("DurataComplessivaSerie"),
-                this.getResultSet().getInt("NumeroEpisodiSerie")
-        );
+                this.getResultSet().getInt("NumeroEpisodiSerie"));
     }
 
-    /**
-     * Creates a Season object from the current row of the ResultSet.
-     *
-     * @return A Season object representing the current season.
-     * @throws SQLException If there's an issue with retrieving data from the ResultSet.
-     */
-    private Season createSeasonFromResultSet() throws SQLException {
+    private Season createSeason(final int seriesCode) throws SQLException {
         return new Season(
-                this.getResultSet().getInt(CODICE_SERIE),
+                seriesCode,
                 this.getResultSet().getInt("NumeroStagione"),
                 this.getResultSet().getString("SuntoStagione"),
-                this.getResultSet().getInt("CodiceCast")
-        );
+                this.getResultSet().getInt("CodiceCast"));
     }
 
-    /**
-     * Creates an Episode object from the current row of the ResultSet.
-     *
-     * @return An Episode object representing the current episode.
-     * @throws SQLException If there's an issue with retrieving data from the ResultSet.
-     */
-    private Episode createEpisodeFromResultSet() throws SQLException {
+    private Episode createEpisode(final int seriesCode) throws SQLException {
         return new Episode(
-                this.getResultSet().getInt(CODICE_SERIE),
+                seriesCode,
                 this.getResultSet().getInt("NumeroStagione"),
                 this.getResultSet().getInt("NumeroEpisodio"),
-                this.getResultSet().getInt("DurataEpisodio")
-        );
+                this.getResultSet().getInt("DurataEpisodio"));
     }
 
-    /**
-     * Adds a Serie, Season, Episode, and CastMember to the list of detailed series.
-     *
-     * @param detailedSeries The list of detailed series.
-     * @param serie          The Serie object to add.
-     * @param season         The Season object to add.
-     * @param episode        The Episode object to add.
-     * @param castMember     The CastMember object to add.
-     */
-    private void addToDetailedSeries(
-            final List<Serie> detailedSeries, final Serie serie,
-            final Season season, final Episode episode, final CastMember castMember) {
-        if (!detailedSeries.contains(serie)) {
+    private void addEpisodeIfNotExists(final Season season, final Episode episode) {
+        if (!season.getEpisodes().contains(episode)) {
             season.addEpisode(episode);
+        }
+    }
+
+    private void addCastMemberIfNotExists(final Season season, final CastMember castMember) {
+        if (!season.getCast().getCastMemberList().contains(castMember)) {
             season.addCastMember(castMember);
-            serie.addSeason(season);
-            detailedSeries.add(serie);
-        } else {
-            final Serie existingSerie = detailedSeries.get(detailedSeries.indexOf(serie));
-            if (!existingSerie.getSeasons().contains(season)) {
-                season.addCastMember(castMember);
-                season.addEpisode(episode);
-                existingSerie.addSeason(season);
-            } else {
-                final Season existingSeason = existingSerie.getSeason(season);
-                if (!existingSeason.getEpisodes().contains(episode)) {
-                    existingSeason.addCastMember(castMember);
-                    existingSeason.addEpisode(episode);
-                }
-            }
         }
     }
 
