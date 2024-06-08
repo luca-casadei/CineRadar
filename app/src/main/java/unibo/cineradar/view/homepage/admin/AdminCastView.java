@@ -72,7 +72,7 @@ public class AdminCastView extends AdminPanel {
         deleteCastButton.addActionListener(e -> deleteCastDialog());
         buttonPanel.add(deleteCastButton);
         final JButton addCastMemberToCastButton = new JButton("Aggiungi Membro Cast ad un Cast");
-        addCastMemberToCastButton.addActionListener(e -> addCastMemberToCastDialog());
+        addCastMemberToCastButton.addActionListener(e -> addCastMemberToCastDialog(Optional.empty()));
         buttonPanel.add(addCastMemberToCastButton);
         final JButton deleteCastMemberToCastButton = new JButton("Elimina Membro Cast da un Cast");
         deleteCastMemberToCastButton.addActionListener(e -> deleteCastMemberToCastDialog());
@@ -300,11 +300,15 @@ public class AdminCastView extends AdminPanel {
      *
      * @param name        The name of the cast.
      */
-    private void addCast(
-            final Optional<String> name) {
+    private void addCast(final Optional<String> name) {
         ((AdminSessionController) getCurrentSessionContext().getController())
                 .addCast(name);
         updateCastTable();
+        addCastMemberDialog();
+        addCastMemberToCastDialog(Optional.of(
+                ((AdminSessionController) getCurrentSessionContext().getController())
+                        .getLastCastId()
+        ));
     }
 
     /**
@@ -356,37 +360,47 @@ public class AdminCastView extends AdminPanel {
                 .deleteCast(id);
     }
 
-    private void addCastMemberToCastDialog() {
+    private void addCastMemberToCastDialog(final Optional<Integer> castId) {
+        if (((AdminSessionController) getCurrentSessionContext().getController()).getCasting().isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Errore: Nessun casting disponibile",
+                    ERROR, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         final JTextField castMemberCodeField = new JTextField(5);
-        final JTextField castCodeField = new JTextField(5);
+        final JTextField castField = new JTextField(5);
 
         final JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(new JLabel("Codice del Cast:"));
-        panel.add(castCodeField);
+        panel.add(castField);
+        if (castId.isPresent()) {
+            castField.setText(castId.get().toString());
+            castField.setEditable(false);
+        }
         panel.add(new JLabel("Codice del Membro:"));
         panel.add(castMemberCodeField);
 
         final JButton okButton = new JButton("OK");
         okButton.setEnabled(false);
         final Runnable checkFields = () -> {
-            final boolean isFilled = isFieldFilled(castCodeField.getText())
+            final boolean isFilled = isFieldFilled(castField.getText())
                     && isFieldFilled(castMemberCodeField.getText());
             okButton.setEnabled(isFilled);
         };
 
         final DocumentListener listener = new ViewDocumentListener(checkFields);
-        castCodeField.getDocument().addDocumentListener(listener);
         castMemberCodeField.getDocument().addDocumentListener(listener);
+        castField.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
             try {
-                if (isNonNegativeNumber(castCodeField.getText())
+                if (isNonNegativeNumber(castField.getText())
                         || isNonNegativeNumber(castMemberCodeField.getText())) {
                     throw new NumberFormatException();
                 }
                 if (((AdminSessionController) getCurrentSessionContext().getController())
-                        .isCastAvailable(Integer.parseInt(castCodeField.getText()))) {
+                        .isCastAvailable(Integer.parseInt(castField.getText()))) {
                     JOptionPane.showMessageDialog(null,
                             "Errore: Cast non inserito",
                             ERROR, JOptionPane.ERROR_MESSAGE);
@@ -401,7 +415,7 @@ public class AdminCastView extends AdminPanel {
                 }
                 addCastMemberToCast(
                         Integer.parseInt(castMemberCodeField.getText()),
-                        Integer.parseInt(castCodeField.getText()));
+                        Integer.parseInt(castField.getText()));
                 JOptionPane.getRootFrame().dispose();
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this,
@@ -460,6 +474,14 @@ public class AdminCastView extends AdminPanel {
                 final int castCode = Integer.parseInt(castCodeField.getText());
                 final boolean deleted = deleteCastMemberToCast(castMemberCode, castCode);
                 if (deleted) {
+                    if (((AdminSessionController) getCurrentSessionContext().getController())
+                            .isEmptyCast(castCode)) {
+                        ((AdminSessionController) getCurrentSessionContext().getController())
+                                .deleteCast(castCode);
+                        updateCastTable();
+                        ((AdminSessionController) getCurrentSessionContext().getController())
+                                .deleteMultimediaCast(castCode);
+                    }
                     updateCasting();
                     JOptionPane.showMessageDialog(
                             null,

@@ -376,6 +376,17 @@ public final class AdministratorContext extends SessionContextImpl {
     }
 
     /**
+     * Retrieves the ID of the last added cast.
+     *
+     * @return The ID of the last cast added to the system.
+     */
+    public Integer getLastCastId() {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getLastCastId();
+        }
+    }
+
+    /**
      * Marks a request as complete in the system.
      *
      * @param code The code of the request to be marked as complete.
@@ -750,6 +761,29 @@ public final class AdministratorContext extends SessionContextImpl {
     public boolean isCast(final int castId) {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.isCast(castId);
+        }
+    }
+
+    /**
+     * Checks if the cast with the specified ID is empty.
+     *
+     * @param castId the ID of the cast to check.
+     * @return {@code true} if the cast is empty, {@code false} otherwise.
+     */
+    public boolean isEmptyCast(final int castId) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.isEmptyCast(castId);
+        }
+    }
+
+    /**
+     * Deletes the multimedia content associated with the specified cast ID.
+     *
+     * @param castId the ID of the cast whose multimedia content is to be deleted.
+     */
+    public void deleteMultimediaCast(final int castId) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.deleteMultimediaCast(castId);
         }
     }
 }

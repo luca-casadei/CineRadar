@@ -331,6 +331,15 @@ public final class AdminSessionController extends SessionControllerImpl {
     }
 
     /**
+     * Retrieves the ID of the last added cast.
+     *
+     * @return The ID of the last cast added to the system.
+     */
+    public Integer getLastCastId() {
+        return this.administratorContext.getLastCastId();
+    }
+
+    /**
      * Retrieves the ID of the last added season for a given series.
      *
      * @param seriesCode The code identifying the series.
@@ -680,5 +689,24 @@ public final class AdminSessionController extends SessionControllerImpl {
      */
     public boolean isCast(final int castId) {
         return this.administratorContext.isCast(castId);
+    }
+
+    /**
+     * Checks if the cast with the specified ID is empty.
+     *
+     * @param castId the ID of the cast to check.
+     * @return {@code true} if the cast is empty, {@code false} otherwise.
+     */
+    public boolean isEmptyCast(final int castId) {
+        return this.administratorContext.isEmptyCast(castId);
+    }
+
+    /**
+     * Deletes the multimedia content associated with the specified cast ID.
+     *
+     * @param castId the ID of the cast whose multimedia content is to be deleted.
+     */
+    public void deleteMultimediaCast(final int castId) {
+        this.administratorContext.deleteMultimediaCast(castId);
     }
 }

@@ -1266,8 +1266,8 @@ public final class AdminOps extends DBManager {
     public boolean isCastMemberAvailable(final int castMemberId) {
         Objects.requireNonNull(getConnection());
         try {
-            final String query = "SELECT Codice FROM membrocast "
-                    + "WHERE Codice = ?";
+            final String query = "SELECT Codice FROM membrocast"
+                    + " WHERE Codice = ?";
             setPreparedStatement(getConnection().prepareStatement(query));
             getPreparedStatement().setInt(1, castMemberId);
             setResultSet(getPreparedStatement().executeQuery());
@@ -1286,8 +1286,8 @@ public final class AdminOps extends DBManager {
     public boolean isCastAvailable(final int castId) {
         Objects.requireNonNull(getConnection());
         try {
-            final String query = "SELECT Codice FROM casting "
-                    + "WHERE Codice = ? ";
+            final String query = "SELECT Codice FROM casting"
+                    + " WHERE Codice = ? ";
             setPreparedStatement(getConnection().prepareStatement(query));
             getPreparedStatement().setInt(1, castId);
             setResultSet(getPreparedStatement().executeQuery());
@@ -1547,6 +1547,89 @@ public final class AdminOps extends DBManager {
     }
 
     /**
+     * Retrieves the ID of the most recently added cast.
+     *
+     * @return the ID of the last cast.
+     * @throws IllegalArgumentException if there is an error retrieving the last cast ID.
+     */
+    public Integer getLastCastId() {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT Codice"
+                    + " FROM casting"
+                    + " ORDER BY Codice DESC"
+                    + " LIMIT 1";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
+            if (getResultSet().next()) {
+                return getResultSet().getInt(1);
+            } else {
+                throw new SQLException();
+            }
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error retrieving last cast id", ex);
+        }
+    }
+
+    /**
+     * Checks if the cast with the specified ID is empty.
+     *
+     * @param castId the ID of the cast to check.
+     * @return {@code true} if the cast is empty, {@code false} otherwise.
+     * @throws IllegalArgumentException if there is an error checking if the cast is empty.
+     */
+    public boolean isEmptyCast(final int castId) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT * FROM partecipazione_cast "
+                    + "WHERE partecipazione_cast.CodiceCast = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, castId);
+            setResultSet(getPreparedStatement().executeQuery());
+            return !getResultSet().next();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Deletes the multimedia content associated with the specified cast ID.
+     *
+     * @param castId the ID of the cast whose multimedia content is to be deleted.
+     * @throws IllegalArgumentException if there is an error deleting the multimedia content.
+     */
+    public void deleteMultimediaCast(final int castId) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String seriesQuery = "SELECT CodiceSerie FROM STAGIONE "
+                    + "WHERE CodiceCast = ?";
+            setPreparedStatement(getConnection().prepareStatement(seriesQuery));
+            getPreparedStatement().setInt(1, castId);
+            setResultSet(getPreparedStatement().executeQuery());
+            while (getResultSet().next()) {
+                final int seriesId = getResultSet().getInt(CODICE_SERIE);
+                final String seasonDeleteQuery = "DELETE FROM STAGIONE "
+                        + "WHERE CodiceCast = ?";
+                setPreparedStatement(getConnection().prepareStatement(seasonDeleteQuery));
+                getPreparedStatement().setInt(1, castId);
+                getPreparedStatement().executeUpdate();
+                final String seriesDeleteQuery = "DELETE FROM STAGIONE "
+                        + "WHERE Codice = ?";
+                setPreparedStatement(getConnection().prepareStatement(seriesDeleteQuery));
+                getPreparedStatement().setInt(1, seriesId);
+                getPreparedStatement().executeUpdate();
+            }
+            final String filmQuery = "DELETE FROM FILM "
+                    + "WHERE CodiceCast = ?";
+            setPreparedStatement(getConnection().prepareStatement(filmQuery));
+            getPreparedStatement().setInt(1, castId);
+            getPreparedStatement().executeUpdate();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error deleting cinema: " + ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Inserts a new template promo or retrieves the code of an existing template promo with the specified discount percentage.
      * If a template promo with the given discount percentage exists, its code is returned. Otherwise, a new template promo
      * is inserted and its generated code is returned.
@@ -1711,7 +1794,7 @@ public final class AdminOps extends DBManager {
 
     private void processSeries(final Map<Integer, Serie> seriesMap) throws SQLException {
         while (this.getResultSet().next()) {
-            final int seriesCode = this.getResultSet().getInt("CodiceSerie");
+            final int seriesCode = this.getResultSet().getInt(CODICE_SERIE);
             final Serie serie = seriesMap.computeIfAbsent(seriesCode, k -> {
                 try {
                     return createSerie(seriesCode);
