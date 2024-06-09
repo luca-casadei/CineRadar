@@ -12,7 +12,10 @@ import unibo.cineradar.model.cinema.Cinema;
 import unibo.cineradar.model.context.administrator.AdministratorContext;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
+import unibo.cineradar.model.promo.GenrePromo;
 import unibo.cineradar.model.promo.Promo;
+import unibo.cineradar.model.promo.SinglePromo;
+import unibo.cineradar.model.promo.TemplatePromo;
 import unibo.cineradar.model.ranking.CastRanking;
 import unibo.cineradar.model.ranking.EvalType;
 import unibo.cineradar.model.ranking.UserRanking;
@@ -369,17 +372,12 @@ public final class AdminSessionController extends SessionControllerImpl {
     }
 
     /**
-     * Adds a new promotional offer.
+     * Adds a new multiple promo offer.
      *
-     * @param percentage the discount percentage of the promotional offer.
-     * @param expiration the expiration date of the promotional offer.
+     * @param percentage the discount percentage of the multiple promo offer.
      */
-    public void addMultiplePromo(final int percentage, final LocalDate expiration) {
-        this.administratorContext.addMultiplePromo(new Promo(
-                0,
-                percentage,
-                expiration
-        ));
+    public void addMultiplePromo(final int percentage) {
+        this.administratorContext.addMultiplePromo(percentage);
     }
 
     /**
@@ -479,12 +477,15 @@ public final class AdminSessionController extends SessionControllerImpl {
      *
      * @param percentage the discount percentage of the promo.
      * @param expiration the expiration date of the promo.
-     * @param genre the genre to which the promo is to be added.
+     * @param genre      the genre to which the promo is to be added.
+     * @param multipleId
      */
-    public void addGenrePromo(final int percentage, final LocalDate expiration, final String genre) {
+    public void addGenrePromo(
+            final int percentage, final LocalDate expiration, final String genre, final int multipleId) {
         this.administratorContext.addGenrePromo(
                 new Promo(0, percentage, expiration),
-                genre
+                genre,
+                multipleId
         );
     }
 
@@ -497,20 +498,10 @@ public final class AdminSessionController extends SessionControllerImpl {
         return this.administratorContext.getGenres();
     }
 
-    /**
-     * Adds a promotional offer for a specific multimedia type.
-     * This method creates a new {@link Promo} object with the specified percentage discount and expiration date,
-     * and adds it to the specified multimedia type (either "Serie" or "Film") and multimedia code.
-     *
-     * @param percentage the discount percentage of the promo.
-     * @param expiration the expiration date of the promo.
-     * @param multimediaType the type of multimedia (either "Serie" or "Film").
-     * @param multimediaCode the code of the multimedia item to which the promo is to be added.
-     */
     public void addSinglePromo(
-            final int percentage, final LocalDate expiration, final String multimediaType, final int multimediaCode) {
+            final int templateCode, final String multimediaType, final int multimediaCode) {
         this.administratorContext.addSinglePromo(
-                new Promo(0, percentage, expiration),
+                templateCode,
                 multimediaType,
                 multimediaCode);
     }
@@ -718,5 +709,41 @@ public final class AdminSessionController extends SessionControllerImpl {
      */
     public List<Integer> getCastLinked(final int castMemberCode) {
         return this.administratorContext.getCastLinked(castMemberCode);
+    }
+
+    public List<Integer> getMultiples() {
+        return this.administratorContext.getMultiples();
+    }
+
+    public void addTemplatePromo(final int percentage) {
+        this.administratorContext.addTemplatePromo(percentage);
+    }
+
+    public List<TemplatePromo> getTemplatePromos() {
+        return this.administratorContext.getTemplatePromos();
+    }
+
+    public List<SinglePromo> getSinglePromos() {
+        return this.administratorContext.getSinglePromos();
+    }
+
+    public List<GenrePromo> getGenrePromos() {
+        return this.administratorContext.getGenrePromos();
+    }
+
+    public void addPromo(final int code, final LocalDate expiration) {
+        this.administratorContext.addPromo(code, expiration);
+    }
+
+    public boolean isTemplatePromoAvailable(final int codePromo) {
+        return !this.administratorContext.isTemplatePromoAvailable(codePromo);
+    }
+
+    public boolean isMultipleAvailable(final int genrePromo) {
+        return !this.administratorContext.isMultipleAvailable(genrePromo);
+    }
+
+    public boolean deleteTemplatePromo(final int code) {
+        return this.administratorContext.deleteTemplatePromo(code);
     }
 }

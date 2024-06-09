@@ -1,7 +1,6 @@
 package unibo.cineradar.model.db;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.mariadb.jdbc.Statement;
 import unibo.cineradar.model.card.CardReg;
 import unibo.cineradar.model.cast.Actor;
 import unibo.cineradar.model.cast.Cast;
@@ -11,7 +10,10 @@ import unibo.cineradar.model.cast.Director;
 import unibo.cineradar.model.cinema.Cinema;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
+import unibo.cineradar.model.promo.GenrePromo;
 import unibo.cineradar.model.promo.Promo;
+import unibo.cineradar.model.promo.SinglePromo;
+import unibo.cineradar.model.promo.TemplatePromo;
 import unibo.cineradar.model.ranking.CastRanking;
 import unibo.cineradar.model.ranking.EvalType;
 import unibo.cineradar.model.ranking.UserRanking;
@@ -869,33 +871,12 @@ public final class AdminOps extends DBManager {
         }
     }
 
-    /**
-     * Adds a new promotional entry for a multiple item promotion.
-     * If the promotional template does not already exist in the MULTIPLO table, it is inserted.
-     * The promo details are then added to the PROMO table.
-     *
-     * @param promo the Promo object containing the details of the promotion.
-     * @throws NullPointerException if the database connection is null.
-     */
-    public void addMultiplePromo(final Promo promo) {
+    public void addMultiplePromo(final int percentage) {
         Objects.requireNonNull(getConnection());
-        final String alrExistMultipleQuery = "SELECT CodiceTemplatePromo FROM MULTIPLO WHERE CodiceTemplatePromo = ?";
         final String multipleQuery = "INSERT INTO MULTIPLO (CodiceTemplatePromo) VALUES (?)";
-        final String promoQuery = "INSERT INTO PROMO (CodiceTemplatePromo, Scadenza) VALUES (?,?)";
         try {
-            getConnection().setAutoCommit(false);
-            final int generatedPromoCode = insertOrUpdateTemplatePromo(promo.percentageDiscount());
-            setPreparedStatement(getConnection().prepareStatement(alrExistMultipleQuery));
-            getPreparedStatement().setInt(1, generatedPromoCode);
-            setResultSet(getPreparedStatement().executeQuery());
-            if (!getResultSet().next()) {
-                setPreparedStatement(getConnection().prepareStatement(multipleQuery));
-                getPreparedStatement().setInt(1, generatedPromoCode);
-                getPreparedStatement().executeUpdate();
-            }
-            setPreparedStatement(getConnection().prepareStatement(promoQuery));
-            getPreparedStatement().setInt(1, generatedPromoCode);
-            getPreparedStatement().setDate(2, Date.valueOf(promo.expiration()));
+            setPreparedStatement(getConnection().prepareStatement(multipleQuery));
+            getPreparedStatement().setInt(1, percentage);
             getPreparedStatement().executeUpdate();
             getConnection().commit();
         } catch (SQLException ex) {
@@ -907,23 +888,23 @@ public final class AdminOps extends DBManager {
      * Adds a new promotional entry for a genre-specific promotion.
      * Inserts the promotional details into the PROMO_GENERE table and then into the PROMO table.
      *
-     * @param promo the Promo object containing the details of the promotion.
-     * @param genre the genre to which the promotion applies.
+     * @param promo      the Promo object containing the details of the promotion.
+     * @param genre      the genre to which the promotion applies.
+     * @param multipleId
      * @throws NullPointerException if the database connection is null.
      */
-    public void addGenrePromo(final Promo promo, final String genre) {
+    public void addGenrePromo(final Promo promo, final String genre, final int multipleId) {
         Objects.requireNonNull(getConnection());
         final String genreQuery = "INSERT INTO PROMO_GENERE (NomeGenere, CodiceTemplateMultiplo) VALUES (?,?)";
         final String promoQuery = "INSERT INTO PROMO (CodiceTemplatePromo, Scadenza) VALUES (?,?)";
         try {
             getConnection().setAutoCommit(false);
-            final int generatedPromoCode = insertOrUpdateTemplatePromo(promo.percentageDiscount());
             setPreparedStatement(getConnection().prepareStatement(genreQuery));
             getPreparedStatement().setString(1, genre);
-            getPreparedStatement().setInt(2, generatedPromoCode);
+            getPreparedStatement().setInt(2, multipleId);
             getPreparedStatement().executeUpdate();
             setPreparedStatement(getConnection().prepareStatement(promoQuery));
-            getPreparedStatement().setInt(1, generatedPromoCode);
+            getPreparedStatement().setInt(1, multipleId);
             getPreparedStatement().setDate(2, Date.valueOf(promo.expiration()));
             getPreparedStatement().executeUpdate();
             getConnection().commit();
@@ -932,26 +913,12 @@ public final class AdminOps extends DBManager {
         }
     }
 
-
-    /**
-     * Adds a new promotional entry for a single item promotion.
-     * Depending on the type of multimedia (either a series or a film), inserts the appropriate details
-     * into the SINGOLO table and then into the PROMO table.
-     *
-     * @param promo          the Promo object containing the details of the promotion.
-     * @param multimediaType the type of multimedia item (either "Serie" or another type indicating a film).
-     * @param multimediaCode the code identifying the specific series or film to which the promotion applies.
-     * @throws NullPointerException if the database connection is null.
-     */
-    public void addSinglePromo(final Promo promo, final String multimediaType, final int multimediaCode) {
+    public void addSinglePromo(final int templateCode, final String multimediaType, final int multimediaCode) {
         Objects.requireNonNull(getConnection());
         final String singleQuery = "INSERT INTO SINGOLO (CodiceTemplatePromo, CodiceSerie, CodiceFilm) VALUES (?,?,?)";
-        final String promoQuery = "INSERT INTO PROMO (CodiceTemplatePromo, Scadenza) VALUES (?,?)";
         try {
-            getConnection().setAutoCommit(false);
-            final int generatedPromoCode = insertOrUpdateTemplatePromo(promo.percentageDiscount());
             setPreparedStatement(getConnection().prepareStatement(singleQuery));
-            getPreparedStatement().setInt(1, generatedPromoCode);
+            getPreparedStatement().setInt(1, templateCode);
             if ("Serie".equals(multimediaType)) {
                 getPreparedStatement().setInt(2, multimediaCode);
                 getPreparedStatement().setNull(3, java.sql.Types.INTEGER);
@@ -960,11 +927,6 @@ public final class AdminOps extends DBManager {
                 getPreparedStatement().setInt(3, multimediaCode);
             }
             getPreparedStatement().executeUpdate();
-            setPreparedStatement(getConnection().prepareStatement(promoQuery));
-            getPreparedStatement().setInt(1, generatedPromoCode);
-            getPreparedStatement().setDate(2, Date.valueOf(promo.expiration()));
-            getPreparedStatement().executeUpdate();
-            getConnection().commit();
         } catch (SQLException ex) {
             handleSQLException(ex);
         }
@@ -1659,35 +1621,148 @@ public final class AdminOps extends DBManager {
         }
     }
 
-    /**
-     * Inserts a new template promo or retrieves the code of an existing template promo with the specified discount percentage.
-     * If a template promo with the given discount percentage exists, its code is returned. Otherwise, a new template promo
-     * is inserted and its generated code is returned.
-     *
-     * @param percentageDiscount the discount percentage of the template promo.
-     * @return the code of the existing or newly inserted template promo.
-     * @throws SQLException          if there is an error while interacting with the database.
-     * @throws IllegalStateException if unable to insert or update the template promo.
-     */
-    private int insertOrUpdateTemplatePromo(final int percentageDiscount) throws SQLException {
-        final String alrExistTemplatePromoQuery = "SELECT CodicePromo FROM TEMPLATEPROMO "
-                + "WHERE PercentualeSconto = ?";
-        final String templatePromoQuery = "INSERT INTO TEMPLATEPROMO (PercentualeSconto) VALUES (?)";
-        setPreparedStatement(getConnection().prepareStatement(alrExistTemplatePromoQuery));
-        getPreparedStatement().setInt(1, percentageDiscount);
-        ResultSet rs = getPreparedStatement().executeQuery();
-        if (rs.next()) {
-            return rs.getInt(1);
-        } else {
-            setPreparedStatement(getConnection().prepareStatement(templatePromoQuery, Statement.RETURN_GENERATED_KEYS));
-            getPreparedStatement().setInt(1, percentageDiscount);
-            getPreparedStatement().executeUpdate();
-            rs = getPreparedStatement().getGeneratedKeys();
-            if (rs.next()) {
-                return rs.getInt(1);
+    public List<Integer> getMultiples() {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT CodiceTemplatePromo FROM MULTIPLO";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
+            final List<Integer> multipleCodes = new ArrayList<>();
+            while (getResultSet().next()) {
+                multipleCodes.add(getResultSet().getInt("CodiceTemplatePromo"));
             }
+            return multipleCodes;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
-        throw new IllegalStateException("Unable to insert or update template promo");
+    }
+
+    public void addTemplatePromo(final int percentage) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "INSERT INTO TEMPLATEPROMO "
+                    + "(PercentualeSconto) "
+                    + "VALUES (?)";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, percentage);
+            getPreparedStatement().executeUpdate();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error adding template promo: " + ex.getMessage(), ex);
+        }
+    }
+
+    public List<TemplatePromo> getTemplatePromos() {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT * FROM TEMPLATEPROMO";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
+            final List<TemplatePromo> templatePromos = new ArrayList<>();
+            while (getResultSet().next()) {
+                templatePromos.add(new TemplatePromo(
+                        getResultSet().getInt("CodicePromo"),
+                        getResultSet().getInt("PercentualeSconto")
+                ));
+            }
+            return templatePromos;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    public List<SinglePromo> getSinglePromos() {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT * FROM SINGOLO";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
+            final List<SinglePromo> singlePromos = new ArrayList<>();
+            while (getResultSet().next()) {
+                singlePromos.add(new SinglePromo(
+                        getResultSet().getInt("CodiceTemplatePromo"),
+                        getResultSet().getInt("CodiceSerie"),
+                        getResultSet().getInt("CodiceFilm")
+                ));
+            }
+            return singlePromos;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    public List<GenrePromo> getGenrePromos() {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT * FROM PROMO_GENERE";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
+            final List<GenrePromo> genrePromos = new ArrayList<>();
+            while (getResultSet().next()) {
+                genrePromos.add(new GenrePromo(
+                        getResultSet().getInt("CodiceTemplateMultiplo"),
+                        getResultSet().getString("NomeGenere")
+                ));
+            }
+            return genrePromos;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    public void addPromo(final int code, final LocalDate expiration) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "INSERT INTO PROMO "
+                    + "(CodiceTemplatePromo, Scadenza)"
+                    + " VALUES (?,?)";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, code);
+            getPreparedStatement().setDate(2, Date.valueOf(expiration));
+            getPreparedStatement().executeUpdate();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error adding promo: " + ex.getMessage(), ex);
+        }
+    }
+
+    public boolean isTemplatePromoAvailable(final int codePromo) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT CodicePromo FROM TEMPLATEPROMO "
+                    + "WHERE CodicePromo = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, codePromo);
+            setResultSet(getPreparedStatement().executeQuery());
+            return getResultSet().next();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    public boolean isMultipleAvailable(final int genrePromo) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT CodiceTemplatePromo FROM MULTIPLO "
+                    + "WHERE CodiceTemplatePromo = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, genrePromo);
+            setResultSet(getPreparedStatement().executeQuery());
+            return getResultSet().next();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    public boolean deleteTemplatePromo(final int code) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "DELETE FROM TEMPLATEPROMO WHERE CodicePromo = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, code);
+            final int rowsAffected = getPreparedStatement().executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error deleting template promo: " + ex.getMessage(), ex);
+        }
     }
 
     /**

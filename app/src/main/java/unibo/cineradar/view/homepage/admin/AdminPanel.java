@@ -9,7 +9,10 @@ import unibo.cineradar.model.cast.Director;
 import unibo.cineradar.model.cinema.Cinema;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Multimedia;
+import unibo.cineradar.model.promo.GenrePromo;
 import unibo.cineradar.model.promo.Promo;
+import unibo.cineradar.model.promo.SinglePromo;
+import unibo.cineradar.model.promo.TemplatePromo;
 import unibo.cineradar.model.serie.Serie;
 import unibo.cineradar.model.utente.Registrar;
 import unibo.cineradar.model.utente.User;
@@ -106,6 +109,118 @@ public abstract class AdminPanel extends JPanel {
 
         this.customizeTableHeader(table);
 
+        return table;
+    }
+
+    /**
+     * Creates the table of the template promo.
+     *
+     * @return A JTable of a template promo list.
+     */
+    protected final JTable createTemplatePromoTable() {
+        final DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("CodiceTemplatePromo");
+        model.addColumn("Percentuale");
+
+        for (final TemplatePromo promo
+                : ((AdminSessionController) this.getCurrentSessionContext().getController()).getTemplatePromos()) {
+            model.addRow(new Object[]{
+                    promo.codePromo(),
+                    promo.percentage()
+            });
+        }
+
+        final JTable table = this.createCustomTable(model);
+        final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setDefaultEditor(Object.class, null);
+        table.setRowHeight(20);
+        this.customizeTableHeader(table);
+        return table;
+    }
+
+    /**
+     * Creates the table of the single promo.
+     *
+     * @return A JTable of a single promo list.
+     */
+    protected final JTable createSinglePromoTable() {
+        final DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("CodiceSingolo");
+        model.addColumn("CodiceSerie");
+        model.addColumn("CodiceFilm");
+
+        for (final SinglePromo promo
+                : ((AdminSessionController) this.getCurrentSessionContext().getController()).getSinglePromos()) {
+            model.addRow(new Object[]{
+                    promo.codePromo(),
+                    promo.seriesCode(),
+                    promo.filmCode()
+            });
+        }
+
+        final JTable table = this.createCustomTable(model);
+        final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setDefaultEditor(Object.class, null);
+        table.setRowHeight(20);
+        this.customizeTableHeader(table);
+        return table;
+    }
+
+    /**
+     * Creates the table of the single promo.
+     *
+     * @return A JTable of a single promo list.
+     */
+    protected final JTable createMultiplePromoTable() {
+        final DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("CodiceMultiplo");
+
+        for (final Integer idPromo
+                : ((AdminSessionController) this.getCurrentSessionContext().getController()).getMultiples()) {
+            model.addRow(new Object[]{
+                    idPromo
+            });
+        }
+
+        final JTable table = this.createCustomTable(model);
+        final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setDefaultEditor(Object.class, null);
+        table.setRowHeight(20);
+        this.customizeTableHeader(table);
+        return table;
+    }
+
+    /**
+     * Creates the table of the genre promos.
+     *
+     * @return A JTable of a genre promo list.
+     */
+    protected final JTable createGenrePromoTable() {
+        final DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("CodicePromoGenere");
+        model.addColumn("NomeGenere");
+
+        for (final GenrePromo promo
+                : ((AdminSessionController) this.getCurrentSessionContext().getController()).getGenrePromos()) {
+            model.addRow(new Object[]{
+                    promo.genrePromoCode(),
+                    promo.genre()
+            });
+        }
+
+        final JTable table = this.createCustomTable(model);
+        final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setDefaultEditor(Object.class, null);
+        table.setRowHeight(20);
+        this.customizeTableHeader(table);
         return table;
     }
 

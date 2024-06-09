@@ -9,7 +9,10 @@ import unibo.cineradar.model.context.SessionContextImpl;
 import unibo.cineradar.model.db.AdminOps;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
+import unibo.cineradar.model.promo.GenrePromo;
 import unibo.cineradar.model.promo.Promo;
+import unibo.cineradar.model.promo.SinglePromo;
+import unibo.cineradar.model.promo.TemplatePromo;
 import unibo.cineradar.model.ranking.CastRanking;
 import unibo.cineradar.model.ranking.EvalType;
 import unibo.cineradar.model.ranking.UserRanking;
@@ -411,16 +414,9 @@ public final class AdministratorContext extends SessionContextImpl {
         }
     }
 
-    /**
-     * Adds a new promotional offer.
-     * This method uses the {@link AdminOps} class to manage promotional operations.
-     *
-     * @param promo the {@link Promo} object representing the promotional offer to be added.
-     * @throws RuntimeException if an error occurs while adding the promotional offer.
-     */
-    public void addMultiplePromo(final Promo promo) {
+    public void addMultiplePromo(final int percentage) {
         try (AdminOps mgr = new AdminOps()) {
-            mgr.addMultiplePromo(promo);
+            mgr.addMultiplePromo(percentage);
         }
     }
 
@@ -537,12 +533,13 @@ public final class AdministratorContext extends SessionContextImpl {
      * This method utilizes an {@link AdminOps} instance to add a genre-specific promo.
      * The {@link Promo} object represents the promotional offer, and the genre specifies where to apply it.
      *
-     * @param promo the {@link Promo} object representing the promotional offer.
-     * @param genre the genre to which the promo is to be added.
+     * @param promo      the {@link Promo} object representing the promotional offer.
+     * @param genre      the genre to which the promo is to be added.
+     * @param multipleId
      */
-    public void addGenrePromo(final Promo promo, final String genre) {
+    public void addGenrePromo(final Promo promo, final String genre, final int multipleId) {
         try (AdminOps mgr = new AdminOps()) {
-            mgr.addGenrePromo(promo, genre);
+            mgr.addGenrePromo(promo, genre, multipleId);
         }
     }
 
@@ -558,20 +555,10 @@ public final class AdministratorContext extends SessionContextImpl {
         }
     }
 
-    /**
-     * Adds a promotional offer for a specific multimedia type.
-     * This method uses an {@link AdminOps} instance to add a promo
-     * to a specific multimedia type (either "Serie" or "Film") and multimedia code.
-     * The {@link Promo} object represents the promotional offer.
-     *
-     * @param promo the {@link Promo} object representing the promotional offer.
-     * @param multimediaType the type of multimedia (either "Serie" or "Film").
-     * @param multimediaCode the code of the multimedia item to which the promo is to be added.
-     */
     public void addSinglePromo(
-            final Promo promo, final String multimediaType, final int multimediaCode) {
+            final int templateCode, final String multimediaType, final int multimediaCode) {
         try (AdminOps mgr = new AdminOps()) {
-            mgr.addSinglePromo(promo, multimediaType, multimediaCode);
+            mgr.addSinglePromo(templateCode, multimediaType, multimediaCode);
         }
     }
 
@@ -798,6 +785,60 @@ public final class AdministratorContext extends SessionContextImpl {
     public List<Integer> getCastLinked(final int castMemberCode) {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.getCastLinked(castMemberCode);
+        }
+    }
+
+    public List<Integer> getMultiples() {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getMultiples();
+        }
+    }
+
+    public void addTemplatePromo(final int percentage) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.addTemplatePromo(percentage);
+        }
+    }
+
+    public List<TemplatePromo> getTemplatePromos() {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getTemplatePromos();
+        }
+    }
+
+    public List<SinglePromo> getSinglePromos() {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getSinglePromos();
+        }
+    }
+
+    public List<GenrePromo> getGenrePromos() {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getGenrePromos();
+        }
+    }
+
+    public void addPromo(final int code, final LocalDate expiration) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.addPromo(code, expiration);
+        }
+    }
+
+    public boolean isTemplatePromoAvailable(final int codePromo) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.isTemplatePromoAvailable(codePromo);
+        }
+    }
+
+    public boolean isMultipleAvailable(final int genrePromo) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.isMultipleAvailable(genrePromo);
+        }
+    }
+
+    public boolean deleteTemplatePromo(final int code) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.deleteTemplatePromo(code);
         }
     }
 }
