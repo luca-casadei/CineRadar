@@ -57,6 +57,15 @@ public final class AdminSerieView extends AdminPanel {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
+    /**
+     * Updates the panel with the latest information.
+     * This method triggers the refresh of the series table.
+     */
+    @Override
+    public void updatePanel() {
+        refreshSeriesTable();
+    }
+
     private JPanel getButtonPanel() {
         final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final JButton addSeriesButton = new JButton("Aggiungi Serie");

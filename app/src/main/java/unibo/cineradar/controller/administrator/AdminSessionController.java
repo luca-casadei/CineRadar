@@ -709,4 +709,14 @@ public final class AdminSessionController extends SessionControllerImpl {
     public void deleteMultimediaCast(final int castId) {
         this.administratorContext.deleteMultimediaCast(castId);
     }
+
+    /**
+     * Retrieves a list of cast member codes that are linked to a specified cast member.
+     *
+     * @param castMemberCode the unique code of the cast member whose linked cast members are to be retrieved
+     * @return a list of integers representing the codes of the cast members linked to the specified cast member
+     */
+    public List<Integer> getCastLinked(final int castMemberCode) {
+        return this.administratorContext.getCastLinked(castMemberCode);
+    }
 }

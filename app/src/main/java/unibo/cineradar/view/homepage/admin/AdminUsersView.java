@@ -40,6 +40,15 @@ public class AdminUsersView extends AdminPanel {
         this.add(buttonPanel, BorderLayout.SOUTH);
     }
 
+    /**
+     * Updates the panel with the latest information.
+     * This method triggers the update of the users.
+     */
+    @Override
+    public void updatePanel() {
+        updateUsers();
+    }
+
     private JPanel getButtonPanel() {
         final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final JButton deleteMemberButton = new JButton("Elimina Utente");

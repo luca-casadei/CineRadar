@@ -56,6 +56,15 @@ public class AdminRankingsView extends AdminPanel {
         this.add(new JScrollPane(fiveBestReviewersTable), BorderLayout.CENTER);
     }
 
+    /**
+     * Updates the panel.
+     * This method does not trigger any specific updates but can be overridden to provide custom update behavior.
+     */
+    @Override
+    public void updatePanel() {
+        // Implement custom update behavior here if needed
+    }
+
     private JPanel getRankingsButtonPanel() {
         final JPanel rankingsButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final JButton fiveBestReviewersButton = new JButton(BEST_REVIEWERS_FOR_NUMBER);

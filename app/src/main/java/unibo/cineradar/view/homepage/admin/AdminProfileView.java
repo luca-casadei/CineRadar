@@ -51,6 +51,15 @@ public final class AdminProfileView extends AdminPanel {
         }
     }
 
+    /**
+     * Updates the panel.
+     * This method does not trigger any specific updates but can be overridden to provide custom update behavior.
+     */
+    @Override
+    public void updatePanel() {
+        // Implement custom update behavior here if needed
+    }
+
     private JPanel createAdminInfoPanel(final Administrator admin) {
         final JPanel adminInfoPanel = new JPanel();
         adminInfoPanel.setLayout(new BoxLayout(adminInfoPanel, BoxLayout.Y_AXIS));

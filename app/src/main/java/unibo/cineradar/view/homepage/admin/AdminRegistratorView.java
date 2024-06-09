@@ -52,6 +52,16 @@ public class AdminRegistratorView extends AdminPanel {
         this.add(buttonPanel, BorderLayout.SOUTH);
     }
 
+    /**
+     * Updates the panel with the latest information.
+     * This method triggers the update of the cinemas and registrars.
+     */
+    @Override
+    public void updatePanel() {
+        updateCinemas();
+        updateRegistrars();
+    }
+
     private JPanel getButtonPanel() {
         final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final JButton addRegButton = new JButton("Aggiungi Registratore");

@@ -64,6 +64,15 @@ public final class AdminRequestsView extends AdminPanel {
     }
 
     /**
+     * Updates the panel with the latest information.
+     * This method triggers the update of the request table.
+     */
+    @Override
+    public void updatePanel() {
+        updateRequestTable();
+    }
+
+    /**
      * Updates the table displaying requests with the latest data.
      */
     private void updateRequestTable() {

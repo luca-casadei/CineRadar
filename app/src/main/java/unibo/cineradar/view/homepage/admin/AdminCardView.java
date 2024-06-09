@@ -44,6 +44,15 @@ public class AdminCardView extends AdminPanel {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
+    /**
+     * Updates the panel.
+     * This method does not trigger any specific updates but can be overridden to provide custom update behavior.
+     */
+    @Override
+    public void updatePanel() {
+        // Implement custom update behavior here if needed
+    }
+
     private void assignPromoDialog() {
         final JTextField codePromoField = new JTextField(5);
         final DatePicker expirationField = new DatePicker();

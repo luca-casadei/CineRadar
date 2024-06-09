@@ -23,6 +23,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.io.Serial;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -55,6 +56,17 @@ public class AdminCastView extends AdminPanel {
         add(castMemberScrollPane, BorderLayout.CENTER);
         final JPanel buttonPanel = getButtonPanel();
         add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    /**
+     * Updates the panel with the latest information.
+     * This method triggers the update of the cast table, member cast table, and casting information.
+     */
+    @Override
+    public void updatePanel() {
+        updateCastTable();
+        updateMemberCastTable();
+        updateCasting();
     }
 
     private JPanel getButtonPanel() {
@@ -118,8 +130,10 @@ public class AdminCastView extends AdminPanel {
     /**
      * Displays a dialog for adding a cast member.
      * The dialog prompts the administrator to enter the details of the cast member.
+     *
+     * @return True if the dialog is closed without adding a cast member, otherwise false.
      */
-    private void addCastMemberDialog() {
+    private boolean addCastMemberDialog() {
         final JTextField nameField = new JTextField(20);
         final JTextField surnameField = new JTextField(20);
         final DatePicker birthdayField = new DatePicker();
@@ -196,9 +210,10 @@ public class AdminCastView extends AdminPanel {
         });
 
         final Object[] options = {okButton, CANCEL};
-        JOptionPane.showOptionDialog(null, panel, "Aggiungi Membro Cast",
+        final int option = JOptionPane.showOptionDialog(null, panel, "Aggiungi Membro Cast",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                 null, options, options[0]);
+        return option == -1;
     }
 
     /**
@@ -233,8 +248,21 @@ public class AdminCastView extends AdminPanel {
                         "Elimina Membro Cast", JOptionPane.PLAIN_MESSAGE));
         try {
             final int code = Integer.parseInt(input);
+            final List<Integer> castCodes = ((AdminSessionController) getCurrentSessionContext().getController())
+                    .getCastLinked(code);
             final boolean deleted = deleteCastMember(code);
             if (deleted) {
+                for (final Integer castCode : castCodes) {
+                    if (((AdminSessionController) getCurrentSessionContext().getController())
+                            .isEmptyCast(castCode)) {
+                        ((AdminSessionController) getCurrentSessionContext().getController())
+                                .deleteMultimediaCast(castCode);
+                        ((AdminSessionController) getCurrentSessionContext().getController())
+                                .deleteCast(castCode);
+                    }
+                }
+                updateCastTable();
+                updateCasting();
                 updateMemberCastTable();
                 JOptionPane.showMessageDialog(
                         null,
@@ -304,11 +332,30 @@ public class AdminCastView extends AdminPanel {
         ((AdminSessionController) getCurrentSessionContext().getController())
                 .addCast(name);
         updateCastTable();
-        addCastMemberDialog();
-        addCastMemberToCastDialog(Optional.of(
-                ((AdminSessionController) getCurrentSessionContext().getController())
-                        .getLastCastId()
-        ));
+
+        final int option = JOptionPane.showConfirmDialog(null,
+                "Vuoi creare un nuovo membro del cast?",
+                "Aggiungi Membro Cast",
+                JOptionPane.YES_NO_OPTION);
+
+        if (option == JOptionPane.YES_OPTION) {
+            final boolean isMemberAdded = addCastMemberDialog();
+            if (!isMemberAdded) {
+                deleteCast(((AdminSessionController) getCurrentSessionContext().getController())
+                        .getLastCastId());
+                updateCastTable();
+                return;
+            }
+        }
+        final boolean isMemberToCastAdded = addCastMemberToCastDialog(
+                Optional.of(
+                        ((AdminSessionController) getCurrentSessionContext().getController())
+                                .getLastCastId()));
+        if (!isMemberToCastAdded) {
+            deleteCast(((AdminSessionController) getCurrentSessionContext().getController())
+                    .getLastCastId());
+            updateCastTable();
+        }
     }
 
     /**
@@ -316,13 +363,14 @@ public class AdminCastView extends AdminPanel {
      * The dialog prompts the administrator to enter the ID of the cast to be deleted.
      */
     private void deleteCastDialog() {
-        final String input = Objects.requireNonNull(
-                JOptionPane.showInputDialog(
+        final String input = Objects.requireNonNull(JOptionPane.showInputDialog(
                         null,
                         "Inserisci l'ID del Cast da eliminare:",
                         "Elimina Cast", JOptionPane.PLAIN_MESSAGE));
         try {
             final int id = Integer.parseInt(input);
+            ((AdminSessionController) getCurrentSessionContext().getController())
+                    .deleteMultimediaCast(id);
             final boolean deleted = deleteCast(id);
             if (deleted) {
                 updateCastTable();
@@ -360,12 +408,20 @@ public class AdminCastView extends AdminPanel {
                 .deleteCast(id);
     }
 
-    private void addCastMemberToCastDialog(final Optional<Integer> castId) {
+    /**
+     * Displays a dialog for adding a cast member to a cast.
+     * The dialog prompts the administrator to enter IDs of the cast and the cast member.
+     *
+     * @param castId An optional parameter representing the ID of the cast.
+     *               If provided, the corresponding field is pre-filled and disabled.
+     * @return True if the dialog is closed without adding a cast member to the cast, otherwise false.
+     */
+    private boolean addCastMemberToCastDialog(final Optional<Integer> castId) {
         if (((AdminSessionController) getCurrentSessionContext().getController()).getCasting().isEmpty()) {
             JOptionPane.showMessageDialog(null,
                     "Errore: Nessun casting disponibile",
                     ERROR, JOptionPane.ERROR_MESSAGE);
-            return;
+            return false;
         }
         final JTextField castMemberCodeField = new JTextField(5);
         final JTextField castField = new JTextField(5);
@@ -430,9 +486,10 @@ public class AdminCastView extends AdminPanel {
         });
 
         final Object[] options = {okButton, CANCEL};
-        JOptionPane.showOptionDialog(null, panel, "Aggiungi MembroCast ad un Cast",
+        final int option = JOptionPane.showOptionDialog(null, panel, "Aggiungi MembroCast ad un Cast",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                 null, options, options[0]);
+        return option == -1;
     }
 
     private void addCastMemberToCast(final int castMemberCode, final int castCode) {
@@ -477,11 +534,11 @@ public class AdminCastView extends AdminPanel {
                     if (((AdminSessionController) getCurrentSessionContext().getController())
                             .isEmptyCast(castCode)) {
                         ((AdminSessionController) getCurrentSessionContext().getController())
-                                .deleteCast(castCode);
-                        updateCastTable();
-                        ((AdminSessionController) getCurrentSessionContext().getController())
                                 .deleteMultimediaCast(castCode);
+                        ((AdminSessionController) getCurrentSessionContext().getController())
+                                .deleteCast(castCode);
                     }
+                    updateCastTable();
                     updateCasting();
                     JOptionPane.showMessageDialog(
                             null,

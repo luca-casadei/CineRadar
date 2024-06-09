@@ -1601,7 +1601,7 @@ public final class AdminOps extends DBManager {
     public void deleteMultimediaCast(final int castId) {
         Objects.requireNonNull(getConnection());
         try {
-            final String seriesQuery = "SELECT CodiceSerie FROM STAGIONE "
+            final String seriesQuery = "SELECT DISTINCT CodiceSerie FROM STAGIONE "
                     + "WHERE CodiceCast = ?";
             setPreparedStatement(getConnection().prepareStatement(seriesQuery));
             getPreparedStatement().setInt(1, castId);
@@ -1613,7 +1613,7 @@ public final class AdminOps extends DBManager {
                 setPreparedStatement(getConnection().prepareStatement(seasonDeleteQuery));
                 getPreparedStatement().setInt(1, castId);
                 getPreparedStatement().executeUpdate();
-                final String seriesDeleteQuery = "DELETE FROM STAGIONE "
+                final String seriesDeleteQuery = "DELETE FROM SERIE "
                         + "WHERE Codice = ?";
                 setPreparedStatement(getConnection().prepareStatement(seriesDeleteQuery));
                 getPreparedStatement().setInt(1, seriesId);
@@ -1626,6 +1626,33 @@ public final class AdminOps extends DBManager {
             getPreparedStatement().executeUpdate();
         } catch (SQLException ex) {
             throw new IllegalArgumentException("Error deleting cinema: " + ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Retrieves a list of cast member codes that are linked to a specified cast member.
+     * This method executes a SQL query to fetch the linked cast members from the database.
+     *
+     * @param castMemberCode the unique code of the cast member whose linked cast members are to be retrieved
+     * @return a list of integers representing the codes of the cast members linked to the specified cast member
+     * @throws NullPointerException if the database connection is {@code null}
+     * @throws IllegalArgumentException if a SQL error occurs during the query execution
+     */
+    public List<Integer> getCastLinked(final int castMemberCode) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT CodiceCast FROM partecipazione_cast "
+                    + "WHERE partecipazione_cast.CodiceMembro = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, castMemberCode);
+            setResultSet(getPreparedStatement().executeQuery());
+            final List<Integer> castCodes = new ArrayList<>();
+            while (getResultSet().next()) {
+                castCodes.add(getResultSet().getInt("CodiceCast"));
+            }
+            return castCodes;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
 

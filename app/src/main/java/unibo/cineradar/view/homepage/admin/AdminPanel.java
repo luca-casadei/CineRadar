@@ -67,6 +67,12 @@ public abstract class AdminPanel extends JPanel {
     }
 
     /**
+     * Updates the content of the panel with the latest data.
+     * Implement this method to refresh and display the most current information.
+     */
+    public abstract void updatePanel();
+
+    /**
      * Creates the table of the multimedia.
      *
      * @param multimediaList The list of multimedia.

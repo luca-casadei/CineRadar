@@ -60,6 +60,15 @@ public final class AdminPromoView extends AdminPanel {
         initButtons();
     }
 
+    /**
+     * Updates the panel with the latest information.
+     * This method triggers the update of the promo table.
+     */
+    @Override
+    public void updatePanel() {
+        updatePromoTable();
+    }
+
     private void initButtons() {
         final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final JButton addMultipleButton = new JButton("Aggiungi Promo Multipla");

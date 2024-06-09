@@ -59,6 +59,15 @@ public final class AdminFilmView extends AdminPanel {
     }
 
     /**
+     * Updates the panel with the latest information.
+     * This method triggers the update of the film table.
+     */
+    @Override
+    public void updatePanel() {
+        updateFilmTable();
+    }
+
+    /**
      * Displays a dialog for adding a movie.
      * The dialog prompts the administrator to enter the title, age limit, plot, duration, and cast ID.
      */

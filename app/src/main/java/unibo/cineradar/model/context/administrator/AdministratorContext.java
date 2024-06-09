@@ -786,4 +786,18 @@ public final class AdministratorContext extends SessionContextImpl {
             mgr.deleteMultimediaCast(castId);
         }
     }
+
+    /**
+     * Retrieves a list of cast member codes that are linked to a specified cast member.
+     * This method uses the {@code AdminOps} class to fetch the linked cast members,
+     * ensuring the resources are properly managed with a try-with-resources statement.
+     *
+     * @param castMemberCode the unique code of the cast member whose linked cast members are to be retrieved
+     * @return a list of integers representing the codes of the cast members linked to the specified cast member
+     */
+    public List<Integer> getCastLinked(final int castMemberCode) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getCastLinked(castMemberCode);
+        }
+    }
 }
