@@ -1,5 +1,6 @@
 package unibo.cineradar.view.homepage.admin;
 
+import com.github.lgooddatepicker.components.DatePicker;
 import unibo.cineradar.controller.administrator.AdminSessionController;
 import unibo.cineradar.model.ranking.CastRanking;
 import unibo.cineradar.model.ranking.EvalType;
@@ -113,14 +114,14 @@ public class AdminRankingsView extends AdminPanel {
 
     private void assignPromoBestFiveReviewersDialog() {
         final JTextField promoCodeField = new JTextField(5);
-        final JTextField expirationField = new JTextField(5);
+        final DatePicker expirationField = new DatePicker();
 
         final JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.add(new JLabel("Codice Promo:"));
-        panel.add(promoCodeField);
         panel.add(new JLabel("Scadenza:"));
         panel.add(expirationField);
+        panel.add(new JLabel("Codice Promo:"));
+        panel.add(promoCodeField);
 
         final JButton okButton = new JButton("OK");
         okButton.setEnabled(false);
@@ -131,13 +132,12 @@ public class AdminRankingsView extends AdminPanel {
         };
         final DocumentListener listener = new ViewDocumentListener(checkFields);
         promoCodeField.getDocument().addDocumentListener(listener);
-        expirationField.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
             try {
                 assignPromoBestFiveReviewers(
                         Integer.parseInt(promoCodeField.getText()),
-                        LocalDate.parse(expirationField.getText())
+                        expirationField.getDate()
                 );
                 JOptionPane.getRootFrame().dispose();
             } catch (IllegalArgumentException ex) {

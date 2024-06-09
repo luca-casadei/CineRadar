@@ -1147,7 +1147,10 @@ public final class AdminOps extends DBManager {
             final int promoCode, final LocalDate expiration, final List<UserRanking> bestNumberRatings) {
         for (final UserRanking userRanking : bestNumberRatings) {
             final Optional<Integer> cinemaCode = getCinemaCode(userRanking.username());
-            cinemaCode.ifPresent(integer -> assignPromo(promoCode, expiration, integer, userRanking.username()));
+            cinemaCode.ifPresent(integer -> {
+                assignPromo(promoCode, expiration, integer, userRanking.username());
+                assignPrizeTag(userRanking.username());
+            });
         }
     }
 
@@ -1975,6 +1978,20 @@ public final class AdminOps extends DBManager {
             getPreparedStatement().executeUpdate();
         } catch (SQLException ex) {
             throw new IllegalArgumentException("Error updating series: " + ex.getMessage(), ex);
+        }
+    }
+
+    private void assignPrizeTag(final String username) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "UPDATE UTENTE "
+                    + "SET TargaPremio = 1 "
+                    + "WHERE Username = ? ";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setString(1, username);
+            getPreparedStatement().executeUpdate();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error assigning Prize Tag: " + ex.getMessage(), ex);
         }
     }
 }
