@@ -241,47 +241,29 @@ public final class AdminPromoView extends AdminPanel {
                 ((AdminSessionController) getCurrentSessionContext().getController())
                         .getMultiples().toArray(Integer[]::new)
         );
-        final DatePicker expirationField = new DatePicker();
-        final JTextField percentageField = new JTextField(5);
 
         final JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(new JLabel("Generi:"));
         panel.add(genreBox);
-        panel.add(new JLabel("Scadenza:"));
-        panel.add(new JScrollPane(expirationField));
         panel.add(new JLabel("ID Multiplo:"));
         panel.add(multipleBox);
-        panel.add(new JLabel("Percentuale:"));
-        panel.add(percentageField);
 
         final JButton okButton = new JButton("OK");
-        configureOkButton(okButton, expirationField, percentageField);
-
         okButton.addActionListener(e -> {
             try {
-                if (expirationField.getDate().isAfter(LocalDate.now())) {
-                    final int percentageLimit = Integer.parseInt(percentageField.getText());
-                    if (percentageLimit <= 0) {
-                        throw new NumberFormatException();
-                    }
-                    if (((AdminSessionController) getCurrentSessionContext().getController())
-                            .isMultipleAvailable(
-                                    Integer.parseInt(String.valueOf(multipleBox.getSelectedItem())))) {
-                        JOptionPane.showMessageDialog(null,
-                                "Errore: Multiplo non inserito",
-                                ERROR, JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    addGenrePromo(
-                            Integer.parseInt(percentageField.getText()),
-                            expirationField.getDate(),
-                            String.valueOf(genreBox.getSelectedItem()),
-                            Integer.parseInt(String.valueOf(multipleBox.getSelectedItem()))
-                    );
-                } else {
-                    showErrorDialog();
+                if (((AdminSessionController) getCurrentSessionContext().getController())
+                        .isMultipleAvailable(
+                                Integer.parseInt(String.valueOf(multipleBox.getSelectedItem())))) {
+                    JOptionPane.showMessageDialog(null,
+                            "Errore: Multiplo non inserito",
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
+                addGenrePromo(
+                        String.valueOf(genreBox.getSelectedItem()),
+                        Integer.parseInt(String.valueOf(multipleBox.getSelectedItem()))
+                );
                 disposeOptionPane();
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this,
@@ -298,10 +280,9 @@ public final class AdminPromoView extends AdminPanel {
         showOptionDialog(panel, okButton);
     }
 
-    private void addGenrePromo(
-            final int percentage, final LocalDate expiration, final String genre, final int multipleId) {
+    private void addGenrePromo(final String genre, final int multipleId) {
         ((AdminSessionController) this.getCurrentSessionContext().getController())
-                .addGenrePromo(percentage, expiration, genre, multipleId);
+                .addGenrePromo(genre, multipleId);
         updateCurrentTable();
     }
 
@@ -478,30 +459,6 @@ public final class AdminPromoView extends AdminPanel {
     private void addPromo(final int code, final LocalDate expiration) {
         ((AdminSessionController) this.getCurrentSessionContext().getController())
                 .addPromo(code, expiration);
-    }
-
-    private void configureOkButton(final JButton okButton, final DatePicker expirationField, final JTextField... fields) {
-        okButton.setEnabled(false);
-        final Runnable checkFields = () -> {
-            boolean allFilled = true;
-            allFilled &= isFieldFilled(expirationField.getText());
-            for (final JTextField field : fields) {
-                allFilled &= isFieldFilled(field.getText());
-            }
-            okButton.setEnabled(allFilled);
-        };
-
-        final DocumentListener listener = new ViewDocumentListener(checkFields);
-        for (final JTextField field : fields) {
-            field.getDocument().addDocumentListener(listener);
-        }
-    }
-
-    private void showErrorDialog() {
-        JOptionPane.showMessageDialog(
-                null,
-                "Inserisci una scadenza valida per la Promo.",
-                ERROR, JOptionPane.ERROR_MESSAGE);
     }
 
     private void disposeOptionPane() {

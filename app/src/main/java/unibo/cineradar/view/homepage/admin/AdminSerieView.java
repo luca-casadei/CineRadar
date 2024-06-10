@@ -182,10 +182,17 @@ public final class AdminSerieView extends AdminPanel {
     private void addSeries(final String title, final int ageLimit, final String plot) {
         ((AdminSessionController) this.getCurrentSessionContext().getController())
                 .addSeries(title, ageLimit, plot);
-        addSeasonDialog(Optional.of(
+        refreshSeriesTable();
+
+        final boolean isSeasonAdded = addSeasonDialog(Optional.of(
                 ((AdminSessionController) this.getCurrentSessionContext().getController())
                         .getLastSeriesId()
         ));
+        if (!isSeasonAdded) {
+            deleteSeries(((AdminSessionController) getCurrentSessionContext().getController())
+                    .getLastSeriesId());
+            refreshSeriesTable();
+        }
     }
 
     /**
@@ -250,13 +257,14 @@ public final class AdminSerieView extends AdminPanel {
      *
      * @param idSeries An optional parameter representing the ID of the series to which the season is being added.
      *                 If present, the series code field will be pre-filled with this ID and made uneditable.
+     * @return True if the dialog is closed without adding a season, otherwise false.
      */
-    private void addSeasonDialog(final Optional<Integer> idSeries) {
+    private boolean addSeasonDialog(final Optional<Integer> idSeries) {
         if (((AdminSessionController) getCurrentSessionContext().getController()).getCasting().isEmpty()) {
             JOptionPane.showMessageDialog(null,
                     "Errore: Nessun casting disponibile",
                     ERROR, JOptionPane.ERROR_MESSAGE);
-            return;
+            return false;
         }
         final JTextField seriesCodeField = new JTextField(5);
         final JTextField seasonNumberField = new JTextField(5);
@@ -321,9 +329,10 @@ public final class AdminSerieView extends AdminPanel {
         });
 
         final Object[] options = {okButton, "Cancel"};
-        JOptionPane.showOptionDialog(null, panel, "Aggiungi Stagione",
+        final int option = JOptionPane.showOptionDialog(null, panel, "Aggiungi Stagione",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                 null, options, options[0]);
+        return option == -1;
     }
 
     /**
@@ -338,12 +347,19 @@ public final class AdminSerieView extends AdminPanel {
             final int seriesCode, final int seasonNumber, final String summary, final int idCast) {
         ((AdminSessionController) getCurrentSessionContext().getController())
                 .addSeason(seriesCode, seasonNumber, summary, idCast);
-        addEpisodeDialog(
+        refreshSeriesTable();
+
+        final boolean isEpisodeAdded = addEpisodeDialog(
                 Optional.of(seriesCode),
                 Optional.of(
                         ((AdminSessionController) this.getCurrentSessionContext().getController())
                                 .getLastSeasonId(seriesCode)
         ));
+        if (!isEpisodeAdded) {
+            deleteSeries(seriesCode);
+            deleteSeason(seriesCode, seasonNumber);
+            refreshSeriesTable();
+        }
     }
 
     /**
@@ -370,6 +386,11 @@ public final class AdminSerieView extends AdminPanel {
                 final int seasonNumber = Integer.parseInt(seasonNumberField.getText());
                 final boolean deleted = deleteSeason(seriesCode, seasonNumber);
                 if (deleted) {
+                    if (((AdminSessionController) getCurrentSessionContext().getController())
+                            .isEmptySeries(seriesCode)) {
+                        ((AdminSessionController) getCurrentSessionContext().getController())
+                                .deleteSeries(seriesCode);
+                    }
                     refreshSeriesTable();
                     JOptionPane.showMessageDialog(
                             null,
@@ -415,14 +436,15 @@ public final class AdminSerieView extends AdminPanel {
      *                 If present, the series code field will be pre-filled with this ID and made uneditable.
      * @param idSeason An optional parameter representing the ID of the season to which the episode belongs.
      *                 If present, the season number field will be pre-filled with this ID and made uneditable.
+     * @return True if the dialog is closed without adding an episode, otherwise false.
      */
-    private void addEpisodeDialog(
+    private boolean addEpisodeDialog(
             final Optional<Integer> idSeries, final Optional<Integer> idSeason) {
         if (((AdminSessionController) getCurrentSessionContext().getController()).getCasting().isEmpty()) {
             JOptionPane.showMessageDialog(null,
                     "Errore: Nessun casting disponibile",
                     ERROR, JOptionPane.ERROR_MESSAGE);
-            return;
+            return false;
         }
         final JTextField seriesCodeField = new JTextField(5);
         final JTextField seasonNumberField = new JTextField(5);
@@ -504,9 +526,10 @@ public final class AdminSerieView extends AdminPanel {
         });
 
         final Object[] options = {okButton, "Cancel"};
-        JOptionPane.showOptionDialog(null, panel, "Aggiungi Episodio",
+        final int option = JOptionPane.showOptionDialog(null, panel, "Aggiungi Episodio",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                 null, options, options[0]);
+        return option == -1;
     }
 
     /**
@@ -552,6 +575,16 @@ public final class AdminSerieView extends AdminPanel {
                 final int episodeNumber = Integer.parseInt(episodeNumberField.getText());
                 final boolean deleted = deleteEpisode(seriesCode, seasonNumber, episodeNumber);
                 if (deleted) {
+                    if (((AdminSessionController) getCurrentSessionContext().getController())
+                            .isEmptySeason(seriesCode, seasonNumber)) {
+                        ((AdminSessionController) getCurrentSessionContext().getController())
+                                .deleteSeason(seriesCode, seasonNumber);
+                    }
+                    if (((AdminSessionController) getCurrentSessionContext().getController())
+                            .isEmptySeries(seriesCode)) {
+                        ((AdminSessionController) getCurrentSessionContext().getController())
+                                .deleteSeries(seriesCode);
+                    }
                     refreshSeriesTable();
                     JOptionPane.showMessageDialog(
                             null,

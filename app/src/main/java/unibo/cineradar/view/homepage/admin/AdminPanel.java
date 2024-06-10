@@ -389,17 +389,15 @@ public abstract class AdminPanel extends JPanel {
      */
     protected JTable createCardTable() {
         final DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("CodiceCinema");
-        model.addColumn("Username");
         model.addColumn("NumeroTessera");
+        model.addColumn("Username");
         model.addColumn("DataRinnovo");
 
         for (final CardReg card
                 : ((AdminSessionController) this.getCurrentSessionContext().getController()).getCards()) {
             model.addRow(new Object[]{
-                    card.getCinemaCode(),
-                    card.getUser(),
                     card.getCardNr(),
+                    card.getUser(),
                     card.getDate()
             });
         }

@@ -32,8 +32,7 @@ Ora rieffettuo l'accesso come amministratore, per soddisfare la richiesta che ho
 - Eliminazione di un membro del cast ✅
 - View aggiunta di un cast ✅
 - Creazione di un cast con i relativi membri ✅
-- Aggiunta di una serie (eccezione all'aggiunta) ❌
-  Se aggiungo la prima parte della serie, e poi clicco cancella nella fase intermedia, aggiunge comunque la serie parziale e quando clicco per vedere i dettagli esplode la console.
+- Aggiunta di una serie ✅
 - Aggiunta di un cinema ✅
 - Eliminazione di un cinema ✅
 - Aggiunta di un registratore ✅
@@ -47,10 +46,7 @@ Creato un registratore, effettuo l'accesso come tale:
 Terminate le funzionalità del registratore, riaccedo come amministratore per assegnare una promo
 - Visualizzazione tessere ✅ (OPZIONALE) ❌
   Visualizzare anche i dettagli del cinema associato alla tessera, da fare in ultimo se rimane tempo e voglia.
-- Assegnazione promo (Form) ❌
-  Il codice del cinema lo si deduce dalla tessera, non serve il campo da riempire.
+- Assegnazione promo (Form) ✅
 - Assegnazione promo non esistente ✅
-- Creazione promo ❌
-  Sbagliato il form di assegnazione promo multipla ai generi.
 
 ## Testing sospeso per errore importante

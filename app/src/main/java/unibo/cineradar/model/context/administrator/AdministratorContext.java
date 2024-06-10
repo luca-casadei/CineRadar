@@ -538,13 +538,12 @@ public final class AdministratorContext extends SessionContextImpl {
      * This method utilizes an {@link AdminOps} instance to add a genre-specific promo.
      * The {@link Promo} object represents the promotional offer, and the genre specifies where to apply it.
      *
-     * @param promo      the {@link Promo} object representing the promotional offer.
-     * @param genre      the genre to which the promo is to be added.
-     * @param multipleId
+     * @param genre       the genre to which the promo is to be added.
+     * @param multipleId  the id of multiple promo
      */
-    public void addGenrePromo(final Promo promo, final String genre, final int multipleId) {
+    public void addGenrePromo(final String genre, final int multipleId) {
         try (AdminOps mgr = new AdminOps()) {
-            mgr.addGenrePromo(promo, genre, multipleId);
+            mgr.addGenrePromo(genre, multipleId);
         }
     }
 
@@ -772,6 +771,31 @@ public final class AdministratorContext extends SessionContextImpl {
     public boolean isEmptyCast(final int castId) {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.isEmptyCast(castId);
+        }
+    }
+
+    /**
+     * Checks if the series with the specified ID is empty.
+     *
+     * @param seriesCode the ID of the series to check.
+     * @return {@code true} if the series is empty, {@code false} otherwise.
+     */
+    public boolean isEmptySeries(final int seriesCode) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.isEmptySeries(seriesCode);
+        }
+    }
+
+    /**
+     * Checks if the season of a series with the specified ID is empty.
+     *
+     * @param seriesCode    the ID of the series to check.
+     * @param seasonNumber  the ID of the season to check.
+     * @return {@code true} if the series is empty, {@code false} otherwise.
+     */
+    public boolean isEmptySeason(final int seriesCode, final int seasonNumber) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.isEmptySeason(seriesCode, seasonNumber);
         }
     }
 

@@ -225,6 +225,48 @@ public final class AdminAvailabilityOps extends DBManager {
     }
 
     /**
+     * Checks if the series with the specified ID is empty.
+     *
+     * @param seriesCode the ID of the series to check.
+     * @return {@code true} if the series is empty, {@code false} otherwise.
+     */
+    public boolean isEmptySeries(final int seriesCode) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT * FROM STAGIONE "
+                    + "WHERE CodiceSerie = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, seriesCode);
+            setResultSet(getPreparedStatement().executeQuery());
+            return !getResultSet().next();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Checks if the season of a series with the specified ID is empty.
+     *
+     * @param seriesCode    the ID of the series to check.
+     * @param seasonNumber  the ID of the season to check.
+     * @return {@code true} if the series is empty, {@code false} otherwise.
+     */
+    public boolean isEmptySeason(final int seriesCode, final int seasonNumber) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT * FROM EPISODIO "
+                    + "WHERE CodiceSerie = ? AND NumeroStagione = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, seriesCode);
+            getPreparedStatement().setInt(2, seasonNumber);
+            setResultSet(getPreparedStatement().executeQuery());
+            return !getResultSet().next();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Checks if a template promotion with the specified code is available in the database.
      *
      * @param codePromo the code of the template promotion to check.

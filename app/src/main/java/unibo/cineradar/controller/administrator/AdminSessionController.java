@@ -475,15 +475,11 @@ public final class AdminSessionController extends SessionControllerImpl {
      * This method creates a new {@link Promo} object with the specified percentage discount and expiration date,
      * and adds it to the specified genre.
      *
-     * @param percentage the discount percentage of the promo.
-     * @param expiration the expiration date of the promo.
      * @param genre      the genre to which the promo is to be added.
-     * @param multipleId
+     * @param multipleId the id of multiple promo
      */
-    public void addGenrePromo(
-            final int percentage, final LocalDate expiration, final String genre, final int multipleId) {
+    public void addGenrePromo(final String genre, final int multipleId) {
         this.administratorContext.addGenrePromo(
-                new Promo(0, percentage, expiration),
                 genre,
                 multipleId
         );
@@ -696,6 +692,27 @@ public final class AdminSessionController extends SessionControllerImpl {
      */
     public boolean isEmptyCast(final int castId) {
         return this.administratorContext.isEmptyCast(castId);
+    }
+
+    /**
+     * Checks if the series with the specified ID is empty.
+     *
+     * @param seriesCode the ID of the series to check.
+     * @return {@code true} if the series is empty, {@code false} otherwise.
+     */
+    public boolean isEmptySeries(final int seriesCode) {
+        return this.administratorContext.isEmptySeries(seriesCode);
+    }
+
+    /**
+     * Checks if the season of a series with the specified ID is empty.
+     *
+     * @param seriesCode    the ID of the series to check.
+     * @param seasonNumber  the ID of the season to check.
+     * @return {@code true} if the series is empty, {@code false} otherwise.
+     */
+    public boolean isEmptySeason(final int seriesCode, final int seasonNumber) {
+        return this.administratorContext.isEmptySeason(seriesCode, seasonNumber);
     }
 
     /**

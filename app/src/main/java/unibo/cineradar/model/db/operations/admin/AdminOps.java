@@ -879,27 +879,19 @@ public final class AdminOps extends DBManager {
      * Adds a new promotional entry for a genre-specific promotion.
      * Inserts the promotional details into the PROMO_GENERE table and then into the PROMO table.
      *
-     * @param promo      the Promo object containing the details of the promotion.
      * @param genre      the genre to which the promotion applies.
      * @param multipleId the Promo id of multiple
      */
-    public void addGenrePromo(final Promo promo, final String genre, final int multipleId) {
+    public void addGenrePromo(final String genre, final int multipleId) {
         Objects.requireNonNull(getConnection());
         final String genreQuery = "INSERT INTO PROMO_GENERE (NomeGenere, CodiceTemplateMultiplo) VALUES (?,?)";
-        final String promoQuery = "INSERT INTO PROMO (CodiceTemplatePromo, Scadenza) VALUES (?,?)";
         try {
-            getConnection().setAutoCommit(false);
             setPreparedStatement(getConnection().prepareStatement(genreQuery));
             getPreparedStatement().setString(1, genre);
             getPreparedStatement().setInt(2, multipleId);
             getPreparedStatement().executeUpdate();
-            setPreparedStatement(getConnection().prepareStatement(promoQuery));
-            getPreparedStatement().setInt(1, multipleId);
-            getPreparedStatement().setDate(2, Date.valueOf(promo.expiration()));
-            getPreparedStatement().executeUpdate();
-            getConnection().commit();
         } catch (SQLException ex) {
-            handleSQLException(ex);
+            throw new IllegalArgumentException("Error adding genre promo: " + ex.getMessage(), ex);
         }
     }
 
@@ -1472,6 +1464,35 @@ public final class AdminOps extends DBManager {
     }
 
     /**
+     * Checks if the series with the specified ID is empty.
+     *
+     * @param seriesCode the ID of the series to check.
+     * @return {@code true} if the series is empty, {@code false} otherwise.
+     */
+    public boolean isEmptySeries(final int seriesCode) {
+        try (AdminAvailabilityOps mgr = new AdminAvailabilityOps()) {
+            return mgr.isEmptySeries(seriesCode);
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Checks if the season of a series with the specified ID is empty.
+     *
+     * @param seriesCode    the ID of the series to check.
+     * @param seasonNumber  the ID of the season to check.
+     * @return {@code true} if the series is empty, {@code false} otherwise.
+     */
+    public boolean isEmptySeason(final int seriesCode, final int seasonNumber) {
+        try (AdminAvailabilityOps mgr = new AdminAvailabilityOps()) {
+            return mgr.isEmptySeason(seriesCode, seasonNumber);
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Deletes the multimedia content associated with the specified cast ID.
      *
      * @param castId the ID of the cast whose multimedia content is to be deleted.
@@ -1711,19 +1732,6 @@ public final class AdminOps extends DBManager {
         } catch (SQLException ex) {
             throw new IllegalArgumentException("Error deleting template promo: " + ex.getMessage(), ex);
         }
-    }
-
-    private void handleSQLException(final SQLException ex) {
-        SQLException rollbackEx = null;
-        try {
-            getConnection().rollback();
-        } catch (SQLException e) {
-            rollbackEx = e;
-        }
-        if (rollbackEx != null) {
-            ex.addSuppressed(rollbackEx);
-        }
-        throw new IllegalArgumentException("Error adding promo: " + ex.getMessage(), ex);
     }
 
     private Optional<Integer> getCinemaCode(final String username) {
