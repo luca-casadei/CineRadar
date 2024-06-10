@@ -39,4 +39,18 @@ Ora rieffettuo l'accesso come amministratore, per soddisfare la richiesta che ho
 - Aggiunta di un registratore ✅
 - Eliminazione di un registratore ✅
 
+Creato un registratore, effettuo l'accesso come tale:
+- Accesso come registratore ✅
+- Tesseramento di un utente non esistente ✅
+- Tesseramento di un utente esistente ✅
+
+Terminate le funzionalità del registratore, riaccedo come amministratore per assegnare una promo
+- Visualizzazione tessere ✅ (OPZIONALE) ❌
+  Visualizzare anche i dettagli del cinema associato alla tessera, da fare in ultimo se rimane tempo e voglia.
+- Assegnazione promo (Form) ❌
+  Il codice del cinema lo si deduce dalla tessera, non serve il campo da riempire.
+- Assegnazione promo non esistente ✅
+- Creazione promo ❌
+  Sbagliato il form di assegnazione promo multipla ai generi.
+
 ## Testing sospeso per errore importante
