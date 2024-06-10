@@ -2,7 +2,7 @@ package unibo.cineradar.model.context.registrar;
 
 import unibo.cineradar.model.cinema.Cinema;
 import unibo.cineradar.model.context.SessionContextImpl;
-import unibo.cineradar.model.db.RegistrarOps;
+import unibo.cineradar.model.db.operations.RegistrarOps;
 import unibo.cineradar.model.utente.Account;
 import unibo.cineradar.model.utente.Registrar;
 import unibo.cineradar.model.card.CardReg;

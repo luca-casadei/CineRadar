@@ -498,6 +498,13 @@ public final class AdminSessionController extends SessionControllerImpl {
         return this.administratorContext.getGenres();
     }
 
+    /**
+     * Adds a single promotional item to the administrator context.
+     *
+     * @param templateCode     an integer representing the code for the promotional template
+     * @param multimediaType   a string specifying the type of multimedia (e.g., "image", "video")
+     * @param multimediaCode   an integer representing the code for the multimedia item
+     */
     public void addSinglePromo(
             final int templateCode, final String multimediaType, final int multimediaCode) {
         this.administratorContext.addSinglePromo(
@@ -505,7 +512,6 @@ public final class AdminSessionController extends SessionControllerImpl {
                 multimediaType,
                 multimediaCode);
     }
-
 
     /**
      * Checks if a specific season of a series is available.
@@ -711,38 +717,87 @@ public final class AdminSessionController extends SessionControllerImpl {
         return this.administratorContext.getCastLinked(castMemberCode);
     }
 
+    /**
+     * Retrieves a list of multiples from the administrator context.
+     *
+     * @return a list of integers representing the multiples.
+     */
     public List<Integer> getMultiples() {
         return this.administratorContext.getMultiples();
     }
 
+    /**
+     * Adds a template promotion with the specified percentage to the administrator context.
+     *
+     * @param percentage the percentage of the template promotion to add.
+     */
     public void addTemplatePromo(final int percentage) {
         this.administratorContext.addTemplatePromo(percentage);
     }
 
+    /**
+     * Retrieves a list of template promotions from the administrator context.
+     *
+     * @return a list of TemplatePromo objects.
+     */
     public List<TemplatePromo> getTemplatePromos() {
         return this.administratorContext.getTemplatePromos();
     }
 
+    /**
+     * Retrieves a list of single promotions from the administrator context.
+     *
+     * @return a list of SinglePromo objects.
+     */
     public List<SinglePromo> getSinglePromos() {
         return this.administratorContext.getSinglePromos();
     }
 
+    /**
+     * Retrieves a list of genre promotions from the administrator context.
+     *
+     * @return a list of GenrePromo objects.
+     */
     public List<GenrePromo> getGenrePromos() {
         return this.administratorContext.getGenrePromos();
     }
 
+    /**
+     * Adds a promotion with the specified code and expiration date to the administrator context.
+     *
+     * @param code the code of the promotion to add.
+     * @param expiration the expiration date of the promotion.
+     */
     public void addPromo(final int code, final LocalDate expiration) {
         this.administratorContext.addPromo(code, expiration);
     }
 
+    /**
+     * Checks if a template promotion with the specified code is available.
+     *
+     * @param codePromo the code of the template promotion to check.
+     * @return {@code true} if the template promotion is not available, {@code false} otherwise.
+     */
     public boolean isTemplatePromoAvailable(final int codePromo) {
         return !this.administratorContext.isTemplatePromoAvailable(codePromo);
     }
 
+    /**
+     * Checks if a multiple is available for the specified genre promotion.
+     *
+     * @param genrePromo the genre promotion to check.
+     * @return {@code true} if the multiple is not available, {@code false} otherwise.
+     */
     public boolean isMultipleAvailable(final int genrePromo) {
         return !this.administratorContext.isMultipleAvailable(genrePromo);
     }
 
+    /**
+     * Deletes a template promotion with the specified code from the administrator context.
+     *
+     * @param code the code of the template promotion to delete.
+     * @return {@code true} if the template promotion was successfully deleted, {@code false} otherwise.
+     */
     public boolean deleteTemplatePromo(final int code) {
         return this.administratorContext.deleteTemplatePromo(code);
     }

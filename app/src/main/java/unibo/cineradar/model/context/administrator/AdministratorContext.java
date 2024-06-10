@@ -6,7 +6,7 @@ import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.cast.Casting;
 import unibo.cineradar.model.cinema.Cinema;
 import unibo.cineradar.model.context.SessionContextImpl;
-import unibo.cineradar.model.db.AdminOps;
+import unibo.cineradar.model.db.operations.admin.AdminOps;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.promo.GenrePromo;
@@ -414,6 +414,11 @@ public final class AdministratorContext extends SessionContextImpl {
         }
     }
 
+    /**
+     * Adds multiple promotional items to the administrator context with a specified discount percentage.
+     *
+     * @param percentage an integer representing the percentage to be applied to the promotional items
+     */
     public void addMultiplePromo(final int percentage) {
         try (AdminOps mgr = new AdminOps()) {
             mgr.addMultiplePromo(percentage);
@@ -555,6 +560,13 @@ public final class AdministratorContext extends SessionContextImpl {
         }
     }
 
+    /**
+     * Adds a single promo using the specified template and multimedia.
+     *
+     * @param templateCode     an integer representing the code for the promotional template
+     * @param multimediaType   a string specifying the type of multimedia (e.g., "image", "video")
+     * @param multimediaCode   an integer representing the code for the multimedia item
+     */
     public void addSinglePromo(
             final int templateCode, final String multimediaType, final int multimediaCode) {
         try (AdminOps mgr = new AdminOps()) {
@@ -788,54 +800,103 @@ public final class AdministratorContext extends SessionContextImpl {
         }
     }
 
+    /**
+     * Retrieves a list of multiples using the AdminOps manager.
+     *
+     * @return a list of integers representing the multiples.
+     */
     public List<Integer> getMultiples() {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.getMultiples();
         }
     }
 
+    /**
+     * Adds a template promotion with the specified percentage using the AdminOps manager.
+     *
+     * @param percentage the percentage of the template promotion to add.
+     */
     public void addTemplatePromo(final int percentage) {
         try (AdminOps mgr = new AdminOps()) {
             mgr.addTemplatePromo(percentage);
         }
     }
 
+    /**
+     * Retrieves a list of template promotions using the AdminOps manager.
+     *
+     * @return a list of TemplatePromo objects.
+     */
     public List<TemplatePromo> getTemplatePromos() {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.getTemplatePromos();
         }
     }
 
+    /**
+     * Retrieves a list of single promotions using the AdminOps manager.
+     *
+     * @return a list of SinglePromo objects.
+     */
     public List<SinglePromo> getSinglePromos() {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.getSinglePromos();
         }
     }
 
+    /**
+     * Retrieves a list of genre promotions using the AdminOps manager.
+     *
+     * @return a list of GenrePromo objects.
+     */
     public List<GenrePromo> getGenrePromos() {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.getGenrePromos();
         }
     }
 
+    /**
+     * Adds a promotion with the specified code and expiration date using the AdminOps manager.
+     *
+     * @param code the code of the promotion to add.
+     * @param expiration the expiration date of the promotion.
+     */
     public void addPromo(final int code, final LocalDate expiration) {
         try (AdminOps mgr = new AdminOps()) {
             mgr.addPromo(code, expiration);
         }
     }
 
+    /**
+     * Checks if a template promotion with the specified code is available using the AdminOps manager.
+     *
+     * @param codePromo the code of the template promotion to check.
+     * @return {@code true} if the template promotion is available, {@code false} otherwise.
+     */
     public boolean isTemplatePromoAvailable(final int codePromo) {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.isTemplatePromoAvailable(codePromo);
         }
     }
 
+    /**
+     * Checks if a multiple is available for the specified genre promotion using the AdminOps manager.
+     *
+     * @param genrePromo the genre promotion to check.
+     * @return {@code true} if the multiple is available, {@code false} otherwise.
+     */
     public boolean isMultipleAvailable(final int genrePromo) {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.isMultipleAvailable(genrePromo);
         }
     }
 
+    /**
+     * Deletes a template promotion with the specified code using the AdminOps manager.
+     *
+     * @param code the code of the template promotion to delete.
+     * @return {@code true} if the template promotion was successfully deleted, {@code false} otherwise.
+     */
     public boolean deleteTemplatePromo(final int code) {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.deleteTemplatePromo(code);

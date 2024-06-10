@@ -1,8 +1,8 @@
 package unibo.cineradar.model.login;
 
-import unibo.cineradar.model.db.AdminOps;
-import unibo.cineradar.model.db.RegistrarOps;
-import unibo.cineradar.model.db.UserOps;
+import unibo.cineradar.model.db.operations.admin.AdminOps;
+import unibo.cineradar.model.db.operations.RegistrarOps;
+import unibo.cineradar.model.db.operations.UserOps;
 import unibo.cineradar.utilities.security.HashingAlgorithm;
 import unibo.cineradar.utilities.security.HashingUtilities;
 import unibo.cineradar.utilities.security.PasswordChecker;

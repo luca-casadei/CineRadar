@@ -3,7 +3,10 @@ package unibo.cineradar.view.homepage.admin;
 import com.github.lgooddatepicker.components.DatePicker;
 import unibo.cineradar.controller.administrator.AdminSessionController;
 import unibo.cineradar.model.multimedia.Genre;
+import unibo.cineradar.model.promo.GenrePromo;
 import unibo.cineradar.model.promo.Promo;
+import unibo.cineradar.model.promo.SinglePromo;
+import unibo.cineradar.model.promo.TemplatePromo;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.BoxLayout;
@@ -15,7 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.BorderLayout;
@@ -42,7 +44,6 @@ public final class AdminPromoView extends AdminPanel {
     private static final String MULTIPLE_PROMO = "Multiplo Promo";
     private static final String GENRE_PROMO = "Genere Promo";
     private static final String PROMO = "Promo";
-    private final JTable promoTable;
 
     /**
      * Constructs a new AdminFilmView with the specified ViewContext.
@@ -51,7 +52,8 @@ public final class AdminPromoView extends AdminPanel {
      */
     public AdminPromoView(final ViewContext currentSessionContext) {
         super(currentSessionContext);
-        this.promoTable = createPromoTable();
+        final JTable promoTable = createPromoTable();
+        promoTable.setName(PROMO);
         final JScrollPane scrollPane = new JScrollPane(promoTable);
         initButtons();
         add(getPromoButtonPanel(), BorderLayout.NORTH);
@@ -60,11 +62,11 @@ public final class AdminPromoView extends AdminPanel {
 
     /**
      * Updates the panel with the latest information.
-     * This method triggers the update of the promo table.
+     * This method triggers the refresh of the current promo table.
      */
     @Override
     public void updatePanel() {
-        updatePromoTable();
+        updateCurrentTable();
     }
 
     private void initButtons() {
@@ -123,6 +125,7 @@ public final class AdminPromoView extends AdminPanel {
             case PROMO -> createPromoTable();
             default -> throw new IllegalStateException("Unexpected value: " + text);
         };
+        table.setName(text);
         this.add(new JScrollPane(table), BorderLayout.CENTER);
         this.revalidate();
         this.repaint();
@@ -218,7 +221,7 @@ public final class AdminPromoView extends AdminPanel {
             final int templateCode, final String multimediaType, final int multimediaCode) {
         ((AdminSessionController) this.getCurrentSessionContext().getController())
                 .addSinglePromo(templateCode, multimediaType, multimediaCode);
-        updatePromoTable();
+        updateCurrentTable();
     }
 
     private void addGenrePromoDialog() {
@@ -245,10 +248,10 @@ public final class AdminPromoView extends AdminPanel {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(new JLabel("Generi:"));
         panel.add(genreBox);
-        panel.add(new JLabel("ID Multiplo:"));
-        panel.add(multipleBox);
         panel.add(new JLabel("Scadenza:"));
         panel.add(new JScrollPane(expirationField));
+        panel.add(new JLabel("ID Multiplo:"));
+        panel.add(multipleBox);
         panel.add(new JLabel("Percentuale:"));
         panel.add(percentageField);
 
@@ -299,7 +302,7 @@ public final class AdminPromoView extends AdminPanel {
             final int percentage, final LocalDate expiration, final String genre, final int multipleId) {
         ((AdminSessionController) this.getCurrentSessionContext().getController())
                 .addGenrePromo(percentage, expiration, genre, multipleId);
-        updatePromoTable();
+        updateCurrentTable();
     }
 
     private void addTemplatePromoDialog() {
@@ -349,7 +352,7 @@ public final class AdminPromoView extends AdminPanel {
     private void addTemplatePromo(final int percentage) {
         ((AdminSessionController) this.getCurrentSessionContext().getController())
                 .addTemplatePromo(percentage);
-        updatePromoTable();
+        updateCurrentTable();
     }
 
     private void addMultiplePromoDialog() {
@@ -375,11 +378,18 @@ public final class AdminPromoView extends AdminPanel {
         codeField.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
-            final int percentageLimit = Integer.parseInt(codeField.getText());
-            if (percentageLimit <= 0) {
-                throw new NumberFormatException();
-            }
             try {
+                final int percentageLimit = Integer.parseInt(codeField.getText());
+                if (percentageLimit <= 0) {
+                    throw new NumberFormatException();
+                }
+                if (((AdminSessionController) getCurrentSessionContext().getController())
+                        .isTemplatePromoAvailable(Integer.parseInt(codeField.getText()))) {
+                    JOptionPane.showMessageDialog(null,
+                            "Errore: Template Promo non inserita",
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 addMultiplePromo(
                         Integer.parseInt(codeField.getText())
                 );
@@ -405,7 +415,7 @@ public final class AdminPromoView extends AdminPanel {
     private void addMultiplePromo(final int percentage) {
         ((AdminSessionController) this.getCurrentSessionContext().getController())
                 .addMultiplePromo(percentage);
-        updatePromoTable();
+        updateCurrentTable();
     }
 
     private void addPromoDialog() {
@@ -511,10 +521,10 @@ public final class AdminPromoView extends AdminPanel {
 
         final JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.add(new JLabel("CodicePromo:"));
-        panel.add(codePromoField);
         panel.add(new JLabel("Scadenza:"));
         panel.add(expirationField);
+        panel.add(new JLabel("CodicePromo:"));
+        panel.add(codePromoField);
 
         final JButton okButton = new JButton("OK");
         okButton.setEnabled(false);
@@ -533,7 +543,7 @@ public final class AdminPromoView extends AdminPanel {
                 final LocalDate expiration = expirationField.getDate();
                 final boolean deleted = deletePromo(code, expiration);
                 if (deleted) {
-                    updatePromoTable();
+                    updateCurrentTable();
                     JOptionPane.showMessageDialog(
                             null,
                             "La Promo e' stata eliminata con successo.",
@@ -541,7 +551,7 @@ public final class AdminPromoView extends AdminPanel {
                 } else {
                     JOptionPane.showMessageDialog(
                             null,
-                            "Errore durante l'eliminazione della Promo.",
+                            "Inserire un Codice Valido per la Promo.",
                             ERROR, JOptionPane.ERROR_MESSAGE);
                 }
             } catch (IllegalArgumentException ex) {
@@ -587,7 +597,7 @@ public final class AdminPromoView extends AdminPanel {
                 final int code = Integer.parseInt(codeField.getText());
                 final boolean deleted = deleteTemplatePromo(code);
                 if (deleted) {
-                    updatePromoTable();
+                    updateCurrentTable();
                     JOptionPane.showMessageDialog(
                             null,
                             "La Template Promo e' stata eliminata con successo.",
@@ -595,7 +605,7 @@ public final class AdminPromoView extends AdminPanel {
                 } else {
                     JOptionPane.showMessageDialog(
                             null,
-                            "Errore durante l'eliminazione della TemplatePromo.",
+                            "Inserire un Codice Valido per Template Promo.",
                             ERROR, JOptionPane.ERROR_MESSAGE);
                 }
             } catch (IllegalArgumentException ex) {
@@ -618,18 +628,66 @@ public final class AdminPromoView extends AdminPanel {
                 .deleteTemplatePromo(code);
     }
 
-    private void updatePromoTable() {
-        SwingUtilities.invokeLater(() -> {
-            final DefaultTableModel model = (DefaultTableModel) this.promoTable.getModel();
-            model.setRowCount(0);
-            for (final Promo promo : ((AdminSessionController) getCurrentSessionContext().getController()).getPromos()) {
-                model.addRow(new Object[]{
-                        promo.id(),
-                        promo.percentageDiscount(),
-                        promo.expiration()
-                });
+    private void updateCurrentTable() {
+        final JScrollPane scrollPane = (JScrollPane) this.getComponent(2);
+        final JTable table = (JTable) scrollPane.getViewport().getView();
+        final DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0);
+
+        switch (table.getName()) {
+            case TEMPLATE_PROMO -> {
+                for (final TemplatePromo promo
+                        : ((AdminSessionController) this.getCurrentSessionContext().getController())
+                        .getTemplatePromos()) {
+                    model.addRow(new Object[]{
+                            promo.codePromo(),
+                            promo.percentage()
+                    });
+                }
             }
-        });
+            case SINGLE_PROMO -> {
+                for (final SinglePromo promo
+                        : ((AdminSessionController) this.getCurrentSessionContext().getController())
+                        .getSinglePromos()) {
+                    model.addRow(new Object[]{
+                            promo.codePromo(),
+                            promo.seriesCode(),
+                            promo.filmCode()
+                    });
+                }
+            }
+            case MULTIPLE_PROMO -> {
+                for (final Integer idPromo
+                        : ((AdminSessionController) this.getCurrentSessionContext().getController())
+                        .getMultiples()) {
+                    model.addRow(new Object[]{
+                            idPromo
+                    });
+                }
+            }
+            case GENRE_PROMO -> {
+                for (final GenrePromo promo
+                        : ((AdminSessionController) this.getCurrentSessionContext().getController())
+                        .getGenrePromos()) {
+                    model.addRow(new Object[]{
+                            promo.genrePromoCode(),
+                            promo.genre()
+                    });
+                }
+            }
+            case PROMO -> {
+                for (final Promo promo
+                        : ((AdminSessionController) this.getCurrentSessionContext().getController())
+                        .getPromos()) {
+                    model.addRow(new Object[]{
+                            promo.id(),
+                            promo.percentageDiscount(),
+                            promo.expiration()
+                    });
+                }
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + table.getName());
+        }
     }
 
     private boolean isFieldFilled(final String text) {

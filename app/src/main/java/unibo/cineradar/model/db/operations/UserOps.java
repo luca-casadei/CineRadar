@@ -1,10 +1,11 @@
-package unibo.cineradar.model.db;
+package unibo.cineradar.model.db.operations;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import unibo.cineradar.model.cast.Actor;
 import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.cast.Director;
+import unibo.cineradar.model.db.DBManager;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.FilmReview;
