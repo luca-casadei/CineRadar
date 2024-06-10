@@ -1,8 +1,9 @@
-package unibo.cineradar.model.db;
+package unibo.cineradar.model.db.operations;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import unibo.cineradar.model.card.CardReg;
 import unibo.cineradar.model.cinema.Cinema;
+import unibo.cineradar.model.db.DBManager;
 import unibo.cineradar.model.utente.Registrar;
 
 import java.sql.Date;

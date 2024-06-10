@@ -1,7 +1,6 @@
-package unibo.cineradar.model.db;
+package unibo.cineradar.model.db.operations.admin;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.mariadb.jdbc.Statement;
 import unibo.cineradar.model.card.CardReg;
 import unibo.cineradar.model.cast.Actor;
 import unibo.cineradar.model.cast.Cast;
@@ -9,9 +8,13 @@ import unibo.cineradar.model.cast.CastMember;
 import unibo.cineradar.model.cast.Casting;
 import unibo.cineradar.model.cast.Director;
 import unibo.cineradar.model.cinema.Cinema;
+import unibo.cineradar.model.db.DBManager;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
+import unibo.cineradar.model.promo.GenrePromo;
 import unibo.cineradar.model.promo.Promo;
+import unibo.cineradar.model.promo.SinglePromo;
+import unibo.cineradar.model.promo.TemplatePromo;
 import unibo.cineradar.model.ranking.CastRanking;
 import unibo.cineradar.model.ranking.EvalType;
 import unibo.cineradar.model.ranking.UserRanking;
@@ -48,7 +51,7 @@ public final class AdminOps extends DBManager {
     private static final int PARAMETER_INDEX1 = 5;
     private static final int PARAMETER_INDEX2 = 6;
     private static final int PARAMETER_INDEX3 = 7;
-    private static final String CODICE_SERIE = "CodiceSerie";
+    private static final String SERIES_CODE = "CodiceSerie";
     private static final String NAME = "Nome";
     private static final String SURNAME = "Cognome";
     private static final String CODE = "Codice";
@@ -261,7 +264,6 @@ public final class AdminOps extends DBManager {
      * Retrieves details of films including their cast from the database.
      *
      * @return A map containing films as keys and their corresponding cast as values.
-     * @throws IllegalArgumentException If an SQL exception occurs.
      */
     public Map<Film, Cast> getFilmsDetails() {
         Objects.requireNonNull(getConnection());
@@ -318,7 +320,6 @@ public final class AdminOps extends DBManager {
      * Retrieves detailed information about series, including seasons, episodes, and cast members.
      *
      * @return A list of Series objects containing detailed information about series, seasons, episodes, and cast members.
-     * @throws IllegalArgumentException If there's an issue with executing the SQL query.
      */
     public List<Serie> getDetailedSeries() {
         Objects.requireNonNull(this.getConnection());
@@ -592,8 +593,6 @@ public final class AdminOps extends DBManager {
      *                       - "PeggiorMediaUtilità": Retrieves users with the lowest average usefulness rating for reviews.
      *                       - "MigliorMediaUtilità": Retrieves users with the highest average usefulness rating for reviews.
      * @return A list of UserRanking objects representing the rankings for the specified evaluation type.
-     * @throws IllegalArgumentException if an invalid evaluation type is provided.
-     * @throws IllegalArgumentException if there is an error retrieving rankings from the database.
      */
     public List<UserRanking> getRankings(final String evaluationType) {
         return switch (evaluationType) {
@@ -611,8 +610,6 @@ public final class AdminOps extends DBManager {
      *                       Possible value is "BestDirectors",
      *                       which retrieves top directors based on the number of appearances in cast.
      * @return A list of CastRanking objects representing the rankings for the specified evaluation type.
-     * @throws IllegalArgumentException if an invalid evaluation type is provided.
-     * @throws IllegalArgumentException if there is an error retrieving rankings from the database.
      */
     public List<CastRanking> getCastRankings(final EvalType evaluationType) {
         Objects.requireNonNull(getConnection());
@@ -646,7 +643,6 @@ public final class AdminOps extends DBManager {
      * Retrieves a list of cast members from the database.
      *
      * @return A list of CastMember objects representing the cast members.
-     * @throws IllegalArgumentException If an error occurs while retrieving cast members from the database.
      */
     public List<CastMember> getCastMembers() {
         Objects.requireNonNull(getConnection());
@@ -697,7 +693,6 @@ public final class AdminOps extends DBManager {
      * Retrieves a list of casting details from the database.
      *
      * @return A list of Casting objects representing the casting details.
-     * @throws IllegalArgumentException If an error occurs while retrieving casting details from the database.
      */
     public List<Casting> getCasting() {
         final String query = "SELECT * FROM casting";
@@ -721,7 +716,6 @@ public final class AdminOps extends DBManager {
      * Adds a new casting detail with the given name to the database.
      *
      * @param name The name of the casting detail to be added.
-     * @throws IllegalArgumentException If an error occurs while adding the casting detail to the database.
      */
     public void addCast(final Optional<String> name) {
         Objects.requireNonNull(getConnection());
@@ -746,7 +740,6 @@ public final class AdminOps extends DBManager {
      *
      * @param id The ID of the casting detail to be deleted.
      * @return True if the casting detail was successfully deleted, false otherwise.
-     * @throws IllegalArgumentException If an error occurs while deleting the casting detail from the database.
      */
     public boolean deleteCast(final int id) {
         Objects.requireNonNull(getConnection());
@@ -765,7 +758,6 @@ public final class AdminOps extends DBManager {
      * Retrieves the ID of the last added series from the database.
      *
      * @return The ID of the last series added to the system.
-     * @throws IllegalArgumentException If there is an error retrieving the series ID from the database.
      */
     public Integer getLastSeriesId() {
         Objects.requireNonNull(getConnection());
@@ -792,7 +784,6 @@ public final class AdminOps extends DBManager {
      *
      * @param seriesCode The code identifying the series.
      * @return The ID of the last season added to the specified series.
-     * @throws IllegalArgumentException If there is an error retrieving the season ID from the database.
      */
     public Integer getLastSeasonId(final int seriesCode) {
         Objects.requireNonNull(getConnection());
@@ -821,7 +812,6 @@ public final class AdminOps extends DBManager {
      *
      * @param code The code of the request to be marked as complete.
      * @return True if the request was successfully marked as complete, false otherwise.
-     * @throws IllegalArgumentException If there is an error updating the request status in the database.
      */
     public boolean completeRequest(final int code) {
         Objects.requireNonNull(getConnection());
@@ -843,8 +833,6 @@ public final class AdminOps extends DBManager {
      * This method executes an SQL query to fetch promo details by joining the 'templatepromo' and 'promo' tables.
      *
      * @return a list of {@link Promo} objects representing the current promotional offers.
-     * @throws IllegalArgumentException if there is an error while retrieving the promotional offers.
-     * @throws NullPointerException     if the database connection is null.
      */
     public List<Promo> getPromos() {
         Objects.requireNonNull(getConnection());
@@ -870,36 +858,20 @@ public final class AdminOps extends DBManager {
     }
 
     /**
-     * Adds a new promotional entry for a multiple item promotion.
-     * If the promotional template does not already exist in the MULTIPLO table, it is inserted.
-     * The promo details are then added to the PROMO table.
+     * Adds a multiple promotion with the specified percentage to the database.
      *
-     * @param promo the Promo object containing the details of the promotion.
-     * @throws NullPointerException if the database connection is null.
+     * @param percentage the percentage of the multiple promotion to add.
      */
-    public void addMultiplePromo(final Promo promo) {
+    public void addMultiplePromo(final int percentage) {
         Objects.requireNonNull(getConnection());
-        final String alrExistMultipleQuery = "SELECT CodiceTemplatePromo FROM MULTIPLO WHERE CodiceTemplatePromo = ?";
         final String multipleQuery = "INSERT INTO MULTIPLO (CodiceTemplatePromo) VALUES (?)";
-        final String promoQuery = "INSERT INTO PROMO (CodiceTemplatePromo, Scadenza) VALUES (?,?)";
         try {
-            getConnection().setAutoCommit(false);
-            final int generatedPromoCode = insertOrUpdateTemplatePromo(promo.percentageDiscount());
-            setPreparedStatement(getConnection().prepareStatement(alrExistMultipleQuery));
-            getPreparedStatement().setInt(1, generatedPromoCode);
-            setResultSet(getPreparedStatement().executeQuery());
-            if (!getResultSet().next()) {
-                setPreparedStatement(getConnection().prepareStatement(multipleQuery));
-                getPreparedStatement().setInt(1, generatedPromoCode);
-                getPreparedStatement().executeUpdate();
-            }
-            setPreparedStatement(getConnection().prepareStatement(promoQuery));
-            getPreparedStatement().setInt(1, generatedPromoCode);
-            getPreparedStatement().setDate(2, Date.valueOf(promo.expiration()));
+            setPreparedStatement(getConnection().prepareStatement(multipleQuery));
+            getPreparedStatement().setInt(1, percentage);
             getPreparedStatement().executeUpdate();
             getConnection().commit();
         } catch (SQLException ex) {
-            handleSQLException(ex);
+            throw new IllegalArgumentException("Error deleting multiple promo: " + ex.getMessage(), ex);
         }
     }
 
@@ -907,23 +879,22 @@ public final class AdminOps extends DBManager {
      * Adds a new promotional entry for a genre-specific promotion.
      * Inserts the promotional details into the PROMO_GENERE table and then into the PROMO table.
      *
-     * @param promo the Promo object containing the details of the promotion.
-     * @param genre the genre to which the promotion applies.
-     * @throws NullPointerException if the database connection is null.
+     * @param promo      the Promo object containing the details of the promotion.
+     * @param genre      the genre to which the promotion applies.
+     * @param multipleId the Promo id of multiple
      */
-    public void addGenrePromo(final Promo promo, final String genre) {
+    public void addGenrePromo(final Promo promo, final String genre, final int multipleId) {
         Objects.requireNonNull(getConnection());
         final String genreQuery = "INSERT INTO PROMO_GENERE (NomeGenere, CodiceTemplateMultiplo) VALUES (?,?)";
         final String promoQuery = "INSERT INTO PROMO (CodiceTemplatePromo, Scadenza) VALUES (?,?)";
         try {
             getConnection().setAutoCommit(false);
-            final int generatedPromoCode = insertOrUpdateTemplatePromo(promo.percentageDiscount());
             setPreparedStatement(getConnection().prepareStatement(genreQuery));
             getPreparedStatement().setString(1, genre);
-            getPreparedStatement().setInt(2, generatedPromoCode);
+            getPreparedStatement().setInt(2, multipleId);
             getPreparedStatement().executeUpdate();
             setPreparedStatement(getConnection().prepareStatement(promoQuery));
-            getPreparedStatement().setInt(1, generatedPromoCode);
+            getPreparedStatement().setInt(1, multipleId);
             getPreparedStatement().setDate(2, Date.valueOf(promo.expiration()));
             getPreparedStatement().executeUpdate();
             getConnection().commit();
@@ -932,26 +903,19 @@ public final class AdminOps extends DBManager {
         }
     }
 
-
     /**
-     * Adds a new promotional entry for a single item promotion.
-     * Depending on the type of multimedia (either a series or a film), inserts the appropriate details
-     * into the SINGOLO table and then into the PROMO table.
+     * Adds a single promotion with the specified template code, multimedia type, and multimedia code to the database.
      *
-     * @param promo          the Promo object containing the details of the promotion.
-     * @param multimediaType the type of multimedia item (either "Serie" or another type indicating a film).
-     * @param multimediaCode the code identifying the specific series or film to which the promotion applies.
-     * @throws NullPointerException if the database connection is null.
+     * @param templateCode the code of the template promotion to add.
+     * @param multimediaType the type of multimedia, either "Serie" or another type (assumed to be "Film").
+     * @param multimediaCode the code of the multimedia, either a series code or a film code depending on the type.
      */
-    public void addSinglePromo(final Promo promo, final String multimediaType, final int multimediaCode) {
+    public void addSinglePromo(final int templateCode, final String multimediaType, final int multimediaCode) {
         Objects.requireNonNull(getConnection());
         final String singleQuery = "INSERT INTO SINGOLO (CodiceTemplatePromo, CodiceSerie, CodiceFilm) VALUES (?,?,?)";
-        final String promoQuery = "INSERT INTO PROMO (CodiceTemplatePromo, Scadenza) VALUES (?,?)";
         try {
-            getConnection().setAutoCommit(false);
-            final int generatedPromoCode = insertOrUpdateTemplatePromo(promo.percentageDiscount());
             setPreparedStatement(getConnection().prepareStatement(singleQuery));
-            getPreparedStatement().setInt(1, generatedPromoCode);
+            getPreparedStatement().setInt(1, templateCode);
             if ("Serie".equals(multimediaType)) {
                 getPreparedStatement().setInt(2, multimediaCode);
                 getPreparedStatement().setNull(3, java.sql.Types.INTEGER);
@@ -960,13 +924,8 @@ public final class AdminOps extends DBManager {
                 getPreparedStatement().setInt(3, multimediaCode);
             }
             getPreparedStatement().executeUpdate();
-            setPreparedStatement(getConnection().prepareStatement(promoQuery));
-            getPreparedStatement().setInt(1, generatedPromoCode);
-            getPreparedStatement().setDate(2, Date.valueOf(promo.expiration()));
-            getPreparedStatement().executeUpdate();
-            getConnection().commit();
         } catch (SQLException ex) {
-            handleSQLException(ex);
+            throw new IllegalArgumentException("Error deleting single promo: " + ex.getMessage(), ex);
         }
     }
 
@@ -977,8 +936,6 @@ public final class AdminOps extends DBManager {
      * @param code       the unique code of the promotional offer to be deleted.
      * @param expiration the expiration date of the promotional offer to be deleted.
      * @return {@code true} if the promotional offer was successfully deleted, {@code false} otherwise.
-     * @throws IllegalArgumentException if there is an error while deleting the promotional offer.
-     * @throws NullPointerException     if the database connection is null.
      */
     public boolean deletePromo(final int code, final LocalDate expiration) {
         Objects.requireNonNull(getConnection());
@@ -1001,8 +958,6 @@ public final class AdminOps extends DBManager {
      * This method executes an SQL query to fetch cards details.
      *
      * @return a list of {@link CardReg} objects representing the cards.
-     * @throws IllegalArgumentException if there is an error while retrieving the cards.
-     * @throws NullPointerException     if the database connection is null.
      */
     public List<CardReg> getCards() {
         Objects.requireNonNull(getConnection());
@@ -1033,8 +988,6 @@ public final class AdminOps extends DBManager {
      * @param expiration The expiration date of the promotional code.
      * @param cinemaCode The code representing the cinema.
      * @param username   The username of the user to whom the promotional code will be assigned.
-     * @throws NullPointerException     If the connection object is null.
-     * @throws IllegalArgumentException If an error occurs while executing the SQL query.
      */
     public void assignPromo(
             final int promoCode, final LocalDate expiration, final int cinemaCode, final String username) {
@@ -1059,7 +1012,6 @@ public final class AdminOps extends DBManager {
      *
      * @param castId The unique identifier of the cast.
      * @return A list of CastMember objects representing detailed information about the cast.
-     * @throws IllegalArgumentException If an error occurs while retrieving the cast details.
      */
     public List<CastMember> getDetailedCast(final int castId) {
         Objects.requireNonNull(getConnection());
@@ -1095,7 +1047,6 @@ public final class AdminOps extends DBManager {
      *
      * @param castMemberCode The code representing the cast member to be added.
      * @param castCode       The code representing the cast to which the member will be added.
-     * @throws IllegalArgumentException If an error occurs while adding the cast member to the cast.
      */
     public void addCastMemberToCast(final int castMemberCode, final int castCode) {
         Objects.requireNonNull(getConnection());
@@ -1118,7 +1069,6 @@ public final class AdminOps extends DBManager {
      * @param castMemberCode The code representing the cast member to be deleted.
      * @param castCode       The code representing the cast from which the member will be deleted.
      * @return True if the deletion was successful, false otherwise.
-     * @throws IllegalArgumentException If an error occurs while deleting the cast member from the cast.
      */
     public boolean deleteCastMemberToCast(final int castMemberCode, final int castCode) {
         Objects.requireNonNull(getConnection());
@@ -1159,7 +1109,6 @@ public final class AdminOps extends DBManager {
      *
      * @param username The username of the user to be deleted.
      * @return True if the user deletion was successful, false otherwise.
-     * @throws IllegalArgumentException If an error occurs while deleting the user.
      */
     public boolean deleteUser(final String username) {
         Objects.requireNonNull(getConnection());
@@ -1180,7 +1129,6 @@ public final class AdminOps extends DBManager {
      *
      * @param username The username of the registrar to be deleted.
      * @return True if the registrar deletion was successful, false otherwise.
-     * @throws IllegalArgumentException If an error occurs while deleting the registrar.
      */
     public boolean deleteRegistrar(final String username) {
         Objects.requireNonNull(getConnection());
@@ -1204,18 +1152,9 @@ public final class AdminOps extends DBManager {
      * @return true if the season is not available, false otherwise.
      */
     public boolean isSeasonAvailable(final int seriesId, final int seasonId) {
-        Objects.requireNonNull(getConnection());
-        try {
-            final String query = "SELECT Codice "
-                    + "FROM serie, stagione "
-                    + "WHERE serie.Codice = stagione.CodiceSerie "
-                    + "AND Codice = ? AND NumeroStagione = ?";
-            setPreparedStatement(getConnection().prepareStatement(query));
-            getPreparedStatement().setInt(1, seriesId);
-            getPreparedStatement().setInt(2, seasonId);
-            setResultSet(getPreparedStatement().executeQuery());
-            return getResultSet().next();
-        } catch (SQLException ex) {
+        try (AdminAvailabilityOps mgr = new AdminAvailabilityOps()) {
+            return mgr.isSeasonAvailable(seriesId, seasonId);
+        } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
@@ -1227,15 +1166,9 @@ public final class AdminOps extends DBManager {
      * @return true if the series is not available, false otherwise.
      */
     public boolean isSeriesAvailable(final int seriesId) {
-        Objects.requireNonNull(getConnection());
-        try {
-            final String query = "SELECT Codice FROM serie"
-                    + " WHERE Codice = ?";
-            setPreparedStatement(getConnection().prepareStatement(query));
-            getPreparedStatement().setInt(1, seriesId);
-            setResultSet(getPreparedStatement().executeQuery());
-            return getResultSet().next();
-        } catch (SQLException ex) {
+        try (AdminAvailabilityOps mgr = new AdminAvailabilityOps()) {
+            return mgr.isSeriesAvailable(seriesId);
+        } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
@@ -1247,15 +1180,9 @@ public final class AdminOps extends DBManager {
      * @return true if the film is not available, false otherwise.
      */
     public boolean isFilmAvailable(final int filmId) {
-        Objects.requireNonNull(getConnection());
-        try {
-            final String query = "SELECT Codice FROM film"
-                    + " WHERE Codice = ? ";
-            setPreparedStatement(getConnection().prepareStatement(query));
-            getPreparedStatement().setInt(1, filmId);
-            setResultSet(getPreparedStatement().executeQuery());
-            return getResultSet().next();
-        } catch (SQLException ex) {
+        try (AdminAvailabilityOps mgr = new AdminAvailabilityOps()) {
+            return mgr.isFilmAvailable(filmId);
+        } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
@@ -1267,15 +1194,9 @@ public final class AdminOps extends DBManager {
      * @return true if the cast member is not available, false otherwise.
      */
     public boolean isCastMemberAvailable(final int castMemberId) {
-        Objects.requireNonNull(getConnection());
-        try {
-            final String query = "SELECT Codice FROM membrocast"
-                    + " WHERE Codice = ?";
-            setPreparedStatement(getConnection().prepareStatement(query));
-            getPreparedStatement().setInt(1, castMemberId);
-            setResultSet(getPreparedStatement().executeQuery());
-            return getResultSet().next();
-        } catch (SQLException ex) {
+        try (AdminAvailabilityOps mgr = new AdminAvailabilityOps()) {
+            return mgr.isCastMemberAvailable(castMemberId);
+        } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
@@ -1287,15 +1208,9 @@ public final class AdminOps extends DBManager {
      * @return true if the cast session is unavailable, false otherwise.
      */
     public boolean isCastAvailable(final int castId) {
-        Objects.requireNonNull(getConnection());
-        try {
-            final String query = "SELECT Codice FROM casting"
-                    + " WHERE Codice = ? ";
-            setPreparedStatement(getConnection().prepareStatement(query));
-            getPreparedStatement().setInt(1, castId);
-            setResultSet(getPreparedStatement().executeQuery());
-            return getResultSet().next();
-        } catch (SQLException ex) {
+        try (AdminAvailabilityOps mgr = new AdminAvailabilityOps()) {
+            return mgr.isCastAvailable(castId);
+        } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
@@ -1307,15 +1222,9 @@ public final class AdminOps extends DBManager {
      * @return true if the promo is not available, false otherwise.
      */
     public boolean isPromoAvailable(final int promoId) {
-        Objects.requireNonNull(getConnection());
-        try {
-            final String query = "SELECT CodiceTemplatePromo FROM promo "
-                    + "WHERE CodiceTemplatePromo = ?";
-            setPreparedStatement(getConnection().prepareStatement(query));
-            getPreparedStatement().setInt(1, promoId);
-            setResultSet(getPreparedStatement().executeQuery());
-            return getResultSet().next();
-        } catch (SQLException ex) {
+        try (AdminAvailabilityOps mgr = new AdminAvailabilityOps()) {
+            return mgr.isPromoAvailable(promoId);
+        } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
@@ -1327,15 +1236,9 @@ public final class AdminOps extends DBManager {
      * @return true if the cinema is not available, false otherwise.
      */
     public boolean isCinemaAvailable(final int cinemaId) {
-        Objects.requireNonNull(getConnection());
-        try {
-            final String query = "SELECT Codice FROM cinema "
-                    + "WHERE Codice = ? ";
-            setPreparedStatement(getConnection().prepareStatement(query));
-            getPreparedStatement().setInt(1, cinemaId);
-            setResultSet(getPreparedStatement().executeQuery());
-            return getResultSet().next();
-        } catch (SQLException ex) {
+        try (AdminAvailabilityOps mgr = new AdminAvailabilityOps()) {
+            return mgr.isCinemaAvailable(cinemaId);
+        } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
@@ -1347,15 +1250,9 @@ public final class AdminOps extends DBManager {
      * @return true if the user is not available, false otherwise.
      */
     public boolean isUserAvailable(final String username) {
-        Objects.requireNonNull(getConnection());
-        try {
-            final String query = "SELECT Username FROM utente "
-                    + "WHERE Username = ?";
-            setPreparedStatement(getConnection().prepareStatement(query));
-            getPreparedStatement().setString(1, username);
-            setResultSet(getPreparedStatement().executeQuery());
-            return getResultSet().next();
-        } catch (SQLException ex) {
+        try (AdminAvailabilityOps mgr = new AdminAvailabilityOps()) {
+            return mgr.isUserAvailable(username);
+        } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
@@ -1364,7 +1261,6 @@ public final class AdminOps extends DBManager {
      * Retrieves a list of all users from the database.
      *
      * @return a list of User objects.
-     * @throws IllegalArgumentException if a SQL error occurs.
      */
     public List<User> getUsers() {
         Objects.requireNonNull(getConnection());
@@ -1395,7 +1291,6 @@ public final class AdminOps extends DBManager {
      * Retrieves a list of all registrars from the database.
      *
      * @return a list of Registrar objects.
-     * @throws IllegalArgumentException if a SQL error occurs.
      */
     public List<Registrar> getRegistrars() {
         Objects.requireNonNull(getConnection());
@@ -1427,7 +1322,6 @@ public final class AdminOps extends DBManager {
      *
      * @param password the password for the new registrar.
      * @param registrar the Registrar object containing the new registrar's details.
-     * @throws IllegalArgumentException if a SQL error occurs while adding the registrar.
      */
     public void addRegistrar(final String password, final Registrar registrar) {
         Objects.requireNonNull(getConnection());
@@ -1456,7 +1350,6 @@ public final class AdminOps extends DBManager {
      * Retrieves a list of all cinemas from the database.
      *
      * @return a list of Cinema objects.
-     * @throws IllegalArgumentException if a SQL error occurs.
      */
     public List<Cinema> getCinemas() {
         Objects.requireNonNull(getConnection());
@@ -1487,7 +1380,6 @@ public final class AdminOps extends DBManager {
      * Adds a new cinema to the database with the provided details.
      *
      * @param cinema the Cinema object containing the new cinema's details.
-     * @throws IllegalArgumentException if a SQL error occurs while adding the cinema.
      */
     public void addCinema(final Cinema cinema) {
         Objects.requireNonNull(getConnection());
@@ -1512,7 +1404,6 @@ public final class AdminOps extends DBManager {
      *
      * @param code the code of the cinema to be deleted.
      * @return true if the cinema was successfully deleted, false otherwise.
-     * @throws IllegalArgumentException if a SQL error occurs while deleting the cinema.
      */
     public boolean deleteCinema(final int code) {
         Objects.requireNonNull(getConnection());
@@ -1535,16 +1426,9 @@ public final class AdminOps extends DBManager {
      * @return {@code true} if a cast with the specified ID exists, {@code false} otherwise.
      */
     public boolean isCast(final int castId) {
-        Objects.requireNonNull(getConnection());
-        try {
-            final String query = "SELECT * FROM casting, partecipazione_cast "
-                    + "WHERE casting.Codice = partecipazione_cast.CodiceCast "
-                    + "AND casting.Codice = ?";
-            setPreparedStatement(getConnection().prepareStatement(query));
-            getPreparedStatement().setInt(1, castId);
-            setResultSet(getPreparedStatement().executeQuery());
-            return getResultSet().next();
-        } catch (SQLException ex) {
+        try (AdminAvailabilityOps mgr = new AdminAvailabilityOps()) {
+            return mgr.isCast(castId);
+        } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
@@ -1553,7 +1437,6 @@ public final class AdminOps extends DBManager {
      * Retrieves the ID of the most recently added cast.
      *
      * @return the ID of the last cast.
-     * @throws IllegalArgumentException if there is an error retrieving the last cast ID.
      */
     public Integer getLastCastId() {
         Objects.requireNonNull(getConnection());
@@ -1579,18 +1462,11 @@ public final class AdminOps extends DBManager {
      *
      * @param castId the ID of the cast to check.
      * @return {@code true} if the cast is empty, {@code false} otherwise.
-     * @throws IllegalArgumentException if there is an error checking if the cast is empty.
      */
     public boolean isEmptyCast(final int castId) {
-        Objects.requireNonNull(getConnection());
-        try {
-            final String query = "SELECT * FROM partecipazione_cast "
-                    + "WHERE partecipazione_cast.CodiceCast = ?";
-            setPreparedStatement(getConnection().prepareStatement(query));
-            getPreparedStatement().setInt(1, castId);
-            setResultSet(getPreparedStatement().executeQuery());
-            return !getResultSet().next();
-        } catch (SQLException ex) {
+        try (AdminAvailabilityOps mgr = new AdminAvailabilityOps()) {
+            return mgr.isEmptyCast(castId);
+        } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
@@ -1599,7 +1475,6 @@ public final class AdminOps extends DBManager {
      * Deletes the multimedia content associated with the specified cast ID.
      *
      * @param castId the ID of the cast whose multimedia content is to be deleted.
-     * @throws IllegalArgumentException if there is an error deleting the multimedia content.
      */
     public void deleteMultimediaCast(final int castId) {
         Objects.requireNonNull(getConnection());
@@ -1610,7 +1485,7 @@ public final class AdminOps extends DBManager {
             getPreparedStatement().setInt(1, castId);
             setResultSet(getPreparedStatement().executeQuery());
             while (getResultSet().next()) {
-                final int seriesId = getResultSet().getInt(CODICE_SERIE);
+                final int seriesId = getResultSet().getInt(SERIES_CODE);
                 final String seasonDeleteQuery = "DELETE FROM STAGIONE "
                         + "WHERE CodiceCast = ?";
                 setPreparedStatement(getConnection().prepareStatement(seasonDeleteQuery));
@@ -1638,8 +1513,6 @@ public final class AdminOps extends DBManager {
      *
      * @param castMemberCode the unique code of the cast member whose linked cast members are to be retrieved
      * @return a list of integers representing the codes of the cast members linked to the specified cast member
-     * @throws NullPointerException if the database connection is {@code null}
-     * @throws IllegalArgumentException if a SQL error occurs during the query execution
      */
     public List<Integer> getCastLinked(final int castMemberCode) {
         Objects.requireNonNull(getConnection());
@@ -1660,43 +1533,186 @@ public final class AdminOps extends DBManager {
     }
 
     /**
-     * Inserts a new template promo or retrieves the code of an existing template promo with the specified discount percentage.
-     * If a template promo with the given discount percentage exists, its code is returned. Otherwise, a new template promo
-     * is inserted and its generated code is returned.
+     * Retrieves a list of multiples from the database.
      *
-     * @param percentageDiscount the discount percentage of the template promo.
-     * @return the code of the existing or newly inserted template promo.
-     * @throws SQLException          if there is an error while interacting with the database.
-     * @throws IllegalStateException if unable to insert or update the template promo.
+     * @return a list of integers representing the multiples.
      */
-    private int insertOrUpdateTemplatePromo(final int percentageDiscount) throws SQLException {
-        final String alrExistTemplatePromoQuery = "SELECT CodicePromo FROM TEMPLATEPROMO "
-                + "WHERE PercentualeSconto = ?";
-        final String templatePromoQuery = "INSERT INTO TEMPLATEPROMO (PercentualeSconto) VALUES (?)";
-        setPreparedStatement(getConnection().prepareStatement(alrExistTemplatePromoQuery));
-        getPreparedStatement().setInt(1, percentageDiscount);
-        ResultSet rs = getPreparedStatement().executeQuery();
-        if (rs.next()) {
-            return rs.getInt(1);
-        } else {
-            setPreparedStatement(getConnection().prepareStatement(templatePromoQuery, Statement.RETURN_GENERATED_KEYS));
-            getPreparedStatement().setInt(1, percentageDiscount);
-            getPreparedStatement().executeUpdate();
-            rs = getPreparedStatement().getGeneratedKeys();
-            if (rs.next()) {
-                return rs.getInt(1);
+    public List<Integer> getMultiples() {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT CodiceTemplatePromo FROM MULTIPLO";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
+            final List<Integer> multipleCodes = new ArrayList<>();
+            while (getResultSet().next()) {
+                multipleCodes.add(getResultSet().getInt("CodiceTemplatePromo"));
             }
+            return multipleCodes;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
-        throw new IllegalStateException("Unable to insert or update template promo");
     }
 
     /**
-     * Handles a SQLException by rolling back the transaction and throwing an IllegalArgumentException.
-     * If an error occurs during the rollback, it is added as a suppressed exception to the original SQLException.
+     * Adds a template promotion with the specified percentage to the database.
      *
-     * @param ex the SQLException that occurred.
-     * @throws IllegalArgumentException always thrown with the original SQLException as its cause.
+     * @param percentage the percentage of the template promotion to add.
      */
+    public void addTemplatePromo(final int percentage) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "INSERT INTO TEMPLATEPROMO "
+                    + "(PercentualeSconto) "
+                    + "VALUES (?)";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, percentage);
+            getPreparedStatement().executeUpdate();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error adding template promo: " + ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Retrieves a list of template promotions from the database.
+     *
+     * @return a list of TemplatePromo objects.
+     */
+    public List<TemplatePromo> getTemplatePromos() {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT * FROM TEMPLATEPROMO";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
+            final List<TemplatePromo> templatePromos = new ArrayList<>();
+            while (getResultSet().next()) {
+                templatePromos.add(new TemplatePromo(
+                        getResultSet().getInt("CodicePromo"),
+                        getResultSet().getInt("PercentualeSconto")
+                ));
+            }
+            return templatePromos;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Retrieves a list of single promotions from the database.
+     *
+     * @return a list of SinglePromo objects.
+     */
+    public List<SinglePromo> getSinglePromos() {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT * FROM SINGOLO";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
+            final List<SinglePromo> singlePromos = new ArrayList<>();
+            while (getResultSet().next()) {
+                singlePromos.add(new SinglePromo(
+                        getResultSet().getInt("CodiceTemplatePromo"),
+                        getResultSet().getInt("CodiceSerie"),
+                        getResultSet().getInt("CodiceFilm")
+                ));
+            }
+            return singlePromos;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Retrieves a list of genre promotions from the database.
+     *
+     * @return a list of GenrePromo objects.
+     */
+    public List<GenrePromo> getGenrePromos() {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT * FROM PROMO_GENERE";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            setResultSet(getPreparedStatement().executeQuery());
+            final List<GenrePromo> genrePromos = new ArrayList<>();
+            while (getResultSet().next()) {
+                genrePromos.add(new GenrePromo(
+                        getResultSet().getInt("CodiceTemplateMultiplo"),
+                        getResultSet().getString("NomeGenere")
+                ));
+            }
+            return genrePromos;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Adds a promotion with the specified code and expiration date to the database.
+     *
+     * @param code the code of the promotion to add.
+     * @param expiration the expiration date of the promotion.
+     */
+    public void addPromo(final int code, final LocalDate expiration) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "INSERT INTO PROMO "
+                    + "(CodiceTemplatePromo, Scadenza)"
+                    + " VALUES (?,?)";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, code);
+            getPreparedStatement().setDate(2, Date.valueOf(expiration));
+            getPreparedStatement().executeUpdate();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error adding promo: " + ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Checks if a template promotion with the specified code is available in the database.
+     *
+     * @param codePromo the code of the template promotion to check.
+     * @return {@code true} if the template promotion is available, {@code false} otherwise.
+     */
+    public boolean isTemplatePromoAvailable(final int codePromo) {
+        try (AdminAvailabilityOps mgr = new AdminAvailabilityOps()) {
+            return mgr.isTemplatePromoAvailable(codePromo);
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Checks if a multiple is available for the specified genre promotion in the database.
+     *
+     * @param genrePromo the genre promotion to check.
+     * @return {@code true} if the multiple is available, {@code false} otherwise.
+     */
+    public boolean isMultipleAvailable(final int genrePromo) {
+        try (AdminAvailabilityOps mgr = new AdminAvailabilityOps()) {
+            return mgr.isMultipleAvailable(genrePromo);
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Deletes a template promotion with the specified code from the database.
+     *
+     * @param code the code of the template promotion to delete.
+     * @return {@code true} if the template promotion was successfully deleted, {@code false} otherwise.
+     */
+    public boolean deleteTemplatePromo(final int code) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "DELETE FROM TEMPLATEPROMO WHERE CodicePromo = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, code);
+            final int rowsAffected = getPreparedStatement().executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error deleting template promo: " + ex.getMessage(), ex);
+        }
+    }
+
     private void handleSQLException(final SQLException ex) {
         SQLException rollbackEx = null;
         try {
@@ -1710,13 +1726,6 @@ public final class AdminOps extends DBManager {
         throw new IllegalArgumentException("Error adding promo: " + ex.getMessage(), ex);
     }
 
-    /**
-     * Retrieves the cinema code associated with the given username from the database.
-     *
-     * @param username The username for which to retrieve the cinema code.
-     * @return An Optional containing the cinema code if found, otherwise empty.
-     * @throws IllegalArgumentException If an error occurs while retrieving the cinema code.
-     */
     private Optional<Integer> getCinemaCode(final String username) {
         Objects.requireNonNull(getConnection());
         try {
@@ -1733,11 +1742,6 @@ public final class AdminOps extends DBManager {
         }
     }
 
-    /**
-     * Retrieves the ranking of the top five reviewers based on the total number of reviews provided.
-     *
-     * @return A list of UserRanking objects representing the top five reviewers.
-     */
     private List<UserRanking> getBestReviewersRanking() {
         final String query =
                 "SELECT UsernameUtente, SUM(NumeroValutazioni) AS TotaleValutazioni "
@@ -1755,11 +1759,6 @@ public final class AdminOps extends DBManager {
         return getResult(query);
     }
 
-    /**
-     * Retrieves the ranking of the bottom five utility reviewers based on the average utility score of their reviews.
-     *
-     * @return A list of UserRanking objects representing the bottom five utility reviewers.
-     */
     private List<UserRanking> getWorstUtilityReviewersRanking() {
         final String query =
                 "SELECT UsernameUtenteValutato, "
@@ -1773,11 +1772,6 @@ public final class AdminOps extends DBManager {
         return getResult(query);
     }
 
-    /**
-     * Retrieves the ranking of the top five utility reviewers based on the average utility score of their reviews.
-     *
-     * @return A list of UserRanking objects representing the top five utility reviewers.
-     */
     private List<UserRanking> getBestUtilityReviewersRanking() {
         final String query =
                 "SELECT UsernameUtenteValutato, "
@@ -1791,14 +1785,6 @@ public final class AdminOps extends DBManager {
         return getResult(query);
     }
 
-    /**
-     * Executes the given SQL query and retrieves the result set,
-     * then processes the result set to construct a list of UserRanking objects.
-     *
-     * @param query The SQL query to execute.
-     * @return A list of UserRanking objects constructed from the result set.
-     * @throws IllegalArgumentException If an error occurs while retrieving the rankings.
-     */
     private List<UserRanking> getResult(final String query) {
         try {
             setPreparedStatement(getConnection().prepareStatement(query));
@@ -1824,7 +1810,7 @@ public final class AdminOps extends DBManager {
 
     private void processSeries(final Map<Integer, Serie> seriesMap) throws SQLException {
         while (this.getResultSet().next()) {
-            final int seriesCode = this.getResultSet().getInt(CODICE_SERIE);
+            final int seriesCode = this.getResultSet().getInt(SERIES_CODE);
             final Serie serie = seriesMap.computeIfAbsent(seriesCode, k -> {
                 try {
                     return createSerie(seriesCode);
@@ -1907,13 +1893,6 @@ public final class AdminOps extends DBManager {
         }
     }
 
-    /**
-     * Retrieves a new CastMember object from the current row of the ResultSet.
-     *
-     * @return A CastMember object representing a member of the cast.
-     * @throws SQLException             If there's an issue with retrieving data from the ResultSet.
-     * @throws IllegalArgumentException If the member's type cannot be determined.
-     */
     private CastMember getNewCastMember() throws SQLException {
         final int memberCastCode =
                 this.getResultSet().getInt("CodiceMembroCast");

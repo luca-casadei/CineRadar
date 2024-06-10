@@ -3,7 +3,7 @@ package unibo.cineradar.model.context.user;
 import unibo.cineradar.model.cast.Cast;
 import unibo.cineradar.model.context.SessionContextImpl;
 
-import unibo.cineradar.model.db.UserOps;
+import unibo.cineradar.model.db.operations.UserOps;
 import unibo.cineradar.model.film.Film;
 import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.model.review.FullFilmReview;

@@ -1,7 +1,7 @@
 package unibo.cineradar.model.film;
 
 import org.junit.jupiter.api.Test;
-import unibo.cineradar.model.db.UserOps;
+import unibo.cineradar.model.db.operations.UserOps;
 
 import java.util.List;
 
