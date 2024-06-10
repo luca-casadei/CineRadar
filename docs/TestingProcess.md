@@ -33,5 +33,10 @@ Ora rieffettuo l'accesso come amministratore, per soddisfare la richiesta che ho
 - View aggiunta di un cast ✅
 - Creazione di un cast con i relativi membri ✅
 - Aggiunta di una serie (eccezione all'aggiunta) ❌
+  Se aggiungo la prima parte della serie, e poi clicco cancella nella fase intermedia, aggiunge comunque la serie parziale e quando clicco per vedere i dettagli esplode la console.
+- Aggiunta di un cinema ✅
+- Eliminazione di un cinema ✅
+- Aggiunta di un registratore ✅
+- Eliminazione di un registratore ✅
 
 ## Testing sospeso per errore importante
