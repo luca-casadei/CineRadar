@@ -367,6 +367,17 @@ public final class AdministratorContext extends SessionContextImpl {
     }
 
     /**
+     * Retrieves the ID of the last added film.
+     *
+     * @return The ID of the last film added to the system.
+     */
+    public int getLastFilmId() {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.getLastFilmId();
+        }
+    }
+
+    /**
      * Retrieves the ID of the last added season for a given series.
      *
      * @param seriesCode The code identifying the series.
@@ -775,6 +786,30 @@ public final class AdministratorContext extends SessionContextImpl {
     }
 
     /**
+     * Checks if the film genres with the specified ID is empty.
+     *
+     * @param filmCode the ID of the film to check.
+     * @return {@code true} if the film is genre empty, {@code false} otherwise.
+     */
+    public boolean isEmptyGenreFilm(final int filmCode) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.isEmptyGenreFilm(filmCode);
+        }
+    }
+
+    /**
+     * Checks if the series genres with the specified ID is empty.
+     *
+     * @param seriesCode the ID of the series to check.
+     * @return {@code true} if the series is genre empty, {@code false} otherwise.
+     */
+    public boolean isEmptyGenreSeries(final int seriesCode) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.isEmptyGenreSeries(seriesCode);
+        }
+    }
+
+    /**
      * Checks if the series with the specified ID is empty.
      *
      * @param seriesCode the ID of the series to check.
@@ -924,6 +959,80 @@ public final class AdministratorContext extends SessionContextImpl {
     public boolean deleteTemplatePromo(final int code) {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.deleteTemplatePromo(code);
+        }
+    }
+
+    /**
+     * Adds a new genre with the specified description to the system.
+     *
+     * @param genre The name of the genre to add.
+     * @param description A description of the genre.
+     */
+    public void addGenre(final String genre, final String description) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.addGenre(genre, description);
+        }
+    }
+
+    /**
+     * Deletes a genre from the system.
+     *
+     * @param genre The name of the genre to delete.
+     * @return {@code true} if the genre was successfully deleted, {@code false} otherwise.
+     */
+    public boolean deleteGenre(final String genre) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.deleteGenre(genre);
+        }
+    }
+
+    /**
+     * Associates a genre with a film.
+     *
+     * @param filmId The ID of the film to which the genre will be added.
+     * @param genre The name of the genre to add to the film.
+     */
+    public void addGenreToFilm(final int filmId, final String genre) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.addGenreToFilm(filmId, genre);
+        }
+    }
+
+    /**
+     * Removes a genre association from a film.
+     *
+     * @param filmCode The ID of the film from which the genre will be removed.
+     * @param genre The name of the genre to remove from the film.
+     * @return {@code true} if the genre was successfully removed from the film, {@code false} otherwise.
+     */
+    public boolean deleteGenreToFilm(final int filmCode, final String genre) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.deleteGenreToFilm(filmCode, genre);
+        }
+    }
+
+    /**
+     * Associates a genre with a series.
+     *
+     * @param seriesId The ID of the series to which the genre will be added.
+     * @param genre The name of the genre to add to the series.
+     */
+    public void addGenreToSeries(final int seriesId, final String genre) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.addGenreToSeries(seriesId, genre);
+        }
+    }
+
+    /**
+     * Removes a genre association from a series.
+     *
+     * @param seriesCode The ID of the series from which the genre will be removed.
+     * @param genre The name of the genre to remove from the series.
+     * @return {@code true} if the genre was successfully removed from the series, {@code false} otherwise.
+     */
+    public boolean deleteGenreToSeries(final int seriesCode, final String genre) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.deleteGenreToSeries(seriesCode, genre);
         }
     }
 }

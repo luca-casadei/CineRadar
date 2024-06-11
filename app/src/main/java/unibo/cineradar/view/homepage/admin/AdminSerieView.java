@@ -2,6 +2,7 @@ package unibo.cineradar.view.homepage.admin;
 
 import unibo.cineradar.controller.administrator.AdminSessionController;
 import unibo.cineradar.model.cast.Casting;
+import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.BoxLayout;
@@ -34,6 +35,8 @@ public final class AdminSerieView extends AdminPanel {
     private static final String SEASON_NUMBER = "Numero Stagione:";
     private static final String SERIES_CODE = "Codice Serie:";
     private static final String DATABASE_ERROR = "Errore del database: ";
+    private static final String CANCEL = "Cancel";
+    private static final String SERIES_NOT_PRESENT = "Errore: Serie non inserita";
     private JScrollPane seriesScrollPane;
     private JTable seriesTable;
 
@@ -89,6 +92,12 @@ public final class AdminSerieView extends AdminPanel {
         final JButton deleteEpisodeButton = new JButton("Elimina Episodio");
         deleteEpisodeButton.addActionListener(e -> deleteEpisodeDialog());
         buttonPanel.add(deleteEpisodeButton);
+        final JButton addGenreButton = new JButton("Aggiungi Genere a Serie");
+        addGenreButton.addActionListener(e -> addGenreToSeriesDialog(Optional.empty()));
+        buttonPanel.add(addGenreButton);
+        final JButton deleteGenreButton = new JButton("Elimina Genere da Serie");
+        deleteGenreButton.addActionListener(e -> deleteGenreToSeriesDialog());
+        buttonPanel.add(deleteGenreButton);
         return buttonPanel;
     }
 
@@ -166,7 +175,7 @@ public final class AdminSerieView extends AdminPanel {
             }
         });
 
-        final Object[] options = {okButton, "Cancel"};
+        final Object[] options = {okButton, CANCEL};
         JOptionPane.showOptionDialog(null, panel, "Aggiungi Serie",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                 null, options, options[0]);
@@ -183,6 +192,17 @@ public final class AdminSerieView extends AdminPanel {
         ((AdminSessionController) this.getCurrentSessionContext().getController())
                 .addSeries(title, ageLimit, plot);
         refreshSeriesTable();
+
+        final boolean isGenreAdded = addGenreToSeriesDialog(Optional.of(
+                ((AdminSessionController) this.getCurrentSessionContext().getController())
+                        .getLastSeriesId()
+        ));
+        if (!isGenreAdded) {
+            deleteSeries(((AdminSessionController) getCurrentSessionContext().getController())
+                    .getLastSeriesId());
+            refreshSeriesTable();
+            return;
+        }
 
         final boolean isSeasonAdded = addSeasonDialog(Optional.of(
                 ((AdminSessionController) this.getCurrentSessionContext().getController())
@@ -310,7 +330,7 @@ public final class AdminSerieView extends AdminPanel {
                 if (((AdminSessionController) getCurrentSessionContext().getController())
                         .isSeriesAvailable(Integer.parseInt(seriesCodeField.getText()))) {
                     JOptionPane.showMessageDialog(null,
-                            "Errore: Serie non inserita",
+                            SERIES_NOT_PRESENT,
                             ERROR, JOptionPane.ERROR_MESSAGE);
                     return;
                 }
@@ -328,7 +348,7 @@ public final class AdminSerieView extends AdminPanel {
             }
         });
 
-        final Object[] options = {okButton, "Cancel"};
+        final Object[] options = {okButton, CANCEL};
         final int option = JOptionPane.showOptionDialog(null, panel, "Aggiungi Stagione",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                 null, options, options[0]);
@@ -490,7 +510,7 @@ public final class AdminSerieView extends AdminPanel {
             if (((AdminSessionController) getCurrentSessionContext().getController())
                     .isSeriesAvailable(Integer.parseInt(seriesCodeField.getText()))) {
                 JOptionPane.showMessageDialog(null,
-                        "Errore: Serie non inserita",
+                        SERIES_NOT_PRESENT,
                         ERROR, JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -525,7 +545,7 @@ public final class AdminSerieView extends AdminPanel {
             }
         });
 
-        final Object[] options = {okButton, "Cancel"};
+        final Object[] options = {okButton, CANCEL};
         final int option = JOptionPane.showOptionDialog(null, panel, "Aggiungi Episodio",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                 null, options, options[0]);
@@ -621,6 +641,153 @@ public final class AdminSerieView extends AdminPanel {
     private boolean deleteEpisode(final int seriesCode, final int seasonNumber, final int episodeNumber) {
         return ((AdminSessionController) getCurrentSessionContext().getController())
                 .deleteEpisode(seriesCode, seasonNumber, episodeNumber);
+    }
+
+    private boolean addGenreToSeriesDialog(final Optional<Integer> idSeries) {
+        if (((AdminSessionController) getCurrentSessionContext().getController()).getGenres().isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Errore: Nessun Genere disponibile",
+                    ERROR, JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (((AdminSessionController) getCurrentSessionContext().getController()).getSeries().isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Errore: Nessuna Serie disponibile",
+                    ERROR, JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        final JTextField seriesCodeField = new JTextField(5);
+        final JComboBox<String> genreBox = new JComboBox<>(
+                ((AdminSessionController) getCurrentSessionContext().getController()).getGenres()
+                        .stream()
+                        .map(Genre::name)
+                        .toArray(String[]::new)
+        );
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel("Codice Serie:"));
+        panel.add(seriesCodeField);
+        if (idSeries.isPresent()) {
+            seriesCodeField.setText(idSeries.get().toString());
+            seriesCodeField.setEditable(false);
+        }
+        panel.add(new JLabel("Genere:"));
+        panel.add(genreBox);
+
+        final JButton okButton = new JButton("OK");
+
+        okButton.addActionListener(e -> {
+            try {
+                if (((AdminSessionController) getCurrentSessionContext().getController())
+                        .isSeriesAvailable(Integer.parseInt(seriesCodeField.getText()))) {
+                    JOptionPane.showMessageDialog(null,
+                            SERIES_NOT_PRESENT,
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                addGenreToSeries(
+                        Integer.parseInt(seriesCodeField.getText()),
+                        String.valueOf(genreBox.getSelectedItem()));
+                JOptionPane.getRootFrame().dispose();
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        DATABASE_ERROR + ex.getMessage(),
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        final Object[] options = {okButton, CANCEL};
+        final int option = JOptionPane.showOptionDialog(null, panel, "Aggiungi Genere a Serie",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, options, options[0]);
+        return option == -1;
+    }
+
+    private void addGenreToSeries(final int seriesId, final String genre) {
+        ((AdminSessionController) getCurrentSessionContext().getController())
+                .addGenreToSeries(seriesId, genre);
+    }
+
+    private void deleteGenreToSeriesDialog() {
+        if (((AdminSessionController) getCurrentSessionContext().getController()).getGenres().isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Errore: Nessun Genere disponibile",
+                    ERROR, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (((AdminSessionController) getCurrentSessionContext().getController()).getSeries().isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Errore: Nessuna Serie disponibile",
+                    ERROR, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        final JTextField seriesCodeField = new JTextField(5);
+        final JComboBox<String> genreBox = new JComboBox<>(
+                ((AdminSessionController) getCurrentSessionContext().getController()).getGenres()
+                        .stream()
+                        .map(Genre::name)
+                        .toArray(String[]::new)
+        );
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel("Codice Serie:"));
+        panel.add(seriesCodeField);
+        panel.add(new JLabel("Genere:"));
+        panel.add(genreBox);
+
+        final int result = JOptionPane.showConfirmDialog(null, panel, "Elimina Genere da Serie",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                if (((AdminSessionController) getCurrentSessionContext().getController())
+                        .isSeriesAvailable(Integer.parseInt(seriesCodeField.getText()))) {
+                    JOptionPane.showMessageDialog(null,
+                            SERIES_NOT_PRESENT,
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                final int seriesCode = Integer.parseInt(seriesCodeField.getText());
+                final boolean deleted = deleteGenreToSeries(
+                        seriesCode,
+                        String.valueOf(genreBox.getSelectedItem()));
+                if (deleted) {
+                    if (((AdminSessionController) getCurrentSessionContext().getController())
+                            .isEmptyGenreSeries(seriesCode)) {
+                        ((AdminSessionController) getCurrentSessionContext().getController())
+                                .deleteFilm(seriesCode);
+                    }
+                    refreshSeriesTable();
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Il Genere e' stata eliminato con successo.",
+                            COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Errore durante l'eliminazione del genere.",
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Inserisci Numero Valido per il Codice Serie.",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        DATABASE_ERROR + ex.getMessage(),
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private boolean deleteGenreToSeries(final int seriesCode, final String genre) {
+        return ((AdminSessionController) getCurrentSessionContext().getController())
+                .deleteGenreToSeries(seriesCode, genre);
     }
 
     private boolean isFieldFilled(final String text) {

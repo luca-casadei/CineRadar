@@ -2,6 +2,7 @@ package unibo.cineradar.view.homepage.admin;
 
 import unibo.cineradar.controller.administrator.AdminSessionController;
 import unibo.cineradar.model.cast.Casting;
+import unibo.cineradar.model.multimedia.Genre;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.BoxLayout;
@@ -19,6 +20,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.io.Serial;
+import java.util.Optional;
 
 /**
  * The AdminFilmView class represents the user interface for managing films by an administrator.
@@ -26,9 +28,10 @@ import java.io.Serial;
  */
 public final class AdminFilmView extends AdminPanel {
     @Serial
-    private static final long serialVersionUID = -302785493612487L;
+    private static final long serialVersionUID = -302785495912487L;
     private static final String ERROR = "Errore";
     private static final String COMPLETE_DELETE = "Eliminazione completata";
+    private static final String DATABASE_ERROR = "Errore del database: ";
     private JTable filmTable;
     private JScrollPane filmScrollPane;
 
@@ -55,6 +58,12 @@ public final class AdminFilmView extends AdminPanel {
         final JButton deleteButton = new JButton("Elimina Film");
         deleteButton.addActionListener(e -> deleteFilmDialog());
         buttonPanel.add(deleteButton);
+        final JButton addGenreFilmButton = new JButton("Aggiungi Genere a Film");
+        addGenreFilmButton.addActionListener(e -> addGenreToFilmDialog(Optional.empty()));
+        buttonPanel.add(addGenreFilmButton);
+        final JButton deleteGenreFilmButton = new JButton("Elimina Genere da Film");
+        deleteGenreFilmButton.addActionListener(e -> deleteGenreToFilmDialog());
+        buttonPanel.add(deleteGenreFilmButton);
         this.add(buttonPanel, BorderLayout.SOUTH);
     }
 
@@ -135,6 +144,11 @@ public final class AdminFilmView extends AdminPanel {
                 JOptionPane.showMessageDialog(this,
                         "Errore: Inserire un Numero Valido in Eta' e Durata",
                         ERROR, JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        DATABASE_ERROR + ex.getMessage(),
+                        ERROR, JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -158,6 +172,16 @@ public final class AdminFilmView extends AdminPanel {
         ((AdminSessionController) this.getCurrentSessionContext().getController())
                 .addFilm(title, ageLimit, plot, duration, idCast);
         updateFilmTable();
+
+        final boolean isGenreAdded = addGenreToFilmDialog(Optional.of(
+                ((AdminSessionController) this.getCurrentSessionContext().getController())
+                        .getLastFilmId()
+        ));
+        if (!isGenreAdded) {
+            deleteFilm(((AdminSessionController) getCurrentSessionContext().getController())
+                    .getLastFilmId());
+            updateFilmTable();
+        }
     }
 
     /**
@@ -196,6 +220,11 @@ public final class AdminFilmView extends AdminPanel {
                         null,
                         "Inserisci un numero valido per il Codice.",
                         ERROR, JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        DATABASE_ERROR + ex.getMessage(),
+                        ERROR, JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -209,6 +238,153 @@ public final class AdminFilmView extends AdminPanel {
     private boolean deleteFilm(final int code) {
         return ((AdminSessionController) getCurrentSessionContext().getController())
                 .deleteFilm(code);
+    }
+
+    private boolean addGenreToFilmDialog(final Optional<Integer> idFilm) {
+        if (((AdminSessionController) getCurrentSessionContext().getController()).getGenres().isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Errore: Nessun Genere disponibile",
+                    ERROR, JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (((AdminSessionController) getCurrentSessionContext().getController()).getFilms().isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Errore: Nessun Film disponibile",
+                    ERROR, JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        final JTextField filmCodeField = new JTextField(5);
+        final JComboBox<String> genreBox = new JComboBox<>(
+                ((AdminSessionController) getCurrentSessionContext().getController()).getGenres()
+                        .stream()
+                        .map(Genre::name)
+                        .toArray(String[]::new)
+        );
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel("Codice Film:"));
+        panel.add(filmCodeField);
+        if (idFilm.isPresent()) {
+            filmCodeField.setText(idFilm.get().toString());
+            filmCodeField.setEditable(false);
+        }
+        panel.add(new JLabel("Genere:"));
+        panel.add(genreBox);
+
+        final JButton okButton = new JButton("OK");
+
+        okButton.addActionListener(e -> {
+            try {
+                if (((AdminSessionController) getCurrentSessionContext().getController())
+                        .isFilmAvailable(Integer.parseInt(filmCodeField.getText()))) {
+                    JOptionPane.showMessageDialog(null,
+                            "Errore: Film non inserito",
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                addGenreToFilm(
+                        Integer.parseInt(filmCodeField.getText()),
+                        String.valueOf(genreBox.getSelectedItem()));
+                JOptionPane.getRootFrame().dispose();
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        DATABASE_ERROR + ex.getMessage(),
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        final Object[] options = {okButton, "Cancel"};
+        final int option = JOptionPane.showOptionDialog(null, panel, "Aggiungi Genere a Film",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, options, options[0]);
+        return option == -1;
+    }
+
+    private void addGenreToFilm(final int filmId, final String genre) {
+        ((AdminSessionController) getCurrentSessionContext().getController())
+                .addGenreToFilm(filmId, genre);
+    }
+
+    private void deleteGenreToFilmDialog() {
+        if (((AdminSessionController) getCurrentSessionContext().getController()).getGenres().isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Errore: Nessun Genere disponibile",
+                    ERROR, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (((AdminSessionController) getCurrentSessionContext().getController()).getFilms().isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Errore: Nessun Film disponibile",
+                    ERROR, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        final JTextField filmCodeField = new JTextField(5);
+        final JComboBox<String> genreBox = new JComboBox<>(
+                ((AdminSessionController) getCurrentSessionContext().getController()).getGenres()
+                        .stream()
+                        .map(Genre::name)
+                        .toArray(String[]::new)
+        );
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel("Codice Film:"));
+        panel.add(filmCodeField);
+        panel.add(new JLabel("Genere:"));
+        panel.add(genreBox);
+
+        final int result = JOptionPane.showConfirmDialog(null, panel, "Elimina Genere da Film",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                if (((AdminSessionController) getCurrentSessionContext().getController())
+                        .isFilmAvailable(Integer.parseInt(filmCodeField.getText()))) {
+                    JOptionPane.showMessageDialog(null,
+                            "Errore: Film non inserito",
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                final int filmCode = Integer.parseInt(filmCodeField.getText());
+                final boolean deleted = deleteGenreToFilm(
+                        filmCode,
+                        String.valueOf(genreBox.getSelectedItem()));
+                if (deleted) {
+                    if (((AdminSessionController) getCurrentSessionContext().getController())
+                            .isEmptyGenreFilm(filmCode)) {
+                        ((AdminSessionController) getCurrentSessionContext().getController())
+                                .deleteFilm(filmCode);
+                    }
+                    updateFilmTable();
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Il Genere e' stata eliminato con successo.",
+                            COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Errore durante l'eliminazione del genere.",
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Inserisci Numero Valido per il Codice Film.",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        DATABASE_ERROR + ex.getMessage(),
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private boolean deleteGenreToFilm(final int filmCode, final String genre) {
+        return ((AdminSessionController) getCurrentSessionContext().getController())
+                .deleteGenreToFilm(filmCode, genre);
     }
 
     private void updateFilmTable() {

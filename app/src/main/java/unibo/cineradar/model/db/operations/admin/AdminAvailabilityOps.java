@@ -225,6 +225,50 @@ public final class AdminAvailabilityOps extends DBManager {
     }
 
     /**
+     * Checks if the film genres with the specified ID is empty.
+     *
+     * @param filmCode the ID of the film to check.
+     * @return {@code true} if the film genres is empty, {@code false} otherwise.
+     * @throws IllegalArgumentException if there is an error checking,
+     *                                  if the film genres is empty.
+     */
+    public boolean isEmptyGenreFilm(final int filmCode) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT * FROM CATEGORIZZAZIONE_FILM "
+                    + "WHERE CodiceFilm = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, filmCode);
+            setResultSet(getPreparedStatement().executeQuery());
+            return !getResultSet().next();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Checks if the series genres with the specified ID is empty.
+     *
+     * @param seriesCode the ID of the series to check.
+     * @return {@code true} if the series genres is empty, {@code false} otherwise.
+     * @throws IllegalArgumentException if there is an error checking,
+     *                                  if the series genres is empty.
+     */
+    public boolean isEmptyGenreSeries(final int seriesCode) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "SELECT * FROM CATEGORIZZAZIONE_SERIE "
+                    + "WHERE CodiceSerie = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setInt(1, seriesCode);
+            setResultSet(getPreparedStatement().executeQuery());
+            return !getResultSet().next();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Checks if the series with the specified ID is empty.
      *
      * @param seriesCode the ID of the series to check.

@@ -334,6 +334,15 @@ public final class AdminSessionController extends SessionControllerImpl {
     }
 
     /**
+     * Retrieves the ID of the last added film.
+     *
+     * @return The ID of the last film added to the system.
+     */
+    public int getLastFilmId() {
+        return this.administratorContext.getLastFilmId();
+    }
+
+    /**
      * Retrieves the ID of the last added cast.
      *
      * @return The ID of the last cast added to the system.
@@ -695,6 +704,26 @@ public final class AdminSessionController extends SessionControllerImpl {
     }
 
     /**
+     * Checks if the film genres with the specified ID is empty.
+     *
+     * @param filmCode the ID of the film to check.
+     * @return {@code true} if the film genres is empty, {@code false} otherwise.
+     */
+    public boolean isEmptyGenreFilm(final int filmCode) {
+        return this.administratorContext.isEmptyGenreFilm(filmCode);
+    }
+
+    /**
+     * Checks if the series genres with the specified ID is empty.
+     *
+     * @param seriesCode the ID of the series to check.
+     * @return {@code true} if the series genres is empty, {@code false} otherwise.
+     */
+    public boolean isEmptyGenreSeries(final int seriesCode) {
+        return this.administratorContext.isEmptyGenreSeries(seriesCode);
+    }
+
+    /**
      * Checks if the series with the specified ID is empty.
      *
      * @param seriesCode the ID of the series to check.
@@ -817,5 +846,67 @@ public final class AdminSessionController extends SessionControllerImpl {
      */
     public boolean deleteTemplatePromo(final int code) {
         return this.administratorContext.deleteTemplatePromo(code);
+    }
+
+    /**
+     * Adds a new genre with the specified description to the system.
+     *
+     * @param genre The name of the genre to add.
+     * @param description A description of the genre.
+     */
+    public void addGenre(final String genre, final String description) {
+        this.administratorContext.addGenre(genre, description);
+    }
+
+    /**
+     * Deletes a genre from the system.
+     *
+     * @param genre The name of the genre to delete.
+     * @return {@code true} if the genre was successfully deleted, {@code false} otherwise.
+     */
+    public boolean deleteGenre(final String genre) {
+        return this.administratorContext.deleteGenre(genre);
+    }
+
+    /**
+     * Associates a genre with a film.
+     *
+     * @param filmId The ID of the film to which the genre will be added.
+     * @param genre The name of the genre to add to the film.
+     */
+    public void addGenreToFilm(final int filmId, final String genre) {
+        this.administratorContext.addGenreToFilm(filmId, genre);
+    }
+
+    /**
+     * Removes a genre association from a film.
+     *
+     * @param filmCode The ID of the film from which the genre will be removed.
+     * @param genre The name of the genre to remove from the film.
+     * @return {@code true} if the genre was successfully removed from the film, {@code false} otherwise.
+     */
+    public boolean deleteGenreToFilm(final int filmCode, final String genre) {
+        return this.administratorContext.deleteGenreToFilm(filmCode, genre);
+    }
+
+    /**
+     * Associates a genre with a series.
+     *
+     * @param seriesId The ID of the series to which the genre will be added.
+     * @param genre The name of the genre to add to the series.
+     */
+    public void addGenreToSeries(final int seriesId, final String genre) {
+        this.administratorContext.addGenreToSeries(seriesId, genre);
+    }
+
+    /**
+     * Removes a genre association from a series.
+     *
+     * @param seriesCode The ID of the series from which the genre will be removed.
+     * @param genre The name of the genre to remove from the series.
+     * @return {@code true} if the genre was successfully removed from the series, {@code false} otherwise.
+     */
+    public boolean deleteGenreToSeries(final int seriesCode, final String genre) {
+        return this.administratorContext.deleteGenreToSeries(seriesCode, genre);
     }
 }
