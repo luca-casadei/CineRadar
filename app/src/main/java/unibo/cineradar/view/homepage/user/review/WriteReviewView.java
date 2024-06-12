@@ -130,10 +130,17 @@ public abstract class WriteReviewView extends JFrame {
 
                 final boolean reviewInserted = insertReview(multimediaId, title, description, selectedSections);
                 if (reviewInserted) {
+                    JOptionPane.showMessageDialog(
+                            WriteReviewView.this,
+                            "Recensione inviata con successo!",
+                            "Successo",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
                     dispose();
                 }
             }
         });
+
 
         loadSections(sectionsPanel);
     }

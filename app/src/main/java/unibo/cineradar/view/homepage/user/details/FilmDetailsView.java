@@ -20,8 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.Serial;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -138,17 +138,32 @@ public final class FilmDetailsView extends DetailsView {
             reviewButton.setText("Recensisci");
         } else {
             reviewButton.setText("Film gia' recensito");
+            cb.setSelected(true);
+            cb.setEnabled(false);
             reviewButton.setEnabled(false);
         }
 
         cb.addActionListener(e -> reviewButton.setEnabled(cb.isSelected() && notReviewedYet));
         reviewButton.setEnabled(cb.isSelected() && notReviewedYet);
-        reviewButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final WriteReviewView writeFilmReviewView = new WriteFilmReviewView(currentSessionContext, detailedFilm);
-                writeFilmReviewView.setVisible(true);
-            }
+        reviewButton.addActionListener(e -> {
+            final WriteReviewView writeFilmReviewView = new WriteFilmReviewView(currentSessionContext, detailedFilm);
+            writeFilmReviewView.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(final WindowEvent e) {
+                    final boolean notReviewedYet = Objects.isNull(uc.getFullFilmReview(detailedFilm.getFilmId(),
+                            uc.getAccount().getUsername()));
+
+                    if (notReviewedYet) {
+                        reviewButton.setText("Recensisci");
+                    } else {
+                        reviewButton.setText("Film gia' recensito");
+                        cb.setSelected(true);
+                        cb.setEnabled(false);
+                        reviewButton.setEnabled(false);
+                    }
+                }
+            });
+            writeFilmReviewView.setVisible(true);
         });
 
         final JPanel bottomPanel = new JPanel(new BorderLayout());

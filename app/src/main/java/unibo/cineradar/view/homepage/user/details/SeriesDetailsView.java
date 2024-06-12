@@ -22,8 +22,11 @@ import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.Serial;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -96,6 +99,7 @@ public final class SeriesDetailsView extends DetailsView {
         final JPanel seasonsPanel = new JPanel();
         seasonsPanel.setLayout(new BoxLayout(seasonsPanel, BoxLayout.Y_AXIS));
         seasonsPanel.setBorder(BorderFactory.createTitledBorder("Stagioni"));
+        final List<JCheckBox> episodeCheckBoxes = new ArrayList<>();
 
         for (final Season actualSeason : serie.getSeasons()) {
             final JPanel seasonPanel = new JPanel(new BorderLayout());
@@ -128,10 +132,12 @@ public final class SeriesDetailsView extends DetailsView {
             episodesPanel.setBorder(BorderFactory.createTitledBorder("Episodi"));
 
             final List<Episode> viewedEpisodes = uc.getViewedEpisodes(serie.getSeriesId(), actualSeason.getId());
+
             for (final Episode episode : actualSeason.getEpisodes()) {
                 episodesPanel.add(new JLabel("Episodio " + episode.id()));
                 episodesPanel.add(new JLabel("Durata: " + episode.duration()));
                 final JCheckBox checkBox = createEpisodeCheckBox(episode, viewedEpisodes);
+                episodeCheckBoxes.add(checkBox);
                 episodesPanel.add(checkBox);
             }
 
@@ -156,12 +162,28 @@ public final class SeriesDetailsView extends DetailsView {
             reviewButton.setText("Recensisci");
         } else {
             reviewButton.setText("Serie gia' recensita");
+            disableEpisodeCheckBoxes(episodeCheckBoxes);
             reviewButton.setEnabled(false);
         }
 
         reviewButton.setEnabled(notReviewedYet && allEpisodesViewed(serie));
         reviewButton.addActionListener(e -> {
             final WriteReviewView writeSerieReviewView = new WriteSerieReviewView(currentSessionContext, serie);
+            writeSerieReviewView.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(final WindowEvent e) {
+                    final boolean notReviewedYet = Objects.isNull(uc.getFullSeriesReview(serie.getSeriesId(),
+                            uc.getAccount().getUsername()));
+
+                    if (notReviewedYet) {
+                        reviewButton.setText("Recensisci");
+                    } else {
+                        reviewButton.setText("Serie gia' recensita");
+                        disableEpisodeCheckBoxes(episodeCheckBoxes);
+                        reviewButton.setEnabled(false);
+                    }
+                }
+            });
             writeSerieReviewView.setVisible(true);
         });
         reviewButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -204,5 +226,12 @@ public final class SeriesDetailsView extends DetailsView {
             }
         }
         return true;
+    }
+
+    private void disableEpisodeCheckBoxes(final List<JCheckBox> episodeCheckBoxes) {
+        for (final JCheckBox checkBox : episodeCheckBoxes) {
+            checkBox.setEnabled(false);
+            checkBox.setSelected(true);
+        }
     }
 }
