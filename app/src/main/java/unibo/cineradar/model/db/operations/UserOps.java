@@ -736,7 +736,7 @@ public final class UserOps extends DBManager {
                     + "WHERE Nome IN ( "
                     + "SELECT categorizzazione_serie.NomeGenere "
                     + "FROM categorizzazione_serie "
-                    + "WHERE categorizzazione_serie.CodiceSerie = 1 )";
+                    + "WHERE categorizzazione_serie.CodiceSerie = ? )";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setInt(FIRST_PARAMETER, seriesId);
             return this.getPreparedStatement().executeUpdate() >= 0;
@@ -753,7 +753,7 @@ public final class UserOps extends DBManager {
                     + "WHERE Nome IN ( "
                     + "SELECT categorizzazione_film.NomeGenere "
                     + "FROM categorizzazione_film "
-                    + "WHERE categorizzazione_film.CodiceFilm = 1 )";
+                    + "WHERE categorizzazione_film.CodiceFilm = ? )";
             this.setPreparedStatement(this.getConnection().prepareStatement(query));
             this.getPreparedStatement().setInt(FIRST_PARAMETER, filmId);
             return this.getPreparedStatement().executeUpdate() >= 0;
