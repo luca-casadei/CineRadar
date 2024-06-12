@@ -1431,6 +1431,46 @@ public final class AdminOps extends DBManager {
     }
 
     /**
+     * Deletes a section from the database.
+     *
+     * @param section The name of the section to delete.
+     * @return {@code true} if the section was successfully deleted, {@code false} otherwise.
+     */
+    public boolean deleteSection(final String section) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "DELETE FROM SEZIONE WHERE Nome = ?";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setString(1, section);
+            final int rowsAffected = getPreparedStatement().executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error deleting section: " + ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Adds a new section with the specified description to the database.
+     *
+     * @param section The name of the section to add.
+     * @param description A description of the section.
+     */
+    public void addSection(final String section, final String description) {
+        Objects.requireNonNull(getConnection());
+        try {
+            final String query = "INSERT INTO SEZIONE "
+                    + "(Nome, Dettaglio)"
+                    + " VALUES (?,?)";
+            setPreparedStatement(getConnection().prepareStatement(query));
+            getPreparedStatement().setString(1, section);
+            getPreparedStatement().setString(2, description);
+            getPreparedStatement().executeUpdate();
+        } catch (SQLException ex) {
+            throw new IllegalArgumentException("Error adding section: " + ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Deletes a genre from the database.
      *
      * @param genre The name of the genre to delete.

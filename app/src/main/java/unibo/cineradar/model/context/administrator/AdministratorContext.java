@@ -976,6 +976,18 @@ public final class AdministratorContext extends SessionContextImpl {
     }
 
     /**
+     * Adds a new section with the specified description to the system.
+     *
+     * @param section The name of the section to add.
+     * @param description A description of the section.
+     */
+    public void addSection(final String section, final String description) {
+        try (AdminOps mgr = new AdminOps()) {
+            mgr.addSection(section, description);
+        }
+    }
+
+    /**
      * Deletes a genre from the system.
      *
      * @param genre The name of the genre to delete.
@@ -984,6 +996,18 @@ public final class AdministratorContext extends SessionContextImpl {
     public boolean deleteGenre(final String genre) {
         try (AdminOps mgr = new AdminOps()) {
             return mgr.deleteGenre(genre);
+        }
+    }
+
+    /**
+     * Deletes a section from the system.
+     *
+     * @param section The name of the section to delete.
+     * @return {@code true} if the section was successfully deleted, {@code false} otherwise.
+     */
+    public boolean deleteSection(final String section) {
+        try (AdminOps mgr = new AdminOps()) {
+            return mgr.deleteSection(section);
         }
     }
 

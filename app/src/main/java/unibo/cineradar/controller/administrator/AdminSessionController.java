@@ -495,6 +495,16 @@ public final class AdminSessionController extends SessionControllerImpl {
     }
 
     /**
+     * Adds a new section with the specified description to the system.
+     *
+     * @param section The name of the section to add.
+     * @param description A description of the section.
+     */
+    public void addSection(final String section, final String description) {
+        this.administratorContext.addSection(section, description);
+    }
+
+    /**
      * Retrieves a list of all genres.
      *
      * @return a list of {@link Genre} objects representing all available genres.
@@ -867,6 +877,16 @@ public final class AdminSessionController extends SessionControllerImpl {
      */
     public boolean deleteGenre(final String genre) {
         return this.administratorContext.deleteGenre(genre);
+    }
+
+    /**
+     * Deletes a section from the system.
+     *
+     * @param section The name of the section to delete.
+     * @return {@code true} if the section was successfully deleted, {@code false} otherwise.
+     */
+    public boolean deleteSection(final String section) {
+        return this.administratorContext.deleteSection(section);
     }
 
     /**

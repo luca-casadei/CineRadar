@@ -66,8 +66,121 @@ public final class AdminProfileView extends AdminPanel {
             final JButton deleteGenreButton = new JButton("Elimina Genere");
             deleteGenreButton.addActionListener(e -> deleteGenreDialog());
             buttonPanel.add(deleteGenreButton);
+            final JButton addSectionButton = new JButton("Aggiungi Sezione");
+            addSectionButton.addActionListener(e -> addSectionDialog());
+            buttonPanel.add(addSectionButton);
+            final JButton deleteSectionButton = new JButton("Elimina Sezione");
+            deleteSectionButton.addActionListener(e -> deleteSectionDialog());
+            buttonPanel.add(deleteSectionButton);
+
             this.add(buttonPanel, BorderLayout.SOUTH);
         }
+    }
+
+    private void addSectionDialog() {
+        final JTextField sectionField = new JTextField(20);
+        final JTextArea descriptionArea = new JTextArea(5, 20);
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel("Sezione:"));
+        panel.add(sectionField);
+        panel.add(new JLabel("Descrizione:"));
+        panel.add(new JScrollPane(descriptionArea));
+
+        final JButton okButton = new JButton("OK");
+        okButton.setEnabled(false);
+        final Runnable checkFields = () -> {
+            final boolean allFilled = isFieldFilled(sectionField.getText())
+                    && isFieldFilled(descriptionArea.getText());
+            okButton.setEnabled(allFilled);
+        };
+
+        final DocumentListener listener = new ViewDocumentListener(checkFields);
+        sectionField.getDocument().addDocumentListener(listener);
+        descriptionArea.getDocument().addDocumentListener(listener);
+
+        okButton.addActionListener(e -> {
+            try {
+                if (containsNumbers(sectionField.getText())) {
+                    throw new NumberFormatException();
+                }
+                addSection(
+                        sectionField.getText(),
+                        descriptionArea.getText());
+                JOptionPane.getRootFrame().dispose();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Errore: Inserire una Sezione Valida",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        DATABASE_ERROR + ex.getMessage(),
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        final Object[] options = {okButton, "Cancel"};
+        JOptionPane.showOptionDialog(null, panel,
+                "Aggiungi Sezione di Valutazione",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, options, options[0]);
+    }
+
+    private void addSection(final String section, final String description) {
+        ((AdminSessionController) this.getCurrentSessionContext().getController())
+                .addSection(section, description);
+    }
+
+    private void deleteSectionDialog() {
+        final JTextField sectionField = new JTextField(5);
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel("Inserisci la Sezione di Valutazione da eliminare:"));
+        panel.add(sectionField);
+
+        final int result = JOptionPane.showConfirmDialog(null, panel,
+                "Elimina Sezione di Valutazione",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                final String section = sectionField.getText();
+                if (containsNumbers(section)) {
+                    throw new NumberFormatException();
+                }
+                final boolean deleted = deleteSection(section);
+                if (deleted) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "La Sezione e' stato eliminata con successo.",
+                            COMPLETE_DELETE, JOptionPane.INFORMATION_MESSAGE);
+                    deleteMultimediaEmptyGenres();
+                } else {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Inserisci una Sezione Presente.",
+                            ERROR, JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Inserisci una Sezione Valida.",
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        DATABASE_ERROR + ex.getMessage(),
+                        ERROR, JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private boolean deleteSection(final String section) {
+        return ((AdminSessionController) this.getCurrentSessionContext().getController())
+                .deleteSection(section);
     }
 
     /**
