@@ -249,6 +249,12 @@ public final class AdminPromoView extends AdminPanel {
         panel.add(new JLabel("ID Multiplo:"));
         panel.add(multipleBox);
 
+        final JButton okButton = getOkButton(multipleBox, genreBox);
+
+        showOptionDialog(panel, okButton);
+    }
+
+    private JButton getOkButton(final JComboBox<Integer> multipleBox, final JComboBox<String> genreBox) {
         final JButton okButton = new JButton("OK");
         okButton.addActionListener(e -> {
             try {
@@ -276,8 +282,7 @@ public final class AdminPromoView extends AdminPanel {
                         ERROR, JOptionPane.ERROR_MESSAGE);
             }
         });
-
-        showOptionDialog(panel, okButton);
+        return okButton;
     }
 
     private void addGenrePromo(final String genre, final int multipleId) {
