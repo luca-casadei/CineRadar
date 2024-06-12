@@ -2,10 +2,13 @@ package unibo.cineradar.view.homepage.admin;
 
 import com.github.lgooddatepicker.components.DatePicker;
 import unibo.cineradar.controller.administrator.AdminSessionController;
+import unibo.cineradar.model.cinema.Cinema;
+import unibo.cineradar.model.utente.User;
 import unibo.cineradar.view.ViewContext;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -54,73 +57,90 @@ public class AdminCardView extends AdminPanel {
     }
 
     private void assignPromoDialog() {
-        final JTextField codePromoField = new JTextField(5);
-        final DatePicker expirationField = new DatePicker();
-        final JTextField cinemaCodeField = new JTextField(5);
-        final JTextField usernameField = new JTextField(5);
+        if (((AdminSessionController) getCurrentSessionContext().getController())
+                .getCinemas().isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Errore: Nessun Cinema inserito",
+                    ERRORE, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (((AdminSessionController) getCurrentSessionContext().getController())
+                .getUsers().isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Errore: Nessun utente inserito",
+                    ERRORE, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        final JTextField idPromoField = new JTextField(5);
+        final DatePicker expPromoField = new DatePicker();
+        final JComboBox<Integer> cinemaBox = new JComboBox<>(
+                ((AdminSessionController) getCurrentSessionContext().getController()).getCinemas()
+                        .stream()
+                        .map(Cinema::codice)
+                        .toArray(Integer[]::new)
+        );
+        final JComboBox<String> userBox = new JComboBox<>(
+                ((AdminSessionController) getCurrentSessionContext().getController()).getUsers()
+                        .stream()
+                        .map(User::getUsername)
+                        .toArray(String[]::new)
+        );
 
         final JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.add(new JLabel("CodicePromo:"));
-        panel.add(codePromoField);
-        panel.add(new JLabel("Scadenza:"));
-        panel.add(expirationField);
-        panel.add(new JLabel("Codice Cinema:"));
-        panel.add(cinemaCodeField);
+        panel.add(new JLabel("ID Cinema:"));
+        panel.add(cinemaBox);
         panel.add(new JLabel("Username:"));
-        panel.add(usernameField);
+        panel.add(userBox);
+        panel.add(new JLabel("Scadenza Promo:"));
+        panel.add(expPromoField);
+        panel.add(new JLabel("ID Promo:"));
+        panel.add(idPromoField);
 
         final JButton okButton = new JButton("OK");
         okButton.setEnabled(false);
         final Runnable checkFields = () -> {
-            final boolean allFilled = isFieldFilled(cinemaCodeField.getText())
-                    && isFieldFilled(usernameField.getText())
-                    && isFieldFilled(codePromoField.getText())
-                    && isFieldFilled(expirationField.getText());
+            final boolean allFilled = isFieldFilled(idPromoField.getText())
+                    && isFieldFilled(expPromoField.getText());
             okButton.setEnabled(allFilled);
         };
 
         final DocumentListener listener = new ViewDocumentListener(checkFields);
-        cinemaCodeField.getDocument().addDocumentListener(listener);
-        usernameField.getDocument().addDocumentListener(listener);
-        codePromoField.getDocument().addDocumentListener(listener);
+        idPromoField.getDocument().addDocumentListener(listener);
 
         okButton.addActionListener(e -> {
-            if (expirationField.getDate().isAfter(LocalDate.now())) {
+            if (expPromoField.getDate().isAfter(LocalDate.now())) {
                 try {
-                    if (isNonNegativeNumber(codePromoField.getText())
-                            || isNonNegativeNumber(cinemaCodeField.getText())) {
+                    if (isNonNegativeNumber(idPromoField.getText())
+                            || isNonNegativeNumber(String.valueOf(cinemaBox.getSelectedItem()))) {
                         throw new NumberFormatException();
                     }
                     if (((AdminSessionController) getCurrentSessionContext().getController())
-                            .isPromoAvailable(Integer.parseInt(codePromoField.getText()))) {
+                            .isPromoAvailable(Integer.parseInt(idPromoField.getText()))) {
                         JOptionPane.showMessageDialog(null,
                                 "Errore: Promo non inserita",
                                 ERRORE, JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     if (((AdminSessionController) getCurrentSessionContext().getController())
-                            .isCinemaAvailable(Integer.parseInt(cinemaCodeField.getText()))) {
+                            .isCardAvailable(
+                                    String.valueOf(userBox.getSelectedItem()),
+                                    Integer.parseInt(String.valueOf(cinemaBox.getSelectedItem()))
+                            )) {
                         JOptionPane.showMessageDialog(null,
-                                "Errore: Cinema non inserito",
-                                ERRORE, JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    if (((AdminSessionController) getCurrentSessionContext().getController())
-                            .isUserAvailable(usernameField.getText())) {
-                        JOptionPane.showMessageDialog(null,
-                                "Errore: Utente non inserito",
+                                "Errore: Utente non ha la Tessera del Cinema inserita",
                                 ERRORE, JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     assignPromo(
-                            Integer.parseInt(codePromoField.getText()),
-                            expirationField.getDate(),
-                            Integer.parseInt(cinemaCodeField.getText()),
-                            usernameField.getText()
+                            Integer.parseInt(idPromoField.getText()),
+                            expPromoField.getDate(),
+                            Integer.parseInt(
+                                    String.valueOf(cinemaBox.getSelectedItem())),
+                            String.valueOf(userBox.getSelectedItem())
                     );
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(this,
+                    JOptionPane.showMessageDialog(null,
                             "Errore: Inserire Codici Validi",
                             "ERROR", JOptionPane.ERROR_MESSAGE);
                 } catch (IllegalArgumentException ex) {

@@ -591,13 +591,14 @@ public final class AdminSessionController extends SessionControllerImpl {
     }
 
     /**
-     * Checks if a user is available.
+     * Checks if a user card is available.
      *
-     * @param username The username of the user to check.
+     * @param username   The username of the user to check.
+     * @param cinemaCode The id of the cinema
      * @return true if the user is not available, false otherwise.
      */
-    public boolean isUserAvailable(final String username) {
-        return !this.administratorContext.isUserAvailable(username);
+    public boolean isCardAvailable(final String username, final int cinemaCode) {
+        return !this.administratorContext.isCardAvailable(username, cinemaCode);
     }
 
     /**

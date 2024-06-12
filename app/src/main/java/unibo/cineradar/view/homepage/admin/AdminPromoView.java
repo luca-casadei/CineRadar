@@ -464,6 +464,7 @@ public final class AdminPromoView extends AdminPanel {
     private void addPromo(final int code, final LocalDate expiration) {
         ((AdminSessionController) this.getCurrentSessionContext().getController())
                 .addPromo(code, expiration);
+        updateCurrentTable();
     }
 
     private void disposeOptionPane() {

@@ -487,6 +487,7 @@ public final class AdminOps extends DBManager {
                 case BEST_DIRECTORS -> "SELECT Nome, Cognome, COUNT(*) AS NumeroPresenze "
                         + "FROM partecipazione_cast "
                         + "JOIN membrocast ON membrocast.Codice = partecipazione_cast.CodiceMembro "
+                        + "WHERE membrocast.TipoRegista "
                         + "GROUP BY Nome, Cognome "
                         + "ORDER BY NumeroPresenze"
                         + " LIMIT 5";
@@ -995,14 +996,15 @@ public final class AdminOps extends DBManager {
     }
 
     /**
-     * Checks if a user is available.
+     * Checks if a user card is available.
      *
-     * @param username The username of the user to check.
+     * @param username   The username of the user to check.
+     * @param cinemaCode The id of the cinema
      * @return true if the user is not available, false otherwise.
      */
-    public boolean isUserAvailable(final String username) {
+    public boolean isCardAvailable(final String username, final int cinemaCode) {
         try (AdminAvailabilityOps mgr = new AdminAvailabilityOps()) {
-            return mgr.isUserAvailable(username);
+            return mgr.isCardAvailable(username, cinemaCode);
         } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }

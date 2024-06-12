@@ -670,14 +670,15 @@ public final class AdministratorContext extends SessionContextImpl {
     }
 
     /**
-     * Checks if a user is available.
+     * Checks if a user card is available.
      *
-     * @param username The username of the user to check.
+     * @param username   The username of the user to check.
+     * @param cinemaCode The id of the cinema
      * @return true if the user is not available, false otherwise.
      */
-    public boolean isUserAvailable(final String username) {
+    public boolean isCardAvailable(final String username, final int cinemaCode) {
         try (AdminOps mgr = new AdminOps()) {
-            return mgr.isUserAvailable(username);
+            return mgr.isCardAvailable(username, cinemaCode);
         }
     }
 

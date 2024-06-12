@@ -163,18 +163,20 @@ public final class AdminAvailabilityOps extends DBManager {
     }
 
     /**
-     * Checks if a user is available.
+     * Checks if a user card is available.
      *
-     * @param username The username of the user to check.
+     * @param username   The username of the user to check.
+     * @param cinemaCode The id of the cinema
      * @return true if the user is not available, false otherwise.
      */
-    public boolean isUserAvailable(final String username) {
+    public boolean isCardAvailable(final String username, final int cinemaCode) {
         Objects.requireNonNull(getConnection());
         try {
-            final String query = "SELECT Username FROM utente "
-                    + "WHERE Username = ?";
+            final String query = "SELECT * FROM TESSERA "
+                    + "WHERE UsernameUtente = ? AND CodiceCinema = ?";
             setPreparedStatement(getConnection().prepareStatement(query));
             getPreparedStatement().setString(1, username);
+            getPreparedStatement().setInt(2, cinemaCode);
             setResultSet(getPreparedStatement().executeQuery());
             return getResultSet().next();
         } catch (SQLException ex) {
