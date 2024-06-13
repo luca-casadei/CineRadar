@@ -136,7 +136,7 @@ public final class AdminRequestsView extends AdminPanel {
         final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         requestsTable.setDefaultRenderer(Object.class, centerRenderer);
-        requestsTable.setRowHeight(30);
+        requestsTable.setRowHeight(20);
         final JTableHeader requestsHeader = requestsTable.getTableHeader();
         requestsHeader.setFont(new Font("Arial", Font.BOLD, 12));
         requestsHeader.setForeground(Color.BLACK);

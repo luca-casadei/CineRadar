@@ -44,8 +44,7 @@ Creato un registratore, effettuo l'accesso come tale:
 - Tesseramento di un utente esistente ✅
 
 Terminate le funzionalità del registratore, riaccedo come amministratore per assegnare una promo
-- Visualizzazione tessere ✅ (OPZIONALE) ❌
-  Visualizzare anche i dettagli del cinema associato alla tessera, da fare in ultimo se rimane tempo e voglia.
+- Visualizzazione tessere ✅
 - Assegnazione promo (Form) ✅
 - Assegnazione promo non esistente ✅
 

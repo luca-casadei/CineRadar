@@ -27,8 +27,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +47,10 @@ public abstract class WriteReviewView extends JFrame {
 
     private final transient UserSessionController uc;
     private final Map<Section, JSpinner> sectionRatingSpinners;
+    private final Map<Section, JCheckBox> sectionCheckboxes;
+    private final JTextField titleField;
+    private final JTextArea descriptionArea;
+    private final JButton submitButton;
 
     /**
      * Constructs a new WriteReviewView with the given user session context and multimedia object.
@@ -61,6 +63,7 @@ public abstract class WriteReviewView extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.uc = (UserSessionController) currentSessionContext.getController();
         this.sectionRatingSpinners = new HashMap<>();
+        this.sectionCheckboxes = new HashMap<>();
 
         setTitle("Scrivi una recensione");
         setLayout(new BorderLayout());
@@ -68,10 +71,10 @@ public abstract class WriteReviewView extends JFrame {
         final JPanel mainPanel = new JPanel(new GridLayout(5, 1));
 
         final JLabel titleLabel = new JLabel("Titolo recensione:");
-        final JTextField titleField = new JTextField();
+        titleField = new JTextField();
         titleField.setFont(new Font(titleField.getFont().getName(), Font.PLAIN, 19));
         final JLabel descriptionLabel = new JLabel("Descrizione:");
-        final JTextArea descriptionArea = new JTextArea();
+        descriptionArea = new JTextArea();
         final JScrollPane descriptionScrollPane = new JScrollPane(descriptionArea);
         descriptionScrollPane.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT / 10));
         final JLabel sectionsLabel = new JLabel("Sezioni di valutazione:");
@@ -90,57 +93,68 @@ public abstract class WriteReviewView extends JFrame {
         add(mainPanel, BorderLayout.NORTH);
         add(sectionsPanel, BorderLayout.CENTER);
 
-        final JButton submitButton = new JButton("Invia recensione");
+        submitButton = new JButton("Invia recensione");
+        submitButton.setEnabled(false);
         add(submitButton, BorderLayout.SOUTH);
 
-        submitButton.addActionListener(new ActionListener() {
+        titleField.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
-            public void actionPerformed(final ActionEvent e) {
-                final String title = titleField.getText().trim();
-                final String description = descriptionArea.getText().trim();
-
-                if (title.isEmpty() || description.isEmpty()) {
-                    JOptionPane.showMessageDialog(
-                            WriteReviewView.this,
-                            "Il titolo e la descrizione non possono essere vuoti.",
-                            "Errore di validazione",
-                            JOptionPane.ERROR_MESSAGE
-                    );
-                    return;
-                }
-
-                final int multimediaId;
-                if (multimedia instanceof Film) {
-                    multimediaId = ((Film) multimedia).getFilmId();
-                } else if (multimedia instanceof Serie) {
-                    multimediaId = ((Serie) multimedia).getSeriesId();
-                } else {
-                    throw new IllegalArgumentException("Unknown multimedia type");
-                }
-
-                final List<ReviewSection> selectedSections = new ArrayList<>();
-
-                for (final Section section : sectionRatingSpinners.keySet()) {
-                    final JSpinner spinner = sectionRatingSpinners.get(section);
-                    if (((JCheckBox) spinner.getParent().getComponent(1)).isSelected()) {
-                        final int rating = (int) spinner.getValue();
-                        selectedSections.add(new ReviewSection(multimediaId, section, rating));
-                    }
-                }
-
-                final boolean reviewInserted = insertReview(multimediaId, title, description, selectedSections);
-                if (reviewInserted) {
-                    JOptionPane.showMessageDialog(
-                            WriteReviewView.this,
-                            "Recensione inviata con successo!",
-                            "Successo",
-                            JOptionPane.INFORMATION_MESSAGE
-                    );
-                    dispose();
-                }
+            public void keyReleased(final java.awt.event.KeyEvent evt) {
+                validateFields();
+            }
+        });
+        descriptionArea.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(final java.awt.event.KeyEvent evt) {
+                validateFields();
             }
         });
 
+        submitButton.addActionListener(e -> {
+            final String title = titleField.getText().trim();
+            final String description = descriptionArea.getText().trim();
+
+            if (title.isEmpty() || description.isEmpty()) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Il titolo e la descrizione non possono essere vuoti.",
+                        "Errore di validazione",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+
+            final int multimediaId;
+            if (multimedia instanceof Film) {
+                multimediaId = ((Film) multimedia).getFilmId();
+            } else if (multimedia instanceof Serie) {
+                multimediaId = ((Serie) multimedia).getSeriesId();
+            } else {
+                throw new IllegalArgumentException("Unknown multimedia type");
+            }
+
+            final List<ReviewSection> selectedSections = new ArrayList<>();
+
+            sectionCheckboxes.forEach((section, checkBox) -> {
+                if (checkBox.isSelected()) {
+                    final JSpinner spinner = sectionRatingSpinners.get(section);
+                    final int rating = (int) spinner.getValue();
+                    selectedSections.add(new ReviewSection(multimediaId, section, rating));
+                }
+            });
+
+
+            final boolean reviewInserted = insertReview(multimediaId, title, description, selectedSections);
+            if (reviewInserted) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Recensione inviata con successo!",
+                        "Successo",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+                dispose();
+            }
+        });
 
         loadSections(sectionsPanel);
     }
@@ -193,6 +207,8 @@ public abstract class WriteReviewView extends JFrame {
             }
             sectionRatingSpinner.setEnabled(false);
             sectionRatingSpinners.put(section, sectionRatingSpinner);
+            sectionCheckboxes.put(section, sectionCheckBox);
+
 
             final GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 0;
@@ -217,18 +233,25 @@ public abstract class WriteReviewView extends JFrame {
 
     private JCheckBox getSectionCheckBox(final Section section) {
         final JCheckBox sectionCheckBox = new JCheckBox();
-        sectionCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final JCheckBox checkBox = (JCheckBox) e.getSource();
-                if (checkBox.isSelected()) {
-                    sectionRatingSpinners.get(section).setEnabled(true);
-                } else {
-                    sectionRatingSpinners.get(section).setEnabled(false);
-                }
-            }
+        sectionCheckBox.addActionListener(e -> {
+            final JCheckBox checkBox = (JCheckBox) e.getSource();
+            sectionRatingSpinners.get(section).setEnabled(checkBox.isSelected());
+            validateFields();
         });
         return sectionCheckBox;
+    }
+
+    private void validateFields() {
+        final String title = titleField.getText().trim();
+        final String description = descriptionArea.getText().trim();
+
+        final boolean isTitleFilled = !title.isEmpty();
+        final boolean isDescriptionFilled = !description.isEmpty();
+
+        final boolean isAnySectionSelected = sectionCheckboxes.values().stream()
+                .anyMatch(JCheckBox::isSelected);
+
+        submitButton.setEnabled(isTitleFilled && isDescriptionFilled && isAnySectionSelected);
     }
 }
 

@@ -622,8 +622,6 @@ Questi schemi gestiscono il caso senza alcuna ridondanza introdotta, le ridondan
 	\end{tabular}
 \end{table}
 
-\todo{Op. 3.*}
-
 \subsection{Visualizzare tutto l'elenco dei film in base all'età di chi lo richiede (Op. 4.1)}
 \begin{figure}[H]
 	\centering
@@ -2169,7 +2167,7 @@ Inoltre, l'utente può accedere a una pagina che mostra le proprie informazioni 
 	\caption{Pagina di dettaglio della recensione.}
 \end{figure}
 \subsection{Amministratore}
-Una volta effettuato l'accesso con un account amministratore, l'amministratore viene portato nella dashboard principale, che consente di gestire i film e le serie TV disponibili, il cast, le classifiche, le tessere, le promozioni, le richieste degli utenti e le proprie informazioni personali. \\
+Una volta effettuato l'accesso con un account amministratore, l'amministratore viene portato nella dashboard principale, che consente di gestire i film e le serie TV disponibili, il cast, le classifiche, le tessere, le promozioni, le richieste degli utenti, i registratori, gli utenti e le proprie informazioni personali. \\
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=375pt]{appimg/adminImages/homepage.png}
@@ -2202,21 +2200,21 @@ L'amministratore ha accesso a una sezione dedicata al cast, dove può visualizza
 	\caption{Pagina dei Cast, Attori e Registi}
 \end{figure}
 
-Nella sezione delle classifiche, l'amministratore può visualizzare e gestire le graduatorie degli utenti in base a diversi criteri, come il numero di recensioni o la loro qualità. Inoltre, l'amministratore può assegnare in blocco una promozione per i primi 5 utenti con il maggior numero di recensioni. L'amministratore ha anche la possibilità di eliminare un utente che ha ricevuto un numero elevato di voti utilità negativi alle sue recensioni. \\
+Nella sezione delle classifiche, l'amministratore può visualizzare e gestire le graduatorie degli utenti in base a diversi criteri, come il numero di recensioni o la loro qualità. Inoltre, l'amministratore può assegnare in blocco una promozione per i primi 5 utenti con il maggior numero di recensioni. \\
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=375pt]{appimg/adminImages/sezioneclassifiche.png}
 	\caption{Pagina delle Classifiche}
 \end{figure}
 
-L'amministratore ha anche la possibilità di gestire le tessere degli utenti, che includono informazioni come il Cinema a cui é legata la tessera e la sua data di rinnovo. In questa sezione, per ogni tessera, l'amministratore vede anche l'utente legato alla tessera e il suo Numero di tessera. L'amministratore ha la possibilità assegnare delle promo già esistenti alle tessere, a seconda delle necessità. \\
+L'amministratore ha anche la possibilità di gestire le tessere degli utenti, che includono informazioni come il numero della tessera, il nome dell'utente e la sua data di rinnovo. L'amministratore ha la possibilità assegnare delle promo già esistenti alle tessere, a seconda delle necessità. \\
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=375pt]{appimg/adminImages/sezionetessere.png}
 	\caption{Pagina delle Tessere}
 \end{figure}
 
-La sezione delle promozioni consente all'amministratore di creare e gestire le promozioni e gli sconti disponibili per gli utenti. \\
+La sezione delle promozioni consente all'amministratore di creare e gestire le promozioni e gli sconti disponibili per gli utenti. Può aggiungere Promo Template, Singole, Multiple, su Genere e Promo con Scadenza. Inoltre, può eliminare Template e Promo con Scadenza già esistenti. \\
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=375pt]{appimg/adminImages/sezionepromo.png}
@@ -2230,10 +2228,24 @@ Nella sezione delle richieste, l'amministratore può visualizzare e gestire le r
 	\caption{Pagina delle Richieste}
 \end{figure}
 
-L'amministratore ha anche accesso a una pagina che mostra le proprie informazioni personali, come il nome, il cognome, il nome utente e il numero di telefono. \\
+Nella sezione dei registratori, l'amministratore ha la possibilità di visualizzare i registratori ed i cinema disponibili con le loro informazioni, nonché di aggiungerli o eliminarli secondo le necessità. \\
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=375pt]{appimg/adminImages/profilo.png}
+	\includegraphics[width=375pt]{appimg/adminImages/sezioneregistratori.png}
+	\caption{Pagina dei Registratori}
+\end{figure}
+
+Nella sezione utenti, l'amministratore può visualizzare le informazioni degli utenti registrati sulla piattaforma e, se necessario, eliminare quelli ritenuti inefficaci nella scrittura di recensioni, basandosi sulla classifica disponibile nella sezione dedicata. \\
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=375pt]{appimg/adminImages/sezioneutenti.png}
+	\caption{Pagina degli Utenti}
+\end{figure}
+
+L'amministratore ha anche accesso a una pagina che mostra le proprie informazioni personali, come il nome, il cognome, il nome utente e il numero di telefono. Inoltre, da questa sezione, può aggiungere ed eliminare un Genere e una Sezione di Valutazione. \\
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=375pt]{appimg/adminImages/sezioneprofilo.png}
 	\caption{Pagina delle Richieste}
 \end{figure}
 
